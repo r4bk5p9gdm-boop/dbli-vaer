@@ -1,6 +1,27 @@
 import Foundation
 import WidgetKit
 
+struct PersistedStoreState: Codable {
+    var places: [Place]
+    var selectedID: UUID?
+    var log: [LogEntry]
+
+    private enum CodingKeys: String, CodingKey { case places, selectedID, log }
+
+    init(places: [Place], selectedID: UUID?, log: [LogEntry]) {
+        self.places = places
+        self.selectedID = selectedID
+        self.log = log
+    }
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        places = (try? values.decode([LossyDecodable<Place>].self, forKey: .places))?.compactMap(\.value) ?? []
+        selectedID = try? values.decode(UUID.self, forKey: .selectedID)
+        log = (try? values.decode([LossyDecodable<LogEntry>].self, forKey: .log))?.compactMap(\.value) ?? []
+    }
+}
+
 @MainActor
 final class Store: ObservableObject {
     @Published var places: [Place] { didSet { save() } }
@@ -24,7 +45,6 @@ final class Store: ObservableObject {
     private let launchPlacesVersionKey = "varsel.launchPlacesVersion"
     private let launchPlacesVersion = 9
     private var proximityMonitor: ProximityMonitor!
-    private struct Persisted: Codable { var places: [Place]; var selectedID: UUID?; var log: [LogEntry] }
 
     static var launchPlaces: [Place] {
         var weekendSun = Rule(type: .sol)
@@ -49,14 +69,20 @@ final class Store: ObservableObject {
     }
 
     init() {
-        alertLanguageStyle = AlertLanguageStyle(
-            rawValue: UserDefaults.standard.string(forKey: "varsel.alertLanguageStyle") ?? ""
+        alertLanguageStyle = AlertLanguageStyle.persisted(
+            UserDefaults.standard.string(forKey: "varsel.alertLanguageStyle") ?? ""
         ) ?? .bokmal
-        if let d = UserDefaults.standard.data(forKey: key), let p = try? JSONDecoder().decode(Persisted.self, from: d) {
+        if let d = UserDefaults.standard.data(forKey: key),
+           let p = try? JSONDecoder().decode(PersistedStoreState.self, from: d),
+           !p.places.isEmpty {
             places = p.places; selectedID = p.selectedID; log = p.log
         } else {
             places = Self.launchPlaces; selectedID = places.first?.id; log = []
             UserDefaults.standard.set(launchPlacesVersion, forKey: launchPlacesVersionKey)
+        }
+
+        if selectedID.map({ id in places.contains { $0.id == id } }) != true {
+            selectedID = places.first?.id
         }
 
         if UserDefaults.standard.integer(forKey: launchPlacesVersionKey) < launchPlacesVersion {
@@ -247,7 +273,7 @@ final class Store: ObservableObject {
     }
 
     private func save() {
-        if let d = try? JSONEncoder().encode(Persisted(places: places, selectedID: selectedID, log: log)) {
+        if let d = try? JSONEncoder().encode(PersistedStoreState(places: places, selectedID: selectedID, log: log)) {
             UserDefaults.standard.set(d, forKey: key)
         }
     }

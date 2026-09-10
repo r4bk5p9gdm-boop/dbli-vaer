@@ -836,6 +836,63 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(AlertType.frost.matches(frost, threshold: 0))
     }
 
+    func testLegacyStoredStateKeepsValidPlacesAndSkipsOnlyUnknownRules() throws {
+        let data = Data("""
+        {"places":[
+          {"name":"Gamle Klinga","lat":64.4,"lon":11.4,"preposition":"på","rules":[
+            {"type":"skyfritt"},
+            {"type":"ukjent-værtype"}
+          ]},
+          {"name":42,"lat":0,"lon":0}
+        ],"selectedID":"00000000-0000-0000-0000-000000000001"}
+        """.utf8)
+
+        let state = try JSONDecoder().decode(PersistedStoreState.self, from: data)
+
+        XCTAssertEqual(state.places.count, 1)
+        XCTAssertEqual(state.places[0].displayName, "Gamle Klinga")
+        XCTAssertEqual(state.places[0].resolvedPreposition, .pa)
+        XCTAssertEqual(state.places[0].rules.count, 1)
+        XCTAssertEqual(state.places[0].rules[0].type, .sol)
+        XCTAssertEqual(state.places[0].rules[0].activeFromHour, 7)
+        XCTAssertTrue(state.places[0].areNotificationsEnabled)
+        XCTAssertTrue(state.log.isEmpty)
+    }
+
+    func testLegacyNamesForLanguageAndWeatherTypesRemainReadable() throws {
+        let decoder = JSONDecoder()
+
+        XCTAssertEqual(try decoder.decode(AlertLanguageStyle.self, from: Data("\"inntrøndersk\"".utf8)), .inntrondersk)
+        XCTAssertEqual(try decoder.decode(AlertType.self, from: Data("\"snø\"".utf8)), .sno)
+        XCTAssertEqual(try decoder.decode(AlertType.self, from: Data("\"duggfall\"".utf8)), .dugg)
+        XCTAssertEqual(try decoder.decode(AlertType.self, from: Data("\"vindkast\"".utf8)), .vind)
+    }
+
+    func testPersistedStateRoundTripKeepsCurrentPlaceAndRuleSettings() throws {
+        var rule = Rule(type: .frost)
+        rule.templateTitle = "Frost i natt"
+        rule.onlyWhenNearby = true
+        var place = Place(name: "Andersmovegen 15", lat: 64.4, lon: 11.5, preposition: .bortpa, rules: [rule])
+        place.customName = "Hjemme"
+        place.notificationsEnabled = false
+        place.rulesOnlyDisplay = true
+        place.hiddenAlertTypes = [.dugg, .vind]
+        place.frostMargin = 2.5
+        let state = PersistedStoreState(places: [place], selectedID: place.id, log: [])
+
+        let decoded = try JSONDecoder().decode(PersistedStoreState.self, from: JSONEncoder().encode(state))
+        let saved = try XCTUnwrap(decoded.places.first)
+
+        XCTAssertEqual(decoded.selectedID, place.id)
+        XCTAssertEqual(saved.customName, "Hjemme")
+        XCTAssertEqual(saved.preposition, .bortpa)
+        XCTAssertEqual(saved.notificationsEnabled, false)
+        XCTAssertEqual(saved.rulesOnlyDisplay, true)
+        XCTAssertEqual(saved.hiddenAlertTypes, [.dugg, .vind])
+        XCTAssertEqual(saved.frostMargin, 2.5)
+        XCTAssertTrue(saved.rules[0].onlyWhenNearby)
+    }
+
     @MainActor
     func testLaunchPlacesUseRequestedNamesAndPrepositions() {
         XCTAssertEqual(Store.launchPlaces.map(\.nameWithPreposition), [

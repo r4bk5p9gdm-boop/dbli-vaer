@@ -15,6 +15,19 @@ struct WeatherConfigurationExport: Codable {
         self.alertLanguageStyle = alertLanguageStyle
         self.places = places
     }
+
+    private enum CodingKeys: String, CodingKey {
+        case formatVersion, exportedAt, selectedPlaceID, alertLanguageStyle, places
+    }
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        formatVersion = (try? values.decode(Int.self, forKey: .formatVersion)) ?? 1
+        exportedAt = (try? values.decode(Date.self, forKey: .exportedAt)) ?? .distantPast
+        selectedPlaceID = try? values.decode(UUID.self, forKey: .selectedPlaceID)
+        alertLanguageStyle = try? values.decode(AlertLanguageStyle.self, forKey: .alertLanguageStyle)
+        places = (try? values.decode([LossyDecodable<Place>].self, forKey: .places))?.compactMap(\.value) ?? []
+    }
 }
 
 struct WeatherConfigurationDocument: FileDocument {

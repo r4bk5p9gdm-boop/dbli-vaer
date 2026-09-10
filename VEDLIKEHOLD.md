@@ -37,7 +37,7 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    manglende nett, gammel prognose og raske stedsskifter.
 7. **AUTO · FERDIG** — Bygg faste testdata for Yr/Nå-varsel og test prioritering
    av regn, snø, sludd, dugg, sol, vind og temperaturgrenser.
-8. **AUTO · KLAR** — Kontroller datalagring og migrering fra eldre versjoner,
+8. **AUTO · FERDIG** — Kontroller datalagring og migrering fra eldre versjoner,
    inkludert regler, steder, språkvalg og globale innstillinger.
 9. **AUTO · KLAR** — Mål og forbedre unødvendig arbeid, nettbruk og samtidighet
    uten å endre synlig oppførsel.
@@ -52,6 +52,12 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-10: Pansret lagring og oppgradering. Eldre oppsett uten logg og nye
+  valg kan leses uten at stedene nullstilles. Gamle navn som «skyfritt», «snø»,
+  «duggfall», «vindkast» og «inntrøndersk» migreres til dagens modeller. En
+  ukjent regel eller et skadet sted forkaster bare den ene posten, og valgt
+  sted repareres dersom referansen ikke lenger finnes. Eksportformatet tåler
+  også manglende eldre metadata. 50 av 50 tester bestod.
 - 2026-09-10: La inn faste Yr- og Nå-varseldata i testpakken. Overlappende
   1-times- og 6-timersperioder gir ikke lenger doble timer; den mest detaljerte
   1-timesverdien vinner. Våt Nå-radar gir presist starttidspunkt innen 90

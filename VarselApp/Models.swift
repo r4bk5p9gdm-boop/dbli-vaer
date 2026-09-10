@@ -5,6 +5,28 @@ enum AlertLanguageStyle: String, Codable, CaseIterable, Identifiable {
     case inntrondersk
     var id: String { rawValue }
     var label: String { self == .bokmal ? "Bokmål" : "Inntrøndersk" }
+
+    static func persisted(_ value: String) -> AlertLanguageStyle? {
+        if let exact = AlertLanguageStyle(rawValue: value) { return exact }
+        switch value.lowercased() {
+        case "bokmål", "bokmaal": return .bokmal
+        case "inntrøndersk", "inntrondersk": return .inntrondersk
+        default: return nil
+        }
+    }
+
+    init(from decoder: Decoder) throws {
+        let value = try decoder.singleValueContainer().decode(String.self)
+        guard let style = Self.persisted(value) else {
+            throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "Ukjent språkvalg: \(value)"))
+        }
+        self = style
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(rawValue)
+    }
 }
 
 enum WindGustLevel: Int, CaseIterable, Identifiable {
@@ -58,6 +80,26 @@ enum WindGustLevel: Int, CaseIterable, Identifiable {
 enum AlertType: String, Codable, CaseIterable, Identifiable {
     case regn, frost, temperatur, sno, vind, dugg, sol
     var id: String { rawValue }
+
+    init(from decoder: Decoder) throws {
+        let value = try decoder.singleValueContainer().decode(String.self).lowercased()
+        switch value {
+        case "regn", "yr": self = .regn
+        case "frost": self = .frost
+        case "temperatur", "temp": self = .temperatur
+        case "sno", "snø", "sludd": self = .sno
+        case "vind", "vindkast": self = .vind
+        case "dugg", "duggfall": self = .dugg
+        case "sol", "skyfritt": self = .sol
+        default:
+            throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "Ukjent varseltype: \(value)"))
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(rawValue)
+    }
 
     var label: String {
         switch self {
@@ -345,6 +387,53 @@ struct Place: Codable, Identifiable, Hashable {
     var showsOnlyRuleAlerts: Bool { rulesOnlyDisplay ?? false }
     var localFrostMargin: Double { max(0, frostMargin ?? 0) }
 
+    private enum CodingKeys: String, CodingKey {
+        case id, name, customName, lat, lon, preposition, rules, notificationsEnabled, rulesOnlyDisplay, hiddenAlertTypes, frostMargin
+    }
+
+    init(
+        id: UUID = UUID(),
+        name: String,
+        customName: String? = nil,
+        lat: Double,
+        lon: Double,
+        preposition: PlacePreposition? = nil,
+        rules: [Rule] = [],
+        notificationsEnabled: Bool? = nil,
+        rulesOnlyDisplay: Bool? = nil,
+        hiddenAlertTypes: Set<AlertType>? = nil,
+        frostMargin: Double? = nil
+    ) {
+        self.id = id
+        self.name = name
+        self.customName = customName
+        self.lat = lat
+        self.lon = lon
+        self.preposition = preposition
+        self.rules = rules
+        self.notificationsEnabled = notificationsEnabled
+        self.rulesOnlyDisplay = rulesOnlyDisplay
+        self.hiddenAlertTypes = hiddenAlertTypes
+        self.frostMargin = frostMargin
+    }
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        id = (try? values.decode(UUID.self, forKey: .id)) ?? UUID()
+        name = try values.decode(String.self, forKey: .name)
+        customName = try? values.decode(String.self, forKey: .customName)
+        lat = try values.decode(Double.self, forKey: .lat)
+        lon = try values.decode(Double.self, forKey: .lon)
+        let rawPreposition = try? values.decode(String.self, forKey: .preposition)
+        preposition = rawPreposition.flatMap { PlacePreposition(rawValue: $0) }
+        rules = (try? values.decode([LossyDecodable<Rule>].self, forKey: .rules))?.compactMap(\.value) ?? []
+        notificationsEnabled = try? values.decode(Bool.self, forKey: .notificationsEnabled)
+        rulesOnlyDisplay = try? values.decode(Bool.self, forKey: .rulesOnlyDisplay)
+        hiddenAlertTypes = (try? values.decode([LossyDecodable<AlertType>].self, forKey: .hiddenAlertTypes))
+            .map { Set($0.compactMap(\.value)) }
+        frostMargin = try? values.decode(Double.self, forKey: .frostMargin)
+    }
+
     var resolvedPreposition: PlacePreposition {
         if let preposition { return preposition }
         return name.compare("Klinga", options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame ? .pa : .i
@@ -397,6 +486,29 @@ struct LogEntry: Codable, Identifiable {
     var id = UUID()
     let time: Date
     let text: String
+
+    private enum CodingKeys: String, CodingKey { case id, time, text }
+
+    init(id: UUID = UUID(), time: Date, text: String) {
+        self.id = id
+        self.time = time
+        self.text = text
+    }
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        id = try values.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        time = try values.decode(Date.self, forKey: .time)
+        text = try values.decode(String.self, forKey: .text)
+    }
+}
+
+struct LossyDecodable<Value: Decodable>: Decodable {
+    let value: Value?
+
+    init(from decoder: Decoder) throws {
+        value = try? Value(from: decoder)
+    }
 }
 
 struct WeatherStatus: Codable, Identifiable, Hashable {
