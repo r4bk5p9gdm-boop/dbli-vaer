@@ -54,6 +54,8 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    widget, Live Activity og Apple Watch gjennom delte modeller og tester.
 13. **AUTO · FERDIG** — Utvid før-lanseringstesten med kritiske ende-til-ende-
    scenarioer og dokumenter en repeterbar lanseringssjekk.
+14. **AUTO · FERDIG** — Gjør varslingsloggen sannferdig når iOS avviser ett
+   eller flere planlagte varsler, i stedet for å rapportere alle som aktivert.
 
 ## Forslag som venter på godkjenning
 
@@ -61,6 +63,10 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-10: Varslingsplanlegging teller nå hvilke lokale varsler iOS faktisk
+  godtok. Loggen skiller mellom fullført, delvis fullført og helt mislykket
+  aktivering, og bruker antallet etter filtrering og iOS-grensen i stedet for
+  det ubehandlede regelresultatet. 55 av 55 tester bestod.
 - 2026-09-10: La til en ende-til-ende-regresjon fra rå Yr-tabell og Nå-varsel
   via sammenslåing, regelplanlegging og inntrøndersk pushtekst til samme status
   etter overføring til widget/Watch. En egen lanseringssjekkliste dekker

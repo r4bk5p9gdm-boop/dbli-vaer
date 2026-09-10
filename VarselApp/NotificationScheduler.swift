@@ -58,6 +58,13 @@ enum NotificationCopy {
     static let activationRequiredBody = "Appen må startes for å aktivere varsler."
 }
 
+struct NotificationScheduleResult: Equatable {
+    let requestedCount: Int
+    let scheduledCount: Int
+    let failedCount: Int
+    let firstScheduledAt: Date?
+}
+
 enum NotificationScheduler {
     static let pendingNotificationLimit = 64
 
@@ -65,11 +72,19 @@ enum NotificationScheduler {
         (try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])) ?? false
     }
 
-    static func reschedule(_ alerts: [PlannedAlert], languageStyle: AlertLanguageStyle = .bokmal) async {
+    @discardableResult
+    static func reschedule(
+        _ alerts: [PlannedAlert],
+        languageStyle: AlertLanguageStyle = .bokmal
+    ) async -> NotificationScheduleResult {
         let center = UNUserNotificationCenter.current()
         center.removeAllPendingNotificationRequests()
         let now = Date()
-        for a in alertsToSchedule(alerts, now: now) {
+        let requested = alertsToSchedule(alerts, now: now)
+        var scheduledCount = 0
+        var failedCount = 0
+        var firstScheduledAt: Date?
+        for a in requested {
             let c = UNMutableNotificationContent()
             c.title = NotificationCopy.title(for: a.rule, placeName: a.placeName, possible: a.possible, languageStyle: languageStyle)
             c.body = NotificationCopy.message(for: a.rule, eventAt: a.eventAt, referenceAt: a.fireAt, possible: a.possible, eventDetail: a.eventDetail, languageStyle: languageStyle)
@@ -80,8 +95,20 @@ enum NotificationScheduler {
                 c.userInfo = [NotificationRoute.placeIDKey: placeID.uuidString]
             }
             let trigger = UNTimeIntervalNotificationTrigger(timeInterval: max(1, a.fireAt.timeIntervalSince(now)), repeats: false)
-            try? await center.add(UNNotificationRequest(identifier: a.id, content: c, trigger: trigger))
+            do {
+                try await center.add(UNNotificationRequest(identifier: a.id, content: c, trigger: trigger))
+                scheduledCount += 1
+                if firstScheduledAt == nil { firstScheduledAt = a.fireAt }
+            } catch {
+                failedCount += 1
+            }
         }
+        return NotificationScheduleResult(
+            requestedCount: requested.count,
+            scheduledCount: scheduledCount,
+            failedCount: failedCount,
+            firstScheduledAt: firstScheduledAt
+        )
     }
 
     /// Makes the iOS 64-notification limit deterministic even if a caller

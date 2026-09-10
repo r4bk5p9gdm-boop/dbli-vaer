@@ -595,6 +595,26 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(Set(scheduled.map(\.id)).count, scheduled.count)
     }
 
+    @MainActor
+    func testNotificationPlanLogReportsActualSchedulingResult() {
+        XCTAssertEqual(
+            Store.notificationPlanLogText(.init(requestedCount: 0, scheduledCount: 0, failedCount: 0, firstScheduledAt: nil)),
+            "Varslingsplan oppdatert – ingen varsler planlagt."
+        )
+        XCTAssertEqual(
+            Store.notificationPlanLogText(.init(requestedCount: 3, scheduledCount: 0, failedCount: 3, firstScheduledAt: nil)),
+            "Kunne ikke aktivere 3 planlagte varsler."
+        )
+        XCTAssertEqual(
+            Store.notificationPlanLogText(.init(requestedCount: 3, scheduledCount: 2, failedCount: 1, firstScheduledAt: base)),
+            "Varslingsplan delvis oppdatert – 2 av 3 varsler aktivert."
+        )
+        XCTAssertTrue(
+            Store.notificationPlanLogText(.init(requestedCount: 2, scheduledCount: 2, failedCount: 0, firstScheduledAt: base))
+                .hasPrefix("Varslingsplan oppdatert – 2 varsler planlagt, første ")
+        )
+    }
+
     func testWatchTransferRoundTripsLatestSnapshotAndExplicitClear() throws {
         let place = Place(name: "Namsos", lat: 64.5, lon: 11.5)
         let snapshot = WidgetWeatherSnapshot(

@@ -266,17 +266,30 @@ final class Store: ObservableObject {
 
     func replan() async {
         let alerts = Planner.planAll(places: places, forecasts: forecasts, nearbyPlaceIDs: nearbyPlaceIDs)
-        await NotificationScheduler.reschedule(alerts, languageStyle: alertLanguageStyle)
+        let scheduleResult = await NotificationScheduler.reschedule(alerts, languageStyle: alertLanguageStyle)
         await LiveWeatherActivityManager.sync(
             places: places,
             forecasts: forecasts,
             nearbyPlaceIDs: nearbyPlaceIDs
         )
         updateWidget()
-        let text = alerts.isEmpty ? "Varslingsplan oppdatert – ingen varsler planlagt."
-            : "Varslingsplan oppdatert – \(alerts.count) varsler planlagt, første \(eventTimePhrase(alerts[0].fireAt))."
+        let text = Self.notificationPlanLogText(scheduleResult)
         log.insert(LogEntry(time: Date(), text: text), at: 0)
         if log.count > 50 { log.removeLast(log.count - 50) }
+    }
+
+    static func notificationPlanLogText(_ result: NotificationScheduleResult) -> String {
+        if result.requestedCount == 0 {
+            return "Varslingsplan oppdatert – ingen varsler planlagt."
+        }
+        if result.failedCount > 0 {
+            if result.scheduledCount == 0 {
+                return "Kunne ikke aktivere \(result.requestedCount) planlagte varsler."
+            }
+            return "Varslingsplan delvis oppdatert – \(result.scheduledCount) av \(result.requestedCount) varsler aktivert."
+        }
+        let first = result.firstScheduledAt.map { ", første \(eventTimePhrase($0))" } ?? ""
+        return "Varslingsplan oppdatert – \(result.scheduledCount) varsler planlagt\(first)."
     }
 
     func select(_ place: Place) {
