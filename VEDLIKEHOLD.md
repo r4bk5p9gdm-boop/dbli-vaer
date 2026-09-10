@@ -41,9 +41,16 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    inkludert regler, steder, språkvalg og globale innstillinger.
 9. **AUTO · FERDIG** — Mål og forbedre unødvendig arbeid, nettbruk og samtidighet
    uten å endre synlig oppførsel.
-10. **AUTO · KLAR** — Samkjør tekst, ikoner og begreper mellom app, push,
+10. **BRUKER · VENTER PÅ ENHET** — Fullfør fysisk kontroll av Watch-appen og
+   CarPlay-widgeten. Watch-målene er korrekt signert, men Apple Watch er ennå
+   ikke synlig som utviklingsenhet i Xcode. Kontrollen fortsetter når
+   Utviklermodus er slått på på klokka og den er paret med Xcode. CarPlay-
+   widgeten kontrolleres etter at iPhone er låst opp, appen er startet én gang
+   og widgeten er valgt under Innstillinger > Generelt > CarPlay. Denne
+   ventende enhetskontrollen blokkerer ikke AUTO-oppgavene nedenfor.
+11. **AUTO · KLAR** — Samkjør tekst, ikoner og begreper mellom app, push,
    widget, Live Activity og Apple Watch gjennom delte modeller og tester.
-11. **AUTO · KLAR** — Utvid før-lanseringstesten med kritiske ende-til-ende-
+12. **AUTO · KLAR** — Utvid før-lanseringstesten med kritiske ende-til-ende-
    scenarioer og dokumenter en repeterbar lanseringssjekk.
 
 ## Forslag som venter på godkjenning
