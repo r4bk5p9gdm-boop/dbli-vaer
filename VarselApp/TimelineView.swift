@@ -318,6 +318,11 @@ private struct WeatherBandLabel: View {
             .frame(width: notificationColumnWidth)
             .accessibilityHidden(true)
 
+            Rectangle()
+                .fill(Color.secondary.opacity(0.22))
+                .frame(width: 1, height: 12)
+                .accessibilityHidden(true)
+
             HStack(spacing: 3) {
                 Image(systemName: systemImage)
                     .foregroundStyle(color)
