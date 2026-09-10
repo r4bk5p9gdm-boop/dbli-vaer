@@ -44,8 +44,11 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
 10. **BRUKER · VENTER PÅ XCODE-PARING** — Fullfør fysisk kontroll av Watch-
    appen. iPhone-appen er installert og startet, men Apple Watch er ikke synlig
    som utviklingsenhet i Xcode og mangler derfor i Watch-profilens enhetsliste.
-   Xcode må registrere klokka og fornye profilen før fysisk installasjon kan
-   godtas. Denne ventende enhetskontrollen blokkerer ikke AUTO-oppgavene.
+   Etter sletting fra iPhone forsvant også oppføringen fra «Tilgjengelige apper»,
+   så neste kontroll må bygge og installere hoved-schemen `VarselApp` (ikke
+   widget-schemen) med Watch-bunten validert og signert. Xcode må registrere
+   klokka og fornye profilen før fysisk installasjon kan godtas. Denne ventende
+   enhetskontrollen blokkerer ikke AUTO-oppgavene.
 11. **AUTO · FERDIG** — Samkjør appnavn og overskriftsformat mellom app, push,
    widget, Live Activity og Apple Watch gjennom én delt tekstmodell og tester.
 12. **AUTO · FERDIG** — Samkjør statusbegreper, værikoner og farger mellom app,
