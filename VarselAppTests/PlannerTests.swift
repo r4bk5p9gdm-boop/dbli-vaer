@@ -257,6 +257,42 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(CurrentWeatherCondition.resolve(rain, precipitationIsFalling: false), .cloudy)
     }
 
+    func testRotatingStatusDetailsDescribeWeatherWithoutRepeatingTime() {
+        let hour = ForecastHour(
+            time: base,
+            temp: 3.3,
+            precip: 0.7,
+            wind: 4,
+            cloud: 28,
+            dew: 2.9,
+            precipMax: 0.9,
+            precipProbability: 41,
+            gust: 12
+        )
+        let place = Place(name: "Klinga", lat: 64.4, lon: 11.5, frostMargin: 2)
+
+        for type in AlertType.allCases {
+            let status = WeatherStatus(
+                ruleID: UUID(),
+                type: type,
+                text: "\(type.label) i dag kl. 20.",
+                eventAt: base,
+                isNow: false,
+                possible: type == .regn || type == .sno
+            )
+            let detail = Planner.statusDetail(for: status, place: place, forecast: [hour])
+            XCTAssertNotNil(detail, "Mangler detalj for \(type)")
+            XCTAssertFalse(detail?.contains("kl.") == true, "Gjentar klokkeslett for \(type): \(detail ?? "")")
+            XCTAssertFalse(detail?.contains("Neste hendelse") == true, "Gjentar hendelsen for \(type): \(detail ?? "")")
+        }
+
+        let dew = WeatherStatus(ruleID: UUID(), type: .dugg, text: "Duggfall i dag kl. 20.", eventAt: base, isNow: false)
+        XCTAssertEqual(
+            Planner.statusDetail(for: dew, place: place, forecast: [hour]),
+            "Duggpunkt 2,9° · 0,4° fra lufta"
+        )
+    }
+
     func testWindGustLevelsProduceDifferentNotificationTitles() {
         var standard = Rule(type: .vind)
         standard.threshold = 12

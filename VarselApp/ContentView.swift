@@ -243,7 +243,7 @@ private struct CurrentWeatherCard: View {
                     let status = rotatingStatuses[index - 1]
                     headline(
                         title: status.text,
-                        detail: status.isNow ? "Gjelder nå" : "Neste hendelse \(eventTimePhrase(status.eventAt))",
+                        detail: Planner.statusDetail(for: status, place: place, forecast: forecast),
                         systemImage: status.type.systemImage,
                         color: status.type.color
                     )
@@ -290,7 +290,7 @@ private struct CurrentWeatherCard: View {
         return (AlertType.sol.systemImage, "Skyer", "overskyet", AlertType.sol.color)
     }
 
-    private func headline(title: String, detail: String, systemImage: String, color: Color) -> some View {
+    private func headline(title: String, detail: String?, systemImage: String, color: Color) -> some View {
         HStack(spacing: 11) {
             Image(systemName: systemImage)
                 .font(.title3)
@@ -298,7 +298,9 @@ private struct CurrentWeatherCard: View {
                 .frame(width: 28)
             VStack(alignment: .leading, spacing: 2) {
                 Text(title).font(.subheadline.weight(.semibold)).lineLimit(1)
-                Text(detail).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                if let detail, !detail.isEmpty {
+                    Text(detail).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                }
             }
             Spacer(minLength: 0)
         }

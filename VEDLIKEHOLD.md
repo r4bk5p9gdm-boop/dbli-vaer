@@ -56,6 +56,9 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    scenarioer og dokumenter en repeterbar lanseringssjekk.
 14. **AUTO · FERDIG** — Gjør varslingsloggen sannferdig når iOS avviser ett
    eller flere planlagte varsler, i stedet for å rapportere alle som aktivert.
+15. **BRUKER · FERDIG** — Fjern gjentatt dag og klokkeslett fra andrelinjen i
+   det rullerende varselet. Bruk linjen til kort, værtypespesifikk informasjon
+   for regn, snø, duggfall, frost, temperatur, vind og sol.
 
 ## Forslag som venter på godkjenning
 
@@ -63,6 +66,11 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-10: Fjernet den dupliserte «Neste hendelse …»-teksten fra den
+  rullerende statusen. Andrelinjen viser nå bare utfyllende værdata: nedbør og
+  sannsynlighet, anslått snø, duggpunkt og temperaturavstand, Yr-temperatur og
+  lokal frostmargin, vindkast eller skydekke. Alle sju varseltyper er dekket av
+  en regresjonstest som avviser gjentatt klokkeslett. 56 av 56 tester bestod.
 - 2026-09-10: Varslingsplanlegging teller nå hvilke lokale varsler iOS faktisk
   godtok. Loggen skiller mellom fullført, delvis fullført og helt mislykket
   aktivering, og bruker antallet etter filtrering og iOS-grensen i stedet for

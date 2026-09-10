@@ -234,6 +234,43 @@ enum Planner {
         }
     }
 
+    static func statusDetail(for status: WeatherStatus, place: Place, forecast: [ForecastHour]) -> String? {
+        guard let hour = forecast.min(by: {
+            abs($0.time.timeIntervalSince(status.eventAt)) < abs($1.time.timeIntervalSince(status.eventAt))
+        }) else { return nil }
+
+        let number: (Double) -> String = {
+            $0.formatted(.number.precision(.fractionLength(0...1)))
+        }
+        let probability = hour.precipProbability.map { " · \(Int($0.rounded())) % sannsynlighet" } ?? ""
+
+        switch status.type {
+        case .regn:
+            let amount = status.possible == true
+                ? (hour.precipMax ?? hour.precipitationRiskRate)
+                : hour.precipitationRate
+            return "\(status.possible == true ? "Opptil " : "")\(number(amount)) mm\(probability)"
+        case .sno:
+            let water = status.possible == true
+                ? (hour.precipMax ?? hour.precipitationRiskRate)
+                : hour.precipitationRate
+            let snow = estimatedFreshSnowMillimeters(waterEquivalent: water, temperature: hour.temp)
+            return "Anslått \(status.possible == true ? "opptil " : "")\(number(snow)) mm snø\(probability)"
+        case .dugg:
+            let gap = max(0, hour.temp - hour.dew)
+            return "Duggpunkt \(number(hour.dew))° · \(number(gap))° fra lufta"
+        case .frost:
+            let margin = place.localFrostMargin > 0 ? " · lokal margin +\(number(place.localFrostMargin))°" : ""
+            return "Yr melder \(number(hour.temp))°\(margin)"
+        case .temperatur:
+            return "Yr melder \(number(hour.temp))°"
+        case .vind:
+            return "Vindkast \(number(hour.effectiveWind)) m/s"
+        case .sol:
+            return "Skydekke \(Int(hour.cloud.rounded())) %"
+        }
+    }
+
     static func status(for rule: Rule, forecast: [ForecastHour], frostMargin: Double = 0, now: Date = Date()) -> WeatherStatus? {
         guard !forecast.isEmpty else { return nil }
         let radar = radarEvent(rule: rule, forecast: forecast, now: now)
