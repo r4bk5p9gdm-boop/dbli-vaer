@@ -648,6 +648,42 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(Set(scheduled.map(\.id)).count, scheduled.count)
     }
 
+    @MainActor
+    func testNotificationReplacementsDoNotInterleaveAtSuspensionPoints() async {
+        let queue = NotificationSchedulingQueue()
+        var pending: [String] = []
+        var resumeFirst: CheckedContinuation<Void, Never>?
+        let firstStarted = expectation(description: "First replacement suspended during add")
+        let result = NotificationScheduleResult(requestedCount: 1, scheduledCount: 1,
+                                              failedCount: 0, firstScheduledAt: base)
+        let first = queue.enqueue {
+            pending.removeAll()
+            await withCheckedContinuation { continuation in
+                resumeFirst = continuation
+                firstStarted.fulfill()
+            }
+            pending.append("old")
+            return result
+        }
+        await fulfillment(of: [firstStarted], timeout: 5)
+        let second = queue.enqueue {
+            pending.removeAll()
+            pending.append("new")
+            return result
+        }
+        // A caller disappearing must not interrupt an in-progress replacement.
+        first.cancel()
+        resumeFirst?.resume()
+        _ = await second.value
+        XCTAssertEqual(pending, ["new"])
+        let third = queue.enqueue {
+            pending.removeAll()
+            return result
+        }
+        _ = await third.value
+        XCTAssertTrue(pending.isEmpty)
+    }
+
     func testSharedNotificationSlotKeepsNearestEventRegardlessOfInputOrder() {
         let rule = Rule(type: .regn)
         let placeID = UUID()

@@ -65,7 +65,32 @@ struct NotificationScheduleResult: Equatable {
     let firstScheduledAt: Date?
 }
 
+/// A complete replacement must finish before the next replacement removes
+/// pending requests. Actor isolation alone would still interleave at each add.
+@MainActor
+final class NotificationSchedulingQueue {
+    private var tail: Task<NotificationScheduleResult, Never>?
+    private var generation = 0
+
+    func enqueue(
+        _ operation: @escaping @MainActor () async -> NotificationScheduleResult
+    ) -> Task<NotificationScheduleResult, Never> {
+        let previous = tail
+        generation += 1
+        let currentGeneration = generation
+        let task = Task { @MainActor in
+            _ = await previous?.value
+            let result = await operation()
+            if generation == currentGeneration { tail = nil }
+            return result
+        }
+        tail = task
+        return task
+    }
+}
+
 enum NotificationScheduler {
+    @MainActor private static let schedulingQueue = NotificationSchedulingQueue()
     static let pendingNotificationLimit = 64
 
     static func requestPermission() async -> Bool {
@@ -73,9 +98,20 @@ enum NotificationScheduler {
     }
 
     @discardableResult
+    @MainActor
     static func reschedule(
         _ alerts: [PlannedAlert],
         languageStyle: AlertLanguageStyle = .bokmal
+    ) async -> NotificationScheduleResult {
+        await schedulingQueue.enqueue {
+            await replacePendingAlerts(alerts, languageStyle: languageStyle)
+        }.value
+    }
+
+    @MainActor
+    private static func replacePendingAlerts(
+        _ alerts: [PlannedAlert],
+        languageStyle: AlertLanguageStyle
     ) async -> NotificationScheduleResult {
         let center = UNUserNotificationCenter.current()
         center.removeAllPendingNotificationRequests()

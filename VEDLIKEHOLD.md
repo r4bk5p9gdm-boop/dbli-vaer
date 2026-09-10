@@ -73,8 +73,12 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    vindkast, og sørg for stor forbokstav i rullerende «Regn»/«Snø»-tekst.
 18. **AUTO · FERDIG** — Ved kollisjon på samme varsel-ID velges nærmeste
    værhendelse før duplikater fjernes, uavhengig av rekkefølgen fra innsender.
-19. **AUTO · ÅPEN** — Undersøk overlappende forgrunns- og bakgrunnsoppdatering
-   av varslingsplanen og om eldre arbeid kan overskrive nyere plan.
+19. **AUTO · FERDIG** — Serialiser komplette utskiftninger av lokale varsler.
+   En eldre plan får ikke legge igjen varsler etter at den neste har tømt køen.
+20. **AUTO · ÅPEN** — Undersøk separat Store i bakgrunnsjobben: den kan ha
+   gamle regler og manglende prognoser mens forgrunnen redigerer og henter.
+   Køen fra oppgave 19 hindrer fletting, men avgjør ikke hvilken dataversjon
+   som er ferskest. Kontroller også kansellering og mislykket førstegangshenting.
 
 ## Forslag som venter på godkjenning
 
@@ -82,6 +86,13 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-11: Hele utskiftningen av lokale varsler går gjennom én delt kø,
+  inkludert alle asynkrone innlegginger. Dette hindrer at en gammel plan
+  fortsetter å legge inn varsler etter at en nyere har slettet dem. Test med
+  kontrollert pause midt i innlegging, avbrutt oppgave og påfølgende tømming
+  bestod. 60 av 60 tester bestod på iOS 27-simulator; samlet iPhone/watchOS-
+  bygg bestod uten signering. Ingen fysiske enheter brukt. Neste: dataversjoner
+  mellom bakgrunnens og forgrunnens Store, som er en separat risiko.
 - 2026-09-11: Varsler som deler utsendingstid og ID sorteres før duplikatvalg,
   slik at senere værhendelser ikke skjuler den nærmeste ved ombyttet input.
   Regresjonstest dekker begge rekkefølger, utløpt varsel og tom kapasitetsgrense.
