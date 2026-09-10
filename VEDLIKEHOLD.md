@@ -39,7 +39,7 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    av regn, snø, sludd, dugg, sol, vind og temperaturgrenser.
 8. **AUTO · FERDIG** — Kontroller datalagring og migrering fra eldre versjoner,
    inkludert regler, steder, språkvalg og globale innstillinger.
-9. **AUTO · KLAR** — Mål og forbedre unødvendig arbeid, nettbruk og samtidighet
+9. **AUTO · FERDIG** — Mål og forbedre unødvendig arbeid, nettbruk og samtidighet
    uten å endre synlig oppførsel.
 10. **AUTO · KLAR** — Samkjør tekst, ikoner og begreper mellom app, push,
    widget, Live Activity og Apple Watch gjennom delte modeller og tester.
@@ -52,6 +52,11 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-10: Reduserte nettbruk og samtidighetsbelastning. Bakgrunnsjobben
+  henter nå bare valgt sted og steder med aktive pushregler; manuell oppdatering
+  henter fortsatt alle steder. Flere navn på samme koordinat deler én Yr/Nå-
+  henting, og antall samtidige steder er begrenset til fire for å unngå
+  unødvendige forespørselsutbrudd. 52 av 52 tester bestod.
 - 2026-09-10: Pansret lagring og oppgradering. Eldre oppsett uten logg og nye
   valg kan leses uten at stedene nullstilles. Gamle navn som «skyfritt», «snø»,
   «duggfall», «vindkast» og «inntrøndersk» migreres til dagens modeller. En

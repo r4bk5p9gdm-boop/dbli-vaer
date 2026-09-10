@@ -894,6 +894,38 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testBackgroundRefreshIncludesSelectedAndNotificationPlacesOnly() {
+        var enabledRule = Rule(type: .regn)
+        enabledRule.enabled = true
+        var disabledRule = Rule(type: .vind)
+        disabledRule.enabled = false
+        let selected = Place(name: "Valgt uten varsler", lat: 1, lon: 1)
+        let alerting = Place(name: "Aktivt varsel", lat: 2, lon: 2, rules: [enabledRule])
+        let inactive = Place(name: "Avslått regel", lat: 3, lon: 3, rules: [disabledRule])
+        var pushOff = Place(name: "Push av", lat: 4, lon: 4, rules: [enabledRule])
+        pushOff.notificationsEnabled = false
+
+        let result = Store.placesNeededForBackgroundRefresh(
+            [selected, alerting, inactive, pushOff],
+            selectedID: selected.id
+        )
+
+        XCTAssertEqual(Set(result.map(\.id)), [selected.id, alerting.id])
+    }
+
+    @MainActor
+    func testForecastRequestsDeduplicateCoordinatesAtApiPrecision() {
+        let first = Place(name: "Namsos", lat: 64.466241, lon: 11.495719)
+        let alias = Place(name: "Sentrum", lat: 64.466239, lon: 11.495721)
+        let other = Place(name: "Klinga", lat: 64.4094, lon: 11.47786)
+
+        let groups = Store.groupedByForecastLocation([first, alias, other])
+
+        XCTAssertEqual(groups.count, 2)
+        XCTAssertEqual(groups[ForecastLocation(place: first)]?.count, 2)
+    }
+
+    @MainActor
     func testLaunchPlacesUseRequestedNamesAndPrepositions() {
         XCTAssertEqual(Store.launchPlaces.map(\.nameWithPreposition), [
             "på Klinga", "nerri Namsos", "oppå Hornburu", "oppi Selbu", "inni Bangdalen"

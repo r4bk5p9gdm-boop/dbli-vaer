@@ -22,8 +22,22 @@ struct PersistedStoreState: Codable {
     }
 }
 
+struct ForecastLocation: Hashable {
+    let latitudeE4: Int
+    let longitudeE4: Int
+
+    init(place: Place) {
+        latitudeE4 = Int((place.lat * 10_000).rounded())
+        longitudeE4 = Int((place.lon * 10_000).rounded())
+    }
+
+    var latitude: Double { Double(latitudeE4) / 10_000 }
+    var longitude: Double { Double(longitudeE4) / 10_000 }
+}
+
 @MainActor
 final class Store: ObservableObject {
+    static let forecastRequestConcurrencyLimit = 4
     @Published var places: [Place] { didSet { save() } }
     @Published var selectedID: UUID? { didSet { save() } }
     @Published var forecasts: [UUID: [ForecastHour]] = [:]
@@ -190,29 +204,58 @@ final class Store: ObservableObject {
         proximityMonitor.configure(for: places)
     }
 
+    static func placesNeededForBackgroundRefresh(_ places: [Place], selectedID: UUID?) -> [Place] {
+        places.filter { place in
+            place.id == selectedID || (
+                place.areNotificationsEnabled
+                    && place.rules.contains { $0.enabled && !$0.isDisplayOnly }
+            )
+        }
+    }
+
+    static func groupedByForecastLocation(_ places: [Place]) -> [ForecastLocation: [Place]] {
+        Dictionary(grouping: places, by: ForecastLocation.init(place:))
+    }
+
     @discardableResult
-    func refreshAll() async -> Bool {
+    func refreshAll(backgroundOnly: Bool = false) async -> Bool {
         guard !isRefreshing else { return true }
         isRefreshing = true
         defer { isRefreshing = false }
 
-        let requestedPlaces = places
+        let requestedPlaces = backgroundOnly
+            ? Self.placesNeededForBackgroundRefresh(places, selectedID: selectedID)
+            : places
+        let locationGroups = Self.groupedByForecastLocation(requestedPlaces)
         var failedNames: [String] = []
-        await withTaskGroup(of: (Place, Result<[ForecastHour], Error>).self) { group in
-            for place in requestedPlaces {
-                group.addTask {
-                    do { return (place, .success(try await YrService.fetch(lat: place.lat, lon: place.lon))) }
-                    catch { return (place, .failure(error)) }
+        let locations = Array(locationGroups.keys)
+        for batchStart in stride(from: 0, to: locations.count, by: Self.forecastRequestConcurrencyLimit) {
+            let batchEnd = min(batchStart + Self.forecastRequestConcurrencyLimit, locations.count)
+            let batch = locations[batchStart..<batchEnd]
+            await withTaskGroup(of: (ForecastLocation, Result<[ForecastHour], Error>).self) { group in
+                for location in batch {
+                    group.addTask {
+                        do {
+                            return (location, .success(try await YrService.fetch(lat: location.latitude, lon: location.longitude)))
+                        } catch {
+                            return (location, .failure(error))
+                        }
+                    }
                 }
-            }
-            for await (place, result) in group {
-                switch result {
-                case .success(let forecast):
-                    forecasts[place.id] = forecast
-                    forecastErrors.removeValue(forKey: place.id)
-                case .failure(let error):
-                    failedNames.append(place.displayName)
-                    forecastErrors[place.id] = forecastErrorMessage(for: place, error: error)
+                for await (location, result) in group {
+                    let matchingPlaces = locationGroups[location] ?? []
+                    switch result {
+                    case .success(let forecast):
+                        for place in matchingPlaces {
+                            forecasts[place.id] = forecast
+                            forecastErrors.removeValue(forKey: place.id)
+                        }
+                    case .failure(let error):
+                        for place in matchingPlaces {
+                            failedNames.append(place.displayName)
+                            forecastErrors[place.id] = forecastErrorMessage(for: place, error: error)
+                        }
+                    }
                 }
             }
         }

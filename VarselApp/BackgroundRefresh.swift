@@ -25,7 +25,7 @@ enum BackgroundRefresh {
         schedule()
         let work = Task {
             let store = await Store()
-            let success = await store.refreshAll()
+            let success = await store.refreshAll(backgroundOnly: true)
             task.setTaskCompleted(success: success && !Task.isCancelled)
         }
         task.expirationHandler = { work.cancel() }
