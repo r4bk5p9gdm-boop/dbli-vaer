@@ -24,21 +24,23 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
 
 1. **BRUKER · FERDIG** — Etabler kontinuerlig vedlikehold, Git-grunnlinje,
    prioriteringsregler og rapportering. Grunnlinje: `a991a0f`, 36 tester bestått.
-2. **AUTO · KLAR** — Pansre varslingsmotoren: tidsvinduer, tidssoner,
+2. **BRUKER · FERDIG** — Fjern duplikatet mellom menyene Varselkø og Logg,
+   men behold oppdateringshistorikken lett tilgjengelig.
+3. **AUTO · KLAR** — Pansre varslingsmotoren: tidsvinduer, tidssoner,
    duplikatdemping, nedbør–dugg-konflikter og grensen for lokale varsler.
-3. **AUTO · KLAR** — Pansre Live Activity-livsløpet: valg av neste hendelse,
+4. **AUTO · KLAR** — Pansre Live Activity-livsløpet: valg av neste hendelse,
    foreldelse, avslutning, gjenåpning og regresjonstester.
-4. **AUTO · KLAR** — Pansre synkronisering med Apple Watch og widgets ved
+5. **AUTO · KLAR** — Pansre synkronisering med Apple Watch og widgets ved
    manglende nett, gammel prognose og raske stedsskifter.
-5. **AUTO · KLAR** — Bygg faste testdata for Yr/Nå-varsel og test prioritering
+6. **AUTO · KLAR** — Bygg faste testdata for Yr/Nå-varsel og test prioritering
    av regn, snø, sludd, dugg, sol, vind og temperaturgrenser.
-6. **AUTO · KLAR** — Kontroller datalagring og migrering fra eldre versjoner,
+7. **AUTO · KLAR** — Kontroller datalagring og migrering fra eldre versjoner,
    inkludert regler, steder, språkvalg og globale innstillinger.
-7. **AUTO · KLAR** — Mål og forbedre unødvendig arbeid, nettbruk og samtidighet
+8. **AUTO · KLAR** — Mål og forbedre unødvendig arbeid, nettbruk og samtidighet
    uten å endre synlig oppførsel.
-8. **AUTO · KLAR** — Samkjør tekst, ikoner og begreper mellom app, push,
+9. **AUTO · KLAR** — Samkjør tekst, ikoner og begreper mellom app, push,
    widget, Live Activity og Apple Watch gjennom delte modeller og tester.
-9. **AUTO · KLAR** — Utvid før-lanseringstesten med kritiske ende-til-ende-
+10. **AUTO · KLAR** — Utvid før-lanseringstesten med kritiske ende-til-ende-
    scenarioer og dokumenter en repeterbar lanseringssjekk.
 
 ## Forslag som venter på godkjenning
@@ -47,5 +49,8 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-10: Fjernet Logg som egen bunnmeny og den dupliserte visningen av
+  planlagte varsler. Siste status og ren oppdateringslogg ligger nå i Varselkø.
+  36 av 36 tester bestod.
 - 2026-09-10: Git-grunnlinje og aktiv vedlikeholdsarbeider med fire timers
   vurderingsrytme. Hele testpakken besto (36 av 36).

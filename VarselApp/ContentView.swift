@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    private enum Tab: Hashable { case home, queue, places, log, settings }
+    private enum Tab: Hashable { case home, queue, places, settings }
 
     @EnvironmentObject var store: Store
     @AppStorage("varsel.onboardingCompleted") private var onboardingCompleted = false
@@ -13,7 +13,6 @@ struct ContentView: View {
             HomeView().tabItem { Label("Hjem", systemImage: "cloud.sun") }.tag(Tab.home)
             AlertQueueView().tabItem { Label("Varselkø", systemImage: "bell.and.waves.left.and.right") }.tag(Tab.queue)
             PlacesView().tabItem { Label("Steder", systemImage: "mappin.and.ellipse") }.tag(Tab.places)
-            LogView().tabItem { Label("Logg", systemImage: "list.bullet.rectangle") }.tag(Tab.log)
             GlobalSettingsView(showsDoneButton: false)
                 .tabItem { Label("Innstillinger", systemImage: "gearshape") }
                 .tag(Tab.settings)
@@ -727,6 +726,20 @@ struct AlertQueueView: View {
                         Text("Øye betyr at regelen følger prognosen. Bjelle betyr at minst ett pushvarsel allerede er planlagt.")
                     }
                 }
+                if let latestUpdate = store.log.first {
+                    Section("Siste oppdatering") {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(latestUpdate.text)
+                                .font(.footnote)
+                            Text(latestUpdate.time.formatted(.dateTime.day().month().hour().minute()))
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                        NavigationLink("Vis oppdateringslogg") {
+                            UpdateLogView()
+                        }
+                    }
+                }
             }
             .navigationTitle("Varselkø")
             .refreshable { _ = await store.refreshAll() }
@@ -1083,39 +1096,28 @@ private struct PlaceRow: View {
     }
 }
 
-struct LogView: View {
+struct UpdateLogView: View {
     @EnvironmentObject var store: Store
     var body: some View {
-        NavigationStack {
-            List {
-                Section("Planlagte varsler") {
-                    let alerts = Planner.planAll(
-                        places: store.places,
-                        forecasts: store.forecasts,
-                        nearbyPlaceIDs: store.nearbyPlaceIDs
-                    )
-                    if alerts.isEmpty { Text("Ingen varsler planlagt.").foregroundStyle(.secondary) }
-                    ForEach(alerts) { a in
-                        HStack(alignment: .top, spacing: 12) {
-                            Circle().fill(a.rule.type.color).frame(width: 10, height: 10).padding(.top, 5)
-                            VStack(alignment: .leading, spacing: 2) {
-                                HStack { Text(a.rule.statusText(weatherAlertText(for: a.rule, eventAt: a.eventAt, possible: a.possible))).bold(); Spacer(); Text(eventTimePhrase(a.fireAt)).font(.caption).foregroundStyle(.secondary) }
-                                Text("\(a.placeName) · varsel \(a.index) av \(a.total)" + (a.quiet ? " · stille" : "")).font(.caption).foregroundStyle(.secondary)
-                            }
-                        }
-                    }
-                }
-                Section("Oppdateringer") {
-                    ForEach(store.log) { e in
-                        VStack(alignment: .leading) {
-                            Text(e.text).font(.footnote)
-                            Text(e.time.formatted(.dateTime.day().month().hour().minute())).font(.caption2).foregroundStyle(.secondary)
-                        }
+        List {
+            if store.log.isEmpty {
+                ContentUnavailableView(
+                    "Ingen oppdateringer ennå",
+                    systemImage: "arrow.triangle.2.circlepath",
+                    description: Text("Oppdateringshistorikken vises når prognosen er hentet.")
+                )
+            } else {
+                ForEach(store.log) { entry in
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(entry.text).font(.footnote)
+                        Text(entry.time.formatted(.dateTime.day().month().hour().minute()))
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
                     }
                 }
             }
-            .navigationTitle("Varsellogg")
         }
+        .navigationTitle("Oppdateringslogg")
     }
 }
 
