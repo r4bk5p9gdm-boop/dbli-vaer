@@ -240,19 +240,12 @@ private struct WeatherBandsForecast: View {
                 } else {
                     if !moistureRules.isEmpty {
                         HStack(spacing: 7) {
-                            HStack(spacing: 3) {
-                                if moistureRules.contains(where: { !$0.isDisplayOnly }) {
-                                    Image(systemName: "bell.fill")
-                                        .font(.system(size: 7))
-                                        .foregroundStyle(.orange)
-                                }
-                                Image(systemName: "drop.fill")
-                                    .foregroundStyle(AlertType.regn.color)
-                                Text("Regn")
-                            }
-                            .font(.caption)
-                            .lineLimit(1)
-                            .frame(width: 78, alignment: .leading)
+                            WeatherBandLabel(
+                                title: "Regn",
+                                systemImage: "drop.fill",
+                                color: AlertType.regn.color,
+                                showsNotification: moistureRules.contains(where: { !$0.isDisplayOnly })
+                            )
                             MoistureBandTrack(day: day, rules: moistureRules)
                         }
                     }
@@ -261,19 +254,12 @@ private struct WeatherBandsForecast: View {
                     }) { type in
                         let typeRules = otherRules.filter { $0.type == type }
                         HStack(spacing: 7) {
-                            HStack(spacing: 3) {
-                                if typeRules.contains(where: { !$0.isDisplayOnly }) {
-                                    Image(systemName: "bell.fill")
-                                        .font(.system(size: 7))
-                                        .foregroundStyle(.orange)
-                                }
-                                Image(systemName: type.systemImage)
-                                    .foregroundStyle(type.color)
-                                Text(type.label)
-                            }
-                            .font(.caption)
-                            .lineLimit(1)
-                            .frame(width: 78, alignment: .leading)
+                            WeatherBandLabel(
+                                title: type.label,
+                                systemImage: type.systemImage,
+                                color: type.color,
+                                showsNotification: typeRules.contains(where: { !$0.isDisplayOnly })
+                            )
                             CombinedDayBandTrack(day: day, rules: typeRules, type: type, frostMargin: frostMargin)
                         }
                     }
@@ -307,6 +293,41 @@ private struct WeatherBandsForecast: View {
                 .allowsHitTesting(false)
             }
         }
+    }
+}
+
+private struct WeatherBandLabel: View {
+    let title: String
+    let systemImage: String
+    let color: Color
+    let showsNotification: Bool
+
+    private let notificationColumnWidth: CGFloat = 9
+
+    var body: some View {
+        HStack(spacing: 3) {
+            Group {
+                if showsNotification {
+                    Image(systemName: "bell.fill")
+                        .foregroundStyle(.orange)
+                } else {
+                    Color.clear
+                }
+            }
+            .font(.system(size: 7))
+            .frame(width: notificationColumnWidth)
+            .accessibilityHidden(true)
+
+            HStack(spacing: 3) {
+                Image(systemName: systemImage)
+                    .foregroundStyle(color)
+                Text(title)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .font(.caption)
+        .lineLimit(1)
+        .frame(width: 78, alignment: .leading)
     }
 }
 
