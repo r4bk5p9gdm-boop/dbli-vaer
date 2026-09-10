@@ -25,7 +25,6 @@ enum Planner {
         return !forecast.contains { hour in
             hour.time >= drySince
                 && hour.time <= eventAt
-                && hour.temp > 1
                 && hour.precipitationRiskRate >= 0.1
         }
     }
@@ -50,9 +49,15 @@ enum Planner {
         }
     }
 
-    private static func radarEvent(rule: Rule, forecast: [ForecastHour], now: Date) -> (date: Date, isNow: Bool)? {
+    private static func radarEvent(
+        rule: Rule,
+        forecast: [ForecastHour],
+        run: Range<Int>? = nil,
+        now: Date
+    ) -> (date: Date, isNow: Bool)? {
         guard isPrecipitationRule(rule) else { return nil }
-        let samples = forecast.flatMap { hour in
+        let selectedHours = run.map { Array(forecast[$0]) } ?? forecast
+        let samples = selectedHours.flatMap { hour in
             (hour.radarSamples ?? []).map { (sample: $0, hour: hour) }
         }.sorted { $0.sample.time < $1.sample.time }
         guard !samples.isEmpty else { return nil }
@@ -165,43 +170,59 @@ enum Planner {
             return res
         }
 
-        guard let selectedRun = runs.first else { return res }
-        let start = selectedRun.lowerBound
+        guard let firstRun = runs.first else { return res }
+        let firstRadarEvent = radarEvent(rule: rule, forecast: forecast, run: firstRun, now: now)
+        res.eventAt = firstRadarEvent?.date ?? forecast[firstRun.lowerBound].time
+        res.possible = firstRadarEvent == nil
+            && isPossible(rule: rule, hour: forecast[firstRun.lowerBound], frostMargin: frostMargin)
 
-        let preciseRadarEvent = radarEvent(rule: rule, forecast: forecast, now: now)
-        let eventAt = preciseRadarEvent?.date ?? forecast[start].time
-        let possible = preciseRadarEvent == nil && isPossible(rule: rule, hour: forecast[start], frostMargin: frostMargin)
-        res.eventAt = eventAt
-        res.possible = possible
-        let matchingHours = Array(forecast[selectedRun])
-        let eventDetail = notificationEventDetail(rule: rule, hours: matchingHours, possible: possible, frostMargin: frostMargin)
+        for run in runs {
+            let start = run.lowerBound
+            let preciseRadarEvent = radarEvent(rule: rule, forecast: forecast, run: run, now: now)
+            let eventAt = preciseRadarEvent?.date ?? forecast[start].time
+            let possible = preciseRadarEvent == nil
+                && isPossible(rule: rule, hour: forecast[start], frostMargin: frostMargin)
+            let candidates = notificationCandidates(for: eventAt, rule: rule, now: now)
+            guard !candidates.isEmpty else { continue }
 
-        var list: [(Date, Bool)] = []
-        let candidateDates: [Date]
-        candidateDates = (0..<rule.alertCount).map { k in
-            eventAt.addingTimeInterval(TimeInterval(-rule.leadMinutes * 60 + k * rule.intervalMinutes * 60))
-        }
-        for at in candidateDates {
-            if at >= eventAt { break }
-            let hr = Calendar.current.component(.hour, from: at)
-            let quiet = rule.quiet && (hr >= rule.quietFrom || hr < rule.quietTo)
-            if at > now { list.append((at, quiet)) }
-        }
-        res.alerts = list.enumerated().map { i, e in
-            PlannedAlert(
+            res.eventAt = eventAt
+            res.possible = possible
+            let matchingHours = Array(forecast[run])
+            let eventDetail = notificationEventDetail(
                 rule: rule,
-                placeID: placeID,
-                placeName: placeName,
-                eventAt: eventAt,
-                fireAt: e.0,
-                index: i + 1,
-                total: list.count,
-                quiet: e.1,
+                hours: matchingHours,
                 possible: possible,
-                eventDetail: eventDetail
+                frostMargin: frostMargin
             )
+            res.alerts = candidates.enumerated().map { index, candidate in
+                PlannedAlert(
+                    rule: rule,
+                    placeID: placeID,
+                    placeName: placeName,
+                    eventAt: eventAt,
+                    fireAt: candidate.date,
+                    index: index + 1,
+                    total: candidates.count,
+                    quiet: candidate.quiet,
+                    possible: possible,
+                    eventDetail: eventDetail
+                )
+            }
+            return res
         }
         return res
+    }
+
+    private static func notificationCandidates(for eventAt: Date, rule: Rule, now: Date) -> [(date: Date, quiet: Bool)] {
+        (0..<rule.alertCount).compactMap { index in
+            let date = eventAt.addingTimeInterval(
+                TimeInterval(-rule.leadMinutes * 60 + index * rule.intervalMinutes * 60)
+            )
+            guard date > now, date < eventAt else { return nil }
+            let hour = Calendar.current.component(.hour, from: date)
+            let quiet = rule.quiet && (hour >= rule.quietFrom || hour < rule.quietTo)
+            return (date, quiet)
+        }
     }
 
     static func statuses(for place: Place, forecast: [ForecastHour], now: Date = Date()) -> [WeatherStatus] {
@@ -273,22 +294,23 @@ enum Planner {
             }.flatMap { r in
                 plan(rule: r, forecast: forecasts[p.id] ?? [], placeName: p.nameWithPreposition, placeID: p.id, frostMargin: p.localFrostMargin).alerts
             }
-            return removingNearbyDuplicateRainAlerts(placeAlerts)
+            return removingDuplicateRainAlerts(placeAlerts)
         }.sorted { $0.fireAt < $1.fireAt }
     }
 
-    private static func removingNearbyDuplicateRainAlerts(_ alerts: [PlannedAlert]) -> [PlannedAlert] {
+    private static func removingDuplicateRainAlerts(_ alerts: [PlannedAlert]) -> [PlannedAlert] {
         var result: [PlannedAlert] = []
-        var lastRainAlert: PlannedAlert?
 
         for alert in alerts.sorted(by: { $0.fireAt < $1.fireAt }) {
             if alert.rule.type == .regn {
-                if let previous = lastRainAlert,
-                   previous.rule.id != alert.rule.id,
-                   alert.fireAt.timeIntervalSince(previous.fireAt) < rainAlertCooldown {
+                let duplicatesAnotherRule = result.contains { previous in
+                    previous.rule.type == .regn
+                        && previous.rule.id != alert.rule.id
+                        && abs(alert.eventAt.timeIntervalSince(previous.eventAt)) < rainAlertCooldown
+                }
+                if duplicatesAnotherRule {
                     continue
                 }
-                lastRainAlert = alert
             }
             result.append(alert)
         }

@@ -26,7 +26,7 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    prioriteringsregler og rapportering. Grunnlinje: `a991a0f`, 36 tester bestått.
 2. **BRUKER · FERDIG** — Fjern duplikatet mellom menyene Varselkø og Logg,
    men behold oppdateringshistorikken lett tilgjengelig.
-3. **AUTO · KLAR** — Pansre varslingsmotoren: tidsvinduer, tidssoner,
+3. **AUTO · FERDIG** — Pansre varslingsmotoren: tidsvinduer, tidssoner,
    duplikatdemping, nedbør–dugg-konflikter og grensen for lokale varsler.
 4. **AUTO · KLAR** — Pansre Live Activity-livsløpet: valg av neste hendelse,
    foreldelse, avslutning, gjenåpning og regresjonstester.
@@ -49,6 +49,11 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-10: Pansret varslingsmotoren slik at en hendelse med utløpt
+  varslingstid ikke skjuler neste hendelse, regn-duplikater vurderes etter
+  hendelsestid, dugg dempes også etter snø, varsel-ID-er er entydige per sted
+  og iOS-grensen på 64 varsler håndteres deterministisk. 40 av 40 tester
+  bestod.
 - 2026-09-10: Fjernet Logg som egen bunnmeny og den dupliserte visningen av
   planlagte varsler. Siste status og ren oppdateringslogg ligger nå i Varselkø.
   36 av 36 tester bestod.

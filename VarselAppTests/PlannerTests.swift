@@ -49,6 +49,28 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(result.alerts.isEmpty)
     }
 
+    func testPastFirstEventDoesNotHideLaterSchedulableEvent() {
+        var rule = Rule(type: .regn)
+        rule.threshold = 0.5
+        rule.leadMinutes = 60
+        let hours = forecast(values: [
+            (5, 1, 2, 80, 2),
+            (5, 0, 2, 80, 2),
+            (5, 0, 2, 80, 2),
+            (5, 1, 2, 80, 2),
+        ])
+
+        let result = Planner.plan(
+            rule: rule,
+            forecast: hours,
+            placeName: "Namsos",
+            now: base.addingTimeInterval(30 * 60)
+        )
+
+        XCTAssertEqual(result.eventAt, hours[3].time)
+        XCTAssertEqual(result.alerts.first?.fireAt, hours[2].time)
+    }
+
     func testClearSkyRequiresConfiguredDuration() {
         var rule = Rule(type: .sol)
         rule.threshold = 20
@@ -418,6 +440,21 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(result.hitIndices, [4])
     }
 
+    func testDewAlertIsAlsoSuppressedAfterSnow() {
+        var rule = Rule(type: .dugg)
+        rule.threshold = 1
+        let hours = forecast(values: [
+            (0, 1, 2, 100, -0.5),
+            (0, 0, 2, 100, -0.5),
+            (0, 0, 2, 100, -0.5),
+        ])
+
+        let result = Planner.plan(rule: rule, forecast: hours, placeName: "Selbu", now: base.addingTimeInterval(-60))
+
+        XCTAssertTrue(result.hitIndices.isEmpty)
+        XCTAssertNil(result.eventAt)
+    }
+
     func testNearbyRainRulesDoNotCreateDuplicateNotifications() {
         var first = Rule(type: .regn)
         first.leadMinutes = 60
@@ -430,6 +467,48 @@ final class PlannerTests: XCTestCase {
         let alerts = Planner.planAll(places: [place], forecasts: [place.id: hours])
         XCTAssertEqual(alerts.count, 1)
         XCTAssertEqual(alerts.first?.placeID, place.id)
+    }
+
+    func testRainDeduplicationUsesEventTimeInsteadOfNotificationTime() {
+        var eveningRule = Rule(type: .regn)
+        eveningRule.leadMinutes = 12 * 60
+        var shortLeadRule = Rule(type: .regn)
+        shortLeadRule.leadMinutes = 60
+        let place = Place(name: "Namsos", lat: 64.5, lon: 11.5, rules: [eveningRule, shortLeadRule])
+        let event = base.addingTimeInterval(15 * 3_600)
+        let hours = [ForecastHour(time: event, temp: 5, precip: 1, wind: 2, cloud: 100, dew: 4)]
+
+        let alerts = Planner.planAll(places: [place], forecasts: [place.id: hours])
+
+        XCTAssertEqual(alerts.count, 1)
+        XCTAssertEqual(alerts.first?.rule.id, eveningRule.id)
+    }
+
+    func testNotificationLimitKeepsNearestUniqueFutureAlerts() {
+        let rule = Rule(type: .regn)
+        let placeID = UUID()
+        let alerts = (0..<70).map { index in
+            let fireAt = base.addingTimeInterval(TimeInterval((70 - index) * 60))
+            return PlannedAlert(
+                rule: rule,
+                placeID: placeID,
+                placeName: "Namsos",
+                eventAt: fireAt.addingTimeInterval(3_600),
+                fireAt: fireAt,
+                index: index + 1,
+                total: 70,
+                quiet: false,
+                possible: false,
+                eventDetail: nil
+            )
+        }
+
+        let scheduled = NotificationScheduler.alertsToSchedule(alerts + [alerts[0]], now: base)
+
+        XCTAssertEqual(scheduled.count, 64)
+        XCTAssertEqual(scheduled.first?.fireAt, base.addingTimeInterval(60))
+        XCTAssertEqual(scheduled.last?.fireAt, base.addingTimeInterval(64 * 60))
+        XCTAssertEqual(Set(scheduled.map(\.id)).count, scheduled.count)
     }
 
     func testNextDayRainCanNotifyAtNineTheEveningBefore() throws {

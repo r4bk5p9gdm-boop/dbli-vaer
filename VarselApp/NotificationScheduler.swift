@@ -57,6 +57,8 @@ enum NotificationCopy {
 }
 
 enum NotificationScheduler {
+    static let pendingNotificationLimit = 64
+
     static func requestPermission() async -> Bool {
         (try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])) ?? false
     }
@@ -65,8 +67,7 @@ enum NotificationScheduler {
         let center = UNUserNotificationCenter.current()
         center.removeAllPendingNotificationRequests()
         let now = Date()
-        // iOS allows at most 64 pending local notifications per app.
-        for a in alerts.filter({ $0.fireAt > now }).prefix(64) {
+        for a in alertsToSchedule(alerts, now: now) {
             let c = UNMutableNotificationContent()
             c.title = NotificationCopy.title(for: a.rule, placeName: a.placeName, possible: a.possible, languageStyle: languageStyle)
             c.body = NotificationCopy.message(for: a.rule, eventAt: a.eventAt, referenceAt: a.fireAt, possible: a.possible, eventDetail: a.eventDetail, languageStyle: languageStyle)
@@ -79,6 +80,25 @@ enum NotificationScheduler {
             let trigger = UNTimeIntervalNotificationTrigger(timeInterval: max(1, a.fireAt.timeIntervalSince(now)), repeats: false)
             try? await center.add(UNNotificationRequest(identifier: a.id, content: c, trigger: trigger))
         }
+    }
+
+    /// Makes the iOS 64-notification limit deterministic even if a caller
+    /// supplies unsorted or accidentally repeated alerts.
+    static func alertsToSchedule(
+        _ alerts: [PlannedAlert],
+        now: Date,
+        limit: Int = pendingNotificationLimit
+    ) -> [PlannedAlert] {
+        guard limit > 0 else { return [] }
+        var seenIDs: Set<String> = []
+        return Array(alerts
+            .filter { $0.fireAt > now && seenIDs.insert($0.id).inserted }
+            .sorted {
+                if $0.fireAt != $1.fireAt { return $0.fireAt < $1.fireAt }
+                if $0.eventAt != $1.eventAt { return $0.eventAt < $1.eventAt }
+                return $0.id < $1.id
+            }
+            .prefix(limit))
     }
 
     static func sendTest(for place: Place, languageStyle: AlertLanguageStyle = .bokmal) async -> Bool {

@@ -386,7 +386,11 @@ struct PlannedAlert: Identifiable, Hashable {
     let quiet: Bool
     let possible: Bool
     let eventDetail: String?
-    var id: String { "\(rule.id.uuidString)-\(index)" }
+    var id: String {
+        let place = placeID?.uuidString ?? "uten-sted"
+        let timestamp = Int(fireAt.timeIntervalSince1970)
+        return "\(place)-\(rule.id.uuidString)-\(timestamp)-\(index)"
+    }
 }
 
 struct LogEntry: Codable, Identifiable {
