@@ -50,7 +50,7 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    ventende enhetskontrollen blokkerer ikke AUTO-oppgavene nedenfor.
 11. **AUTO · FERDIG** — Samkjør appnavn og overskriftsformat mellom app, push,
    widget, Live Activity og Apple Watch gjennom én delt tekstmodell og tester.
-12. **AUTO · KLAR** — Samkjør statusbegreper, værikoner og farger mellom app,
+12. **AUTO · FERDIG** — Samkjør statusbegreper, værikoner og farger mellom app,
    widget, Live Activity og Apple Watch gjennom delte modeller og tester.
 13. **AUTO · KLAR** — Utvid før-lanseringstesten med kritiske ende-til-ende-
    scenarioer og dokumenter en repeterbar lanseringssjekk.
@@ -61,6 +61,12 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-10: Samlet visuell tolkning av været nå i én delt modell for snø,
+  regn, tåke, sol, solgløtt og skyer. iPhone, Watch-appen og Watch-widgeten
+  bruker nå de samme tersklene, ikonene, fargene og navnene, mens varselikoner
+  fortsatt kommer fra den felles varseltypen i app, widgets og Live Activity.
+  Regresjonstesten dekker også at tørr Nå-status trumfer mulig regn i
+  tabellvarselet på hovedikonet. 53 av 53 tester bestod.
 - 2026-09-10: Samlet appnavnet og formatet for app- og værvarseltitler i én
   felles tekstmodell. Hjemskjerm, oppstartsveiviser, push, iPhone-widget,
   Live Activity, Watch-app og Watch-widget bruker nå samme kilde, og tekstens

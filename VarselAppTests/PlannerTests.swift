@@ -241,6 +241,22 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(AlertType.vind.matches(hour, threshold: 10))
     }
 
+    func testCurrentWeatherConditionUsesSharedSymbolsAndThresholds() {
+        let rain = ForecastHour(time: base, temp: 8, precip: 0.2, wind: 3, cloud: 80, dew: 5)
+        let snow = ForecastHour(time: base, temp: 1, precip: 0.2, wind: 3, cloud: 80, dew: 0)
+        let fog = ForecastHour(time: base, temp: 8, precip: 0, wind: 3, cloud: 80, dew: 7, fog: 60)
+        let clear = ForecastHour(time: base, temp: 8, precip: 0, wind: 3, cloud: 20, dew: 3)
+        let partlyCloudy = ForecastHour(time: base, temp: 8, precip: 0, wind: 3, cloud: 65, dew: 3)
+
+        XCTAssertEqual(CurrentWeatherCondition.resolve(rain), .rain)
+        XCTAssertEqual(CurrentWeatherCondition.resolve(rain).systemImage, AlertType.regn.systemImage)
+        XCTAssertEqual(CurrentWeatherCondition.resolve(snow), .snow)
+        XCTAssertEqual(CurrentWeatherCondition.resolve(fog), .fog)
+        XCTAssertEqual(CurrentWeatherCondition.resolve(clear), .clear)
+        XCTAssertEqual(CurrentWeatherCondition.resolve(partlyCloudy), .partlyCloudy)
+        XCTAssertEqual(CurrentWeatherCondition.resolve(rain, precipitationIsFalling: false), .cloudy)
+    }
+
     func testWindGustLevelsProduceDifferentNotificationTitles() {
         var standard = Rule(type: .vind)
         standard.threshold = 12

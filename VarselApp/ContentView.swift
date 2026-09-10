@@ -187,11 +187,12 @@ private struct CurrentWeatherCard: View {
                 HStack(spacing: 4) {
                     Text("\(Int(current.temp.rounded()))°")
                         .font(.system(size: 29, weight: .light, design: .rounded))
-                    Image(systemName: currentSymbol)
+                    Image(systemName: currentCondition.systemImage)
                         .font(.system(size: 27, weight: .semibold))
                         .symbolRenderingMode(.hierarchical)
-                        .foregroundStyle(currentSymbolColor)
+                        .foregroundStyle(currentCondition.color)
                         .frame(width: 36, height: 36)
+                        .accessibilityLabel(currentCondition.label)
                 }
                 .fixedSize()
                 .layoutPriority(3)
@@ -306,19 +307,8 @@ private struct CurrentWeatherCard: View {
         .background(color.opacity(0.09), in: RoundedRectangle(cornerRadius: 11))
     }
 
-    private var currentSymbol: String {
-        if precipitation.isFallingNow { return current.temp <= 1 ? "cloud.snow.fill" : "cloud.rain.fill" }
-        if (current.fog ?? 0) >= 50 { return "cloud.fog.fill" }
-        if current.cloud <= 20 { return "sun.max.fill" }
-        if current.cloud <= 65 { return "cloud.sun.fill" }
-        return "cloud.fill"
-    }
-
-    private var currentSymbolColor: Color {
-        if precipitation.isFallingNow { return .blue }
-        if (current.fog ?? 0) >= 50 { return Color(red: 0.38, green: 0.45, blue: 0.52) }
-        if current.cloud <= 20 { return Color(red: 0.94, green: 0.62, blue: 0.08) }
-        return Color(red: 0.27, green: 0.45, blue: 0.62)
+    private var currentCondition: CurrentWeatherCondition {
+        CurrentWeatherCondition.resolve(current, precipitationIsFalling: precipitation.isFallingNow)
     }
 }
 

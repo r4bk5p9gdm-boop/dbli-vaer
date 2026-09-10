@@ -19,9 +19,10 @@ struct WatchContentView: View {
                                     Text("\(current.temp.formatted(.number.precision(.fractionLength(0))))°")
                                         .font(.system(size: 38, weight: .medium, design: .rounded))
                                     Spacer()
-                                    Image(systemName: currentWeatherSymbol(current))
+                                    Image(systemName: currentCondition(current).systemImage)
                                         .font(.title)
-                                        .foregroundStyle(currentWeatherColor(current))
+                                        .foregroundStyle(currentCondition(current).color)
+                                        .accessibilityLabel(currentCondition(current).label)
                                 }
                             }
                             .padding(.vertical, 3)
@@ -84,17 +85,7 @@ struct WatchContentView: View {
         .font(.caption)
     }
 
-    private func currentWeatherSymbol(_ hour: ForecastHour) -> String {
-        if hour.temp <= 1, hour.precipitationRiskRate >= 0.1 { return "cloud.snow.fill" }
-        if hour.precipitationRiskRate >= 0.1 { return "cloud.rain.fill" }
-        if hour.cloud <= 25 { return "sun.max.fill" }
-        return "cloud.fill"
-    }
-
-    private func currentWeatherColor(_ hour: ForecastHour) -> Color {
-        if hour.temp <= 1, hour.precipitationRiskRate >= 0.1 { return AlertType.sno.color }
-        if hour.precipitationRiskRate >= 0.1 { return AlertType.regn.color }
-        if hour.cloud <= 25 { return AlertType.sol.color }
-        return .gray
+    private func currentCondition(_ hour: ForecastHour) -> CurrentWeatherCondition {
+        CurrentWeatherCondition.resolve(hour)
     }
 }

@@ -45,12 +45,13 @@ struct WatchWeatherWidgetView: View {
     private var icon: String {
         if let status { return status.type.systemImage }
         guard let current else { return "iphone.and.arrow.forward" }
-        if current.temp <= 1, current.precipitationRiskRate >= 0.1 { return "cloud.snow.fill" }
-        if current.precipitationRiskRate >= 0.1 { return "cloud.rain.fill" }
-        if current.cloud <= 25 { return "sun.max.fill" }
-        return "cloud.fill"
+        return CurrentWeatherCondition.resolve(current).systemImage
     }
-    private var tint: Color { status?.type.color ?? .cyan }
+    private var tint: Color {
+        if let status { return status.type.color }
+        guard let current else { return .cyan }
+        return CurrentWeatherCondition.resolve(current).color
+    }
 
     var body: some View {
         Group {

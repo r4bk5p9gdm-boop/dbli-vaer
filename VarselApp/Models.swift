@@ -175,6 +175,56 @@ enum AlertType: String, Codable, CaseIterable, Identifiable {
     }
 }
 
+enum CurrentWeatherCondition: Equatable {
+    case snow
+    case rain
+    case fog
+    case clear
+    case partlyCloudy
+    case cloudy
+
+    static func resolve(_ hour: ForecastHour, precipitationIsFalling: Bool? = nil) -> Self {
+        let isWet = precipitationIsFalling ?? (hour.precipitationRiskRate >= 0.1)
+        if isWet { return hour.temp <= 1 ? .snow : .rain }
+        if (hour.fog ?? 0) >= 50 { return .fog }
+        if hour.cloud <= 20 { return .clear }
+        if hour.cloud <= 65 { return .partlyCloudy }
+        return .cloudy
+    }
+
+    var label: String {
+        switch self {
+        case .snow: "Snø"
+        case .rain: "Regn"
+        case .fog: "Tåke"
+        case .clear: "Sol"
+        case .partlyCloudy: "Solgløtt"
+        case .cloudy: "Skyer"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .snow: AlertType.sno.systemImage
+        case .rain: AlertType.regn.systemImage
+        case .fog: "cloud.fog.fill"
+        case .clear: AlertType.sol.systemImage
+        case .partlyCloudy: "cloud.sun.fill"
+        case .cloudy: "cloud.fill"
+        }
+    }
+
+    var color: Color {
+        switch self {
+        case .snow: AlertType.sno.color
+        case .rain: AlertType.regn.color
+        case .fog: Color(red: 0.38, green: 0.45, blue: 0.52)
+        case .clear: AlertType.sol.color
+        case .partlyCloudy, .cloudy: Color(red: 0.27, green: 0.45, blue: 0.62)
+        }
+    }
+}
+
 struct Rule: Codable, Identifiable, Hashable {
     var id = UUID()
     var templateTitle: String = ""
