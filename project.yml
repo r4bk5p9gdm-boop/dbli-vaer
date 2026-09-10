@@ -96,6 +96,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: no.mathias.VarselApp.watchkitapp
         MARKETING_VERSION: "1.0"
         CURRENT_PROJECT_VERSION: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         SKIP_INSTALL: YES
   DbliVaerWatchWidget:
     type: app-extension

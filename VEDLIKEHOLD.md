@@ -41,13 +41,11 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    inkludert regler, steder, språkvalg og globale innstillinger.
 9. **AUTO · FERDIG** — Mål og forbedre unødvendig arbeid, nettbruk og samtidighet
    uten å endre synlig oppførsel.
-10. **BRUKER · VENTER PÅ ENHET** — Fullfør fysisk kontroll av Watch-appen og
-   CarPlay-widgeten. Watch-målene er korrekt signert, men Apple Watch er ennå
-   ikke synlig som utviklingsenhet i Xcode. Kontrollen fortsetter når
-   Utviklermodus er slått på på klokka og den er paret med Xcode. CarPlay-
-   widgeten kontrolleres etter at iPhone er låst opp, appen er startet én gang
-   og widgeten er valgt under Innstillinger > Generelt > CarPlay. Denne
-   ventende enhetskontrollen blokkerer ikke AUTO-oppgavene nedenfor.
+10. **BRUKER · VENTER PÅ XCODE-PARING** — Fullfør fysisk kontroll av Watch-
+   appen. iPhone-appen er installert og startet, men Apple Watch er ikke synlig
+   som utviklingsenhet i Xcode og mangler derfor i Watch-profilens enhetsliste.
+   Xcode må registrere klokka og fornye profilen før fysisk installasjon kan
+   godtas. Denne ventende enhetskontrollen blokkerer ikke AUTO-oppgavene.
 11. **AUTO · FERDIG** — Samkjør appnavn og overskriftsformat mellom app, push,
    widget, Live Activity og Apple Watch gjennom én delt tekstmodell og tester.
 12. **AUTO · FERDIG** — Samkjør statusbegreper, værikoner og farger mellom app,
@@ -59,6 +57,9 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
 15. **BRUKER · FERDIG** — Fjern gjentatt dag og klokkeslett fra andrelinjen i
    det rullerende varselet. Bruk linjen til kort, værtypespesifikk informasjon
    for regn, snø, duggfall, frost, temperatur, vind og sol.
+16. **BRUKER · FERDIG** — Legg til manglende appikon i Watch-målet, bygg og
+   kontroller den innebygde Watch-pakken. Avklar samtidig hvor CarPlay-widgeten
+   skal finnes og kontroller at widgetmålet oppfyller CarPlay-kravene.
 
 ## Forslag som venter på godkjenning
 
@@ -66,6 +67,12 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-10: La inn en egen watchOS-assetkatalog med 1024-pikslers AppIcon.
+  Xcode genererer nå Watch-ikonene og `CFBundleIconName`, og Watch-appen bygges
+  med gyldig `Assets.car`. CarPlay-widgeten er kontrollert mot Apples krav:
+  `systemSmall` støttes og bakgrunnen er fjernbar. Fysisk Watch-installasjon
+  venter separat på at Xcode registrerer klokka i utviklerprofilen. 56 av 56
+  tester bestod, og fysisk iPhone-bygg bestod.
 - 2026-09-10: Fjernet den dupliserte «Neste hendelse …»-teksten fra den
   rullerende statusen. Andrelinjen viser nå bare utfyllende værdata: nedbør og
   sannsynlighet, anslått snø, duggpunkt og temperaturavstand, Yr-temperatur og

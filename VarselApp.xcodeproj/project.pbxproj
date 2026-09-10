@@ -10,6 +10,7 @@
 		062CB257AECCA7C0BF8226B0 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF12FBF8BEA595FC0E9555CB /* LocationManager.swift */; };
 		0DA08A4BFD37FF389A51E694 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35B43B5BBC1E008C8B2A972 /* Models.swift */; };
 		13B23AD10BAC7B6649089A02 /* Planner.swift in Sources */ = {isa = PBXBuildFile; fileRef = EED36A1BECE4570EB1B3361D /* Planner.swift */; };
+		16BEBF07CE83DC4377111E9B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A91A904D643F38C91DDC4DFF /* Assets.xcassets */; };
 		21B01B9357C8B008BA32AB4C /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5113EC2BAE917C478069C109 /* Store.swift */; };
 		25947916093DC59FAFC82AAC /* WatchContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80FA04D1239061DE602A4DE /* WatchContentView.swift */; };
 		2C0960057472CCD564B1DFC9 /* NotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00D43EE3FBD6573EF6C6C07 /* NotificationScheduler.swift */; };
@@ -140,6 +141,7 @@
 		8D47BE515002919F075A1F78 /* RulePresetPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RulePresetPickerView.swift; sourceTree = "<group>"; };
 		A24F1438F53B0802F2BD70B2 /* WatchSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSyncManager.swift; sourceTree = "<group>"; };
 		A363D4D7A546CF7826A12A2E /* YrService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YrService.swift; sourceTree = "<group>"; };
+		A91A904D643F38C91DDC4DFF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B35B43B5BBC1E008C8B2A972 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		B8C0C5C978C139FFB6401808 /* BackgroundRefresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundRefresh.swift; sourceTree = "<group>"; };
 		BDBAB96410ABD491F2818370 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -182,6 +184,7 @@
 		6A26DEB4054BCC07A984CAB2 /* DbliVaerWatchApp */ = {
 			isa = PBXGroup;
 			children = (
+				A91A904D643F38C91DDC4DFF /* Assets.xcassets */,
 				36191B0F3E43068EAA802F12 /* DbliVaerWatchApp.entitlements */,
 				78C00E938A2AF122A337FDED /* DbliVaerWatchApp.swift */,
 				3370CFF0DB4AD80472A1753A /* Info.plist */,
@@ -257,6 +260,7 @@
 			buildConfigurationList = DDD54370E220C810D9ABA12C /* Build configuration list for PBXNativeTarget "DbliVaerWatchApp" */;
 			buildPhases = (
 				8F309EA1BE9B216E05183D61 /* Sources */,
+				D1F623C784A425B36B81327A /* Resources */,
 				243853F6CD12D5A87B914BA4 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
@@ -405,6 +409,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				81C815CDD2F843C726A58834 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D1F623C784A425B36B81327A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				16BEBF07CE83DC4377111E9B /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
