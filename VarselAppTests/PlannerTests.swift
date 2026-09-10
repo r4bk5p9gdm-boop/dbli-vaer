@@ -834,6 +834,52 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testWetNowcastFlowsFromYrPayloadToPushAndWidgetStatus() throws {
+        let table = try YrService.decodeLocationForecast(Self.dryLocationForecastFixture)
+        let nowcast = try YrService.decodeNowcast(Self.nowcastFixture(rateAtFiveMinutes: 0.8))
+        let forecast = YrService.applying(nowcast: nowcast, to: table)
+        let now = try XCTUnwrap(ISO8601DateFormatter().date(from: "2033-05-18T09:30:00Z"))
+        let onset = try XCTUnwrap(ISO8601DateFormatter().date(from: "2033-05-18T10:05:00Z"))
+        var rule = Rule(type: .regn)
+        rule.threshold = 0.5
+        rule.leadMinutes = 30
+        let place = Place(name: "Namsos", lat: 64.4662, lon: 11.4957, preposition: .nerri, rules: [rule])
+
+        let plan = Planner.plan(
+            rule: rule,
+            forecast: forecast,
+            placeName: place.nameWithPreposition,
+            placeID: place.id,
+            now: now
+        )
+        let alert = try XCTUnwrap(plan.alerts.first)
+        let snapshot = WidgetWeatherSnapshot(place: place, forecast: forecast, updatedAt: now)
+        let transferred = try JSONDecoder().decode(
+            WidgetWeatherSnapshot.self,
+            from: JSONEncoder().encode(snapshot)
+        )
+        let status = try XCTUnwrap(
+            Planner.statuses(for: transferred.place, forecast: transferred.forecast, now: now)
+                .first(where: { $0.type == .regn })
+        )
+
+        XCTAssertEqual(alert.eventAt, onset)
+        XCTAssertEqual(alert.fireAt, now.addingTimeInterval(5 * 60))
+        XCTAssertFalse(alert.possible)
+        XCTAssertEqual(
+            NotificationCopy.title(
+                for: alert.rule,
+                placeName: alert.placeName,
+                possible: alert.possible,
+                languageStyle: .inntrondersk
+            ),
+            "D bli Regn! nerri Namsos"
+        )
+        XCTAssertEqual(status.type, .regn)
+        XCTAssertEqual(status.eventAt, onset)
+        XCTAssertEqual(status.text, "Regn om en halvtime.")
+    }
+
     func testDryNowcastDoesNotEraseRainFromTableForecast() throws {
         let table = try YrService.decodeLocationForecast(Self.rainyLocationForecastFixture)
         let nowcast = try YrService.decodeNowcast(Self.nowcastFixture(rateAtFiveMinutes: 0))

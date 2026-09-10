@@ -52,7 +52,7 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    widget, Live Activity og Apple Watch gjennom én delt tekstmodell og tester.
 12. **AUTO · FERDIG** — Samkjør statusbegreper, værikoner og farger mellom app,
    widget, Live Activity og Apple Watch gjennom delte modeller og tester.
-13. **AUTO · KLAR** — Utvid før-lanseringstesten med kritiske ende-til-ende-
+13. **AUTO · FERDIG** — Utvid før-lanseringstesten med kritiske ende-til-ende-
    scenarioer og dokumenter en repeterbar lanseringssjekk.
 
 ## Forslag som venter på godkjenning
@@ -61,6 +61,11 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-10: La til en ende-til-ende-regresjon fra rå Yr-tabell og Nå-varsel
+  via sammenslåing, regelplanlegging og inntrøndersk pushtekst til samme status
+  etter overføring til widget/Watch. En egen lanseringssjekkliste dekker
+  automatisk port, værkjeden, fysisk iPhone, Live Activity, Apple Watch,
+  CarPlay og oppgraderingsdata. 54 av 54 tester bestod.
 - 2026-09-10: Samlet visuell tolkning av været nå i én delt modell for snø,
   regn, tåke, sol, solgløtt og skyer. iPhone, Watch-appen og Watch-widgeten
   bruker nå de samme tersklene, ikonene, fargene og navnene, mens varselikoner
