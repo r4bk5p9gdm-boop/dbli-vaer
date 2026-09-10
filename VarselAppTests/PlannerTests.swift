@@ -307,6 +307,23 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(WindGustLevel.forSpeed(31), .veryPowerful)
     }
 
+    func testWindStrengthUsesEverydayBeaufortNames() {
+        XCTAssertEqual(windStrengthLabel(for: 0), "stille")
+        XCTAssertEqual(windStrengthLabel(for: 4), "lett bris")
+        XCTAssertEqual(windStrengthLabel(for: 9), "frisk bris")
+        XCTAssertEqual(windStrengthLabel(for: 12), "liten kuling")
+        XCTAssertEqual(windStrengthLabel(for: 22), "liten storm")
+        XCTAssertEqual(windStrengthLabel(for: 30), "sterk storm")
+        XCTAssertEqual(windStrengthLabel(for: 33), "orkan")
+    }
+
+    func testPrecipitationHeadlineAlwaysStartsWithCapitalLetter() {
+        XCTAssertEqual(precipitationHeadlineName(temperature: 8, possible: false), "Regn")
+        XCTAssertEqual(precipitationHeadlineName(temperature: 0, possible: false), "Snø")
+        XCTAssertEqual(precipitationHeadlineName(temperature: 8, possible: true), "Mulig regn")
+        XCTAssertEqual(precipitationHeadlineName(temperature: 0, possible: true), "Mulig snø")
+    }
+
     func testDewPointIsCalculatedFromTemperatureAndHumidity() {
         XCTAssertEqual(YrService.calculatedDewPoint(temperature: 20, relativeHumidity: 50), 9.3, accuracy: 0.2)
         XCTAssertEqual(YrService.calculatedDewPoint(temperature: 5, relativeHumidity: 100), 5, accuracy: 0.01)

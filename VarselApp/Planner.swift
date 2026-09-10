@@ -265,7 +265,7 @@ enum Planner {
         case .temperatur:
             return "Yr melder \(number(hour.temp))°"
         case .vind:
-            return "Vindkast \(number(hour.effectiveWind)) m/s"
+            return "Vindkast \(number(hour.effectiveWind)) m/s · \(windStrengthLabel(for: hour.effectiveWind))"
         case .sol:
             return "Skydekke \(Int(hour.cloud.rounded())) %"
         }
@@ -379,7 +379,7 @@ enum Planner {
         case .vind:
             let strongest = hours.map(\.effectiveWind).max() ?? 0
             let level = WindGustLevel.forSpeed(strongest)
-            return "\(level.guidance) Opp mot \(strongest.formatted(.number.precision(.fractionLength(0...1)))) m/s i \(durationText)."
+            return "\(level.guidance) Opp mot \(strongest.formatted(.number.precision(.fractionLength(0...1)))) m/s (\(windStrengthLabel(for: strongest))) i \(durationText)."
         case .frost:
             let lowest = hours.map(\.temp).min() ?? 0
             if frostMargin > 0 {

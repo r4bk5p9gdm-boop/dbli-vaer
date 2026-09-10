@@ -60,6 +60,8 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
 16. **BRUKER · FERDIG** — Legg til manglende appikon i Watch-målet, bygg og
    kontroller den innebygde Watch-pakken. Avklar samtidig hvor CarPlay-widgeten
    skal finnes og kontroller at widgetmålet oppfyller CarPlay-kravene.
+17. **BRUKER · FERDIG** — Vis hverdagsnavn på vindstyrken etter m/s for
+   vindkast, og sørg for stor forbokstav i rullerende «Regn»/«Snø»-tekst.
 
 ## Forslag som venter på godkjenning
 
@@ -67,6 +69,11 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-10: Vindkast viser nå både m/s og kjent vindstyrkenavn fra stille og
+  bris via kuling og storm til orkan. Navnet brukes i rullerende værdetalj,
+  utfyllende pushtekst, live-status og Watch-visning. Rullerende nedbør starter
+  alltid med «Regn» eller «Snø» med stor bokstav, mens «Mulig regn/snø» beholder
+  naturlig setningsform. 58 av 58 tester bestod.
 - 2026-09-10: La inn en egen watchOS-assetkatalog med 1024-pikslers AppIcon.
   Xcode genererer nå Watch-ikonene og `CFBundleIconName`, og Watch-appen bygges
   med gyldig `Assets.car`. CarPlay-widgeten er kontrollert mot Apples krav:

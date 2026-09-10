@@ -93,6 +93,29 @@ enum WindGustLevel: Int, CaseIterable, Identifiable {
     }
 }
 
+func windStrengthLabel(for metersPerSecond: Double) -> String {
+    switch metersPerSecond {
+    case ..<0.3: "stille"
+    case ..<1.6: "flau vind"
+    case ..<3.4: "svak vind"
+    case ..<5.5: "lett bris"
+    case ..<8.0: "laber bris"
+    case ..<10.8: "frisk bris"
+    case ..<13.9: "liten kuling"
+    case ..<17.2: "stiv kuling"
+    case ..<20.8: "sterk kuling"
+    case ..<24.5: "liten storm"
+    case ..<28.5: "full storm"
+    case ..<32.7: "sterk storm"
+    default: "orkan"
+    }
+}
+
+func precipitationHeadlineName(temperature: Double, possible: Bool) -> String {
+    let kind = temperature <= 1 ? "Snø" : "Regn"
+    return possible ? "Mulig \(kind.lowercased())" : kind
+}
+
 enum AlertType: String, Codable, CaseIterable, Identifiable {
     case regn, frost, temperatur, sno, vind, dugg, sol
     var id: String { rawValue }

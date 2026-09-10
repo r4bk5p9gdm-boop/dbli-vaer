@@ -47,7 +47,12 @@ struct WatchContentView: View {
 
                         Section("Nå") {
                             watchMetric("Nedbør", value: "\(current.precipitationRiskRate.formatted(.number.precision(.fractionLength(0...1)))) mm", icon: "drop.fill", color: .blue)
-                            watchMetric("Vindkast", value: "\(current.effectiveWind.formatted(.number.precision(.fractionLength(0...1)))) m/s", icon: "wind", color: .teal)
+                            watchMetric(
+                                "Vindkast",
+                                value: "\(current.effectiveWind.formatted(.number.precision(.fractionLength(0...1)))) m/s · \(windStrengthLabel(for: current.effectiveWind))",
+                                icon: "wind",
+                                color: .teal
+                            )
                             watchMetric("Duggpunkt", value: "\(current.dew.formatted(.number.precision(.fractionLength(0...1))))°", icon: "humidity.fill", color: .mint)
                         }
 

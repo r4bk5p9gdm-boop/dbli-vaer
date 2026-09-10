@@ -209,7 +209,7 @@ private struct CurrentWeatherCard: View {
                 LiveWeatherMetric(
                     icon: AlertType.vind.systemImage,
                     label: "Vindkast",
-                    value: "\(current.effectiveWind.formatted(.number.precision(.fractionLength(0...1)))) m/s",
+                    value: "\(current.effectiveWind.formatted(.number.precision(.fractionLength(0...1)))) m/s · \(windStrengthLabel(for: current.effectiveWind))",
                     color: AlertType.vind.color,
                     isActive: current.effectiveWind >= WindGustLevel.looseObjects.threshold
                 )
@@ -444,9 +444,8 @@ private struct CurrentPrecipitationSummary {
 
         if let upcoming = forecast.dropFirst().first(where: { $0.precipitationRiskRate >= 0.1 }) {
             let possible = upcoming.precip < 0.1
-            let kind = upcoming.temp <= 1 ? "snø" : "regn"
             return CurrentPrecipitationSummary(
-                title: "\(possible ? "Mulig " : "")\(kind) \(eventTimePhrase(upcoming.time, relativeTo: now))",
+                title: "\(precipitationHeadlineName(temperature: upcoming.temp, possible: possible)) \(eventTimePhrase(upcoming.time, relativeTo: now))",
                 detail: possible
                     ? "opptil \(amountLabel(upcoming.precipMax ?? upcoming.precipitationRiskRate, temperature: upcoming.temp))\(probabilitySuffix(upcoming.precipProbability))"
                     : "\(amountLabel(upcoming.precip, temperature: upcoming.temp)) neste time",
