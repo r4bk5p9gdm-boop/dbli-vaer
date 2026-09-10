@@ -121,12 +121,15 @@ enum NotificationScheduler {
         guard limit > 0 else { return [] }
         var seenIDs: Set<String> = []
         return Array(alerts
-            .filter { $0.fireAt > now && seenIDs.insert($0.id).inserted }
+            .filter { $0.fireAt > now }
             .sorted {
                 if $0.fireAt != $1.fireAt { return $0.fireAt < $1.fireAt }
                 if $0.eventAt != $1.eventAt { return $0.eventAt < $1.eventAt }
                 return $0.id < $1.id
             }
+            // One evening notification can represent several weather events.
+            // Keep the nearest event regardless of the caller's input order.
+            .filter { seenIDs.insert($0.id).inserted }
             .prefix(limit))
     }
 

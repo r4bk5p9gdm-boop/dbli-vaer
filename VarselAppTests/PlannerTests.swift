@@ -648,6 +648,26 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(Set(scheduled.map(\.id)).count, scheduled.count)
     }
 
+    func testSharedNotificationSlotKeepsNearestEventRegardlessOfInputOrder() {
+        let rule = Rule(type: .regn)
+        let placeID = UUID()
+        let fireAt = base.addingTimeInterval(3600)
+        func alert(eventOffset: TimeInterval) -> PlannedAlert {
+            PlannedAlert(rule: rule, placeID: placeID, placeName: "Namsos",
+                         eventAt: base.addingTimeInterval(eventOffset), fireAt: fireAt,
+                         index: 1, total: 1, quiet: false, possible: false, eventDetail: nil)
+        }
+        let early = alert(eventOffset: 7200)
+        let late = alert(eventOffset: 14400)
+        XCTAssertEqual(early.id, late.id)
+        for input in [[late, early], [early, late]] {
+            let scheduled = NotificationScheduler.alertsToSchedule(input, now: base, limit: 1)
+            XCTAssertEqual(scheduled, [early])
+        }
+        XCTAssertTrue(NotificationScheduler.alertsToSchedule([early], now: fireAt).isEmpty)
+        XCTAssertTrue(NotificationScheduler.alertsToSchedule([early], now: base, limit: 0).isEmpty)
+    }
+
     @MainActor
     func testNotificationPlanLogReportsActualSchedulingResult() {
         XCTAssertEqual(

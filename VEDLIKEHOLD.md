@@ -41,7 +41,9 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    inkludert regler, steder, språkvalg og globale innstillinger.
 9. **AUTO · FERDIG** — Mål og forbedre unødvendig arbeid, nettbruk og samtidighet
    uten å endre synlig oppførsel.
-10. **BRUKER · PÅGÅR · FYSISK WATCH-INSTALLASJON** — Nytt komplett bygg med
+10. **BRUKER · UTSATT AV BRUKER FOR NATTEN · FYSISK WATCH-INSTALLASJON** —
+   Ingen enhetsleting, paring eller fysisk installasjon før Mathias ber om det.
+   Nattvedlikehold fortsetter med kode og tester. Nytt komplett bygg med
    Xcode 27 RC er bestått og installert på iPhone. Innebygd Watch-app,
    Watch-widget, AppIcon og signaturer er kontrollert. Bygg:
    `/private/tmp/dblivaer-verified`, logg `/private/tmp/dblivaer-verified.log`.
@@ -69,6 +71,10 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    skal finnes og kontroller at widgetmålet oppfyller CarPlay-kravene.
 17. **BRUKER · FERDIG** — Vis hverdagsnavn på vindstyrken etter m/s for
    vindkast, og sørg for stor forbokstav i rullerende «Regn»/«Snø»-tekst.
+18. **AUTO · FERDIG** — Ved kollisjon på samme varsel-ID velges nærmeste
+   værhendelse før duplikater fjernes, uavhengig av rekkefølgen fra innsender.
+19. **AUTO · ÅPEN** — Undersøk overlappende forgrunns- og bakgrunnsoppdatering
+   av varslingsplanen og om eldre arbeid kan overskrive nyere plan.
 
 ## Forslag som venter på godkjenning
 
@@ -76,6 +82,12 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-11: Varsler som deler utsendingstid og ID sorteres før duplikatvalg,
+  slik at senere værhendelser ikke skjuler den nærmeste ved ombyttet input.
+  Regresjonstest dekker begge rekkefølger, utløpt varsel og tom kapasitetsgrense.
+  59 av 59 tester bestod på iOS 27-simulator. Samlet iPhone/watchOS-bygg bestod
+  uten signering eller installasjon på fysiske enheter. Eksisterende bruker-
+  endringer i Watch-visninger, prosjekt og schemes er bevart utenfor commit.
 - 2026-09-10: Vindkast viser nå både m/s og kjent vindstyrkenavn fra stille og
   bris via kuling og storm til orkan. Navnet brukes i rullerende værdetalj,
   utfyllende pushtekst, live-status og Watch-visning. Rullerende nedbør starter
