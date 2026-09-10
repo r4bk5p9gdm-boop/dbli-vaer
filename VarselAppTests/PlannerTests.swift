@@ -774,10 +774,101 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(PlacePreposition.allCases.count, 15)
     }
 
+    func testYrFixturePrefersDetailedHourOverOverlappingSixHourEstimate() throws {
+        let forecast = try YrService.decodeLocationForecast(Self.locationForecastFixture)
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+
+        XCTAssertEqual(forecast.count, 6)
+        XCTAssertEqual(forecast.map { calendar.component(.hour, from: $0.time) }, [10, 11, 12, 13, 14, 15])
+        XCTAssertEqual(forecast[0].precip, 1, accuracy: 0.001)
+        XCTAssertEqual(forecast[2].precip, 0.8, accuracy: 0.001)
+        XCTAssertEqual(forecast[2].precipMax, 1.2)
+        XCTAssertEqual(forecast[2].precipProbability, 60)
+        XCTAssertEqual(forecast[2].temp, 2)
+    }
+
+    func testWetNowcastOverridesDryTableAndUsesExactOnset() throws {
+        let table = try YrService.decodeLocationForecast(Self.dryLocationForecastFixture)
+        let nowcast = try YrService.decodeNowcast(Self.nowcastFixture(rateAtFiveMinutes: 0.8))
+        let merged = YrService.applying(nowcast: nowcast, to: table)
+        let onset = try XCTUnwrap(ISO8601DateFormatter().date(from: "2033-05-18T10:05:00Z"))
+        var rule = Rule(type: .regn)
+        rule.threshold = 0.5
+
+        XCTAssertEqual(merged[0].radarSamples?.count, 2)
+        XCTAssertEqual(merged[0].precipitationRate, 0.8, accuracy: 0.001)
+        XCTAssertEqual(merged[0].temp, 8)
+        XCTAssertEqual(merged[0].wind, 4)
+        XCTAssertEqual(merged[0].gust, 9)
+        XCTAssertEqual(merged[0].dew, 4.7, accuracy: 0.2)
+        XCTAssertEqual(
+            Planner.plan(rule: rule, forecast: merged, placeName: "Namsos", now: onset.addingTimeInterval(-6 * 60)).eventAt,
+            onset
+        )
+    }
+
+    func testDryNowcastDoesNotEraseRainFromTableForecast() throws {
+        let table = try YrService.decodeLocationForecast(Self.rainyLocationForecastFixture)
+        let nowcast = try YrService.decodeNowcast(Self.nowcastFixture(rateAtFiveMinutes: 0))
+        let merged = YrService.applying(nowcast: nowcast, to: table)
+
+        XCTAssertEqual(merged[0].precip, 0.7, accuracy: 0.001)
+        XCTAssertEqual(merged[0].precipitationRate, 0.7, accuracy: 0.001)
+        XCTAssertTrue(AlertType.regn.matches(merged[0], threshold: 0.5))
+    }
+
+    func testWeatherTypeFixtureLocksThresholdsAndSleetBoundary() {
+        let rain = ForecastHour(time: base, temp: 1.1, precip: 0.6, wind: 3, cloud: 90, dew: 0)
+        let sleetAsSnow = ForecastHour(time: base, temp: 1, precip: 0.6, wind: 3, cloud: 90, dew: 0)
+        let dew = ForecastHour(time: base, temp: 5, precip: 0, wind: 2, cloud: 60, dew: 4.5)
+        let sunAndWind = ForecastHour(time: base, temp: 9, precip: 0, wind: 4, cloud: 10, dew: 1, gust: 13)
+        let frost = ForecastHour(time: base, temp: -0.1, precip: 0, wind: 1, cloud: 20, dew: -2)
+
+        XCTAssertTrue(AlertType.regn.matches(rain, threshold: 0.5))
+        XCTAssertFalse(AlertType.sno.matches(rain, threshold: 0.5))
+        XCTAssertTrue(AlertType.sno.matches(sleetAsSnow, threshold: 0.5))
+        XCTAssertFalse(AlertType.regn.matches(sleetAsSnow, threshold: 0.5))
+        XCTAssertTrue(AlertType.dugg.matches(dew, threshold: 1))
+        XCTAssertTrue(AlertType.sol.matches(sunAndWind, threshold: 20))
+        XCTAssertTrue(AlertType.vind.matches(sunAndWind, threshold: 12))
+        XCTAssertTrue(AlertType.temperatur.matches(sunAndWind, threshold: 10))
+        XCTAssertTrue(AlertType.frost.matches(frost, threshold: 0))
+    }
+
     @MainActor
     func testLaunchPlacesUseRequestedNamesAndPrepositions() {
         XCTAssertEqual(Store.launchPlaces.map(\.nameWithPreposition), [
             "på Klinga", "nerri Namsos", "oppå Hornburu", "oppi Selbu", "inni Bangdalen"
         ])
+    }
+
+
+    private static let locationForecastFixture = Data("""
+    {"properties":{"timeseries":[
+      {"time":"2033-05-18T10:00:00Z","data":{"instant":{"details":{"air_temperature":7,"relative_humidity":75,"wind_speed":3,"wind_speed_of_gust":7,"cloud_area_fraction":85}},"next_6_hours":{"details":{"precipitation_amount":6,"precipitation_amount_min":0,"precipitation_amount_max":12,"probability_of_precipitation":50}}}},
+      {"time":"2033-05-18T12:00:00Z","data":{"instant":{"details":{"air_temperature":2,"dew_point_temperature":1,"wind_speed":5,"wind_speed_of_gust":11,"cloud_area_fraction":95}},"next_1_hours":{"details":{"precipitation_amount":0.8,"precipitation_amount_min":0.3,"precipitation_amount_max":1.2,"probability_of_precipitation":60}}}}
+    ]}}
+    """.utf8)
+
+    private static let dryLocationForecastFixture = locationFixture(precipitation: 0)
+    private static let rainyLocationForecastFixture = locationFixture(precipitation: 0.7)
+
+    private static func locationFixture(precipitation: Double) -> Data {
+        Data("""
+        {"properties":{"timeseries":[
+          {"time":"2033-05-18T10:00:00Z","data":{"instant":{"details":{"air_temperature":7,"relative_humidity":70,"wind_speed":2,"wind_speed_of_gust":5,"cloud_area_fraction":90}},"next_1_hours":{"details":{"precipitation_amount":\(precipitation),"precipitation_amount_min":0,"precipitation_amount_max":\(precipitation),"probability_of_precipitation":80}}}}
+        ]}}
+        """.utf8)
+    }
+
+    private static func nowcastFixture(rateAtFiveMinutes: Double) -> Data {
+        Data("""
+        {"properties":{"meta":{"radar_coverage":"ok"},"timeseries":[
+          {"time":"2033-05-18T11:35:00Z","data":{"instant":{"details":{"precipitation_rate":8}}}},
+          {"time":"2033-05-18T10:05:00Z","data":{"instant":{"details":{"precipitation_rate":\(rateAtFiveMinutes)}}}},
+          {"time":"2033-05-18T10:00:00Z","data":{"instant":{"details":{"precipitation_rate":0,"air_temperature":8,"relative_humidity":80,"wind_speed":4,"wind_speed_of_gust":9}}}}
+        ]}}
+        """.utf8)
     }
 }

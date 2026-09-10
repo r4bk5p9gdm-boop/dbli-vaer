@@ -57,6 +57,20 @@ enum YrService {
         let properties: Properties
     }
 
+    struct NowcastPayload {
+        struct Observation {
+            let time: Date
+            let temperature: Double?
+            let relativeHumidity: Double?
+            let wind: Double?
+            let gust: Double?
+        }
+
+        let hasRadarCoverage: Bool
+        let samples: [PrecipitationSample]
+        let observation: Observation?
+    }
+
     static func calculatedDewPoint(temperature: Double, relativeHumidity: Double) -> Double {
         // Magnus-formelen, godt egnet for vanlig utetemperatur.
         let humidity = min(max(relativeHumidity, 0.1), 100) / 100
@@ -71,29 +85,8 @@ enum YrService {
         async let nowcast = try? fetchNowcast(lat: lat, lon: lon)
 
         var forecast = try await locationForecast
-        if let radar = await nowcast, radar.properties.meta.radar_coverage?.lowercased() == "ok" {
-            let allSamples = radar.properties.timeseries.compactMap { series in
-                series.data.instant.details.precipitation_rate.map {
-                    PrecipitationSample(time: series.time, rate: $0)
-                }
-            }
-            let samples = ninetyMinuteNowcast(from: allSamples)
-            forecast = merging(radarSamples: samples, into: forecast)
-
-            if let observation = radar.properties.timeseries.first,
-               let index = forecast.indices.min(by: {
-                   abs(forecast[$0].time.timeIntervalSince(observation.time)) < abs(forecast[$1].time.timeIntervalSince(observation.time))
-               }), abs(forecast[index].time.timeIntervalSince(observation.time)) <= 3_600 {
-                let details = observation.data.instant.details
-                if let temperature = details.air_temperature {
-                    forecast[index].temp = temperature
-                    if let humidity = details.relative_humidity {
-                        forecast[index].dew = calculatedDewPoint(temperature: temperature, relativeHumidity: humidity)
-                    }
-                }
-                if let wind = details.wind_speed { forecast[index].wind = wind }
-                if let gust = details.wind_speed_of_gust { forecast[index].gust = gust }
-            }
+        if let radar = await nowcast {
+            forecast = applying(nowcast: radar, to: forecast)
         }
         return forecast
     }
@@ -115,6 +108,26 @@ enum YrService {
         }
     }
 
+    static func applying(nowcast: NowcastPayload, to forecast: [ForecastHour]) -> [ForecastHour] {
+        guard nowcast.hasRadarCoverage else { return forecast }
+        var updated = merging(radarSamples: ninetyMinuteNowcast(from: nowcast.samples), into: forecast)
+
+        if let observation = nowcast.observation,
+           let index = updated.indices.min(by: {
+               abs(updated[$0].time.timeIntervalSince(observation.time)) < abs(updated[$1].time.timeIntervalSince(observation.time))
+           }), abs(updated[index].time.timeIntervalSince(observation.time)) <= 3_600 {
+            if let temperature = observation.temperature {
+                updated[index].temp = temperature
+                if let humidity = observation.relativeHumidity {
+                    updated[index].dew = calculatedDewPoint(temperature: temperature, relativeHumidity: humidity)
+                }
+            }
+            if let wind = observation.wind { updated[index].wind = wind }
+            if let gust = observation.gust { updated[index].gust = gust }
+        }
+        return updated
+    }
+
     private static func fetchLocationForecast(lat: Double, lon: Double) async throws -> [ForecastHour] {
         var comps = URLComponents(string: "https://api.met.no/weatherapi/locationforecast/2.0/complete")!
         comps.queryItems = [
@@ -128,48 +141,63 @@ enum YrService {
         guard let http = resp as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
             throw URLError(.badServerResponse)
         }
-        let dec = JSONDecoder()
-        dec.dateDecodingStrategy = .iso8601
-        let r = try dec.decode(Response.self, from: data)
-        return r.properties.timeseries.flatMap { s -> [ForecastHour] in
+        return try decodeLocationForecast(data)
+    }
+
+    static func decodeLocationForecast(_ data: Data) throws -> [ForecastHour] {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let response = try decoder.decode(Response.self, from: data)
+        var hoursByTime: [Date: (resolution: Int, hour: ForecastHour)] = [:]
+
+        for series in response.properties.timeseries {
             let periodHours: Int
             let next: Response.Next
-            if let hourly = s.data.next_1_hours {
+            if let hourly = series.data.next_1_hours {
                 periodHours = 1
                 next = hourly
-            } else if let sixHourly = s.data.next_6_hours {
+            } else if let sixHourly = series.data.next_6_hours {
                 periodHours = 6
                 next = sixHourly
             } else {
-                return []
+                continue
             }
-            let d = s.data.instant.details
-            guard let temperature = d.air_temperature else { return [] }
-            let dewPoint = d.dew_point_temperature
-                ?? d.relative_humidity.map { calculatedDewPoint(temperature: temperature, relativeHumidity: $0) }
+            let details = series.data.instant.details
+            guard let temperature = details.air_temperature else { continue }
+            let dewPoint = details.dew_point_temperature
+                ?? details.relative_humidity.map { calculatedDewPoint(temperature: temperature, relativeHumidity: $0) }
                 ?? temperature
             let divisor = Double(periodHours)
-            return (0..<periodHours).map { offset in
-                ForecastHour(
-                    time: s.time.addingTimeInterval(TimeInterval(offset * 3_600)),
+            for offset in 0..<periodHours {
+                let hour = ForecastHour(
+                    time: series.time.addingTimeInterval(TimeInterval(offset * 3_600)),
                     temp: temperature,
                     precip: (next.details.precipitation_amount ?? 0) / divisor,
-                    wind: d.wind_speed ?? 0,
-                    cloud: d.cloud_area_fraction ?? 0,
+                    wind: details.wind_speed ?? 0,
+                    cloud: details.cloud_area_fraction ?? 0,
                     dew: dewPoint,
                     precipMin: next.details.precipitation_amount_min.map { $0 / divisor },
                     precipMax: next.details.precipitation_amount_max.map { $0 / divisor },
                     precipProbability: next.details.probability_of_precipitation,
-                    gust: d.wind_speed_of_gust,
-                    fog: d.fog_area_fraction,
-                    temperatureLow: d.air_temperature_percentile_10,
-                    temperatureHigh: d.air_temperature_percentile_90
+                    gust: details.wind_speed_of_gust,
+                    fog: details.fog_area_fraction,
+                    temperatureLow: details.air_temperature_percentile_10,
+                    temperatureHigh: details.air_temperature_percentile_90
                 )
+                if hoursByTime[hour.time].map({ periodHours < $0.resolution }) ?? true {
+                    hoursByTime[hour.time] = (periodHours, hour)
+                }
             }
-        }.prefix(9 * 24).map { $0 }
+        }
+
+        return hoursByTime.values
+            .map(\.hour)
+            .sorted { $0.time < $1.time }
+            .prefix(9 * 24)
+            .map { $0 }
     }
 
-    private static func fetchNowcast(lat: Double, lon: Double) async throws -> NowcastResponse {
+    private static func fetchNowcast(lat: Double, lon: Double) async throws -> NowcastPayload {
         var comps = URLComponents(string: "https://api.met.no/weatherapi/nowcast/2.0/complete")!
         comps.queryItems = [
             .init(name: "lat", value: String(format: "%.4f", lat)),
@@ -182,8 +210,33 @@ enum YrService {
         guard let http = resp as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
             throw URLError(.badServerResponse)
         }
+        return try decodeNowcast(data)
+    }
+
+    static func decodeNowcast(_ data: Data) throws -> NowcastPayload {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        return try decoder.decode(NowcastResponse.self, from: data)
+        let response = try decoder.decode(NowcastResponse.self, from: data)
+        let ordered = response.properties.timeseries.sorted { $0.time < $1.time }
+        let samples = ordered.compactMap { series in
+            series.data.instant.details.precipitation_rate.map {
+                PrecipitationSample(time: series.time, rate: $0)
+            }
+        }
+        let observation = ordered.first.map { series in
+            let details = series.data.instant.details
+            return NowcastPayload.Observation(
+                time: series.time,
+                temperature: details.air_temperature,
+                relativeHumidity: details.relative_humidity,
+                wind: details.wind_speed,
+                gust: details.wind_speed_of_gust
+            )
+        }
+        return NowcastPayload(
+            hasRadarCoverage: response.properties.meta.radar_coverage?.lowercased() == "ok",
+            samples: samples,
+            observation: observation
+        )
     }
 }

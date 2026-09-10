@@ -35,7 +35,7 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    foreldelse, avslutning, gjenåpning og regresjonstester.
 6. **AUTO · FERDIG** — Pansre synkronisering med Apple Watch og widgets ved
    manglende nett, gammel prognose og raske stedsskifter.
-7. **AUTO · KLAR** — Bygg faste testdata for Yr/Nå-varsel og test prioritering
+7. **AUTO · FERDIG** — Bygg faste testdata for Yr/Nå-varsel og test prioritering
    av regn, snø, sludd, dugg, sol, vind og temperaturgrenser.
 8. **AUTO · KLAR** — Kontroller datalagring og migrering fra eldre versjoner,
    inkludert regler, steder, språkvalg og globale innstillinger.
@@ -52,6 +52,12 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-10: La inn faste Yr- og Nå-varseldata i testpakken. Overlappende
+  1-times- og 6-timersperioder gir ikke lenger doble timer; den mest detaljerte
+  1-timesverdien vinner. Våt Nå-radar gir presist starttidspunkt innen 90
+  minutter, mens tørr radar ikke fjerner regn fra tabellvarslet. Grensene for
+  regn, snø/sludd, dugg, sol, vind, frost og temperatur er låst med
+  regresjonstester. 47 av 47 tester bestod.
 - 2026-09-10: Pansret iPhone–Watch/widget-synkronisering. Nyeste sted og vær
   køes dersom WatchConnectivity ennå ikke er aktivert, siste overføring vinner
   ved raske stedsskifter, eldre overføringer avvises etter omstart, og sletting
