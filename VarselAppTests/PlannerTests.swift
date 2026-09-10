@@ -569,6 +569,31 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(Set(scheduled.map(\.id)).count, scheduled.count)
     }
 
+    func testWatchTransferRoundTripsLatestSnapshotAndExplicitClear() throws {
+        let place = Place(name: "Namsos", lat: 64.5, lon: 11.5)
+        let snapshot = WidgetWeatherSnapshot(
+            place: place,
+            forecast: [ForecastHour(time: base, temp: 5, precip: 1, wind: 2, cloud: 100, dew: 4)],
+            updatedAt: base
+        )
+        let transfer = WatchWeatherTransfer(snapshot: snapshot, sentAt: base.addingTimeInterval(1))
+        let clear = WatchWeatherTransfer(snapshot: nil, sentAt: base.addingTimeInterval(2))
+
+        let decodedTransfer = try JSONDecoder().decode(
+            WatchWeatherTransfer.self,
+            from: JSONEncoder().encode(transfer)
+        )
+        let decodedClear = try JSONDecoder().decode(
+            WatchWeatherTransfer.self,
+            from: JSONEncoder().encode(clear)
+        )
+
+        XCTAssertEqual(decodedTransfer.snapshot?.place.id, place.id)
+        XCTAssertEqual(decodedTransfer.snapshot?.forecast.first?.temp, 5)
+        XCTAssertNil(decodedClear.snapshot)
+        XCTAssertGreaterThan(decodedClear.sentAt, decodedTransfer.sentAt)
+    }
+
     func testNextDayRainCanNotifyAtNineTheEveningBefore() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))

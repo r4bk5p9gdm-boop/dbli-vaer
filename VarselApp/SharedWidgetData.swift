@@ -6,6 +6,13 @@ struct WidgetWeatherSnapshot: Codable {
     let updatedAt: Date
 }
 
+/// Versioned payload semantics for iPhone → Watch application context.
+/// A nil snapshot explicitly clears weather that would otherwise linger.
+struct WatchWeatherTransfer: Codable {
+    let snapshot: WidgetWeatherSnapshot?
+    let sentAt: Date
+}
+
 enum SharedWidgetData {
     static let appGroup = "group.no.mathias.dblivaer"
     private static let snapshotKey = "widget.weather.snapshot"

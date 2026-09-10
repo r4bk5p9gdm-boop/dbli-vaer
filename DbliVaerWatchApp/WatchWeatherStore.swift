@@ -9,12 +9,15 @@ final class WatchWeatherStore: ObservableObject {
     @Published private(set) var message: String?
 
     private let receiver = WatchSnapshotReceiver()
+    private let lastTransferKey = "watch.lastWeatherTransferAt"
+    private var lastTransferAt: Date
 
     init() {
         snapshot = SharedWidgetData.load()
-        receiver.onSnapshot = { [weak self] snapshot in
+        lastTransferAt = UserDefaults.standard.object(forKey: lastTransferKey) as? Date ?? .distantPast
+        receiver.onTransfer = { [weak self] transfer in
             Task { @MainActor in
-                self?.accept(snapshot)
+                self?.accept(transfer)
             }
         }
         receiver.activate()
@@ -38,10 +41,23 @@ final class WatchWeatherStore: ObservableObject {
         SharedWidgetData.save(place: snapshot.place, forecast: snapshot.forecast, updatedAt: snapshot.updatedAt)
         WidgetCenter.shared.reloadAllTimelines()
     }
+
+    private func accept(_ transfer: WatchWeatherTransfer) {
+        guard transfer.sentAt >= lastTransferAt else { return }
+        lastTransferAt = transfer.sentAt
+        UserDefaults.standard.set(transfer.sentAt, forKey: lastTransferKey)
+        guard let snapshot = transfer.snapshot else {
+            self.snapshot = nil
+            SharedWidgetData.clear()
+            WidgetCenter.shared.reloadAllTimelines()
+            return
+        }
+        accept(snapshot)
+    }
 }
 
 private final class WatchSnapshotReceiver: NSObject, WCSessionDelegate {
-    var onSnapshot: ((WidgetWeatherSnapshot) -> Void)?
+    var onTransfer: ((WatchWeatherTransfer) -> Void)?
     private static let snapshotKey = "weatherSnapshot"
 
     func activate() {
@@ -59,9 +75,15 @@ private final class WatchSnapshotReceiver: NSObject, WCSessionDelegate {
     }
 
     private func decode(_ context: [String: Any]) {
-        guard let data = context[Self.snapshotKey] as? Data,
-              let snapshot = try? JSONDecoder().decode(WidgetWeatherSnapshot.self, from: data) else { return }
-        onSnapshot?(snapshot)
+        guard let data = context[Self.snapshotKey] as? Data else { return }
+        let decoder = JSONDecoder()
+        if let transfer = try? decoder.decode(WatchWeatherTransfer.self, from: data) {
+            onTransfer?(transfer)
+            return
+        }
+        // Accept contexts sent by builds from before WatchWeatherTransfer.
+        if let snapshot = try? decoder.decode(WidgetWeatherSnapshot.self, from: data) {
+            onTransfer?(WatchWeatherTransfer(snapshot: snapshot, sentAt: snapshot.updatedAt))
+        }
     }
 }
-

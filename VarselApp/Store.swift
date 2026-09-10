@@ -255,6 +255,7 @@ final class Store: ObservableObject {
     private func updateWidget() {
         guard let place = selected else {
             SharedWidgetData.clear()
+            WatchSyncManager.shared.clear()
             WidgetCenter.shared.reloadAllTimelines()
             return
         }

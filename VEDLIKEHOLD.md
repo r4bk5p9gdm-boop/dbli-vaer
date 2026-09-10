@@ -33,7 +33,7 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    ellers stopper arbeidet.
 5. **AUTO · FERDIG** — Pansre Live Activity-livsløpet: valg av neste hendelse,
    foreldelse, avslutning, gjenåpning og regresjonstester.
-6. **AUTO · KLAR** — Pansre synkronisering med Apple Watch og widgets ved
+6. **AUTO · FERDIG** — Pansre synkronisering med Apple Watch og widgets ved
    manglende nett, gammel prognose og raske stedsskifter.
 7. **AUTO · KLAR** — Bygg faste testdata for Yr/Nå-varsel og test prioritering
    av regn, snø, sludd, dugg, sol, vind og temperaturgrenser.
@@ -52,6 +52,11 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-10: Pansret iPhone–Watch/widget-synkronisering. Nyeste sted og vær
+  køes dersom WatchConnectivity ennå ikke er aktivert, siste overføring vinner
+  ved raske stedsskifter, eldre overføringer avvises etter omstart, og sletting
+  av siste sted rydder også gammel Watch/widget-status. Eldre appoverføringer
+  kan fortsatt leses. 43 av 43 tester bestod.
 - 2026-09-10: Pansret Live Activity-livsløpet. En startet aktivitet fortsetter
   gjennom de siste ti minuttene og mens været pågår, men avsluttes straks når
   regelen slås av, stedet ikke lenger kvalifiserer eller hendelsen avlyses eller
