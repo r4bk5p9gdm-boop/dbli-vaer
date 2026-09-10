@@ -1,0 +1,179 @@
+import ActivityKit
+import Foundation
+
+enum LiveWeatherActivitySettings {
+    static let enabledKey = "varsel.liveWeatherActivitiesEnabled"
+
+    static var isEnabled: Bool {
+        let defaults = UserDefaults.standard
+        guard defaults.object(forKey: enabledKey) != nil else { return true }
+        return defaults.bool(forKey: enabledKey)
+    }
+}
+
+@MainActor
+enum LiveWeatherActivityManager {
+    private static let earliestStart: TimeInterval = 10 * 60
+    private static let latestStart: TimeInterval = 60 * 60
+
+    private struct Candidate {
+        let place: Place
+        let rule: Rule
+        let status: WeatherStatus
+        let detail: String
+        let expectedEndAt: Date
+    }
+
+    static func sync(
+        places: [Place],
+        forecasts: [UUID: [ForecastHour]],
+        nearbyPlaceIDs: Set<UUID>,
+        now: Date = Date()
+    ) async {
+        guard LiveWeatherActivitySettings.isEnabled,
+              ActivityAuthorizationInfo().areActivitiesEnabled else {
+            await endAll()
+            return
+        }
+
+        let candidate = bestCandidate(
+            places: places,
+            forecasts: forecasts,
+            nearbyPlaceIDs: nearbyPlaceIDs,
+            now: now
+        )
+        let activities = Activity<WeatherActivityAttributes>.activities
+
+        guard let candidate else {
+            for activity in activities where activity.content.state.expectedEndAt <= now {
+                await activity.end(nil, dismissalPolicy: .immediate)
+            }
+            return
+        }
+
+        let state = WeatherActivityAttributes.ContentState(
+            eventAt: candidate.status.eventAt,
+            expectedEndAt: candidate.expectedEndAt,
+            detail: candidate.detail,
+            possible: candidate.status.possible ?? false,
+            updatedAt: now
+        )
+        let content = ActivityContent(
+            state: state,
+            staleDate: candidate.expectedEndAt,
+            relevanceScore: relevanceScore(for: candidate.rule.type)
+        )
+
+        if let current = activities.first(where: {
+            $0.attributes.placeID == candidate.place.id && $0.attributes.ruleID == candidate.rule.id
+        }) {
+            await current.update(content)
+            for activity in activities where activity.id != current.id {
+                await activity.end(nil, dismissalPolicy: .immediate)
+            }
+            return
+        }
+
+        for activity in activities {
+            await activity.end(nil, dismissalPolicy: .immediate)
+        }
+
+        let attributes = WeatherActivityAttributes(
+            placeID: candidate.place.id,
+            ruleID: candidate.rule.id,
+            placeName: candidate.place.nameWithPreposition,
+            alertType: candidate.rule.type.rawValue,
+            weatherName: alertWeatherName(for: candidate.rule)
+        )
+        _ = try? Activity.request(attributes: attributes, content: content, pushType: nil)
+    }
+
+    static func endAll() async {
+        for activity in Activity<WeatherActivityAttributes>.activities {
+            await activity.end(nil, dismissalPolicy: .immediate)
+        }
+    }
+
+    private static func bestCandidate(
+        places: [Place],
+        forecasts: [UUID: [ForecastHour]],
+        nearbyPlaceIDs: Set<UUID>,
+        now: Date
+    ) -> Candidate? {
+        places
+            .filter(\.areNotificationsEnabled)
+            .flatMap { place in
+                place.rules.compactMap { rule -> Candidate? in
+                    guard rule.enabled,
+                          rule.type == .regn || rule.type == .sno,
+                          !rule.onlyWhenNearby || nearbyPlaceIDs.contains(place.id),
+                          let forecast = forecasts[place.id],
+                          let status = Planner.status(
+                            for: rule,
+                            forecast: forecast,
+                            frostMargin: place.localFrostMargin,
+                            now: now
+                          ),
+                          !status.isNow else { return nil }
+                    let seconds = status.eventAt.timeIntervalSince(now)
+                    guard seconds >= earliestStart && seconds <= latestStart else { return nil }
+                    let summary = precipitationSummary(
+                        rule: rule,
+                        eventAt: status.eventAt,
+                        forecast: forecast,
+                        possible: status.possible ?? false
+                    )
+                    return Candidate(
+                        place: place,
+                        rule: rule,
+                        status: status,
+                        detail: summary.detail,
+                        expectedEndAt: summary.endAt
+                    )
+                }
+            }
+            .sorted {
+                if $0.status.eventAt != $1.status.eventAt { return $0.status.eventAt < $1.status.eventAt }
+                return severity($0.rule.type) > severity($1.rule.type)
+            }
+            .first
+    }
+
+    private static func precipitationSummary(
+        rule: Rule,
+        eventAt: Date,
+        forecast: [ForecastHour],
+        possible: Bool
+    ) -> (detail: String, endAt: Date) {
+        let startIndex = forecast.indices.min {
+            abs(forecast[$0].time.timeIntervalSince(eventAt)) < abs(forecast[$1].time.timeIntervalSince(eventAt))
+        } ?? forecast.startIndex
+        var hours: [ForecastHour] = []
+        for index in startIndex..<forecast.endIndex {
+            let hour = forecast[index]
+            guard rule.isActive(at: hour.time), rule.matches(hour) else { break }
+            hours.append(hour)
+        }
+        if hours.isEmpty, forecast.indices.contains(startIndex) { hours = [forecast[startIndex]] }
+        let duration = max(1, hours.count)
+        let endAt = eventAt.addingTimeInterval(TimeInterval(duration) * 3_600)
+        let durationText = duration == 1 ? "omtrent 1 time" : "omtrent \(duration) timer"
+
+        if rule.type == .sno {
+            let amount = hours.reduce(0.0) { total, hour in
+                let water = possible ? hour.precipitationRiskRate : hour.precipitationRate
+                return total + estimatedFreshSnowMillimeters(waterEquivalent: water, temperature: hour.temp)
+            }
+            return ("Anslått \(amount.formatted(.number.precision(.fractionLength(0...1)))) mm snø · \(durationText)", endAt)
+        }
+
+        let amount = hours.reduce(0.0) { total, hour in
+            total + (possible ? hour.precipitationRiskRate : hour.precipitationRate)
+        }
+        let prefix = possible ? "Opptil" : "Ca."
+        return ("\(prefix) \(amount.formatted(.number.precision(.fractionLength(0...1)))) mm · \(durationText)", endAt)
+    }
+
+    private static func severity(_ type: AlertType) -> Int { type == .sno ? 2 : 1 }
+    private static func relevanceScore(for type: AlertType) -> Double { type == .sno ? 100 : 90 }
+}

@@ -1,0 +1,1132 @@
+import SwiftUI
+
+struct ContentView: View {
+    private enum Tab: Hashable { case home, queue, places, log, settings }
+
+    @EnvironmentObject var store: Store
+    @AppStorage("varsel.onboardingCompleted") private var onboardingCompleted = false
+    @State private var showingOnboarding = false
+    @State private var selectedTab: Tab = .home
+
+    var body: some View {
+        TabView(selection: $selectedTab) {
+            HomeView().tabItem { Label("Hjem", systemImage: "cloud.sun") }.tag(Tab.home)
+            AlertQueueView().tabItem { Label("Varselkø", systemImage: "bell.and.waves.left.and.right") }.tag(Tab.queue)
+            PlacesView().tabItem { Label("Steder", systemImage: "mappin.and.ellipse") }.tag(Tab.places)
+            LogView().tabItem { Label("Logg", systemImage: "list.bullet.rectangle") }.tag(Tab.log)
+            GlobalSettingsView(showsDoneButton: false)
+                .tabItem { Label("Innstillinger", systemImage: "gearshape") }
+                .tag(Tab.settings)
+        }
+        .tint(Color(red: 0.09, green: 0.14, blue: 0.23))
+        .onAppear {
+            if !onboardingCompleted { showingOnboarding = true }
+            openNotificationPlace(NotificationRoute.consumePendingPlaceID())
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NotificationRoute.requested)) { notification in
+            let notifiedPlaceID = notification.userInfo?[NotificationRoute.placeIDKey] as? String
+            openNotificationPlace(NotificationRoute.consumePendingPlaceID() ?? notifiedPlaceID)
+        }
+        .fullScreenCover(isPresented: $showingOnboarding) {
+            OnboardingWizardView {
+                onboardingCompleted = true
+                showingOnboarding = false
+            }
+        }
+    }
+
+    private func openNotificationPlace(_ placeIDString: String?) {
+        guard let placeIDString,
+              let placeID = UUID(uuidString: placeIDString),
+              store.places.contains(where: { $0.id == placeID }) else { return }
+        store.selectedID = placeID
+        selectedTab = .home
+    }
+}
+
+struct HomeView: View {
+    @EnvironmentObject var store: Store
+    @State private var editing: Rule?
+    @State private var showingSettings = false
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 14) {
+                    if store.notificationsAuthorized == false {
+                        Label("Varslinger er avslått. Slå dem på i Innstillinger for å motta værvarsler.", systemImage: "bell.slash.fill")
+                            .font(.footnote)
+                            .foregroundStyle(.orange)
+                            .card()
+                    }
+                    if let error = store.error {
+                        Label(error, systemImage: "exclamationmark.triangle.fill")
+                            .font(.footnote)
+                            .foregroundStyle(.orange)
+                            .card()
+                    }
+                    if let p = store.selected {
+                        let fc = store.selectedForecast
+                        let visibleForecast = Array(fc.prefix(48))
+                        if !visibleForecast.isEmpty {
+                            CurrentWeatherCard(
+                                place: p,
+                                places: store.places,
+                                forecast: visibleForecast,
+                                onSelect: store.select
+                            )
+                        }
+                        VStack(alignment: .leading, spacing: 10) {
+                            HStack {
+                                Text("Neste 48 timer").font(.subheadline.bold())
+                                Spacer()
+                                if store.isRefreshing {
+                                    ProgressView().controlSize(.small)
+                                } else {
+                                    Text("Yr.no" + (store.lastUpdate.map { " · \(timeLabel($0))" } ?? ""))
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            if fc.isEmpty {
+                                Text(store.error ?? "Henter prognose …").font(.footnote).foregroundStyle(.secondary)
+                            } else {
+                                ForecastVariantsView(
+                                    forecast: visibleForecast,
+                                    rules: p.rulesForDisplay,
+                                    frostMargin: p.localFrostMargin,
+                                    mode: .weatherBands
+                                )
+                            }
+                        }.card()
+
+                    } else {
+                        ContentUnavailableView(
+                            "Ingen steder",
+                            systemImage: "mappin.slash",
+                            description: Text("Legg til et sted under Steder for å hente værvarsel.")
+                        )
+                    }
+                }.padding()
+            }
+            .background(Color(red: 0.93, green: 0.95, blue: 0.97))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Tilpass", systemImage: "slider.horizontal.3") { showingSettings = true }
+                }
+            }
+            .refreshable { _ = await store.refreshAll() }
+            .sheet(item: $editing) { r in RuleEditorView(rule: r, isNew: false) }
+            .sheet(isPresented: $showingSettings) { RulesView() }
+        }
+    }
+}
+
+private struct CurrentWeatherCard: View {
+    let place: Place
+    let places: [Place]
+    let forecast: [ForecastHour]
+    let onSelect: (Place) -> Void
+    var showsPlaceMenu = true
+
+    private var current: ForecastHour { forecast[0] }
+    private var precipitation: CurrentPrecipitationSummary {
+        CurrentPrecipitationSummary.make(from: forecast)
+    }
+    private var rotatingStatuses: [WeatherStatus] {
+        Array(
+            Planner.statuses(for: place, forecast: forecast)
+                .filter { $0.type != .regn && $0.type != .sno }
+                .prefix(4)
+        )
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .center, spacing: 7) {
+                WeatherWordmark()
+
+                Text(place.resolvedPreposition.rawValue)
+                    .font(.caption.weight(.bold).italic())
+                    .foregroundStyle(.white)
+                    .fixedSize()
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 3)
+                    .background(
+                        LinearGradient(
+                            colors: [.blue.opacity(0.72), .cyan.opacity(0.72)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        ),
+                        in: Capsule()
+                    )
+                    .rotationEffect(.degrees(-4))
+
+                if showsPlaceMenu {
+                    Menu {
+                        ForEach(places) { candidate in
+                            Button {
+                                onSelect(candidate)
+                            } label: {
+                                if candidate.id == place.id {
+                                    Label(candidate.displayName, systemImage: "checkmark")
+                                } else {
+                                    Text(candidate.displayName)
+                                }
+                            }
+                        }
+                    } label: {
+                        PlaceTitle(place: place, showsChevron: true)
+                    }
+                    .layoutPriority(1)
+                } else {
+                    PlaceTitle(place: place, showsChevron: false)
+                        .layoutPriority(1)
+                }
+
+                HStack(spacing: 4) {
+                    Text("\(Int(current.temp.rounded()))°")
+                        .font(.system(size: 29, weight: .light, design: .rounded))
+                    Image(systemName: currentSymbol)
+                        .font(.system(size: 27, weight: .semibold))
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(currentSymbolColor)
+                        .frame(width: 36, height: 36)
+                }
+                .fixedSize()
+                .layoutPriority(3)
+            }
+
+            HStack(spacing: 5) {
+                LiveWeatherMetric(
+                    icon: current.temp <= 1 ? AlertType.sno.systemImage : AlertType.regn.systemImage,
+                    label: current.temp <= 1 ? "Snø" : "Regn",
+                    value: precipitationMetricValue,
+                    color: current.temp <= 1 ? AlertType.sno.color : AlertType.regn.color,
+                    isActive: current.precipitationRiskRate >= 0.1
+                )
+                LiveWeatherMetric(
+                    icon: AlertType.vind.systemImage,
+                    label: "Vindkast",
+                    value: "\(current.effectiveWind.formatted(.number.precision(.fractionLength(0...1)))) m/s",
+                    color: AlertType.vind.color,
+                    isActive: current.effectiveWind >= WindGustLevel.looseObjects.threshold
+                )
+                LiveWeatherMetric(
+                    icon: moistureMetric.icon,
+                    label: moistureMetric.label,
+                    value: moistureMetric.value,
+                    color: moistureMetric.color,
+                    isActive: moistureMetric.isActive
+                )
+                LiveWeatherMetric(
+                    icon: skyMetric.icon,
+                    label: skyMetric.label,
+                    value: skyMetric.value,
+                    color: skyMetric.color,
+                    isActive: current.cloud <= 65
+                )
+            }
+
+            SwiftUI.TimelineView(.periodic(from: .now, by: 6)) { timeline in
+                let count = rotatingStatuses.count + 1
+                let index = Int(timeline.date.timeIntervalSince1970 / 6) % max(count, 1)
+                if index == 0 {
+                    headline(
+                        title: precipitation.title,
+                        detail: precipitation.detail,
+                        systemImage: precipitation.systemImage,
+                        color: precipitation.color
+                    )
+                } else {
+                    let status = rotatingStatuses[index - 1]
+                    headline(
+                        title: status.text,
+                        detail: status.isNow ? "Gjelder nå" : "Neste hendelse \(eventTimePhrase(status.eventAt))",
+                        systemImage: status.type.systemImage,
+                        color: status.type.color
+                    )
+                }
+            }
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            LinearGradient(
+                colors: [Color.white, Color(red: 0.96, green: 0.98, blue: 1.0)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            ),
+            in: RoundedRectangle(cornerRadius: 18)
+        )
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.blue.opacity(0.12)))
+    }
+
+    private var precipitationMetricValue: String {
+        let amount = current.precipitationRiskRate
+        return amount >= 0.1
+            ? "\(amount.formatted(.number.precision(.fractionLength(0...1)))) mm"
+            : "opphold"
+    }
+
+    private var moistureMetric: (icon: String, label: String, value: String, color: Color, isActive: Bool) {
+        if current.temp <= 0 {
+            return (AlertType.frost.systemImage, "Frost", "\(current.temp.formatted(.number.precision(.fractionLength(0...1))))°", AlertType.frost.color, true)
+        }
+        let gap = max(0, current.temp - current.dew)
+        return (
+            AlertType.dugg.systemImage,
+            "Dugg",
+            "\(gap.formatted(.number.precision(.fractionLength(0...1))))° fra",
+            AlertType.dugg.color,
+            gap <= 1 && current.precipitationRiskRate < 0.1
+        )
+    }
+
+    private var skyMetric: (icon: String, label: String, value: String, color: Color) {
+        if current.cloud <= 20 { return (AlertType.sol.systemImage, "Sol", "klart", AlertType.sol.color) }
+        if current.cloud <= 65 { return (AlertType.sol.systemImage, "Sol", "gløtt", AlertType.sol.color) }
+        return (AlertType.sol.systemImage, "Skyer", "overskyet", AlertType.sol.color)
+    }
+
+    private func headline(title: String, detail: String, systemImage: String, color: Color) -> some View {
+        HStack(spacing: 11) {
+            Image(systemName: systemImage)
+                .font(.title3)
+                .foregroundStyle(color)
+                .frame(width: 28)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title).font(.subheadline.weight(.semibold)).lineLimit(1)
+                Text(detail).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .background(color.opacity(0.09), in: RoundedRectangle(cornerRadius: 11))
+    }
+
+    private var currentSymbol: String {
+        if precipitation.isFallingNow { return current.temp <= 1 ? "cloud.snow.fill" : "cloud.rain.fill" }
+        if (current.fog ?? 0) >= 50 { return "cloud.fog.fill" }
+        if current.cloud <= 20 { return "sun.max.fill" }
+        if current.cloud <= 65 { return "cloud.sun.fill" }
+        return "cloud.fill"
+    }
+
+    private var currentSymbolColor: Color {
+        if precipitation.isFallingNow { return .blue }
+        if (current.fog ?? 0) >= 50 { return Color(red: 0.38, green: 0.45, blue: 0.52) }
+        if current.cloud <= 20 { return Color(red: 0.94, green: 0.62, blue: 0.08) }
+        return Color(red: 0.27, green: 0.45, blue: 0.62)
+    }
+}
+
+private struct PlaceTitle: View {
+    let place: Place
+    let showsChevron: Bool
+
+    var body: some View {
+        HStack(spacing: 3) {
+            Text(place.displayName)
+                .font(.system(size: 29, weight: .light, design: .rounded))
+                .lineLimit(1)
+                .minimumScaleFactor(0.55)
+            if showsChevron {
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 9, weight: .semibold))
+            }
+        }
+        .foregroundStyle(.blue)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+private struct WeatherWordmark: View {
+    var body: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 0) {
+            Text("D")
+                .font(.system(size: 23, weight: .bold, design: .rounded))
+            Text(" bli ")
+                .font(.system(size: 17, weight: .semibold, design: .rounded))
+            Text("Vær")
+                .font(.system(size: 23, weight: .black, design: .rounded))
+            Text("!")
+                .font(.system(size: 23, weight: .black, design: .rounded))
+                .foregroundStyle(Color(red: 0.96, green: 0.63, blue: 0.08))
+                .offset(y: -1)
+        }
+        .foregroundStyle(Color(red: 0.06, green: 0.12, blue: 0.22))
+        .fixedSize()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("D bli Vær!")
+    }
+}
+
+private struct LiveWeatherMetric: View {
+    let icon: String
+    let label: String
+    let value: String
+    let color: Color
+    let isActive: Bool
+
+    var body: some View {
+        VStack(spacing: 2) {
+            Image(systemName: icon)
+                .font(.caption.weight(.semibold))
+                .symbolRenderingMode(.hierarchical)
+                .foregroundStyle(color)
+                .frame(height: 14)
+            Text(label)
+                .font(.system(size: 9, weight: .medium))
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+            Text(value)
+                .font(.system(size: 10, weight: .semibold, design: .rounded))
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
+        }
+        .padding(.vertical, 5)
+        .frame(maxWidth: .infinity)
+        .background(
+            isActive ? color.opacity(0.10) : Color.secondary.opacity(0.055),
+            in: RoundedRectangle(cornerRadius: 8)
+        )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(label), \(value)")
+    }
+}
+
+private struct CurrentPrecipitationSummary {
+    let title: String
+    let detail: String
+    let systemImage: String
+    let color: Color
+    let isFallingNow: Bool
+
+    static func make(from forecast: [ForecastHour], now: Date = Date()) -> CurrentPrecipitationSummary {
+        let current = forecast[0]
+        let samples = forecast.flatMap { $0.radarSamples ?? [] }.sorted { $0.time < $1.time }
+        let latest = samples.last { $0.time <= now.addingTimeInterval(2 * 60) }
+
+        if let latest, latest.time >= now.addingTimeInterval(-10 * 60), latest.rate >= 0.1 {
+            return CurrentPrecipitationSummary(
+                title: current.temp <= 1 ? "Snø nå" : "Regn nå",
+                detail: "\(amountLabel(latest.rate, temperature: current.temp, perHour: true)) i Nå-varselet",
+                systemImage: current.temp <= 1 ? "cloud.snow.fill" : "cloud.rain.fill",
+                color: .blue,
+                isFallingNow: true
+            )
+        }
+
+        if let upcoming = samples.first(where: { $0.time > now.addingTimeInterval(2 * 60) && $0.rate >= 0.1 }) {
+            let kind = current.temp <= 1 ? "Snø" : "Regn"
+            return CurrentPrecipitationSummary(
+                title: "\(kind) \(eventTimePhrase(upcoming.time, relativeTo: now))",
+                detail: "Nå-varsel · opptil \(amountLabel(upcoming.rate, temperature: current.temp, perHour: true))",
+                systemImage: current.temp <= 1 ? "cloud.snow.fill" : "cloud.rain.fill",
+                color: .blue,
+                isFallingNow: false
+            )
+        }
+
+        if current.precip >= 0.1 {
+            return CurrentPrecipitationSummary(
+                title: current.temp <= 1 ? "Snø denne timen" : "Regn denne timen",
+                detail: "\(amountLabel(current.precip, temperature: current.temp)) neste time\(probabilitySuffix(current.precipProbability))",
+                systemImage: current.temp <= 1 ? "cloud.snow.fill" : "cloud.rain.fill",
+                color: .blue,
+                isFallingNow: false
+            )
+        }
+
+        if current.precipitationRiskRate >= 0.1 {
+            return CurrentPrecipitationSummary(
+                title: current.temp <= 1 ? "Mulig snø denne timen" : "Mulig regn denne timen",
+                detail: "opptil \(amountLabel(current.precipMax ?? current.precipitationRiskRate, temperature: current.temp))\(probabilitySuffix(current.precipProbability))",
+                systemImage: "umbrella.fill",
+                color: .blue.opacity(0.75),
+                isFallingNow: false
+            )
+        }
+
+        if let upcoming = forecast.dropFirst().first(where: { $0.precipitationRiskRate >= 0.1 }) {
+            let possible = upcoming.precip < 0.1
+            let kind = upcoming.temp <= 1 ? "snø" : "regn"
+            return CurrentPrecipitationSummary(
+                title: "\(possible ? "Mulig " : "")\(kind) \(eventTimePhrase(upcoming.time, relativeTo: now))",
+                detail: possible
+                    ? "opptil \(amountLabel(upcoming.precipMax ?? upcoming.precipitationRiskRate, temperature: upcoming.temp))\(probabilitySuffix(upcoming.precipProbability))"
+                    : "\(amountLabel(upcoming.precip, temperature: upcoming.temp)) neste time",
+                systemImage: possible ? "umbrella.fill" : (upcoming.temp <= 1 ? "cloud.snow.fill" : "cloud.rain.fill"),
+                color: possible ? .blue.opacity(0.75) : .blue,
+                isFallingNow: false
+            )
+        }
+
+        return CurrentPrecipitationSummary(
+            title: "Opphold nå",
+            detail: samples.isEmpty ? "0 mm neste time" : "Ingen nedbør i Nå-varselet",
+            systemImage: "umbrella",
+            color: .secondary,
+            isFallingNow: false
+        )
+    }
+
+    private static func rateLabel(_ value: Double) -> String {
+        value.formatted(.number.precision(.fractionLength(0...1)))
+    }
+
+    private static func amountLabel(_ waterEquivalent: Double, temperature: Double, perHour: Bool = false) -> String {
+        let suffix = perHour ? "/t" : ""
+        if temperature <= 1 {
+            return "anslått \(rateLabel(estimatedFreshSnowMillimeters(waterEquivalent: waterEquivalent, temperature: temperature))) mm snø\(suffix)"
+        }
+        return "\(rateLabel(waterEquivalent)) mm\(suffix)"
+    }
+
+    private static func probabilitySuffix(_ probability: Double?) -> String {
+        probability.map { " · \(Int($0.rounded())) % sannsynlighet" } ?? ""
+    }
+}
+
+struct RulesView: View {
+    @EnvironmentObject var store: Store
+    @Environment(\.dismiss) private var dismiss
+    @State private var editing: Rule?
+    @State private var creating = false
+    @State private var testAlertMessage: String?
+
+    var body: some View {
+        NavigationStack {
+            List {
+                if var p = store.selected {
+                    Section {
+                        Menu {
+                            ForEach(store.places) { candidate in
+                                Button {
+                                    store.select(candidate)
+                                } label: {
+                                    if candidate.id == p.id {
+                                        Label(candidate.nameWithPreposition, systemImage: "checkmark")
+                                    } else {
+                                        Text(candidate.nameWithPreposition)
+                                    }
+                                }
+                            }
+                        } label: {
+                            HStack(spacing: 7) {
+                                WeatherWordmark()
+                                Text(p.resolvedPreposition.rawValue)
+                                    .font(.caption.weight(.bold).italic())
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 7).padding(.vertical, 3)
+                                    .background(Color.blue.opacity(0.72), in: Capsule())
+                                Text(p.displayName)
+                                    .font(.title2.weight(.light))
+                                    .foregroundStyle(.blue)
+                                    .lineLimit(1)
+                                Spacer()
+                                Image(systemName: "chevron.up.chevron.down")
+                                    .font(.caption2.weight(.semibold))
+                                    .foregroundStyle(.blue)
+                            }
+                        }
+                        Text("Trykk på stedet for å bytte.")
+                            .font(.caption2).foregroundStyle(.secondary)
+                    }
+                    Section("Synlige værrader på Hjem") {
+                        ForEach(AlertType.allCases) { type in
+                            Toggle(isOn: Binding(
+                                get: { p.isAlertTypeVisible(type) },
+                                set: { visible in
+                                    var hidden = p.hiddenAlertTypes ?? []
+                                    if visible { hidden.remove(type) } else { hidden.insert(type) }
+                                    p.hiddenAlertTypes = hidden
+                                    store.update(p)
+                                }
+                            )) {
+                                Label(type.label, systemImage: type.systemImage)
+                                    .foregroundStyle(type.color)
+                            }
+                        }
+                    }
+                    Section("Lokal frostmargin") {
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack {
+                                Text("Varsle tidligere")
+                                Spacer()
+                                Text(p.localFrostMargin == 0
+                                     ? "Ingen margin"
+                                     : "+\(p.localFrostMargin.formatted(.number.precision(.fractionLength(0...1)))) °C")
+                                    .fontWeight(.semibold)
+                            }
+                            Slider(
+                                value: Binding(
+                                    get: { p.localFrostMargin },
+                                    set: { value in
+                                        p.frostMargin = value
+                                        store.update(p)
+                                        Task { await store.replan() }
+                                    }
+                                ),
+                                in: 0...5,
+                                step: 0.5
+                            )
+                        }
+                        Text("Brukes bare for frostvarsler. Med +2,5 °C kan mulig frost varsles når Yr melder +2,5 °C eller kaldere. Temperaturen fra Yr endres ikke.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    Section {
+                        ForEach(p.rules) { r in
+                        HStack {
+                            RoundedRectangle(cornerRadius: 2).fill(r.type.color).frame(width: 4, height: 40)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(r.displayName).bold()
+                                Text("\(r.summary) · \(r.notificationScheduleLabel), \(r.activeHoursLabel)" + (r.repeatsEnabled ? ", \(r.alertCount)×" : "") + (r.quiet ? ", stille \(r.quietFrom)–\(r.quietTo)" : ""))
+                                    .font(.caption).foregroundStyle(.secondary)
+                                if let aftertext = r.cleanedCustomName {
+                                    Text("Huskelapp: \(aftertext)")
+                                        .font(.caption2).foregroundStyle(.blue)
+                                }
+                                Text((r.days.count == 7 ? "Alle dager" : r.days.sorted().map { dayNames[$0] }.joined(separator: " ")) + (r.onlyWhenNearby ? " · bare i nærheten" : ""))
+                                    .font(.caption).foregroundStyle(.secondary)
+                            }
+                            .contentShape(Rectangle())
+                            .onTapGesture { editing = r }
+                            Spacer()
+                            Toggle("", isOn: Binding(
+                                get: { r.enabled },
+                                set: { v in
+                                    if let i = p.rules.firstIndex(of: r) { p.rules[i].enabled = v; store.update(p) }
+                                    Task { await store.replan() }
+                                })).labelsHidden()
+                        }
+                        .opacity(r.enabled ? 1 : 0.55)
+                        }
+                        .onDelete { idx in p.rules.remove(atOffsets: idx); store.update(p); Task { await store.replan() } }
+                        Button {
+                            creating = true
+                        } label: {
+                            Label("Nytt varsel", systemImage: "plus.circle.fill")
+                                .font(.headline)
+                                .padding(.vertical, 3)
+                        }
+                        Button {
+                            Task {
+                                let sent = await NotificationScheduler.sendTest(for: p, languageStyle: store.alertLanguageStyle)
+                                testAlertMessage = sent
+                                    ? "Testvarselet kommer om et par sekunder. Det vises også mens appen er åpen."
+                                    : "Testvarselet kunne ikke sendes. Kontroller at varslinger er tillatt i Innstillinger."
+                            }
+                        } label: {
+                            Label("Send testvarsel", systemImage: "bell.badge.fill")
+                        }
+                    } header: {
+                        Text("Varselinnstillinger for \(p.displayName)")
+                    }
+                }
+            }
+            .navigationTitle("Tilpass")
+            .toolbar {
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    Menu("Sorter", systemImage: "arrow.up.arrow.down") {
+                        Button("Aktive først") { sortRules { $0.enabled && !$1.enabled } }
+                        Button("Etter værtype") { sortRules { $0.type.label < $1.type.label } }
+                        Button("Etter navn") { sortRules { $0.displayName.localizedCaseInsensitiveCompare($1.displayName) == .orderedAscending } }
+                    }
+                    Button("Ferdig") { dismiss() }
+                }
+            }
+            .sheet(item: $editing) { r in RuleEditorView(rule: r, isNew: false) }
+            .sheet(isPresented: $creating) { RulePresetPickerView() }
+            .alert("Testvarsel", isPresented: Binding(
+                get: { testAlertMessage != nil },
+                set: { if !$0 { testAlertMessage = nil } }
+            )) {
+                Button("OK") { testAlertMessage = nil }
+            } message: {
+                Text(testAlertMessage ?? "")
+            }
+        }
+    }
+
+    private func sortRules(by areInIncreasingOrder: (Rule, Rule) -> Bool) {
+        guard var place = store.selected else { return }
+        place.rules.sort(by: areInIncreasingOrder)
+        store.update(place)
+    }
+}
+
+struct AlertQueueView: View {
+    @EnvironmentObject private var store: Store
+
+    private var alerts: [PlannedAlert] {
+        Planner.planAll(places: store.places, forecasts: store.forecasts, nearbyPlaceIDs: store.nearbyPlaceIDs)
+    }
+    private var watchedRules: [WatchedRule] {
+        store.places.filter(\.areNotificationsEnabled).flatMap { place in
+            place.rules.filter(\.enabled).map { WatchedRule(place: place, rule: $0) }
+        }
+    }
+
+    var body: some View {
+        NavigationStack {
+            List {
+                if alerts.isEmpty && watchedRules.isEmpty {
+                    ContentUnavailableView(
+                        "Ingen aktive varsler",
+                        systemImage: "bell.slash",
+                        description: Text("Opprett eller slå på et varsel fra Tilpass på Hjem.")
+                    )
+                }
+                if !alerts.isEmpty {
+                    Section("Kommende pushvarsler") {
+                        ForEach(alerts) { alert in
+                            HStack(alignment: .top, spacing: 11) {
+                                Image(systemName: "bell.fill")
+                                    .foregroundStyle(.orange)
+                                    .padding(.top, 3)
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text(NotificationCopy.title(for: alert.rule, placeName: alert.placeName, possible: alert.possible, languageStyle: store.alertLanguageStyle))
+                                        .font(.subheadline.weight(.semibold))
+                                    Text(NotificationCopy.message(for: alert.rule, eventAt: alert.eventAt, referenceAt: alert.fireAt, possible: alert.possible, eventDetail: alert.eventDetail, languageStyle: store.alertLanguageStyle))
+                                        .font(.caption).foregroundStyle(.secondary)
+                                    Text("Sendes \(eventTimePhrase(alert.fireAt))")
+                                        .font(.caption2).foregroundStyle(.blue)
+                                }
+                            }
+                        }
+                    }
+                }
+                if !watchedRules.isEmpty {
+                    Section {
+                        ForEach(watchedRules) { item in
+                            HStack(alignment: .top, spacing: 11) {
+                                Image(systemName: alerts.contains(where: { $0.rule.id == item.rule.id }) ? "bell.fill" : "eye.fill")
+                                    .foregroundStyle(alerts.contains(where: { $0.rule.id == item.rule.id }) ? .orange : .secondary)
+                                    .frame(width: 22)
+                                    .padding(.top, 3)
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text("\(item.rule.displayName) · \(item.place.nameWithPreposition)")
+                                        .font(.subheadline.weight(.semibold))
+                                    Text(watchedDetail(item))
+                                        .font(.caption).foregroundStyle(.secondary)
+                                    if item.rule.onlyWhenNearby {
+                                        Text("Varsler bare når du er i nærheten")
+                                            .font(.caption2).foregroundStyle(.blue)
+                                    }
+                                }
+                            }
+                        }
+                    } header: {
+                        Text("Aktive regler som følger med")
+                    } footer: {
+                        Text("Øye betyr at regelen følger prognosen. Bjelle betyr at minst ett pushvarsel allerede er planlagt.")
+                    }
+                }
+            }
+            .navigationTitle("Varselkø")
+            .refreshable { _ = await store.refreshAll() }
+        }
+    }
+
+    private func watchedDetail(_ item: WatchedRule) -> String {
+        let forecast = store.forecasts[item.place.id] ?? []
+        guard !forecast.isEmpty else { return "Venter på prognose" }
+        let result = Planner.plan(
+            rule: item.rule,
+            forecast: forecast,
+            placeName: item.place.nameWithPreposition,
+            frostMargin: item.place.localFrostMargin
+        )
+        if let eventAt = result.eventAt {
+            if result.alerts.isEmpty { return "Treff \(eventTimePhrase(eventAt)), men forvarseltidspunktet er passert" }
+            return "Treff \(eventTimePhrase(eventAt))"
+        }
+        return "Ingen treff i prognosen de neste 48 timene"
+    }
+}
+
+private struct WatchedRule: Identifiable {
+    let place: Place
+    let rule: Rule
+    var id: String { "\(place.id)-\(rule.id)" }
+}
+
+struct PlacesView: View {
+    @EnvironmentObject var store: Store
+    @StateObject private var loc = LocationManager()
+    @State private var busy = false
+    @State private var showingSearch = false
+    @State private var locationError: String?
+    @State private var showingExporter = false
+    @State private var editingPlaces = false
+
+    private var alertPlaces: [Place] {
+        store.places.filter { $0.areNotificationsEnabled && $0.rules.contains(where: \.enabled) }
+    }
+
+    private var savedPlaces: [Place] {
+        store.places.filter { !$0.areNotificationsEnabled || !$0.rules.contains(where: \.enabled) }
+    }
+
+    var body: some View {
+        NavigationStack {
+            Group {
+                if editingPlaces {
+                    List {
+                if store.places.isEmpty {
+                    ContentUnavailableView(
+                        "Ingen steder",
+                        systemImage: "mappin.and.ellipse",
+                        description: Text("Søk etter et sted eller bruk posisjonen din.")
+                    )
+                }
+                if !alertPlaces.isEmpty {
+                    Section("Steder med aktive varsler") {
+                        ForEach(alertPlaces) { place in
+                            PlaceRow(place: place)
+                        }
+                        .onDelete { offsets in remove(offsets, from: alertPlaces) }
+                        .onMove { source, destination in move(source, to: destination, within: alertPlaces) }
+                    }
+                }
+
+                if !savedPlaces.isEmpty {
+                    Section("Lagret for å sjekke") {
+                        ForEach(savedPlaces) { place in
+                            PlaceRow(place: place)
+                        }
+                        .onDelete { offsets in remove(offsets, from: savedPlaces) }
+                        .onMove { source, destination in move(source, to: destination, within: savedPlaces) }
+                    }
+                }
+
+                    Section {
+                    Button("Søk etter sted", systemImage: "magnifyingglass") {
+                        showingSearch = true
+                    }
+                    Button(busy ? "Finner posisjon …" : "Legg til min posisjon") {
+                        busy = true
+                        locationError = nil
+                        Task {
+                            do {
+                                let l = try await loc.current()
+                                let name = await LocationManager.name(for: l)
+                                await store.add(Place(name: name, lat: l.coordinate.latitude, lon: l.coordinate.longitude, preposition: .i))
+                            } catch {
+                                locationError = "Fant ikke posisjonen din. Kontroller stedstilgang i Innstillinger."
+                            }
+                            busy = false
+                        }
+                    }.disabled(busy)
+                    if let locationError {
+                        Text(locationError).font(.footnote).foregroundStyle(.red)
+                    }
+                    } footer: {
+                        Text("Nye steder lagres uten varsler. Velg et sted og opprett varslene du vil ha under Varsler.")
+                    }
+                    }
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: 12) {
+                            ForEach(store.places) { place in
+                                if let forecast = store.forecasts[place.id], !forecast.isEmpty {
+                                    CurrentWeatherCard(
+                                        place: place,
+                                        places: store.places,
+                                        forecast: forecast,
+                                        onSelect: store.select,
+                                        showsPlaceMenu: false
+                                    )
+                                    .contentShape(RoundedRectangle(cornerRadius: 18))
+                                    .onTapGesture { store.select(place) }
+                                } else {
+                                    VStack(alignment: .leading, spacing: 5) {
+                                        HStack { WeatherWordmark(); Text(place.nameWithPreposition).font(.headline).foregroundStyle(.blue) }
+                                        Text(store.forecastErrors[place.id] ?? "Henter prognose …")
+                                            .font(.footnote).foregroundStyle(.secondary)
+                                    }
+                                    .card()
+                                }
+                            }
+                        }
+                        .padding()
+                    }
+                    .background(Color(red: 0.93, green: 0.95, blue: 0.97))
+                    .refreshable { _ = await store.refreshAll() }
+                }
+            }
+            .navigationTitle("Steder")
+            .toolbar {
+                ToolbarItemGroup(placement: .topBarTrailing) {
+                    Button(editingPlaces ? "Ferdig" : "Rediger") { editingPlaces.toggle() }
+                    Button("Eksporter oppsett", systemImage: "square.and.arrow.up") {
+                        showingExporter = true
+                    }
+                }
+            }
+            .sheet(isPresented: $showingSearch) { PlaceSearchView() }
+            .fileExporter(
+                isPresented: $showingExporter,
+                document: WeatherConfigurationDocument(places: store.places, selectedPlaceID: store.selectedID, alertLanguageStyle: store.alertLanguageStyle),
+                contentType: .json,
+                defaultFilename: "D-bli-Vaer-oppsett"
+            ) { _ in }
+        }
+    }
+
+    private func remove(_ offsets: IndexSet, from places: [Place]) {
+        store.removePlaces(ids: Set(offsets.compactMap { index in
+            places.indices.contains(index) ? places[index].id : nil
+        }))
+    }
+
+    private func move(_ source: IndexSet, to destination: Int, within visiblePlaces: [Place]) {
+        var reordered = visiblePlaces
+        reordered.move(fromOffsets: source, toOffset: destination)
+        let visibleIDs = Set(visiblePlaces.map(\.id))
+        var next = reordered.makeIterator()
+        var allPlaces = store.places
+        for index in allPlaces.indices where visibleIDs.contains(allPlaces[index].id) {
+            if let replacement = next.next() { allPlaces[index] = replacement }
+        }
+        store.places = allPlaces
+    }
+}
+
+private struct GlobalSettingsView: View {
+    @EnvironmentObject private var store: Store
+    @Environment(\.dismiss) private var dismiss
+    @State private var showingOnboarding = false
+    @AppStorage(LiveWeatherActivitySettings.enabledKey) private var liveActivitiesEnabled = true
+    var showsDoneButton = true
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("Språk i alle pushvarsler") {
+                    Picker("Språkstil", selection: $store.alertLanguageStyle) {
+                        ForEach(AlertLanguageStyle.allCases) { style in
+                            Text(style.label).tag(style)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+
+                    Text("Preposisjonen du har valgt for stedet – som i, på, nerri eller oppi – endres ikke av språkvalget.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Section {
+                    Button {
+                        showingOnboarding = true
+                    } label: {
+                        Label("Kjør oppstartsveiviseren", systemImage: "wand.and.stars")
+                    }
+                } footer: {
+                    Text("Velg hjemsted og legg til anbefalte standardvarsler på nytt.")
+                }
+
+                Section("CarPlay") {
+                    Label("CarPlay-widgeten er klar", systemImage: "car.fill")
+                    Text("Krever iOS 26 eller nyere. Legg til D bli Vær! fra widgetinnstillingene for bilen under Innstillinger › Generelt › CarPlay.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Section("Live Activity") {
+                    Toggle("Vis nedtelling til regn og snø", isOn: $liveActivitiesEnabled)
+                    Text("Starter når appen finner regn eller snø 10–60 minutter fram. Fortsetter på låseskjermen, Dynamic Island og i CarPlay etter at appen lukkes.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .onChange(of: liveActivitiesEnabled) { _, _ in
+                    Task { await store.replan() }
+                }
+
+                Section("Apple Watch") {
+                    Label("Watch-app og komplikasjoner er med", systemImage: "applewatch")
+                    Text("Klokka følger valgt sted fra iPhone. Du kan åpne Watch-appen, legge D bli Vær! i Smart stabel og velge komplikasjonen på urskiven.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .navigationTitle("Innstillinger")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                if showsDoneButton {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Ferdig") { dismiss() }
+                    }
+                }
+            }
+            .fullScreenCover(isPresented: $showingOnboarding) {
+                OnboardingWizardView { showingOnboarding = false }
+            }
+        }
+    }
+}
+
+private struct PlaceRow: View {
+    @EnvironmentObject private var store: Store
+    let place: Place
+    @State private var showingNameEditor = false
+    @State private var nameDraft = ""
+
+    private var enabledRules: [Rule] { place.rules.filter(\.enabled) }
+    private var nearbyRuleCount: Int { enabledRules.filter(\.onlyWhenNearby).count }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 10) {
+                HStack(spacing: 6) {
+                    Menu {
+                        ForEach(PlacePreposition.allCases) { preposition in
+                            Button(preposition.rawValue) { updatePreposition(preposition) }
+                        }
+                    } label: {
+                        HStack(spacing: 3) {
+                            Text(place.resolvedPreposition.rawValue)
+                            Image(systemName: "chevron.down").font(.caption2)
+                        }
+                        .font(.subheadline.italic())
+                        .padding(.horizontal, 9).padding(.vertical, 5)
+                        .background(Color.blue.opacity(0.1), in: Capsule())
+                    }
+                    Button { store.select(place) } label: {
+                        Text(place.displayName)
+                            .font(.title3.weight(.light))
+                    }
+                    .buttonStyle(.plain)
+                }
+                Spacer()
+                if let current = store.forecasts[place.id]?.first {
+                    Image(systemName: current.cloud <= 20 ? "sun.max.fill" : (current.precipitationRiskRate >= 0.1 ? "cloud.rain.fill" : "cloud.fill"))
+                        .foregroundStyle(current.cloud <= 20 ? .orange : .blue)
+                    Text("\(Int(current.temp.rounded()))°").font(.title3.weight(.medium))
+                }
+                if place.id == store.selectedID { Image(systemName: "checkmark.circle.fill").foregroundStyle(.blue) }
+            }
+            HStack {
+                if enabledRules.isEmpty {
+                    Text("Ingen aktive varsler")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text("\(enabledRules.count) aktive \(enabledRules.count == 1 ? "varsel" : "varsler")" + nearbyText)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                if store.forecastErrors[place.id] != nil { Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange) }
+            }
+            HStack(spacing: 8) {
+                Button(place.areNotificationsEnabled ? "Push på" : "Push av", systemImage: place.areNotificationsEnabled ? "bell.fill" : "bell.slash") {
+                    update { $0.notificationsEnabled = !place.areNotificationsEnabled }
+                }
+                Menu {
+                    Button("Vis alle værtyper") { update { $0.rulesOnlyDisplay = false } }
+                    Button("Vis bare regelstyrte varsel") { update { $0.rulesOnlyDisplay = true } }
+                } label: {
+                    Label(place.showsOnlyRuleAlerts ? "Bare regler" : "Alle værtyper", systemImage: "eye")
+                }
+                Button("Gi eget navn", systemImage: "pencil") {
+                    nameDraft = place.customName ?? ""
+                    showingNameEditor = true
+                }
+            }
+            .font(.caption.weight(.medium))
+            .buttonStyle(.bordered)
+            .controlSize(.small)
+        }
+        .padding(.vertical, 5)
+        .sheet(isPresented: $showingNameEditor) {
+            NavigationStack {
+                Form {
+                    Section("Eget navn") {
+                        TextField("For eksempel Hytta", text: $nameDraft)
+                        Text("Det opprinnelige stedsnavnet er \(place.name). La feltet stå tomt for å bruke det igjen.")
+                            .font(.footnote).foregroundStyle(.secondary)
+                    }
+                }
+                .navigationTitle("Navn på stedet")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) { Button("Avbryt") { showingNameEditor = false } }
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("Lagre") {
+                            update { $0.customName = nameDraft }
+                            showingNameEditor = false
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private var nearbyText: String {
+        guard nearbyRuleCount > 0 else { return "" }
+        return " · \(nearbyRuleCount) bare i nærheten"
+    }
+
+    private func updatePreposition(_ preposition: PlacePreposition) { update { $0.preposition = preposition } }
+
+    private func update(_ change: (inout Place) -> Void) {
+        var updated = place
+        change(&updated)
+        store.update(updated)
+        Task { await store.replan() }
+    }
+}
+
+struct LogView: View {
+    @EnvironmentObject var store: Store
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Planlagte varsler") {
+                    let alerts = Planner.planAll(
+                        places: store.places,
+                        forecasts: store.forecasts,
+                        nearbyPlaceIDs: store.nearbyPlaceIDs
+                    )
+                    if alerts.isEmpty { Text("Ingen varsler planlagt.").foregroundStyle(.secondary) }
+                    ForEach(alerts) { a in
+                        HStack(alignment: .top, spacing: 12) {
+                            Circle().fill(a.rule.type.color).frame(width: 10, height: 10).padding(.top, 5)
+                            VStack(alignment: .leading, spacing: 2) {
+                                HStack { Text(a.rule.statusText(weatherAlertText(for: a.rule, eventAt: a.eventAt, possible: a.possible))).bold(); Spacer(); Text(eventTimePhrase(a.fireAt)).font(.caption).foregroundStyle(.secondary) }
+                                Text("\(a.placeName) · varsel \(a.index) av \(a.total)" + (a.quiet ? " · stille" : "")).font(.caption).foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                }
+                Section("Oppdateringer") {
+                    ForEach(store.log) { e in
+                        VStack(alignment: .leading) {
+                            Text(e.text).font(.footnote)
+                            Text(e.time.formatted(.dateTime.day().month().hour().minute())).font(.caption2).foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Varsellogg")
+        }
+    }
+}
+
+extension View {
+    func card(accent: Color? = nil) -> some View {
+        HStack(spacing: 0) {
+            if let a = accent { Rectangle().fill(a).frame(width: 4) }
+            self.padding(14).frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color(white: 0.87)))
+    }
+}
