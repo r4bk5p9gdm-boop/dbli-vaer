@@ -41,14 +41,18 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    inkludert regler, steder, språkvalg og globale innstillinger.
 9. **AUTO · FERDIG** — Mål og forbedre unødvendig arbeid, nettbruk og samtidighet
    uten å endre synlig oppførsel.
-10. **BRUKER · VENTER PÅ XCODE-PARING** — Fullfør fysisk kontroll av Watch-
-   appen. iPhone-appen er installert og startet, men Apple Watch er ikke synlig
-   som utviklingsenhet i Xcode og mangler derfor i Watch-profilens enhetsliste.
-   Etter sletting fra iPhone forsvant også oppføringen fra «Tilgjengelige apper»,
-   så neste kontroll må bygge og installere hoved-schemen `VarselApp` (ikke
-   widget-schemen) med Watch-bunten validert og signert. Xcode må registrere
-   klokka og fornye profilen før fysisk installasjon kan godtas. Denne ventende
-   enhetskontrollen blokkerer ikke AUTO-oppgavene.
+10. **BRUKER · PÅGÅR · FYSISK WATCH-INSTALLASJON** — Nytt komplett bygg med
+   Xcode 27 RC er bestått og installert på iPhone. Innebygd Watch-app,
+   Watch-widget, AppIcon og signaturer er kontrollert. Bygg:
+   `/private/tmp/dblivaer-verified`, logg `/private/tmp/dblivaer-verified.log`.
+   Den fysiske klokka er ikke i Xcodes enhetsliste; konkret avvisningsgrunn
+   ved Watch-installasjon er ennå ukjent. Begge Watch-profiler har samme fire
+   registrerte enheter; klokkens UDID må identifiseres før vi kan fastslå om
+   den mangler. Avventer brukerens forsøk fra Watch-appen etter nytt bygg.
+   Tidligere påstander om manglende konto/hengt CoreDevice bygget på kjøring
+   i sandkasse; enhetskommandoer og signert bygg fungerer med riktig tilgang.
+   Apple dokumenterer Developer Mode også for watchOS; motsatt råd var feil.
+   Ikke slett brukerdata eller endre signering på grunnlag av disse antakelsene.
 11. **AUTO · FERDIG** — Samkjør appnavn og overskriftsformat mellom app, push,
    widget, Live Activity og Apple Watch gjennom én delt tekstmodell og tester.
 12. **AUTO · FERDIG** — Samkjør statusbegreper, værikoner og farger mellom app,
