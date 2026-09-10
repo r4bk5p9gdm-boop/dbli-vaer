@@ -31,7 +31,7 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
 4. **BRUKER · FERDIG** — Sett vedlikeholdsarbeideren i kontinuerlig
    femminuttersrytme og bruk tilgjengelige resetter bare når en bruksgrense
    ellers stopper arbeidet.
-5. **AUTO · KLAR** — Pansre Live Activity-livsløpet: valg av neste hendelse,
+5. **AUTO · FERDIG** — Pansre Live Activity-livsløpet: valg av neste hendelse,
    foreldelse, avslutning, gjenåpning og regresjonstester.
 6. **AUTO · KLAR** — Pansre synkronisering med Apple Watch og widgets ved
    manglende nett, gammel prognose og raske stedsskifter.
@@ -52,6 +52,11 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-10: Pansret Live Activity-livsløpet. En startet aktivitet fortsetter
+  gjennom de siste ti minuttene og mens været pågår, men avsluttes straks når
+  regelen slås av, stedet ikke lenger kvalifiserer eller hendelsen avlyses eller
+  flyttes ut av nærhorisonten. Kommende status bruker nå nærmeste værhendelse
+  uavhengig av om pushens forvarseltid er passert. 42 av 42 tester bestod.
 - 2026-09-10: Endret den aktive vedlikeholdsarbeideren fra fire timer til hvert
   femte minutt. Tre resetter er autorisert ved faktisk bruksstopp; de brukes
   ikke før en grense er nådd.

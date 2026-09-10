@@ -11,11 +11,23 @@ enum LiveWeatherActivitySettings {
     }
 }
 
+enum LiveWeatherActivityPolicy {
+    static let earliestStart: TimeInterval = 10 * 60
+    static let latestStart: TimeInterval = 60 * 60
+
+    static func canStart(_ status: WeatherStatus, now: Date) -> Bool {
+        guard !status.isNow else { return false }
+        let seconds = status.eventAt.timeIntervalSince(now)
+        return seconds >= earliestStart && seconds <= latestStart
+    }
+
+    static func canContinue(_ status: WeatherStatus, now: Date) -> Bool {
+        status.isNow || (status.eventAt >= now && status.eventAt.timeIntervalSince(now) <= latestStart)
+    }
+}
+
 @MainActor
 enum LiveWeatherActivityManager {
-    private static let earliestStart: TimeInterval = 10 * 60
-    private static let latestStart: TimeInterval = 60 * 60
-
     private struct Candidate {
         let place: Place
         let rule: Rule
@@ -36,16 +48,23 @@ enum LiveWeatherActivityManager {
             return
         }
 
-        let candidate = bestCandidate(
+        let activities = Activity<WeatherActivityAttributes>.activities
+        let continuation = bestContinuationCandidate(
+            for: activities,
             places: places,
             forecasts: forecasts,
             nearbyPlaceIDs: nearbyPlaceIDs,
             now: now
         )
-        let activities = Activity<WeatherActivityAttributes>.activities
+        let candidate = continuation ?? bestStartCandidate(
+            places: places,
+            forecasts: forecasts,
+            nearbyPlaceIDs: nearbyPlaceIDs,
+            now: now
+        )
 
         guard let candidate else {
-            for activity in activities where activity.content.state.expectedEndAt <= now {
+            for activity in activities {
                 await activity.end(nil, dismissalPolicy: .immediate)
             }
             return
@@ -94,49 +113,92 @@ enum LiveWeatherActivityManager {
         }
     }
 
-    private static func bestCandidate(
+    private static func bestStartCandidate(
         places: [Place],
         forecasts: [UUID: [ForecastHour]],
         nearbyPlaceIDs: Set<UUID>,
         now: Date
     ) -> Candidate? {
-        places
+        sortedCandidates(
+            places
             .filter(\.areNotificationsEnabled)
             .flatMap { place in
                 place.rules.compactMap { rule -> Candidate? in
-                    guard rule.enabled,
-                          rule.type == .regn || rule.type == .sno,
-                          !rule.onlyWhenNearby || nearbyPlaceIDs.contains(place.id),
-                          let forecast = forecasts[place.id],
-                          let status = Planner.status(
-                            for: rule,
-                            forecast: forecast,
-                            frostMargin: place.localFrostMargin,
-                            now: now
-                          ),
-                          !status.isNow else { return nil }
-                    let seconds = status.eventAt.timeIntervalSince(now)
-                    guard seconds >= earliestStart && seconds <= latestStart else { return nil }
-                    let summary = precipitationSummary(
-                        rule: rule,
-                        eventAt: status.eventAt,
-                        forecast: forecast,
-                        possible: status.possible ?? false
-                    )
-                    return Candidate(
+                    makeCandidate(
                         place: place,
                         rule: rule,
-                        status: status,
-                        detail: summary.detail,
-                        expectedEndAt: summary.endAt
+                        forecast: forecasts[place.id],
+                        nearbyPlaceIDs: nearbyPlaceIDs,
+                        now: now,
+                        isEligible: LiveWeatherActivityPolicy.canStart
                     )
                 }
             }
-            .sorted {
-                if $0.status.eventAt != $1.status.eventAt { return $0.status.eventAt < $1.status.eventAt }
-                return severity($0.rule.type) > severity($1.rule.type)
-            }
-            .first
+        ).first
+    }
+
+    private static func bestContinuationCandidate(
+        for activities: [Activity<WeatherActivityAttributes>],
+        places: [Place],
+        forecasts: [UUID: [ForecastHour]],
+        nearbyPlaceIDs: Set<UUID>,
+        now: Date
+    ) -> Candidate? {
+        sortedCandidates(activities.compactMap { activity in
+            guard let place = places.first(where: { $0.id == activity.attributes.placeID }),
+                  place.areNotificationsEnabled,
+                  let rule = place.rules.first(where: { $0.id == activity.attributes.ruleID }) else { return nil }
+            return makeCandidate(
+                place: place,
+                rule: rule,
+                forecast: forecasts[place.id],
+                nearbyPlaceIDs: nearbyPlaceIDs,
+                now: now,
+                isEligible: LiveWeatherActivityPolicy.canContinue
+            )
+        }).first
+    }
+
+    private static func makeCandidate(
+        place: Place,
+        rule: Rule,
+        forecast: [ForecastHour]?,
+        nearbyPlaceIDs: Set<UUID>,
+        now: Date,
+        isEligible: (WeatherStatus, Date) -> Bool
+    ) -> Candidate? {
+        guard rule.enabled,
+              rule.type == .regn || rule.type == .sno,
+              !rule.onlyWhenNearby || nearbyPlaceIDs.contains(place.id),
+              let forecast,
+              let status = Planner.status(
+                for: rule,
+                forecast: forecast,
+                frostMargin: place.localFrostMargin,
+                now: now
+              ),
+              isEligible(status, now) else { return nil }
+        let summary = precipitationSummary(
+            rule: rule,
+            eventAt: status.eventAt,
+            forecast: forecast,
+            possible: status.possible ?? false
+        )
+        return Candidate(
+            place: place,
+            rule: rule,
+            status: status,
+            detail: summary.detail,
+            expectedEndAt: summary.endAt
+        )
+    }
+
+    private static func sortedCandidates(_ candidates: [Candidate]) -> [Candidate] {
+        candidates.sorted {
+            if $0.status.isNow != $1.status.isNow { return $0.status.isNow }
+            if $0.status.eventAt != $1.status.eventAt { return $0.status.eventAt < $1.status.eventAt }
+            return severity($0.rule.type) > severity($1.rule.type)
+        }
     }
 
     private static func precipitationSummary(

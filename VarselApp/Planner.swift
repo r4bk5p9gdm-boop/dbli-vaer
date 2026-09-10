@@ -276,9 +276,13 @@ enum Planner {
             }
         }
 
-        let result = plan(rule: rule, forecast: forecast, placeName: "", frostMargin: frostMargin, now: now)
-        guard let eventAt = result.eventAt, eventAt > now else { return nil }
-        let possible = result.possible
+        guard let nextRun = matchingRuns(rule: rule, forecast: forecast, frostMargin: frostMargin)
+            .first(where: { forecast[$0.lowerBound].time > now }) else { return nil }
+        let start = nextRun.lowerBound
+        let nextRadar = radarEvent(rule: rule, forecast: forecast, run: nextRun, now: now)
+        let eventAt = nextRadar?.date ?? forecast[start].time
+        guard eventAt > now else { return nil }
+        let possible = nextRadar == nil && isPossible(rule: rule, hour: forecast[start], frostMargin: frostMargin)
         let text = weatherAlertText(for: rule, eventAt: eventAt, referenceAt: now, possible: possible)
         return WeatherStatus(ruleID: rule.id, type: rule.type, text: rule.statusText(text), eventAt: eventAt, isNow: false, possible: possible)
     }

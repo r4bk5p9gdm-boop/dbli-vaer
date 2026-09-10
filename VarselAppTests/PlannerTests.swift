@@ -71,6 +71,64 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(result.alerts.first?.fireAt, hours[2].time)
     }
 
+    func testStatusKeepsNearEventAfterItsNotificationTimeHasPassed() {
+        var rule = Rule(type: .regn)
+        rule.threshold = 0.5
+        rule.leadMinutes = 120
+        let hours = forecast(values: [
+            (5, 0, 2, 80, 2),
+            (5, 1, 2, 80, 2),
+            (5, 0, 2, 80, 2),
+            (5, 1, 2, 80, 2),
+        ])
+        let now = base.addingTimeInterval(30 * 60)
+
+        let status = Planner.status(for: rule, forecast: hours, now: now)
+        let notificationPlan = Planner.plan(rule: rule, forecast: hours, placeName: "Namsos", now: now)
+
+        XCTAssertEqual(status?.eventAt, hours[1].time)
+        XCTAssertEqual(notificationPlan.eventAt, hours[3].time)
+    }
+
+    func testLiveActivityPolicyStartsNearEventAndContinuesCurrentEvent() {
+        let rule = Rule(type: .regn)
+        let near = WeatherStatus(
+            ruleID: rule.id,
+            type: .regn,
+            text: "Regn om en halvtime.",
+            eventAt: base.addingTimeInterval(30 * 60),
+            isNow: false
+        )
+        let tooSoon = WeatherStatus(
+            ruleID: rule.id,
+            type: .regn,
+            text: "Regn straks.",
+            eventAt: base.addingTimeInterval(5 * 60),
+            isNow: false
+        )
+        let movedAway = WeatherStatus(
+            ruleID: rule.id,
+            type: .regn,
+            text: "Regn senere.",
+            eventAt: base.addingTimeInterval(90 * 60),
+            isNow: false
+        )
+        let current = WeatherStatus(
+            ruleID: rule.id,
+            type: .regn,
+            text: "Regn nå.",
+            eventAt: base,
+            isNow: true
+        )
+
+        XCTAssertTrue(LiveWeatherActivityPolicy.canStart(near, now: base))
+        XCTAssertFalse(LiveWeatherActivityPolicy.canStart(tooSoon, now: base))
+        XCTAssertFalse(LiveWeatherActivityPolicy.canStart(current, now: base))
+        XCTAssertTrue(LiveWeatherActivityPolicy.canContinue(tooSoon, now: base))
+        XCTAssertTrue(LiveWeatherActivityPolicy.canContinue(current, now: base))
+        XCTAssertFalse(LiveWeatherActivityPolicy.canContinue(movedAway, now: base))
+    }
+
     func testClearSkyRequiresConfiguredDuration() {
         var rule = Rule(type: .sol)
         rule.threshold = 20
