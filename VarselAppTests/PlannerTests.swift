@@ -262,6 +262,16 @@ final class PlannerTests: XCTestCase {
 
     func testNorwegianNotificationCopy() {
         let reference = base
+        XCTAssertEqual(AppCopy.name, "D bli Vær!")
+        XCTAssertEqual(AppCopy.heading(placeName: "nerri Namsos"), "D bli Vær! nerri Namsos")
+        XCTAssertEqual(
+            AppCopy.weatherHeadline(weatherName: "Duggfall", placeName: "på Klinga"),
+            "D bli Duggfall! på Klinga"
+        )
+        XCTAssertEqual(
+            AppCopy.weatherHeadline(weatherName: "Regn", placeName: "nerri Namsos", possibility: "kan bli"),
+            "D kan bli Regn! nerri Namsos"
+        )
         XCTAssertEqual(NotificationCopy.title(for: Rule(type: .regn), possible: true), "D kan bli Regn!")
         XCTAssertEqual(NotificationCopy.title(for: Rule(type: .regn), placeName: "nerri Namsos", possible: true), "D kan bli Regn! nerri Namsos")
         XCTAssertEqual(

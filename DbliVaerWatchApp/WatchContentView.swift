@@ -10,7 +10,7 @@ struct WatchContentView: View {
                     List {
                         Section {
                             VStack(alignment: .leading, spacing: 6) {
-                                Text("D bli Vær!")
+                                Text(AppCopy.name)
                                     .font(.headline)
                                 Text(snapshot.place.nameWithPreposition)
                                     .font(.title3.weight(.semibold))
@@ -62,7 +62,7 @@ struct WatchContentView: View {
                     )
                 }
             }
-            .navigationTitle("D bli Vær!")
+            .navigationTitle(AppCopy.name)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { Task { await store.refresh() } } label: {
@@ -98,4 +98,3 @@ struct WatchContentView: View {
         return .gray
     }
 }
-

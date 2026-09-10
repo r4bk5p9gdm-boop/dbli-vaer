@@ -79,7 +79,7 @@ struct WeatherWidgetView: View {
                 .symbolRenderingMode(.palette)
                 .foregroundStyle(AlertType.regn.color, AlertType.sol.color)
                 .widgetAccentable()
-            Text(["D bli Vær!", entry.placeName].filter { !$0.isEmpty }.joined(separator: " "))
+            Text(AppCopy.heading(placeName: entry.placeName))
                 .font(.subheadline.weight(.bold))
                 .lineLimit(1)
                 .minimumScaleFactor(0.60)
@@ -194,7 +194,10 @@ struct WeatherLiveActivity: Widget {
                 }
                 DynamicIslandExpandedRegion(.bottom) {
                     VStack(alignment: .leading, spacing: 3) {
-                        Text("D bli \(context.attributes.weatherName)! \(context.attributes.placeName)")
+                        Text(AppCopy.weatherHeadline(
+                            weatherName: context.attributes.weatherName,
+                            placeName: context.attributes.placeName
+                        ))
                             .font(.headline)
                             .lineLimit(1)
                         Text(context.state.detail)
@@ -240,7 +243,10 @@ private struct WeatherLiveActivityView: View {
                 .foregroundStyle(type.color)
                 .frame(width: 40)
             VStack(alignment: .leading, spacing: 3) {
-                Text("D bli \(context.attributes.weatherName)! \(context.attributes.placeName)")
+                Text(AppCopy.weatherHeadline(
+                    weatherName: context.attributes.weatherName,
+                    placeName: context.attributes.placeName
+                ))
                     .font(.headline)
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)

@@ -48,9 +48,11 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    widgeten kontrolleres etter at iPhone er låst opp, appen er startet én gang
    og widgeten er valgt under Innstillinger > Generelt > CarPlay. Denne
    ventende enhetskontrollen blokkerer ikke AUTO-oppgavene nedenfor.
-11. **AUTO · KLAR** — Samkjør tekst, ikoner og begreper mellom app, push,
+11. **AUTO · FERDIG** — Samkjør appnavn og overskriftsformat mellom app, push,
+   widget, Live Activity og Apple Watch gjennom én delt tekstmodell og tester.
+12. **AUTO · KLAR** — Samkjør statusbegreper, værikoner og farger mellom app,
    widget, Live Activity og Apple Watch gjennom delte modeller og tester.
-12. **AUTO · KLAR** — Utvid før-lanseringstesten med kritiske ende-til-ende-
+13. **AUTO · KLAR** — Utvid før-lanseringstesten med kritiske ende-til-ende-
    scenarioer og dokumenter en repeterbar lanseringssjekk.
 
 ## Forslag som venter på godkjenning
@@ -59,6 +61,10 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-10: Samlet appnavnet og formatet for app- og værvarseltitler i én
+  felles tekstmodell. Hjemskjerm, oppstartsveiviser, push, iPhone-widget,
+  Live Activity, Watch-app og Watch-widget bruker nå samme kilde, og tekstens
+  mellomrom og preposisjon er låst med tester. 52 av 52 tester bestod.
 - 2026-09-10: Reduserte nettbruk og samtidighetsbelastning. Bakgrunnsjobben
   henter nå bare valgt sted og steder med aktive pushregler; manuell oppdatering
   henter fortsatt alle steder. Flere navn på samme koordinat deler én Yr/Nå-

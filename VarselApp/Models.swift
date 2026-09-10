@@ -1,5 +1,21 @@
 import SwiftUI
 
+enum AppCopy {
+    static let name = "D bli Vær!"
+
+    static func heading(placeName: String = "") -> String {
+        [name, placeName].filter { !$0.isEmpty }.joined(separator: " ")
+    }
+
+    static func weatherHeadline(
+        weatherName: String,
+        placeName: String = "",
+        possibility: String = "bli"
+    ) -> String {
+        ["D \(possibility) \(weatherName)!", placeName].filter { !$0.isEmpty }.joined(separator: " ")
+    }
+}
+
 enum AlertLanguageStyle: String, Codable, CaseIterable, Identifiable {
     case bokmal
     case inntrondersk

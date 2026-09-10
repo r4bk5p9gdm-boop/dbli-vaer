@@ -84,7 +84,7 @@ struct WatchWeatherWidgetView: View {
         VStack(alignment: .leading, spacing: 3) {
             HStack(spacing: 4) {
                 Image(systemName: icon).foregroundStyle(tint).widgetAccentable()
-                Text("D bli Vær!").font(.caption.bold()).widgetAccentable()
+                Text(AppCopy.name).font(.caption.bold()).widgetAccentable()
                 Spacer(minLength: 0)
                 Text(temperature).font(.caption.bold())
             }
@@ -111,7 +111,7 @@ struct WatchWeatherWidgetView: View {
 
     private var inlineText: String {
         if let status { return status.text }
-        guard let place = entry.snapshot?.place else { return "D bli Vær!" }
+        guard let place = entry.snapshot?.place else { return AppCopy.name }
         return "\(temperature) \(place.nameWithPreposition)"
     }
 }

@@ -359,7 +359,7 @@ private struct WeatherWordmark: View {
         .foregroundStyle(Color(red: 0.06, green: 0.12, blue: 0.22))
         .fixedSize()
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("D bli Vær!")
+        .accessibilityLabel(AppCopy.name)
     }
 }
 

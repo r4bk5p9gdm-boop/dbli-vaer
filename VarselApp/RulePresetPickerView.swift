@@ -300,7 +300,7 @@ struct OnboardingWizardView: View {
             Section {
                 VStack(alignment: .leading, spacing: 5) {
                     HStack {
-                        Text("D bli Vær! \(store.selected?.nameWithPreposition ?? "")")
+                        Text(AppCopy.heading(placeName: store.selected?.nameWithPreposition ?? ""))
                         Spacer()
                         Text("\(step) av 4")
                             .font(.caption.weight(.semibold))

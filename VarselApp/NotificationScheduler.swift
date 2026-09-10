@@ -22,11 +22,13 @@ enum NotificationCopy {
     static func title(for rule: Rule, possible: Bool = false, languageStyle: AlertLanguageStyle = .bokmal) -> String {
         let weather = alertWeatherName(for: rule)
         let possibility = possible && languageStyle == .bokmal ? "kan bli" : "bli"
-        return "D \(possibility) \(weather)!"
+        return AppCopy.weatherHeadline(weatherName: weather, possibility: possibility)
     }
 
     static func title(for rule: Rule, placeName: String, possible: Bool = false, languageStyle: AlertLanguageStyle = .bokmal) -> String {
-        let title = "\(title(for: rule, possible: possible, languageStyle: languageStyle)) \(placeName)"
+        let weather = alertWeatherName(for: rule)
+        let possibility = possible && languageStyle == .bokmal ? "kan bli" : "bli"
+        let title = AppCopy.weatherHeadline(weatherName: weather, placeName: placeName, possibility: possibility)
         return possible && languageStyle == .inntrondersk ? "\(title), sjer d ut som" : title
     }
 
