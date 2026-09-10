@@ -22,8 +22,8 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
 
 ## Nummerert kø
 
-1. **BRUKER · PÅGÅR** — Etabler kontinuerlig vedlikehold, Git-grunnlinje,
-   prioriteringsregler og rapportering.
+1. **BRUKER · FERDIG** — Etabler kontinuerlig vedlikehold, Git-grunnlinje,
+   prioriteringsregler og rapportering. Grunnlinje: `a991a0f`, 36 tester bestått.
 2. **AUTO · KLAR** — Pansre varslingsmotoren: tidsvinduer, tidssoner,
    duplikatdemping, nedbør–dugg-konflikter og grensen for lokale varsler.
 3. **AUTO · KLAR** — Pansre Live Activity-livsløpet: valg av neste hendelse,
@@ -47,4 +47,5 @@ Ingen.
 
 ## Ferdig
 
-Ingen ennå.
+- 2026-09-10: Git-grunnlinje og aktiv vedlikeholdsarbeider med fire timers
+  vurderingsrytme. Hele testpakken besto (36 av 36).
