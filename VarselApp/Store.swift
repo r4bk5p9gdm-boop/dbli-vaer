@@ -46,6 +46,7 @@ final class Store: ObservableObject {
             for id in Self.invalidatedForecastIDs(previous: oldValue, current: places) {
                 forecasts.removeValue(forKey: id)
                 forecastErrors.removeValue(forKey: id)
+                forecastUpdatedAt.removeValue(forKey: id)
             }
             save()
         }
@@ -55,6 +56,7 @@ final class Store: ObservableObject {
     @Published private(set) var forecastErrors: [UUID: String] = [:]
     @Published var log: [LogEntry] = [] { didSet { save() } }
     @Published var lastUpdate: Date?
+    private var forecastUpdatedAt: [UUID: Date] = [:]
     @Published var isRefreshing = false
     @Published var notificationsAuthorized: Bool?
     @Published var alertLanguageStyle: AlertLanguageStyle {
@@ -293,6 +295,7 @@ final class Store: ObservableObject {
                         successfulPlaceCount += matchingPlaces.count
                         for place in matchingPlaces {
                             forecasts[place.id] = forecast
+                            forecastUpdatedAt[place.id] = Date()
                             forecastErrors.removeValue(forKey: place.id)
                         }
                     case .failure(let error):
@@ -360,6 +363,7 @@ final class Store: ObservableObject {
             guard !Task.isCancelled,
                   !Self.currentRecipients(for: [place], in: places).isEmpty else { return }
             forecasts[place.id] = forecast
+            forecastUpdatedAt[place.id] = Date()
             forecastErrors.removeValue(forKey: place.id)
             lastUpdate = Date()
         } catch {
@@ -393,17 +397,32 @@ final class Store: ObservableObject {
         }
     }
 
+    static func widgetSnapshot(
+        place: Place?, forecast: [ForecastHour], updatedAt: Date?, cached: WidgetWeatherSnapshot?
+    ) -> WidgetWeatherSnapshot? {
+        guard let place else { return nil }
+        if !forecast.isEmpty, let updatedAt {
+            return WidgetWeatherSnapshot(place: place, forecast: forecast, updatedAt: updatedAt)
+        }
+        guard let cached, cached.place.id == place.id,
+              ForecastLocation(place: cached.place) == ForecastLocation(place: place),
+              !cached.forecast.isEmpty else { return nil }
+        return WidgetWeatherSnapshot(place: place, forecast: cached.forecast, updatedAt: cached.updatedAt)
+    }
+
     private func updateWidget() {
-        guard let place = selected else {
+        let snapshot = Self.widgetSnapshot(
+            place: selected, forecast: selectedForecast,
+            updatedAt: selected.flatMap { forecastUpdatedAt[$0.id] }, cached: SharedWidgetData.load()
+        )
+        guard let snapshot else {
             SharedWidgetData.clear()
             WatchSyncManager.shared.clear()
             WidgetCenter.shared.reloadAllTimelines()
             return
         }
-        let forecast = forecasts[place.id] ?? []
-        let updatedAt = lastUpdate ?? Date()
-        SharedWidgetData.save(place: place, forecast: forecast, updatedAt: updatedAt)
-        WatchSyncManager.shared.send(place: place, forecast: forecast, updatedAt: updatedAt)
+        SharedWidgetData.save(place: snapshot.place, forecast: snapshot.forecast, updatedAt: snapshot.updatedAt)
+        WatchSyncManager.shared.send(place: snapshot.place, forecast: snapshot.forecast, updatedAt: snapshot.updatedAt)
         WidgetCenter.shared.reloadAllTimelines()
     }
 

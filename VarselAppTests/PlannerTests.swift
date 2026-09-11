@@ -1096,6 +1096,32 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testWidgetFallbackKeepsActualForecastAgeAndCurrentName() throws {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let hours = forecast(values: [(10, 0, 1, 10, 5)])
+        let cached = WidgetWeatherSnapshot(place: place, forecast: hours, updatedAt: base)
+        var renamed = place
+        renamed.customName = "Hjemme"
+        let snapshot = try XCTUnwrap(Store.widgetSnapshot(place: renamed, forecast: [], updatedAt: nil, cached: cached))
+        XCTAssertEqual(snapshot.updatedAt, base)
+        XCTAssertEqual(snapshot.forecast, hours)
+        XCTAssertEqual(snapshot.place.customName, "Hjemme")
+        let fresh = Store.widgetSnapshot(place: renamed, forecast: hours, updatedAt: base.addingTimeInterval(60), cached: cached)
+        XCTAssertEqual(fresh?.updatedAt, base.addingTimeInterval(60))
+    }
+
+    @MainActor
+    func testWidgetFallbackRejectsOtherOrMovedPlaces() {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let cached = WidgetWeatherSnapshot(place: place, forecast: forecast(values: [(10, 0, 1, 10, 5)]), updatedAt: base)
+        var moved = place
+        moved.lat = 63
+        XCTAssertNil(Store.widgetSnapshot(place: moved, forecast: [], updatedAt: nil, cached: cached))
+        XCTAssertNil(Store.widgetSnapshot(place: Place(name: "Namsos", lat: 64, lon: 11), forecast: [], updatedAt: nil, cached: cached))
+        XCTAssertNil(Store.widgetSnapshot(place: nil, forecast: [], updatedAt: nil, cached: cached))
+    }
+
+    @MainActor
     func testForecastCacheInvalidatesRemovedAndMovedPlaces() {
         let old = Place(name: "Klinga", lat: 64, lon: 11)
         var moved = old

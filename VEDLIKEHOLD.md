@@ -95,11 +95,15 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    varslingsplan, widget/Watch-data og oppdateringstid. Feilmeldinger vises
    fortsatt. En bevisst tom stedsliste kan fortsatt rydde planen.
 25. **AUTO · ÅPEN** — Kontroller overlapp mellom full oppdatering og
-   bakgrunnsoppdatering, samt widget/Live Activity ved delvis manglende værdata.
+   bakgrunnsoppdatering, samt Live Activity ved delvis manglende værdata.
    Utvid også integrasjonstestene for kansellering midt i nettverkshenting.
 26. **AUTO · FERDIG** — Bufrede prognoser og hentefeil fjernes ved endrede
    koordinater eller sletting av sted, også ved direkte redigering av listen.
    Omdøping, regelendringer og sortering beholder gyldige værdata.
+27. **AUTO · FERDIG** — Widget/Watch bruker valgt steds faktiske hentetid,
+   ikke tidspunktet et annet sted ble oppdatert. Ved manglende data kan siste
+   delte prognose for samme sted/koordinater brukes med sin opprinnelige alder.
+   Data for et annet/flyttet sted brukes ikke; dagens navn og regler beholdes.
 
 ## Forslag som venter på godkjenning
 
@@ -107,6 +111,13 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-11: Widget/Watch får hentetid per sted, slik at vellykket henting
+  et annet sted ikke gjør gammel prognose tilsynelatende fersk. Ved oppstart
+  uten data brukes bare lagret prognose for samme sted/posisjon, med gammel
+  hentetid og dagens navn/regler. To regresjonstester dekker alder, ferske
+  data, omdøping, flytting, annet sted og tomt valg. 74 av 74 tester og samlet
+  iPhone/watchOS-bygg bestod. Ingen fysisk installasjon. Neste: overlappende
+  oppdateringer og Live Activity ved manglende data.
 - 2026-09-11: Endring av et steds koordinater fjerner nå gammel prognose og
   gammel hentefeil fra minnet. Samme vern gjelder direkte listeendringer og
   sletting, mens navn, regler, rekkefølge og avrunding innen API-presisjon
