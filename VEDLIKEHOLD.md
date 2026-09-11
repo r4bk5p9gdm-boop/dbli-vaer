@@ -41,20 +41,14 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    inkludert regler, steder, språkvalg og globale innstillinger.
 9. **AUTO · FERDIG** — Mål og forbedre unødvendig arbeid, nettbruk og samtidighet
    uten å endre synlig oppførsel.
-10. **BRUKER · UTSATT AV BRUKER FOR NATTEN · FYSISK WATCH-INSTALLASJON** —
-   Ingen enhetsleting, paring eller fysisk installasjon før Mathias ber om det.
-   Nattvedlikehold fortsetter med kode og tester. Nytt komplett bygg med
-   Xcode 27 RC er bestått og installert på iPhone. Innebygd Watch-app,
-   Watch-widget, AppIcon og signaturer er kontrollert. Bygg:
-   `/private/tmp/dblivaer-verified`, logg `/private/tmp/dblivaer-verified.log`.
-   Den fysiske klokka er ikke i Xcodes enhetsliste; konkret avvisningsgrunn
-   ved Watch-installasjon er ennå ukjent. Begge Watch-profiler har samme fire
-   registrerte enheter; klokkens UDID må identifiseres før vi kan fastslå om
-   den mangler. Avventer brukerens forsøk fra Watch-appen etter nytt bygg.
-   Tidligere påstander om manglende konto/hengt CoreDevice bygget på kjøring
-   i sandkasse; enhetskommandoer og signert bygg fungerer med riktig tilgang.
-   Apple dokumenterer Developer Mode også for watchOS; motsatt råd var feil.
-   Ikke slett brukerdata eller endre signering på grunnlag av disse antakelsene.
+10. **BRUKER · FERDIG · FYSISK WATCH-INSTALLASJON** — Etter brukerens
+   aktivering av utviklermodus og paring ble klokka synlig i Xcode. Loggen
+   viste 0xe8008015, og Watch-UDID manglet i profilene. Med brukerens tillatelse
+   registrerte Xcode klokka på eksisterende team 775WDN88WN; begge Watch-
+   profiler inneholder nå 00008310-0000FC6A3E6BA01E. Signert bygg bestod,
+   installasjon på fysisk Watch og iPhone bestod, og Watch-appen startet via
+   devicectl. Bygg/logg: `/private/tmp/dblivaer-watch-registered` og
+   `/private/tmp/dblivaer-watch-registered.log`. Ingen kontobytte eller sletting.
 11. **AUTO · FERDIG** — Samkjør appnavn og overskriftsformat mellom app, push,
    widget, Live Activity og Apple Watch gjennom én delt tekstmodell og tester.
 12. **AUTO · FERDIG** — Samkjør statusbegreper, værikoner og farger mellom app,
