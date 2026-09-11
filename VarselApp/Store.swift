@@ -301,7 +301,11 @@ final class Store: ObservableObject {
     func replan() async {
         guard !Task.isCancelled else { return }
         let alerts = Planner.planAll(places: places, forecasts: forecasts, nearbyPlaceIDs: nearbyPlaceIDs)
-        let scheduleResult = await NotificationScheduler.reschedule(alerts, languageStyle: alertLanguageStyle)
+        let scheduleResult = await NotificationScheduler.reschedule(
+            alerts, languageStyle: alertLanguageStyle, places: places,
+            missingForecastPlaceIDs: Set(places.filter { (forecasts[$0.id] ?? []).isEmpty }.map(\.id)),
+            nearbyPlaceIDs: nearbyPlaceIDs
+        )
         await LiveWeatherActivityManager.sync(
             places: places,
             forecasts: forecasts,

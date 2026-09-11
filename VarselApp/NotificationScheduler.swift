@@ -65,6 +65,28 @@ struct NotificationScheduleResult: Equatable {
     let firstScheduledAt: Date?
 }
 
+/// Persisted with a request so an offline refresh can retain only alerts
+/// whose rule and location still match the user's current settings.
+struct NotificationPlanContext: Codable, Hashable {
+    let placeID: UUID
+    let placeName: String
+    let latitude: Double
+    let longitude: Double
+    let frostMargin: Double
+    let rule: Rule
+    let languageStyle: AlertLanguageStyle
+
+    init(place: Place, rule: Rule, languageStyle: AlertLanguageStyle) {
+        placeID = place.id
+        placeName = place.nameWithPreposition
+        latitude = place.lat
+        longitude = place.lon
+        frostMargin = place.localFrostMargin
+        self.rule = rule
+        self.languageStyle = languageStyle
+    }
+}
+
 /// A complete replacement must finish before the next replacement removes
 /// pending requests. Actor isolation alone would still interleave at each add.
 @MainActor
@@ -92,6 +114,46 @@ final class NotificationSchedulingQueue {
 enum NotificationScheduler {
     @MainActor private static let schedulingQueue = NotificationSchedulingQueue()
     static let pendingNotificationLimit = 64
+    static let planContextKey = "weatherPlanContext"
+
+    static func nextFireDate(for request: UNNotificationRequest) -> Date? {
+        if let trigger = request.trigger as? UNTimeIntervalNotificationTrigger { return trigger.nextTriggerDate() }
+        if let trigger = request.trigger as? UNCalendarNotificationTrigger { return trigger.nextTriggerDate() }
+        return nil
+    }
+
+    static func nearestRequestIDs(_ dates: [(id: String, date: Date)]) -> Set<String> {
+        Set(dates.sorted {
+            $0.date == $1.date ? $0.id < $1.id : $0.date < $1.date
+        }.prefix(pendingNotificationLimit).map(\.id))
+    }
+
+    static func requestsToPreserve(
+        _ requests: [UNNotificationRequest],
+        places: [Place],
+        missingForecastPlaceIDs: Set<UUID>,
+        nearbyPlaceIDs: Set<UUID>,
+        languageStyle: AlertLanguageStyle,
+        now: Date
+    ) -> [UNNotificationRequest] {
+        requests.filter { request in
+            guard let date = nextFireDate(for: request), date > now,
+                  let data = request.content.userInfo[planContextKey] as? Data,
+                  let context = try? JSONDecoder().decode(NotificationPlanContext.self, from: data),
+                  missingForecastPlaceIDs.contains(context.placeID),
+                  let place = places.first(where: { $0.id == context.placeID }),
+                  place.areNotificationsEnabled,
+                  let rule = place.rules.first(where: { $0.id == context.rule.id }),
+                  rule.enabled, !rule.isDisplayOnly,
+                  !rule.onlyWhenNearby || nearbyPlaceIDs.contains(place.id)
+            else { return false }
+            return context == NotificationPlanContext(place: place, rule: rule, languageStyle: languageStyle)
+        }.sorted {
+            let first = nextFireDate(for: $0) ?? .distantFuture
+            let second = nextFireDate(for: $1) ?? .distantFuture
+            return first == second ? $0.identifier < $1.identifier : first < second
+        }.prefix(pendingNotificationLimit).map { $0 }
+    }
 
     static func requestPermission() async -> Bool {
         (try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])) ?? false
@@ -101,25 +163,47 @@ enum NotificationScheduler {
     @MainActor
     static func reschedule(
         _ alerts: [PlannedAlert],
-        languageStyle: AlertLanguageStyle = .bokmal
+        languageStyle: AlertLanguageStyle = .bokmal,
+        places: [Place] = [],
+        missingForecastPlaceIDs: Set<UUID> = [],
+        nearbyPlaceIDs: Set<UUID> = []
     ) async -> NotificationScheduleResult {
         await schedulingQueue.enqueue {
-            await replacePendingAlerts(alerts, languageStyle: languageStyle)
+            await replacePendingAlerts(
+                alerts, languageStyle: languageStyle, places: places,
+                missingForecastPlaceIDs: missingForecastPlaceIDs, nearbyPlaceIDs: nearbyPlaceIDs
+            )
         }.value
     }
 
     @MainActor
     private static func replacePendingAlerts(
         _ alerts: [PlannedAlert],
-        languageStyle: AlertLanguageStyle
+        languageStyle: AlertLanguageStyle,
+        places: [Place],
+        missingForecastPlaceIDs: Set<UUID>,
+        nearbyPlaceIDs: Set<UUID>
     ) async -> NotificationScheduleResult {
         let center = UNUserNotificationCenter.current()
-        center.removeAllPendingNotificationRequests()
+        let pending = await center.pendingNotificationRequests()
         let now = Date()
-        let requested = alertsToSchedule(alerts, now: now)
-        var scheduledCount = 0
+        var preserved = requestsToPreserve(
+            pending, places: places, missingForecastPlaceIDs: missingForecastPlaceIDs,
+            nearbyPlaceIDs: nearbyPlaceIDs, languageStyle: languageStyle, now: now
+        )
+        var requested = alertsToSchedule(alerts, now: now)
+        let nearestIDs = nearestRequestIDs(
+            preserved.compactMap { request in
+                nextFireDate(for: request).map { (id: request.identifier, date: $0) }
+            } + requested.map { (id: $0.id, date: $0.fireAt) }
+        )
+        preserved = preserved.filter { nearestIDs.contains($0.identifier) }
+        requested = requested.filter { nearestIDs.contains($0.id) }
+        let preservedIDs = Set(preserved.map(\.identifier))
+        center.removePendingNotificationRequests(withIdentifiers: pending.map(\.identifier).filter { !preservedIDs.contains($0) })
+        var scheduledCount = preserved.count
         var failedCount = 0
-        var firstScheduledAt: Date?
+        var firstScheduledAt = preserved.compactMap { nextFireDate(for: $0) }.min()
         for a in requested {
             let c = UNMutableNotificationContent()
             c.title = NotificationCopy.title(for: a.rule, placeName: a.placeName, possible: a.possible, languageStyle: languageStyle)
@@ -129,18 +213,22 @@ enum NotificationScheduler {
             c.threadIdentifier = a.rule.id.uuidString
             if let placeID = a.placeID {
                 c.userInfo = [NotificationRoute.placeIDKey: placeID.uuidString]
+                if let place = places.first(where: { $0.id == placeID }),
+                   let data = try? JSONEncoder().encode(NotificationPlanContext(place: place, rule: a.rule, languageStyle: languageStyle)) {
+                    c.userInfo[planContextKey] = data
+                }
             }
             let trigger = UNTimeIntervalNotificationTrigger(timeInterval: max(1, a.fireAt.timeIntervalSince(now)), repeats: false)
             do {
                 try await center.add(UNNotificationRequest(identifier: a.id, content: c, trigger: trigger))
                 scheduledCount += 1
-                if firstScheduledAt == nil { firstScheduledAt = a.fireAt }
+                firstScheduledAt = min(firstScheduledAt ?? a.fireAt, a.fireAt)
             } catch {
                 failedCount += 1
             }
         }
         return NotificationScheduleResult(
-            requestedCount: requested.count,
+            requestedCount: requested.count + preserved.count,
             scheduledCount: scheduledCount,
             failedCount: failedCount,
             firstScheduledAt: firstScheduledAt

@@ -1,4 +1,5 @@
 import XCTest
+import UserNotifications
 @testable import VarselApp
 
 final class PlannerTests: XCTestCase {
@@ -1092,6 +1093,71 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(saved.hiddenAlertTypes, [.dugg, .vind])
         XCTAssertEqual(saved.frostMargin, 2.5)
         XCTAssertTrue(saved.rules[0].onlyWhenNearby)
+    }
+
+    @MainActor
+    func testPreservedAndNewNotificationsShareChronologicalCapacity() {
+        let dates = (0..<80).reversed().map { (id: "request-\($0)", date: base.addingTimeInterval(Double($0))) }
+        let ids = NotificationScheduler.nearestRequestIDs(dates)
+        XCTAssertEqual(ids.count, 64)
+        XCTAssertTrue(ids.contains("request-0"))
+        XCTAssertTrue(ids.contains("request-63"))
+        XCTAssertFalse(ids.contains("request-64"))
+    }
+
+    @MainActor
+    func testOfflineNotificationPreservationRequiresUnchangedActiveRule() throws {
+        let rule = Rule(type: .regn)
+        let place = Place(name: "Klinga", lat: 64, lon: 11, rules: [rule])
+        let content = UNMutableNotificationContent()
+        content.userInfo[NotificationScheduler.planContextKey] = try JSONEncoder().encode(
+            NotificationPlanContext(place: place, rule: rule, languageStyle: .bokmal)
+        )
+        let trigger = UNCalendarNotificationTrigger(
+            dateMatching: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: base), repeats: false
+        )
+        let request = UNNotificationRequest(identifier: "offline", content: content, trigger: trigger)
+        func preserved(_ current: Place, missing: Set<UUID>? = nil, nearby: Set<UUID> = []) -> [UNNotificationRequest] {
+            NotificationScheduler.requestsToPreserve(
+                [request], places: [current], missingForecastPlaceIDs: missing ?? [place.id],
+                nearbyPlaceIDs: nearby, languageStyle: .bokmal, now: base.addingTimeInterval(-3600)
+            )
+        }
+        XCTAssertEqual(preserved(place).map(\.identifier), ["offline"])
+        XCTAssertTrue(preserved(place, missing: []).isEmpty)
+        var changed = place
+        changed.rules[0].threshold += 1
+        XCTAssertTrue(preserved(changed).isEmpty)
+        changed = place
+        changed.notificationsEnabled = false
+        XCTAssertTrue(preserved(changed).isEmpty)
+        changed = place
+        changed.rules[0].enabled = false
+        XCTAssertTrue(preserved(changed).isEmpty)
+        changed = place
+        changed.lat += 1
+        XCTAssertTrue(preserved(changed).isEmpty)
+        XCTAssertTrue(NotificationScheduler.requestsToPreserve(
+            [request], places: [], missingForecastPlaceIDs: [place.id], nearbyPlaceIDs: [],
+            languageStyle: .bokmal, now: base.addingTimeInterval(-3600)
+        ).isEmpty)
+        XCTAssertTrue(NotificationScheduler.requestsToPreserve(
+            [request], places: [place], missingForecastPlaceIDs: [place.id], nearbyPlaceIDs: [],
+            languageStyle: .inntrondersk, now: base.addingTimeInterval(-3600)
+        ).isEmpty)
+        XCTAssertTrue(NotificationScheduler.requestsToPreserve(
+            [request], places: [place], missingForecastPlaceIDs: [place.id], nearbyPlaceIDs: [],
+            languageStyle: .bokmal, now: base.addingTimeInterval(3600)
+        ).isEmpty)
+    }
+
+    @MainActor
+    func testOfflineNotificationPreservationRejectsUnverifiableRequests() {
+        let request = UNNotificationRequest(identifier: "legacy", content: UNMutableNotificationContent(), trigger: nil)
+        XCTAssertTrue(NotificationScheduler.requestsToPreserve(
+            [request], places: [], missingForecastPlaceIDs: [], nearbyPlaceIDs: [],
+            languageStyle: .bokmal, now: base
+        ).isEmpty)
     }
 
     @MainActor

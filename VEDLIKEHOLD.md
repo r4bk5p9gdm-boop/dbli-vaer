@@ -78,11 +78,11 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
 20. **AUTO · FERDIG** — App og bakgrunnsjobb bruker samme Store, med privat
    konstruktør som hindrer separate kopier. Bakgrunnsloggen kan dermed ikke
    skrive tilbake egne, foreldede steder/regler over forgrunnens endringer.
-21. **AUTO · ÅPEN** — Pansre delvis mislykket førstegangshenting og andre
-   replan-utløsere før værdata finnes: ikke erstatt gyldige varsler for steder
-   som mangler prognose. Fullstendig hentefeil er beskyttet i oppgave 24. Kontroller
-   også overlapp mellom full oppdatering og bakgrunnsoppdatering, og
-   invalidasjon av allerede bufrede prognoser ved koordinatendring.
+21. **AUTO · FERDIG** — Ved manglende prognose beholdes allerede planlagte
+   varsler når lagret regel/sted/språk fortsatt samsvarer. Nye varsler lagrer
+   denne konteksten i iOS-forespørselen; eldre forespørsler uten kontekst kan
+   ikke verifiseres og bevares ikke selektivt. Avslåtte, endrede, slettede og
+   ikke lenger nærliggende regler bevares ikke. Felles grense er 64 nærmeste.
 22. **AUTO · FERDIG** — Avbrutt oppdatering starter ikke nye hentebatcher,
    registrerer ikke kansellering som værfeil og sender ikke en ufullstendig
    prognose videre til varslingsplanlegging. En allerede påbegynt utskiftning
@@ -94,6 +94,10 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
 24. **AUTO · FERDIG** — Når alle forespurte steder feiler, behold eksisterende
    varslingsplan, widget/Watch-data og oppdateringstid. Feilmeldinger vises
    fortsatt. En bevisst tom stedsliste kan fortsatt rydde planen.
+25. **AUTO · ÅPEN** — Kontroller overlapp mellom full oppdatering og
+   bakgrunnsoppdatering, invalidasjon av allerede bufrede prognoser ved
+   koordinatendring, samt widget/Live Activity ved delvis manglende værdata.
+   Utvid også integrasjonstestene for kansellering midt i nettverkshenting.
 
 ## Forslag som venter på godkjenning
 
@@ -101,6 +105,13 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-11: Selektiv bevaring av lokale varsler når enkelte steder mangler
+  prognose, også ved oppstart/replanlegging. Lagret regelkontekst sammenlignes
+  med dagens sted, regel og språk før bevaring; gamle forespørsler uten denne
+  metadataen kan ikke bekreftes. Bevarte og nye varsler deler de 64 nærmeste
+  plassene, og loggen teller begge. Tre tester dekker regelendring, avslag,
+  sletting, flytting, språk, utløp, manglende metadata og kapasitet. 70 av 70
+  tester og samlet iPhone/watchOS-bygg bestod. Ingen fysisk installasjon.
 - 2026-09-11: En oppdatering der alle steder feiler returnerer nå feil uten
   å erstatte lokale varsler eller merke gamle data som nettopp oppdatert.
   Feiltekstene beholdes. To beslutningstester dekker full feil, delvis/full
