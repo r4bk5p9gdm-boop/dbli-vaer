@@ -1096,6 +1096,26 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testForecastCacheInvalidatesRemovedAndMovedPlaces() {
+        let old = Place(name: "Klinga", lat: 64, lon: 11)
+        var moved = old
+        moved.lon = 12
+        XCTAssertEqual(Store.invalidatedForecastIDs(previous: [old], current: [moved]), [old.id])
+        XCTAssertEqual(Store.invalidatedForecastIDs(previous: [old], current: []), [old.id])
+    }
+
+    @MainActor
+    func testForecastCacheSurvivesRenamingReorderingAndRuleEdits() {
+        let first = Place(name: "Klinga", lat: 64.409401, lon: 11)
+        let second = Place(name: "Namsos", lat: 64.46, lon: 11.49)
+        var edited = first
+        edited.customName = "Hjemme"
+        edited.lat = 64.409402
+        edited.rules = [Rule(type: .regn)]
+        XCTAssertTrue(Store.invalidatedForecastIDs(previous: [first, second], current: [second, edited]).isEmpty)
+    }
+
+    @MainActor
     func testPreservedAndNewNotificationsShareChronologicalCapacity() {
         let dates = (0..<80).reversed().map { (id: "request-\($0)", date: base.addingTimeInterval(Double($0))) }
         let ids = NotificationScheduler.nearestRequestIDs(dates)

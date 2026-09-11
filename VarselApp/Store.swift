@@ -41,7 +41,15 @@ final class Store: ObservableObject {
     // A separate instance can overwrite newer settings when its log is saved.
     static let shared = Store()
     static let forecastRequestConcurrencyLimit = 4
-    @Published var places: [Place] { didSet { save() } }
+    @Published var places: [Place] {
+        didSet {
+            for id in Self.invalidatedForecastIDs(previous: oldValue, current: places) {
+                forecasts.removeValue(forKey: id)
+                forecastErrors.removeValue(forKey: id)
+            }
+            save()
+        }
+    }
     @Published var selectedID: UUID? { didSet { save() } }
     @Published var forecasts: [UUID: [ForecastHour]] = [:]
     @Published private(set) var forecastErrors: [UUID: String] = [:]
@@ -218,6 +226,13 @@ final class Store: ObservableObject {
 
     static func groupedByForecastLocation(_ places: [Place]) -> [ForecastLocation: [Place]] {
         Dictionary(grouping: places, by: ForecastLocation.init(place:))
+    }
+
+    static func invalidatedForecastIDs(previous: [Place], current: [Place]) -> Set<UUID> {
+        Set(previous.filter { old in
+            guard let new = current.first(where: { $0.id == old.id }) else { return true }
+            return ForecastLocation(place: old) != ForecastLocation(place: new)
+        }.map(\.id))
     }
 
     /// Resolve against live places after a network suspension. A response for
