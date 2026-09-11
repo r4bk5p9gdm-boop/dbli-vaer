@@ -94,8 +94,7 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
 24. **AUTO · FERDIG** — Når alle forespurte steder feiler, behold eksisterende
    varslingsplan, widget/Watch-data og oppdateringstid. Feilmeldinger vises
    fortsatt. En bevisst tom stedsliste kan fortsatt rydde planen.
-25. **AUTO · ÅPEN** — Kontroller overlapp mellom full oppdatering og
-   bakgrunnsoppdatering, samt Live Activity ved delvis manglende værdata.
+25. **AUTO · ÅPEN** — Kontroller Live Activity ved delvis manglende værdata.
    Utvid også integrasjonstestene for kansellering midt i nettverkshenting.
 26. **AUTO · FERDIG** — Bufrede prognoser og hentefeil fjernes ved endrede
    koordinater eller sletting av sted, også ved direkte redigering av listen.
@@ -104,6 +103,14 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    ikke tidspunktet et annet sted ble oppdatert. Ved manglende data kan siste
    delte prognose for samme sted/koordinater brukes med sin opprinnelige alder.
    Data for et annet/flyttet sted brukes ikke; dagens navn og regler beholdes.
+28. **AUTO · FERDIG** — Full oppdatering og bakgrunnsoppdatering køes i
+   stedet for å rapportere en hoppet-over oppdatering som vellykket. Hver
+   jobb leser ferske steder ved start. Kansellering av en jobb stopper ikke
+   neste; en avbrutt jobb som venter, starter ikke nettverkshenting.
+29. **BRUKER · ÅPEN** — Undersøk hva som var varslet på Klinga natt til
+   11. september etter observert rim på biltak, søppeldunklokk og gress.
+   Bruk dette som grunnlag for forslag til lokal frostmargin. Ikke anta at
+   observert overflaterim er målt lufttemperatur; marginen er ikke endret.
 
 ## Forslag som venter på godkjenning
 
@@ -111,6 +118,12 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-11: Overlappende bakgrunns- og fulloppdateringer kjøres i rekkefølge
+  i stedet for å hoppe over den siste med et uriktig suksessresultat. Avbrudd
+  følger riktig jobb og stanser ikke neste. To kontrollerte asynkrone tester
+  dekker rekkefølge, feilresultat og kansellering både under venting og aktiv
+  jobb. 76 av 76 tester og samlet iPhone/watchOS-bygg bestod. Ingen fysisk
+  installasjon. Brukerens frostobservasjon er neste prioritet, oppgave 29.
 - 2026-09-11: Widget/Watch får hentetid per sted, slik at vellykket henting
   et annet sted ikke gjør gammel prognose tilsynelatende fersk. Ved oppstart
   uten data brukes bare lagret prognose for samme sted/posisjon, med gammel

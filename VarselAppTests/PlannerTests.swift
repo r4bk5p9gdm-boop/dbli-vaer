@@ -1096,6 +1096,62 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testCancellingActiveRefreshDoesNotCancelFollowingRefresh() async {
+        let queue = ForecastRefreshQueue()
+        let started = expectation(description: "Active refresh started")
+        let active = queue.enqueue {
+            started.fulfill()
+            do {
+                try await Task.sleep(nanoseconds: 60_000_000_000)
+                return true
+            } catch { return false }
+        }
+        await fulfillment(of: [started], timeout: 2)
+        let following = queue.enqueue { true }
+        active.cancel()
+        let activeResult = await active.value
+        let followingResult = await following.value
+        XCTAssertFalse(activeResult)
+        XCTAssertTrue(followingResult)
+    }
+
+    @MainActor
+    func testOverlappingRefreshesRunInOrderAndSkipCancelledWaiter() async {
+        let queue = ForecastRefreshQueue()
+        let started = expectation(description: "First refresh suspended")
+        var resume: CheckedContinuation<Void, Never>?
+        var events: [String] = []
+        let first = queue.enqueue {
+            events.append("background-start")
+            await withCheckedContinuation { continuation in
+                resume = continuation
+                started.fulfill()
+            }
+            events.append("background-end")
+            return false
+        }
+        await fulfillment(of: [started], timeout: 2)
+        let cancelled = queue.enqueue {
+            events.append("cancelled")
+            return true
+        }
+        cancelled.cancel()
+        let full = queue.enqueue {
+            events.append("full-refresh")
+            return true
+        }
+        XCTAssertEqual(events, ["background-start"])
+        resume?.resume()
+        let firstResult = await first.value
+        let cancelledResult = await cancelled.value
+        let fullResult = await full.value
+        XCTAssertFalse(firstResult)
+        XCTAssertFalse(cancelledResult)
+        XCTAssertTrue(fullResult)
+        XCTAssertEqual(events, ["background-start", "background-end", "full-refresh"])
+    }
+
+    @MainActor
     func testWidgetFallbackKeepsActualForecastAgeAndCurrentName() throws {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let hours = forecast(values: [(10, 0, 1, 10, 5)])

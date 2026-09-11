@@ -35,6 +35,28 @@ struct ForecastLocation: Hashable {
     var longitude: Double { Double(longitudeE4) / 10_000 }
 }
 
+/// Serialize full and background refreshes without falsely reporting success
+/// for a refresh that was skipped. Each operation reads live places on start.
+@MainActor
+final class ForecastRefreshQueue {
+    private var tail: Task<Bool, Never>?
+    private var generation = 0
+
+    func enqueue(_ operation: @escaping @MainActor () async -> Bool) -> Task<Bool, Never> {
+        let previous = tail
+        generation += 1
+        let currentGeneration = generation
+        let task = Task { @MainActor in
+            defer { if generation == currentGeneration { tail = nil } }
+            _ = await previous?.value
+            guard !Task.isCancelled else { return false }
+            return await operation()
+        }
+        tail = task
+        return task
+    }
+}
+
 @MainActor
 final class Store: ObservableObject {
     // Foreground and background work must share live rules and forecasts.
@@ -72,6 +94,7 @@ final class Store: ObservableObject {
     private let launchPlacesVersionKey = "varsel.launchPlacesVersion"
     private let launchPlacesVersion = 9
     private var proximityMonitor: ProximityMonitor!
+    private let refreshQueue = ForecastRefreshQueue()
 
     static var launchPlaces: [Place] {
         var weekendSun = Rule(type: .sol)
@@ -255,7 +278,16 @@ final class Store: ObservableObject {
     @discardableResult
     func refreshAll(backgroundOnly: Bool = false) async -> Bool {
         guard !Task.isCancelled else { return false }
-        guard !isRefreshing else { return true }
+        let work = refreshQueue.enqueue { await self.performRefresh(backgroundOnly: backgroundOnly) }
+        return await withTaskCancellationHandler {
+            await work.value
+        } onCancel: {
+            work.cancel()
+        }
+    }
+
+    private func performRefresh(backgroundOnly: Bool) async -> Bool {
+        guard !Task.isCancelled else { return false }
         isRefreshing = true
         defer { isRefreshing = false }
 
