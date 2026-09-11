@@ -5,6 +5,52 @@ import UserNotifications
 final class PlannerTests: XCTestCase {
     private let base = Date(timeIntervalSince1970: 2_000_000_000)
 
+    func testLocalAdjustmentPreservesYrAndDoesNotAccumulate() throws {
+        let hour = ForecastHour(time: base, temp: 4, precip: 0, wind: 1, cloud: 0, dew: 1)
+        let local = hour.locallyAdjusted(by: -2)
+        XCTAssertEqual(local.temp, 2)
+        XCTAssertEqual(local.yrTemperature, 4)
+        XCTAssertEqual(local.locallyAdjusted(by: -2).temp, 2)
+        XCTAssertEqual(local.locallyAdjusted(by: 0), hour)
+        let frost = Rule(type: .frost)
+        XCTAssertFalse(frost.matches(local))
+        XCTAssertTrue(frost.matches(local, frostMargin: 2.5))
+        var place = Place(name: "Test", lat: 64, lon: 11)
+        place.temperatureOffset = -2
+        let decoded = try JSONDecoder().decode(Place.self, from: JSONEncoder().encode(place))
+        XCTAssertEqual(decoded.localTemperatureOffset, -2)
+    }
+
+    func testCalibrationKeepsEvidenceAfterRollingHistoryExpires() throws {
+        let place = Place(name: "Test", lat: 64, lon: 11)
+        let hour = ForecastHour(time: base, temp: 4, precip: 0, wind: 1, cloud: 0, dew: 1)
+        let old = CalibrationForecast(place: place, fetchedAt: base.addingTimeInterval(-3600), hours: [hour])
+        let future = CalibrationForecast(place: place, fetchedAt: base.addingTimeInterval(60), hours: [hour.locallyAdjusted(by: 8)])
+        var history = CalibrationHistory(forecasts: [old, future])
+        let observation = history.observation(place: place, at: base, temperature: 1, frost: nil, surface: "", now: base)
+        XCTAssertEqual(observation.forecastFetchedAt, old.fetchedAt)
+        XCTAssertEqual(observation.suggestedTemperatureOffset, -3)
+        history.observations = [observation]
+        history.prune(now: base.addingTimeInterval(49 * 3600))
+        XCTAssertTrue(history.forecasts.isEmpty)
+        let decoded = try JSONDecoder().decode(CalibrationHistory.self, from: JSONEncoder().encode(history))
+        XCTAssertEqual(decoded.observations.first?.evidence.first?.temp, 4)
+    }
+
+    func testFrostObservationUsesForecastFromBeforeNight() {
+        let morning = Calendar.current.startOfDay(for: base).addingTimeInterval(7 * 3600)
+        let place = Place(name: "Test", lat: 64, lon: 11)
+        let hour = ForecastHour(time: morning.addingTimeInterval(-3600), temp: 3, precip: 0, wind: 1, cloud: 0, dew: 1)
+        let evening = CalibrationForecast(place: place, fetchedAt: morning.addingTimeInterval(-10 * 3600), hours: [hour])
+        let latest = CalibrationForecast(place: place, fetchedAt: morning.addingTimeInterval(-1800), hours: [hour])
+        let history = CalibrationHistory(forecasts: [evening, latest])
+        let observed = history.observation(place: place, at: morning, temperature: nil, frost: true, surface: "Gress", now: morning)
+        XCTAssertEqual(observed.forecastFetchedAt, evening.fetchedAt)
+        XCTAssertEqual(observed.evidence.count, 1)
+        XCTAssertNil(observed.suggestedTemperatureOffset)
+        XCTAssertTrue(CalibrationHistory().observation(place: place, at: morning, temperature: nil, frost: true, surface: "Gress", now: morning).evidence.isEmpty)
+    }
+
     private func forecast(values: [(temp: Double, precip: Double, wind: Double, cloud: Double, dew: Double)]) -> [ForecastHour] {
         values.enumerated().map { index, value in
             ForecastHour(

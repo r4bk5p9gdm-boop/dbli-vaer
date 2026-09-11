@@ -261,9 +261,10 @@ enum Planner {
             return "Duggpunkt \(number(hour.dew))° · \(number(gap))° fra lufta"
         case .frost:
             let margin = place.localFrostMargin > 0 ? " · lokal margin +\(number(place.localFrostMargin))°" : ""
-            return "Yr melder \(number(hour.temp))°\(margin)"
+            let label = hour.yrTemperature == nil ? "Yr melder" : "Lokalt anslag"
+            return "\(label) \(number(hour.temp))°\(margin)"
         case .temperatur:
-            return "Yr melder \(number(hour.temp))°"
+            return "\(hour.yrTemperature == nil ? "Yr melder" : "Lokalt anslag") \(number(hour.temp))°"
         case .vind:
             return "Vindkast \(number(hour.effectiveWind)) m/s · \(windStrengthLabel(for: hour.effectiveWind))"
         case .sol:
@@ -382,8 +383,9 @@ enum Planner {
             return "\(level.guidance) Opp mot \(strongest.formatted(.number.precision(.fractionLength(0...1)))) m/s (\(windStrengthLabel(for: strongest))) i \(durationText)."
         case .frost:
             let lowest = hours.map(\.temp).min() ?? 0
+            let label = hours.contains { $0.yrTemperature != nil } ? "Lokalt anslag ned mot" : "Yr melder ned mot"
             if frostMargin > 0 {
-                return "Yr melder ned mot \(lowest.formatted(.number.precision(.fractionLength(0...1))))°. Lokal frostmargin er +\(frostMargin.formatted(.number.precision(.fractionLength(0...1))))°."
+                return "\(label) \(lowest.formatted(.number.precision(.fractionLength(0...1))))°. Lokal frostmargin er +\(frostMargin.formatted(.number.precision(.fractionLength(0...1))))°."
             }
             return "Ned mot \(lowest.formatted(.number.precision(.fractionLength(0...1))))° i \(durationText)."
         case .temperatur:

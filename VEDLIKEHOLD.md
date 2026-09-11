@@ -107,10 +107,12 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    stedet for å rapportere en hoppet-over oppdatering som vellykket. Hver
    jobb leser ferske steder ved start. Kansellering av en jobb stopper ikke
    neste; en avbrutt jobb som venter, starter ikke nettverkshenting.
-29. **BRUKER · ÅPEN** — Undersøk hva som var varslet på Klinga natt til
-   11. september etter observert rim på biltak, søppeldunklokk og gress.
-   Bruk dette som grunnlag for forslag til lokal frostmargin. Ikke anta at
-   observert overflaterim er målt lufttemperatur; marginen er ikke endret.
+29. **BRUKER · UTREDET** — Nattens prognose for Klinga ble ikke funnet lokalt,
+   og kan ikke tallfestes fra rimobservasjonen. Frostmarginen er ikke endret.
+30. **BRUKER · FERDIG** — Separat lokal temperaturjustering per lagret sted,
+   rullerende 48-timers prognosehistorikk og manuell temperatur/frostregistrering.
+   Observasjoner beholder nødvendig prognosegrunnlag etter opprydding. Målt
+   avvik vises uten automatisk endring; Netatmo og kurvejustering er utsatt.
 
 ## Forslag som venter på godkjenning
 
@@ -118,6 +120,15 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-11: Lokal temperaturjustering er separat fra frostmargin og bruker
+  bevart Yr-original slik at endringer aldri summeres flere ganger. Nytt
+  skjema i stedets varselinnstillinger registrerer lufttemperatur/tid og
+  frost/overflate. Prognoseversjoner beholdes i 48 timer, med opprydding ved
+  oppstart og oppdatering også ved nettfeil. Observasjoner lagrer relevant
+  sammenligningsgrunnlag separat; frost bruker prognose fra før natten og
+  målt temperatur viser avvik uten automatisk endring. Registreringer kan
+  slettes. Historikk begynner først ved nye hentinger. Netatmo/kurver utsatt.
+  79 av 79 tester og samlet iPhone/watchOS-bygg bestod. Ingen fysisk installasjon.
 - 2026-09-11: Overlappende bakgrunns- og fulloppdateringer kjøres i rekkefølge
   i stedet for å hoppe over den siste med et uriktig suksessresultat. Avbrudd
   følger riktig jobb og stanser ikke neste. To kontrollerte asynkrone tester

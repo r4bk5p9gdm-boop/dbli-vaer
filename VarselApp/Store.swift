@@ -1,6 +1,88 @@
 import Foundation
 import WidgetKit
 
+struct CalibrationForecast: Codable, Identifiable {
+    var id = UUID()
+    let place: Place
+    let fetchedAt: Date
+    let hours: [ForecastHour]
+}
+
+struct LocalWeatherObservation: Codable, Identifiable {
+    var id = UUID()
+    let place: Place
+    let observedAt: Date
+    let registeredAt: Date
+    let measuredTemperature: Double?
+    let frost: Bool?
+    let surface: String
+    let forecastFetchedAt: Date?
+    let evidence: [ForecastHour]
+    let nightForecast: CalibrationForecast?
+
+    var suggestedTemperatureOffset: Double? {
+        guard let measuredTemperature, let hour = evidence.first else { return nil }
+        return measuredTemperature - (hour.yrTemperature ?? hour.temp)
+    }
+}
+
+struct CalibrationHistory: Codable {
+    var forecasts: [CalibrationForecast] = []
+    var observations: [LocalWeatherObservation] = []
+    static let retention: TimeInterval = 48 * 3600
+    private static let key = "varsel.calibrationHistory.v1"
+
+    mutating func prune(now: Date) {
+        forecasts.removeAll { $0.fetchedAt < now.addingTimeInterval(-Self.retention) || $0.fetchedAt > now }
+    }
+
+    mutating func record(place: Place, hours: [ForecastHour], fetchedAt: Date) {
+        prune(now: fetchedAt)
+        guard !hours.isEmpty else { save(); return }
+        // Retain forecast versions: a later update must not erase what was
+        // available when an earlier observation was made.
+        forecasts.append(CalibrationForecast(place: place, fetchedAt: fetchedAt,
+            hours: hours.filter { $0.time <= fetchedAt.addingTimeInterval(Self.retention) }.map { $0.locallyAdjusted(by: 0) }))
+        save()
+    }
+
+    func observation(place: Place, at date: Date, temperature: Double?, frost: Bool?, surface: String, now: Date = Date()) -> LocalWeatherObservation {
+        let nightStart = Calendar.current.startOfDay(for: date).addingTimeInterval(-3600)
+        let cutoff = temperature == nil && frost != nil ? nightStart : date
+        let source = forecasts.filter {
+            $0.place.id == place.id && ForecastLocation(place: $0.place) == ForecastLocation(place: place)
+                && $0.fetchedAt <= cutoff && $0.fetchedAt >= now.addingTimeInterval(-Self.retention)
+        }.max { $0.fetchedAt < $1.fetchedAt }
+        let evidence: [ForecastHour]
+        if temperature != nil {
+            let nearest = source?.hours.min { abs($0.time.timeIntervalSince(date)) < abs($1.time.timeIntervalSince(date)) }
+            evidence = nearest.map { abs($0.time.timeIntervalSince(date)) <= 1800 ? [$0] : [] } ?? []
+        } else {
+            evidence = source?.hours.filter { $0.time >= nightStart && $0.time <= date } ?? []
+        }
+        let nightSource = frost == nil ? nil : forecasts.filter {
+            $0.place.id == place.id && ForecastLocation(place: $0.place) == ForecastLocation(place: place)
+                && $0.fetchedAt <= nightStart && $0.fetchedAt >= now.addingTimeInterval(-Self.retention)
+        }.max { $0.fetchedAt < $1.fetchedAt }
+        let night = nightSource.map { CalibrationForecast(place: $0.place, fetchedAt: $0.fetchedAt,
+            hours: $0.hours.filter { $0.time >= nightStart && $0.time <= date }) }
+        return LocalWeatherObservation(place: source?.place ?? place, observedAt: date, registeredAt: now,
+            measuredTemperature: temperature, frost: frost, surface: surface,
+            forecastFetchedAt: source?.fetchedAt, evidence: evidence, nightForecast: night)
+    }
+
+    func save() {
+        if let data = try? JSONEncoder().encode(self) { UserDefaults.standard.set(data, forKey: Self.key) }
+    }
+
+    static func load() -> Self {
+        guard let data = UserDefaults.standard.data(forKey: key), var history = try? JSONDecoder().decode(Self.self, from: data) else { return Self() }
+        history.prune(now: Date())
+        history.save()
+        return history
+    }
+}
+
 struct PersistedStoreState: Codable {
     var places: [Place]
     var selectedID: UUID?
@@ -74,7 +156,16 @@ final class Store: ObservableObject {
         }
     }
     @Published var selectedID: UUID? { didSet { save() } }
-    @Published var forecasts: [UUID: [ForecastHour]] = [:]
+    @Published private var rawForecasts: [UUID: [ForecastHour]] = [:]
+    var forecasts: [UUID: [ForecastHour]] {
+        get {
+            rawForecasts.map { id, hours in
+                (id, hours.map { $0.locallyAdjusted(by: places.first(where: { $0.id == id })?.localTemperatureOffset ?? 0) })
+            }.reduce(into: [:]) { $0[$1.0] = $1.1 }
+        }
+        set { rawForecasts = newValue.mapValues { $0.map { $0.locallyAdjusted(by: 0) } } }
+    }
+    @Published private(set) var calibration = CalibrationHistory.load()
     @Published private(set) var forecastErrors: [UUID: String] = [:]
     @Published var log: [LogEntry] = [] { didSet { save() } }
     @Published var lastUpdate: Date?
@@ -240,6 +331,17 @@ final class Store: ObservableObject {
         proximityMonitor.configure(for: places)
     }
 
+    func recordObservation(place: Place, at date: Date, temperature: Double?, frost: Bool?, surface: String) {
+        calibration.prune(now: Date())
+        calibration.observations.insert(calibration.observation(place: place, at: date, temperature: temperature, frost: frost, surface: surface), at: 0)
+        calibration.save()
+    }
+
+    func removeObservation(id: UUID) {
+        calibration.observations.removeAll { $0.id == id }
+        calibration.save()
+    }
+
     static func placesNeededForBackgroundRefresh(_ places: [Place], selectedID: UUID?) -> [Place] {
         places.filter { place in
             place.id == selectedID || (
@@ -288,6 +390,8 @@ final class Store: ObservableObject {
 
     private func performRefresh(backgroundOnly: Bool) async -> Bool {
         guard !Task.isCancelled else { return false }
+        calibration.prune(now: Date())
+        calibration.save()
         isRefreshing = true
         defer { isRefreshing = false }
 
@@ -328,6 +432,7 @@ final class Store: ObservableObject {
                         for place in matchingPlaces {
                             forecasts[place.id] = forecast
                             forecastUpdatedAt[place.id] = Date()
+                            calibration.record(place: place, hours: forecast, fetchedAt: Date())
                             forecastErrors.removeValue(forKey: place.id)
                         }
                     case .failure(let error):
@@ -396,6 +501,7 @@ final class Store: ObservableObject {
                   !Self.currentRecipients(for: [place], in: places).isEmpty else { return }
             forecasts[place.id] = forecast
             forecastUpdatedAt[place.id] = Date()
+            calibration.record(place: place, hours: forecast, fetchedAt: Date())
             forecastErrors.removeValue(forKey: place.id)
             lastUpdate = Date()
         } catch {
@@ -439,7 +545,7 @@ final class Store: ObservableObject {
         guard let cached, cached.place.id == place.id,
               ForecastLocation(place: cached.place) == ForecastLocation(place: place),
               !cached.forecast.isEmpty else { return nil }
-        return WidgetWeatherSnapshot(place: place, forecast: cached.forecast, updatedAt: cached.updatedAt)
+        return WidgetWeatherSnapshot(place: place, forecast: cached.forecast.map { $0.locallyAdjusted(by: place.localTemperatureOffset) }, updatedAt: cached.updatedAt)
     }
 
     private func updateWidget() {

@@ -408,6 +408,15 @@ struct ForecastHour: Codable, Identifiable, Hashable {
     var temperatureLow: Double? = nil
     var temperatureHigh: Double? = nil
     var radarSamples: [PrecipitationSample]? = nil
+    var yrTemperature: Double? = nil
+
+    func locallyAdjusted(by offset: Double) -> ForecastHour {
+        var copy = self
+        let original = yrTemperature ?? temp
+        copy.temp = original + offset
+        copy.yrTemperature = offset == 0 ? nil : original
+        return copy
+    }
     var id: Date { time }
 
     var precipitationRate: Double {
@@ -471,13 +480,15 @@ struct Place: Codable, Identifiable, Hashable {
     var rulesOnlyDisplay: Bool? = nil
     var hiddenAlertTypes: Set<AlertType>? = nil
     var frostMargin: Double? = nil
+    var temperatureOffset: Double? = nil
+    var localTemperatureOffset: Double { min(10, max(-10, temperatureOffset ?? 0)) }
 
     var areNotificationsEnabled: Bool { notificationsEnabled ?? true }
     var showsOnlyRuleAlerts: Bool { rulesOnlyDisplay ?? false }
     var localFrostMargin: Double { max(0, frostMargin ?? 0) }
 
     private enum CodingKeys: String, CodingKey {
-        case id, name, customName, lat, lon, preposition, rules, notificationsEnabled, rulesOnlyDisplay, hiddenAlertTypes, frostMargin
+        case id, name, customName, lat, lon, preposition, rules, notificationsEnabled, rulesOnlyDisplay, hiddenAlertTypes, frostMargin, temperatureOffset
     }
 
     init(
@@ -521,6 +532,7 @@ struct Place: Codable, Identifiable, Hashable {
         hiddenAlertTypes = (try? values.decode([LossyDecodable<AlertType>].self, forKey: .hiddenAlertTypes))
             .map { Set($0.compactMap(\.value)) }
         frostMargin = try? values.decode(Double.self, forKey: .frostMargin)
+        temperatureOffset = try? values.decode(Double.self, forKey: .temperatureOffset)
     }
 
     var resolvedPreposition: PlacePreposition {

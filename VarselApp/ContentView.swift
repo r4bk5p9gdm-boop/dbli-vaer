@@ -1,5 +1,88 @@
 import SwiftUI
 
+struct LocalCalibrationView: View {
+    @EnvironmentObject var store: Store
+    let placeID: UUID
+    @State private var date = Date()
+    @State private var temperature = ""
+    @State private var frost = "Vet ikke"
+    @State private var surface = "Gress"
+    @State private var saved = false
+
+    private var measured: Double? { Double(temperature.replacingOccurrences(of: ",", with: ".").trimmingCharacters(in: .whitespaces)) }
+    private var valid: Bool {
+        (temperature.isEmpty || measured.map { $0.isFinite && (-60...60).contains($0) } == true)
+            && (measured != nil || frost != "Vet ikke")
+    }
+
+    var body: some View {
+        Form {
+            if let place = store.places.first(where: { $0.id == placeID }) {
+                Section("Observasjon \(place.nameWithPreposition)") {
+                    DatePicker("Tidspunkt", selection: $date, in: Date().addingTimeInterval(-48 * 3600)...Date())
+                    TextField("Målt lufttemperatur (valgfritt)", text: $temperature)
+                        .keyboardType(.numbersAndPunctuation)
+                    Picker("Frost i natt", selection: $frost) {
+                        ForEach(["Vet ikke", "Ja", "Nei"], id: \.self) { Text($0) }
+                    }
+                    if frost == "Ja" {
+                        Picker("Hvor?", selection: $surface) {
+                            ForEach(["Gress", "Bil/tak", "Gress og bil/tak", "Annet"], id: \.self) { Text($0) }
+                        }
+                    }
+                    Text("Temperatur gjelder valgt tidspunkt. Frost gjelder natten før dette tidspunktet. Rim på en overflate er ikke en måling av lufttemperatur.")
+                        .font(.caption).foregroundStyle(.secondary)
+                    Button("Lagre observasjon") {
+                        store.recordObservation(place: place, at: date, temperature: measured,
+                            frost: frost == "Vet ikke" ? nil : frost == "Ja", surface: frost == "Ja" ? surface : "")
+                        temperature = ""; frost = "Vet ikke"; saved = true
+                    }.disabled(!valid)
+                }
+                Section("Registreringer") {
+                    let observations = store.calibration.observations.filter { $0.place.id == placeID }
+                    if observations.isEmpty { Text("Ingen registreringer ennå.").foregroundStyle(.secondary) }
+                    ForEach(observations) { observation in
+                        DisclosureGroup {
+                            if let offset = observation.suggestedTemperatureOffset {
+                                Text("Målt avvik fra Yr: \(offset.formatted(.number.precision(.fractionLength(1)))) °C")
+                                Text("Én måling er ikke nok til å fastslå en fast justering. Endre innstillingen manuelt når du har nok grunnlag.")
+                                    .font(.caption).foregroundStyle(.secondary)
+                            }
+                            if let frost = observation.frost { Text(frost ? "Frost: \(observation.surface)" : "Ingen frost observert") }
+                            if observation.measuredTemperature != nil, observation.frost != nil {
+                                if let night = observation.nightForecast, let minimum = night.hours.map(\.temp).min() {
+                                    Text("Nattens varslede minimum: \(minimum.formatted()) °C (hentet \(night.fetchedAt.formatted(date: .abbreviated, time: .shortened)))")
+                                        .font(.caption)
+                                } else { Text("Ingen prognose fra før natten lagret.").font(.caption) }
+                            }
+                            if observation.evidence.isEmpty { Text("Ingen lagret prognose for sammenligning.").foregroundStyle(.secondary) }
+                            if let fetched = observation.forecastFetchedAt {
+                                Text("Prognose hentet \(fetched.formatted(date: .abbreviated, time: .shortened))").font(.caption)
+                            }
+                            ForEach(observation.evidence) { hour in
+                                Text("\(hour.time.formatted(date: .omitted, time: .shortened)) · Yr \(hour.temp.formatted(.number.precision(.fractionLength(1))))° · duggpunkt \(hour.dew.formatted(.number.precision(.fractionLength(1))))° · vind \(hour.wind.formatted()) m/s · skyer \(hour.cloud.formatted()) %")
+                                    .font(.caption)
+                            }
+                        } label: {
+                            VStack(alignment: .leading) {
+                                Text(observation.observedAt.formatted(date: .abbreviated, time: .shortened))
+                                if let temp = observation.measuredTemperature { Text("Målt \(temp.formatted()) °C").font(.caption) }
+                            }
+                        }
+                        .swipeActions { Button("Slett", role: .destructive) { store.removeObservation(id: observation.id) } }
+                    }
+                }
+                Section {
+                    Text("Prognoser beholdes rullerende i 48 timer og ryddes ved neste oppdatering eller oppstart. Registrerte observasjoner beholder sitt sammenligningsgrunnlag. Netatmo og automatisk kurvejustering er ikke aktivert.")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+            }
+        }
+        .navigationTitle("Lokale målinger")
+        .alert("Observasjonen er lagret", isPresented: $saved) { Button("OK", role: .cancel) {} }
+    }
+}
+
 struct ContentView: View {
     private enum Tab: Hashable { case home, queue, places, settings }
 
@@ -66,6 +149,10 @@ struct HomeView: View {
                     }
                     if let p = store.selected {
                         let fc = store.selectedForecast
+                        if p.localTemperatureOffset != 0, let hour = fc.first {
+                            Text("Lokalt anslag \(hour.temp.formatted(.number.precision(.fractionLength(1))))° · Yr \((hour.yrTemperature ?? hour.temp).formatted(.number.precision(.fractionLength(1))))°")
+                                .font(.caption).foregroundStyle(.secondary)
+                        }
                         let visibleForecast = Array(fc.prefix(48))
                         if !visibleForecast.isEmpty {
                             CurrentWeatherCard(
@@ -542,6 +629,19 @@ struct RulesView: View {
                             }
                         }
                     }
+                    Section("Lokal temperatur") {
+                        Stepper(value: Binding(
+                            get: { p.localTemperatureOffset },
+                            set: { p.temperatureOffset = $0; store.update(p); Task { await store.replan() } }
+                        ), in: -10...10, step: 0.5) {
+                            Text("Justering: \(p.localTemperatureOffset.formatted(.number.precision(.fractionLength(1)))) °C")
+                        }
+                        Text("Gjelder akkurat denne lagrede posisjonen. Minus betyr kaldere enn Yr. Frostmarginen kommer i tillegg. Ingen justering skjer automatisk.")
+                            .font(.caption).foregroundStyle(.secondary)
+                        NavigationLink("Registrer temperatur eller frost") {
+                            LocalCalibrationView(placeID: p.id)
+                        }
+                    }
                     Section("Lokal frostmargin") {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
@@ -565,7 +665,7 @@ struct RulesView: View {
                                 step: 0.5
                             )
                         }
-                        Text("Brukes bare for frostvarsler. Med +2,5 °C kan mulig frost varsles når Yr melder +2,5 °C eller kaldere. Temperaturen fra Yr endres ikke.")
+                        Text("Brukes bare for frostvarsler, etter lokal temperaturjustering. Med +2,5 °C kan mulig frost varsles ved et lokalt anslag på +2,5 °C eller kaldere. Yr-originalen beholdes.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }

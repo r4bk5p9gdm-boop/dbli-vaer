@@ -73,6 +73,7 @@ struct NotificationPlanContext: Codable, Hashable {
     let latitude: Double
     let longitude: Double
     let frostMargin: Double
+    let temperatureOffset: Double?
     let rule: Rule
     let languageStyle: AlertLanguageStyle
 
@@ -82,6 +83,7 @@ struct NotificationPlanContext: Codable, Hashable {
         latitude = place.lat
         longitude = place.lon
         frostMargin = place.localFrostMargin
+        temperatureOffset = place.temperatureOffset
         self.rule = rule
         self.languageStyle = languageStyle
     }
