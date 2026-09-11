@@ -78,8 +78,9 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
 20. **AUTO · FERDIG** — App og bakgrunnsjobb bruker samme Store, med privat
    konstruktør som hindrer separate kopier. Bakgrunnsloggen kan dermed ikke
    skrive tilbake egne, foreldede steder/regler over forgrunnens endringer.
-21. **AUTO · ÅPEN** — Pansre mislykket førstegangshenting:
-   ikke erstatt en gyldig varslingsplan med manglende prognoser. Kontroller
+21. **AUTO · ÅPEN** — Pansre delvis mislykket førstegangshenting og andre
+   replan-utløsere før værdata finnes: ikke erstatt gyldige varsler for steder
+   som mangler prognose. Fullstendig hentefeil er beskyttet i oppgave 24. Kontroller
    også overlapp mellom full oppdatering og bakgrunnsoppdatering, og
    invalidasjon av allerede bufrede prognoser ved koordinatendring.
 22. **AUTO · FERDIG** — Avbrutt oppdatering starter ikke nye hentebatcher,
@@ -90,6 +91,9 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    finnes med samme ID og koordinater på API-presisjon. Sletting eller flytting
    under henting gjenoppretter ikke gammel prognose/feil. Gjelder både samlet
    oppdatering og henting ved tillegg av et sted; oppdaterte navn brukes i feil.
+24. **AUTO · FERDIG** — Når alle forespurte steder feiler, behold eksisterende
+   varslingsplan, widget/Watch-data og oppdateringstid. Feilmeldinger vises
+   fortsatt. En bevisst tom stedsliste kan fortsatt rydde planen.
 
 ## Forslag som venter på godkjenning
 
@@ -97,6 +101,12 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-11: En oppdatering der alle steder feiler returnerer nå feil uten
+  å erstatte lokale varsler eller merke gamle data som nettopp oppdatert.
+  Feiltekstene beholdes. To beslutningstester dekker full feil, delvis/full
+  suksess og bevisst tom stedsliste. 67 av 67 tester og samlet iPhone/watchOS-
+  bygg bestod uten fysisk installasjon. Delvis feil og andre utløsere uten
+  prognoser gjenstår uttrykkelig i oppgave 21.
 - 2026-09-11: Forsinkede værdata og hentefeil avvises når stedet er slettet
   eller flyttet under forespørselen. Steder som bare er omdøpt eller har fått
   nye regler beholder dataene, med siste navn/innstillinger. To regresjons-

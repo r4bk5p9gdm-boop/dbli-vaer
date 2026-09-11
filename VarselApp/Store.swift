@@ -230,6 +230,11 @@ final class Store: ObservableObject {
         return currentPlaces.filter { requestedLocations[$0.id] == ForecastLocation(place: $0) }
     }
 
+    static func shouldFinalizeRefresh(successfulPlaceCount: Int, failedPlaceCount: Int) -> Bool {
+        // An empty place list is intentional; a complete network failure is not.
+        successfulPlaceCount > 0 || failedPlaceCount == 0
+    }
+
     @discardableResult
     func refreshAll(backgroundOnly: Bool = false) async -> Bool {
         guard !Task.isCancelled else { return false }
@@ -242,6 +247,7 @@ final class Store: ObservableObject {
             : places
         let locationGroups = Self.groupedByForecastLocation(requestedPlaces)
         var failedNames: [String] = []
+        var successfulPlaceCount = 0
         let locations = Array(locationGroups.keys)
         for batchStart in stride(from: 0, to: locations.count, by: Self.forecastRequestConcurrencyLimit) {
             guard !Task.isCancelled else { return false }
@@ -269,6 +275,7 @@ final class Store: ObservableObject {
                     )
                     switch result {
                     case .success(let forecast):
+                        successfulPlaceCount += matchingPlaces.count
                         for place in matchingPlaces {
                             forecasts[place.id] = forecast
                             forecastErrors.removeValue(forKey: place.id)
@@ -283,6 +290,9 @@ final class Store: ObservableObject {
             }
         }
         guard !Task.isCancelled else { return false }
+        guard Self.shouldFinalizeRefresh(
+            successfulPlaceCount: successfulPlaceCount, failedPlaceCount: failedNames.count
+        ) else { return false }
         lastUpdate = Date()
         await replan()
         return failedNames.isEmpty

@@ -1095,6 +1095,19 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testTotalForecastFailureDoesNotFinalizeRefresh() {
+        XCTAssertFalse(Store.shouldFinalizeRefresh(successfulPlaceCount: 0, failedPlaceCount: 1))
+        XCTAssertFalse(Store.shouldFinalizeRefresh(successfulPlaceCount: 0, failedPlaceCount: 5))
+    }
+
+    @MainActor
+    func testSuccessfulAndIntentionallyEmptyRefreshCanFinalize() {
+        XCTAssertTrue(Store.shouldFinalizeRefresh(successfulPlaceCount: 3, failedPlaceCount: 0))
+        XCTAssertTrue(Store.shouldFinalizeRefresh(successfulPlaceCount: 1, failedPlaceCount: 2))
+        XCTAssertTrue(Store.shouldFinalizeRefresh(successfulPlaceCount: 0, failedPlaceCount: 0))
+    }
+
+    @MainActor
     func testForecastRecipientsExcludeRemovedAndRelocatedPlaces() {
         let removed = Place(name: "Slettet", lat: 64, lon: 11)
         let moved = Place(name: "Flyttet", lat: 64, lon: 11)
