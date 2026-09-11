@@ -220,6 +220,16 @@ final class Store: ObservableObject {
         Dictionary(grouping: places, by: ForecastLocation.init(place:))
     }
 
+    /// Resolve against live places after a network suspension. A response for
+    /// a removed or relocated place must not restore its obsolete forecast.
+    static func currentRecipients(for requestedPlaces: [Place], in currentPlaces: [Place]) -> [Place] {
+        let requestedLocations = Dictionary(
+            requestedPlaces.map { ($0.id, ForecastLocation(place: $0)) },
+            uniquingKeysWith: { first, _ in first }
+        )
+        return currentPlaces.filter { requestedLocations[$0.id] == ForecastLocation(place: $0) }
+    }
+
     @discardableResult
     func refreshAll(backgroundOnly: Bool = false) async -> Bool {
         guard !Task.isCancelled else { return false }
@@ -254,7 +264,9 @@ final class Store: ObservableObject {
                         group.cancelAll()
                         break
                     }
-                    let matchingPlaces = locationGroups[location] ?? []
+                    let matchingPlaces = Self.currentRecipients(
+                        for: locationGroups[location] ?? [], in: places
+                    )
                     switch result {
                     case .success(let forecast):
                         for place in matchingPlaces {
@@ -315,11 +327,16 @@ final class Store: ObservableObject {
         selectedID = place.id
         proximityMonitor.configure(for: places)
         do {
-            forecasts[place.id] = try await YrService.fetch(lat: place.lat, lon: place.lon)
+            let forecast = try await YrService.fetch(lat: place.lat, lon: place.lon)
+            guard !Task.isCancelled,
+                  !Self.currentRecipients(for: [place], in: places).isEmpty else { return }
+            forecasts[place.id] = forecast
             forecastErrors.removeValue(forKey: place.id)
             lastUpdate = Date()
         } catch {
-            forecastErrors[place.id] = forecastErrorMessage(for: place, error: error)
+            guard !Task.isCancelled,
+                  let currentPlace = Self.currentRecipients(for: [place], in: places).first else { return }
+            forecastErrors[place.id] = forecastErrorMessage(for: currentPlace, error: error)
         }
         await replan()
     }

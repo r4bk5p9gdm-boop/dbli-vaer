@@ -1095,6 +1095,31 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testForecastRecipientsExcludeRemovedAndRelocatedPlaces() {
+        let removed = Place(name: "Slettet", lat: 64, lon: 11)
+        let moved = Place(name: "Flyttet", lat: 64, lon: 11)
+        var relocated = moved
+        relocated.lat = 63
+        let replacement = Place(name: "Slettet", lat: 64, lon: 11)
+        XCTAssertTrue(Store.currentRecipients(
+            for: [removed, moved], in: [relocated, replacement]
+        ).isEmpty)
+    }
+
+    @MainActor
+    func testForecastRecipientsKeepLatestNamesAndRulesAtSameLocation() {
+        let original = Place(name: "Klinga", lat: 64.409401, lon: 11.477861)
+        var updated = original
+        updated.customName = "Hjemme"
+        updated.lat = 64.409402 // Same precision as the actual forecast request.
+        updated.rules = [Rule(type: .vind)]
+        let recipients = Store.currentRecipients(for: [original], in: [updated])
+        XCTAssertEqual(recipients.count, 1)
+        XCTAssertEqual(recipients.first?.customName, "Hjemme")
+        XCTAssertEqual(recipients.first?.rules.first?.type, .vind)
+    }
+
+    @MainActor
     func testCancelledRefreshDoesNotUpdateTimestampOrLog() async {
         let store = Store.shared
         let lastUpdate = store.lastUpdate

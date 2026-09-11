@@ -80,12 +80,16 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    skrive tilbake egne, foreldede steder/regler over forgrunnens endringer.
 21. **AUTO · ÅPEN** — Pansre mislykket førstegangshenting:
    ikke erstatt en gyldig varslingsplan med manglende prognoser. Kontroller
-   også overlapp mellom full oppdatering og bakgrunnsoppdatering, samt svar
-   for steder som er slettet eller har fått nye koordinater under henting.
+   også overlapp mellom full oppdatering og bakgrunnsoppdatering, og
+   invalidasjon av allerede bufrede prognoser ved koordinatendring.
 22. **AUTO · FERDIG** — Avbrutt oppdatering starter ikke nye hentebatcher,
    registrerer ikke kansellering som værfeil og sender ikke en ufullstendig
    prognose videre til varslingsplanlegging. En allerede påbegynt utskiftning
    av lokale varsler fullføres fortsatt samlet av køen fra oppgave 19.
+23. **AUTO · FERDIG** — Nettverkssvar knyttes bare til steder som fremdeles
+   finnes med samme ID og koordinater på API-presisjon. Sletting eller flytting
+   under henting gjenoppretter ikke gammel prognose/feil. Gjelder både samlet
+   oppdatering og henting ved tillegg av et sted; oppdaterte navn brukes i feil.
 
 ## Forslag som venter på godkjenning
 
@@ -93,6 +97,12 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-11: Forsinkede værdata og hentefeil avvises når stedet er slettet
+  eller flyttet under forespørselen. Steder som bare er omdøpt eller har fått
+  nye regler beholder dataene, med siste navn/innstillinger. To regresjons-
+  tester dekker sletting, ny ID, flytting, API-avrunding og redigering. 65 av
+  65 tester og samlet iPhone/watchOS-bygg bestod uten fysisk installasjon.
+  Neste prioritet er fortsatt manglende prognoser ved nettfeil (oppgave 21).
 - 2026-09-11: Avbrutte oppdateringer stopper før nye hentebatcher og før
   varslingsplanlegging, og ignorerer resultater etter kansellering. De setter
   ikke et nytt «sist oppdatert»-tidspunkt. Direkte avbrutt replanlegging er
