@@ -1095,6 +1095,20 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testStoreRemainsSharedAcrossTaskBoundaries() async {
+        let foregroundStore = Store.shared
+        let backgroundStore = await Task { @MainActor in Store.shared }.value
+        XCTAssertTrue(foregroundStore === backgroundStore)
+
+        let originalAuthorization = foregroundStore.notificationsAuthorized
+        defer { foregroundStore.notificationsAuthorized = originalAuthorization }
+        foregroundStore.notificationsAuthorized = false
+        XCTAssertEqual(backgroundStore.notificationsAuthorized, false)
+        backgroundStore.notificationsAuthorized = true
+        XCTAssertEqual(foregroundStore.notificationsAuthorized, true)
+    }
+
+    @MainActor
     func testBackgroundRefreshIncludesSelectedAndNotificationPlacesOnly() {
         var enabledRule = Rule(type: .regn)
         enabledRule.enabled = true

@@ -75,10 +75,13 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    værhendelse før duplikater fjernes, uavhengig av rekkefølgen fra innsender.
 19. **AUTO · FERDIG** — Serialiser komplette utskiftninger av lokale varsler.
    En eldre plan får ikke legge igjen varsler etter at den neste har tømt køen.
-20. **AUTO · ÅPEN** — Undersøk separat Store i bakgrunnsjobben: den kan ha
-   gamle regler og manglende prognoser mens forgrunnen redigerer og henter.
-   Køen fra oppgave 19 hindrer fletting, men avgjør ikke hvilken dataversjon
-   som er ferskest. Kontroller også kansellering og mislykket førstegangshenting.
+20. **AUTO · FERDIG** — App og bakgrunnsjobb bruker samme Store, med privat
+   konstruktør som hindrer separate kopier. Bakgrunnsloggen kan dermed ikke
+   skrive tilbake egne, foreldede steder/regler over forgrunnens endringer.
+21. **AUTO · ÅPEN** — Pansre kansellering og mislykket førstegangshenting:
+   ikke erstatt en gyldig varslingsplan med manglende prognoser. Kontroller
+   også overlapp mellom full oppdatering og bakgrunnsoppdatering, samt svar
+   for steder som er slettet eller har fått nye koordinater under henting.
 
 ## Forslag som venter på godkjenning
 
@@ -86,6 +89,12 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-11: Forgrunn og bakgrunn deler én hovedtrådisolert Store. Privat
+  konstruktør hindrer at nye bakgrunnsjobber lager en separat kopi som kan
+  overskrive ferske innstillinger ved logglagring. Regresjonstest kontrollerer
+  identitet og delt tilstand over en oppgavegrense. 61 av 61 tester bestod på
+  iOS 27-simulator; samlet iPhone/watchOS-bygg bestod uten signering. Ingen
+  fysisk installasjon. Kansellering og manglende prognoser følges i oppgave 21.
 - 2026-09-11: Hele utskiftningen av lokale varsler går gjennom én delt kø,
   inkludert alle asynkrone innlegginger. Dette hindrer at en gammel plan
   fortsetter å legge inn varsler etter at en nyere har slettet dem. Test med

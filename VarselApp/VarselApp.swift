@@ -30,7 +30,7 @@ final class AppNotificationDelegate: NSObject, UIApplicationDelegate, UNUserNoti
 @main
 struct VarselApp: App {
     @UIApplicationDelegateAdaptor(AppNotificationDelegate.self) private var notificationDelegate
-    @StateObject private var store = Store()
+    @StateObject private var store = Store.shared
 
     init() { BackgroundRefresh.register() }
 

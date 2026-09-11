@@ -24,7 +24,7 @@ enum BackgroundRefresh {
     private static func handle(_ task: BGAppRefreshTask) {
         schedule()
         let work = Task {
-            let store = await Store()
+            let store = await Store.shared
             let success = await store.refreshAll(backgroundOnly: true)
             task.setTaskCompleted(success: success && !Task.isCancelled)
         }

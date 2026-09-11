@@ -37,6 +37,9 @@ struct ForecastLocation: Hashable {
 
 @MainActor
 final class Store: ObservableObject {
+    // Foreground and background work must share live rules and forecasts.
+    // A separate instance can overwrite newer settings when its log is saved.
+    static let shared = Store()
     static let forecastRequestConcurrencyLimit = 4
     @Published var places: [Place] { didSet { save() } }
     @Published var selectedID: UUID? { didSet { save() } }
@@ -82,7 +85,7 @@ final class Store: ObservableObject {
         ]
     }
 
-    init() {
+    private init() {
         alertLanguageStyle = AlertLanguageStyle.persisted(
             UserDefaults.standard.string(forKey: "varsel.alertLanguageStyle") ?? ""
         ) ?? .bokmal
