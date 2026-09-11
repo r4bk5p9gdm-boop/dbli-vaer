@@ -222,6 +222,7 @@ final class Store: ObservableObject {
 
     @discardableResult
     func refreshAll(backgroundOnly: Bool = false) async -> Bool {
+        guard !Task.isCancelled else { return false }
         guard !isRefreshing else { return true }
         isRefreshing = true
         defer { isRefreshing = false }
@@ -233,6 +234,7 @@ final class Store: ObservableObject {
         var failedNames: [String] = []
         let locations = Array(locationGroups.keys)
         for batchStart in stride(from: 0, to: locations.count, by: Self.forecastRequestConcurrencyLimit) {
+            guard !Task.isCancelled else { return false }
             let batchEnd = min(batchStart + Self.forecastRequestConcurrencyLimit, locations.count)
             let batch = locations[batchStart..<batchEnd]
             await withTaskGroup(of: (ForecastLocation, Result<[ForecastHour], Error>).self) { group in
@@ -246,6 +248,12 @@ final class Store: ObservableObject {
                     }
                 }
                 for await (location, result) in group {
+                    // Cancellation is not a forecast failure, and must not
+                    // replace useful data or trigger an incomplete alert plan.
+                    guard !Task.isCancelled else {
+                        group.cancelAll()
+                        break
+                    }
                     let matchingPlaces = locationGroups[location] ?? []
                     switch result {
                     case .success(let forecast):
@@ -262,12 +270,14 @@ final class Store: ObservableObject {
                 }
             }
         }
+        guard !Task.isCancelled else { return false }
         lastUpdate = Date()
         await replan()
         return failedNames.isEmpty
     }
 
     func replan() async {
+        guard !Task.isCancelled else { return }
         let alerts = Planner.planAll(places: places, forecasts: forecasts, nearbyPlaceIDs: nearbyPlaceIDs)
         let scheduleResult = await NotificationScheduler.reschedule(alerts, languageStyle: alertLanguageStyle)
         await LiveWeatherActivityManager.sync(

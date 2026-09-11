@@ -1095,6 +1095,32 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testCancelledRefreshDoesNotUpdateTimestampOrLog() async {
+        let store = Store.shared
+        let lastUpdate = store.lastUpdate
+        let logIDs = store.log.map(\.id)
+        let result = await Task { @MainActor in
+            withUnsafeCurrentTask { $0?.cancel() }
+            return await store.refreshAll(backgroundOnly: true)
+        }.value
+
+        XCTAssertFalse(result)
+        XCTAssertEqual(store.lastUpdate, lastUpdate)
+        XCTAssertEqual(store.log.map(\.id), logIDs)
+    }
+
+    @MainActor
+    func testCancelledReplanDoesNotReplaceNotificationPlan() async {
+        let store = Store.shared
+        let logIDs = store.log.map(\.id)
+        await Task { @MainActor in
+            withUnsafeCurrentTask { $0?.cancel() }
+            await store.replan()
+        }.value
+        XCTAssertEqual(store.log.map(\.id), logIDs)
+    }
+
+    @MainActor
     func testStoreRemainsSharedAcrossTaskBoundaries() async {
         let foregroundStore = Store.shared
         let backgroundStore = await Task { @MainActor in Store.shared }.value

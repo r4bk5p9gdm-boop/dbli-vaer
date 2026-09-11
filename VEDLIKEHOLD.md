@@ -78,10 +78,14 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
 20. **AUTO · FERDIG** — App og bakgrunnsjobb bruker samme Store, med privat
    konstruktør som hindrer separate kopier. Bakgrunnsloggen kan dermed ikke
    skrive tilbake egne, foreldede steder/regler over forgrunnens endringer.
-21. **AUTO · ÅPEN** — Pansre kansellering og mislykket førstegangshenting:
+21. **AUTO · ÅPEN** — Pansre mislykket førstegangshenting:
    ikke erstatt en gyldig varslingsplan med manglende prognoser. Kontroller
    også overlapp mellom full oppdatering og bakgrunnsoppdatering, samt svar
    for steder som er slettet eller har fått nye koordinater under henting.
+22. **AUTO · FERDIG** — Avbrutt oppdatering starter ikke nye hentebatcher,
+   registrerer ikke kansellering som værfeil og sender ikke en ufullstendig
+   prognose videre til varslingsplanlegging. En allerede påbegynt utskiftning
+   av lokale varsler fullføres fortsatt samlet av køen fra oppgave 19.
 
 ## Forslag som venter på godkjenning
 
@@ -89,6 +93,12 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-11: Avbrutte oppdateringer stopper før nye hentebatcher og før
+  varslingsplanlegging, og ignorerer resultater etter kansellering. De setter
+  ikke et nytt «sist oppdatert»-tidspunkt. Direkte avbrutt replanlegging er
+  også beskyttet. To regresjonstester dekker oppgaver kansellert før oppstart;
+  63 av 63 tester og samlet iPhone/watchOS-bygg bestod. Ingen fysiske enheter
+  brukt. Manglende prognoser uten kansellering gjenstår i oppgave 21.
 - 2026-09-11: Forgrunn og bakgrunn deler én hovedtrådisolert Store. Privat
   konstruktør hindrer at nye bakgrunnsjobber lager en separat kopi som kan
   overskrive ferske innstillinger ved logglagring. Regresjonstest kontrollerer
