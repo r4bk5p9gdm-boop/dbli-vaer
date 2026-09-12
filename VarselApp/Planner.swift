@@ -266,7 +266,10 @@ enum Planner {
         case .temperatur:
             return "\(hour.yrTemperature == nil ? "Yr melder" : "Lokalt anslag") \(number(hour.temp))°"
         case .vind:
-            return "Vindkast \(number(hour.effectiveWind)) m/s · \(windStrengthLabel(for: hour.effectiveWind))"
+            if let gust = hour.gust {
+                return "Vind \(number(hour.wind)) m/s · kast \(number(gust)) m/s"
+            }
+            return "Vind \(number(hour.wind)) m/s · kast ikke oppgitt"
         case .sol:
             return "Skydekke \(Int(hour.cloud.rounded())) %"
         }
@@ -298,7 +301,7 @@ enum Planner {
                     text = "Under \(rule.threshold.formatted(.number.precision(.fractionLength(0...1))))° nå."
                 case .sno: text = possible ? "Mulig snø nå." : "Snø nå."
                 case .vind:
-                    text = "\(WindGustLevel.forSpeed(forecast[currentIndex].effectiveWind).label) nå."
+                    text = forecast[currentIndex].gust == nil ? "Vind nå." : "Vindkast nå."
                 case .dugg: text = "Fare for dugg nå."
                 case .sol:
                     text = "Sol i \(duration) \(duration == 1 ? "time" : "timer") nå."

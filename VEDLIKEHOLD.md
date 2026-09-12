@@ -156,7 +156,9 @@ deretter AUTO 25.
    AlertType.defaultThreshold for vind er 10: standardene er inkonsistente.
    Gi tydelig justerbar nedre grense som inkluderer 9; ikke overskriv lagrede
    personlige terskler automatisk. Skill vind og kast i tekst, og unngå bare
-   «Vind i natt kl. 01» uten styrke. Kontroller push, rullering og maler med
+   «Vind i natt kl. 01» uten styrke. Rullerende overskrift sier nå «Vindkast»,
+   og detaljlinjen viser vind og kast separat (eller «kast ikke oppgitt»).
+   Kontroller videre push, live-målefelter og maler med
    grensetester. effectiveWind bruker max(middelvind, kast); vurder eksplisitt
    merking når kast mangler. Brukerens konkrete Yr-observasjon er ikke hentet.
 38. **BRUKER · TRENGER AVKLARING** — «Ser ikke at årsplaner blir lagret?»:
@@ -169,6 +171,11 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-12: Rullerende vindhendelser omtales som vindkast; nå-hendelser
+  uten kastdata sier vind. Detaljlinjen viser begge Yr-verdier separat og
+  merker manglende kast eksplisitt. Ingen endring i terskler eller pushoverskrift.
+  Alle 84 tester bestod, inkludert egen teksttest for begge datafelter og
+  manglende kast. Ingen fysisk installasjon. Flere vindtekstflater gjenstår.
 - 2026-09-12: Vindeditoren har egen justerbar grense 4–50 m/s og viser
   «Egen grense» når verdien ikke er et forhåndsnivå. Lagrede regler endres ikke.
   Regresjonstest bekrefter lagring av 9 m/s og at 8,9 ikke treffer mens 9 gjør.

@@ -721,7 +721,8 @@ func weatherAlertText(for rule: Rule, eventAt: Date, referenceAt: Date = Date(),
     case .regn, .sno: return possible ? "Mulig \(weather.lowercased()) \(when)." : "\(weather) \(when)."
     case .frost:
         return possible ? "Mulig frost \(when)." : "Frost \(when)."
-    case .temperatur, .vind, .dugg: return "\(weather) \(when)."
+    case .vind: return "Vindkast \(when)."
+    case .temperatur, .dugg: return "\(weather) \(when)."
     case .sol:
         let duration = "\(rule.durationHours) \(rule.durationHours == 1 ? "time" : "timer")"
         return "\(weather) i \(duration) \(when)."

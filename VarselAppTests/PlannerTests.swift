@@ -5,6 +5,19 @@ import UserNotifications
 final class PlannerTests: XCTestCase {
     private let base = Date(timeIntervalSince1970: 2_000_000_000)
 
+    func testWindStatusSeparatesWindAndGust() throws {
+        var rule = Rule(type: .vind)
+        rule.threshold = 9
+        let place = Place(name: "Test", lat: 64, lon: 11)
+        let status = WeatherStatus(ruleID: rule.id, type: .vind, text: "", eventAt: base, isNow: false)
+        var hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 3, cloud: 20, dew: 4)
+        hour.gust = 9
+        XCTAssertEqual(Planner.statusDetail(for: status, place: place, forecast: [hour]), "Vind 3 m/s · kast 9 m/s")
+        hour.gust = nil
+        XCTAssertEqual(Planner.statusDetail(for: status, place: place, forecast: [hour]), "Vind 3 m/s · kast ikke oppgitt")
+        XCTAssertTrue(weatherAlertText(for: rule, eventAt: base.addingTimeInterval(3600), referenceAt: base).hasPrefix("Vindkast "))
+    }
+
     func testCustomNineMeterGustThresholdSurvivesSaving() throws {
         var rule = Rule(type: .vind)
         rule.threshold = 9
