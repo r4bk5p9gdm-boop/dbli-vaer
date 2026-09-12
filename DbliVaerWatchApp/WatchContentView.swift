@@ -9,21 +9,22 @@ struct WatchContentView: View {
                 if let snapshot = store.snapshot, let current = snapshot.forecast.first {
                     List {
                         Section {
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text(AppCopy.name)
+                            HStack(spacing: 6) {
+                                Text(snapshot.place.displayName)
                                     .font(.headline)
-                                Text(snapshot.place.nameWithPreposition)
-                                    .font(.title3.weight(.semibold))
                                     .foregroundStyle(.cyan)
-                                HStack(alignment: .firstTextBaseline) {
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.8)
+                                Spacer(minLength: 0)
+                                HStack(spacing: 4) {
                                     Text("\(current.temp.formatted(.number.precision(.fractionLength(0))))°")
-                                        .font(.system(size: 38, weight: .medium, design: .rounded))
-                                    Spacer()
+                                        .font(.system(.title3, design: .rounded).weight(.medium))
                                     Image(systemName: currentCondition(current).systemImage)
-                                        .font(.title)
+                                        .font(.title3)
                                         .foregroundStyle(currentCondition(current).color)
                                         .accessibilityLabel(currentCondition(current).label)
                                 }
+                                .fixedSize()
                             }
                             .padding(.vertical, 3)
                         }

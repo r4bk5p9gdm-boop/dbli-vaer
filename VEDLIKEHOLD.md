@@ -114,8 +114,9 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    rullerende 48-timers prognosehistorikk og manuell temperatur/frostregistrering.
    Observasjoner beholder nødvendig prognosegrunnlag etter opprydding. Målt
    avvik vises uten automatisk endring; Netatmo og kurvejustering er utsatt.
-31. **BRUKER · ÅPEN** — Kompakt Watch-visning: sted, temperatur og værikon,
-   deretter unike hendelsesikoner for neste 12 timer. Fjern duplisert appnavn.
+31. **BRUKER · DELVIS FERDIG** — Watch-toppfelt har nå sted, temperatur og
+   værikon på én rad uten duplisert appnavn. Gjenstår: unike hendelsesikoner
+   for neste 12 timer.
    Sirkulær komplikasjon skal vise neste hendelses symbol og tidspunkt;
    Smartstabel-widget kan veksle mellom kommende hendelser via tidslinjen.
    Bruker har bedt om denne UI-retningen. Avklar/utred stedskilde (hjem,
@@ -140,6 +141,11 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-12: Kompakt Watch-toppfelt med eget stedsnavn, temperatur og værikon.
+  Lange navn kan forkortes; temperatur og ikon beholder plassen. Watch-bygg
+  bestod med to jobber og gjenbruk av eksisterende DerivedData. Ingen simulator,
+  visuell kontroll eller fysisk installasjon. Eksisterende kompatibilitets-
+  endringer er bevart utenfor commit. Resten av oppgave 31 gjenstår.
 - 2026-09-12: To visningstekster i hjemstatus endret til «Sol» og «solgløtt».
   Terskler, ikoner og pushlogikk er uendret. Git-diff-kontroll bestod.
   Bygg, simulator og visuell kontroll utsatt av diskhensyn (12 GiB ledig).
