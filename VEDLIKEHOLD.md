@@ -7,6 +7,11 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
 ## Arbeidsregler
 
 - Ta én avgrenset oppgave om gangen og revurder prioriteringen før hver økt.
+- Planlagt rytme er nå tre minutter. Ikke kjør overlappende økter.
+- Claude kan arbeide samtidig. Kontroller diskplass, minnepress, belastning,
+  aktive bygg og simulatorer før tungt arbeid. Maks én tung simulator om gangen;
+  ikke stopp Claudes prosesser. Gjenbruk byggedata og utsett tunge tester ved
+  ressursknapphet. Ikke slett andres data for å frigjøre plass.
 - Prioriter korrekt værlogikk, robuste varsler, datalagring, bakgrunnskjøring,
   Watch-synkronisering, ytelse og regresjonstester før nye funksjoner.
 - Små, reversible forbedringer kan gjennomføres selvstendig.
@@ -21,6 +26,8 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
   uttrykkelig beskjed.
 
 ## Nummerert kø
+
+Åpne BRUKER-oppgaver prioriteres nå: 31, 32, 33, deretter AUTO 25.
 
 1. **BRUKER · FERDIG** — Etabler kontinuerlig vedlikehold, Git-grunnlinje,
    prioriteringsregler og rapportering. Grunnlinje: `a991a0f`, 36 tester bestått.
@@ -107,6 +114,25 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    rullerende 48-timers prognosehistorikk og manuell temperatur/frostregistrering.
    Observasjoner beholder nødvendig prognosegrunnlag etter opprydding. Målt
    avvik vises uten automatisk endring; Netatmo og kurvejustering er utsatt.
+31. **BRUKER · ÅPEN** — Kompakt Watch-visning: sted, temperatur og værikon,
+   deretter unike hendelsesikoner for neste 12 timer. Fjern duplisert appnavn.
+   Sirkulær komplikasjon skal vise neste hendelses symbol og tidspunkt;
+   Smartstabel-widget kan veksle mellom kommende hendelser via tidslinjen.
+   Bruker har bedt om denne UI-retningen. Avklar/utred stedskilde (hjem,
+   valgt eller nåværende sted) uten å fremstille et lagret sted som GPS-posisjon.
+   Eksisterende ulagrede Watch-endringer må avgrenses før implementering.
+32. **BRUKER · ÅPEN** — Hjemstatus skal hete «Sol» også ved overskyet vær.
+   Bruk «solgløtt» ved delvis skydekke; vurder stiplet markering i solraden
+   som ren visning, uten å endre normale pushterskler.
+33. **BRUKER · DIAGNOSTISERT / ÅPEN** — Språkvalget påvirker ikke rullerende
+   hjemstatus. ContentView viser Planner.statuses-text direkte; Planner bruker
+   weatherAlertText og hardkodede nå-tekster uten språkparameter. Rule.statusText
+   returnerer teksten uendret. NotificationCopy bruker derimot språkvalget.
+   Neste interne forbedring: felles språkstyrt tekstkilde med kompakte varianter,
+   overføring av språk til widget/Watch og tester for umiddelbar endring på hjem.
+   Behold valgte stedspreposisjoner. Diagnosen er rapportert; ingen retting ennå.
+34. **BRUKER · FERDIG** — Gjenoppta vedlikehold hvert tredje minutt med
+   ressursvern for parallelt Claude-arbeid. Aktiv automasjon er oppdatert.
 
 ## Forslag som venter på godkjenning
 
@@ -114,6 +140,10 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-12: Lett vedlikeholdsgjennomgang og ajourføring av brukeroppgaver
+  31–34. Omtrent 12 GiB ledig på datavolumet; ingen bygg, simulator eller
+  installasjon startet. Bare dokumentasjon endret, kontrollert med git diff.
+  Språkfeilens kodevei dokumentert; ikke markert som rettet.
 - 2026-09-11: Lokal temperaturjustering er separat fra frostmargin og bruker
   bevart Yr-original slik at endringer aldri summeres flere ganger. Nytt
   skjema i stedets varselinnstillinger registrerer lufttemperatur/tid og
