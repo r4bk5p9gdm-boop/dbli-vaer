@@ -373,8 +373,8 @@ private struct CurrentWeatherCard: View {
 
     private var skyMetric: (icon: String, label: String, value: String, color: Color) {
         if current.cloud <= 20 { return (AlertType.sol.systemImage, "Sol", "klart", AlertType.sol.color) }
-        if current.cloud <= 65 { return (AlertType.sol.systemImage, "Sol", "gløtt", AlertType.sol.color) }
-        return (AlertType.sol.systemImage, "Skyer", "overskyet", AlertType.sol.color)
+        if current.cloud <= 65 { return (AlertType.sol.systemImage, "Sol", "solgløtt", AlertType.sol.color) }
+        return (AlertType.sol.systemImage, "Sol", "overskyet", AlertType.sol.color)
     }
 
     private func headline(title: String, detail: String?, systemImage: String, color: Color) -> some View {

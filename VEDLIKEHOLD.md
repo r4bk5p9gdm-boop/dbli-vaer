@@ -121,8 +121,8 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    Bruker har bedt om denne UI-retningen. Avklar/utred stedskilde (hjem,
    valgt eller nåværende sted) uten å fremstille et lagret sted som GPS-posisjon.
    Eksisterende ulagrede Watch-endringer må avgrenses før implementering.
-32. **BRUKER · ÅPEN** — Hjemstatus skal hete «Sol» også ved overskyet vær.
-   Bruk «solgløtt» ved delvis skydekke; vurder stiplet markering i solraden
+32. **BRUKER · DELVIS FERDIG** — Hjemstatus heter nå «Sol» også ved overskyet
+   vær, og «solgløtt» erstatter «gløtt». Gjenstår: vurder stiplet markering i solraden
    som ren visning, uten å endre normale pushterskler.
 33. **BRUKER · DIAGNOSTISERT / ÅPEN** — Språkvalget påvirker ikke rullerende
    hjemstatus. ContentView viser Planner.statuses-text direkte; Planner bruker
@@ -140,6 +140,10 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-12: To visningstekster i hjemstatus endret til «Sol» og «solgløtt».
+  Terskler, ikoner og pushlogikk er uendret. Git-diff-kontroll bestod.
+  Bygg, simulator og visuell kontroll utsatt av diskhensyn (12 GiB ledig).
+  Ikke installert. Watch-endringer fortsatt urørt; oppgave 32 er bare delvis ferdig.
 - 2026-09-12: Lett vedlikeholdsgjennomgang og ajourføring av brukeroppgaver
   31–34. Omtrent 12 GiB ledig på datavolumet; ingen bygg, simulator eller
   installasjon startet. Bare dokumentasjon endret, kontrollert med git diff.
