@@ -27,7 +27,8 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
 
 ## Nummerert kø
 
-Åpne BRUKER-oppgaver prioriteres nå: 31, 32, 33, deretter AUTO 25.
+Åpne BRUKER-oppgaver prioriteres nå: 35 (grunnlag 36), 31, 33, 32,
+deretter AUTO 25.
 
 1. **BRUKER · FERDIG** — Etabler kontinuerlig vedlikehold, Git-grunnlinje,
    prioriteringsregler og rapportering. Grunnlinje: `a991a0f`, 36 tester bestått.
@@ -134,6 +135,22 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    Gjenstår: overføring av språk til widget/Watch og visuell kontroll av bytte.
 34. **BRUKER · FERDIG** — Gjenoppta vedlikehold hvert tredje minutt med
    ressursvern for parallelt Claude-arbeid. Aktiv automasjon er oppdatert.
+35. **BRUKER · ÅPEN** — Sveip mellom tre hjemmesider: favoritt 2 til venstre,
+   nåværende posisjon i midten og favoritt 1 til høyre. Åpne på posisjonssiden;
+   vis nabostedenes navn/piler. Bruker har bedt om denne navigasjonsretningen.
+   Favoritter velges eksplisitt, ikke ved å omdefinere dagens stedsrekkefølge.
+   Andre steder beholdes i Steder. Sveiping skal ikke endre pushregler.
+   Nåværende posisjon må ha eget oppdateringstidspunkt/nøyaktighet og skille
+   tydelig mellom fersk GPS, sist kjente posisjon og nektet tilgang.
+   Del visningssted/vær med Watch; ikke bruk 5-km nærhetsregion som GPS-posisjon.
+36. **BRUKER · ÅPEN · GRUNNLAG FOR 35** — Sikre posisjon og Watch-henting før
+   automatisk stedsskifte. LocationManager.current lagrer bare én continuation:
+   overlappende kall kan overskrive en venter, og avbrudd/tidsavbrudd mangler.
+   WatchWeatherStore.refresh fanger sted før await og aksepterer resultatet
+   ubetinget etterpå: et stedsskifte eller tømming fra iPhone under henting kan
+   overskrives av det gamle svaret. Den lokale Watch-hentingen bruker dessuten
+   rå Yr-temperatur uten stedets lokale temperaturjustering. Legg til regresjons-
+   dekning og avvis utdaterte svar; behold nye innstillinger ved oppdatering.
 
 ## Forslag som venter på godkjenning
 
@@ -141,6 +158,12 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-12: Utredet grunnlaget for sveipesider og felles posisjon med Watch.
+  Eksisterende LocationManager kan hente GPS og navn, men Store/Watch deler
+  bare valgt lagret sted uten GPS-alder/nøyaktighet. Nærhetsmonitoren gjelder
+  5-km pushregioner og er ikke egnet som «nåværende sted». To samtidighetsrisikoer
+  og manglende lokal temperaturjustering i Watch-refresh er dokumentert i 36.
+  Ingen kode, bygg, simulator eller installasjon denne økta; diff-kontroll bestod.
 - 2026-09-12: Koblet rullerende hjem-/stedstekst til globalt språkvalg og
   samlet dialektord i WeatherLanguage, også brukt av push. Alle 81 tester
   bestod på én simulator uten parallell testing, inkludert den nye språk-
