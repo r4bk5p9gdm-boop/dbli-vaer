@@ -362,7 +362,7 @@ enum Planner {
         return result
     }
 
-    private static func notificationEventDetail(rule: Rule, hours: [ForecastHour], possible: Bool, frostMargin: Double = 0) -> String? {
+    static func notificationEventDetail(rule: Rule, hours: [ForecastHour], possible: Bool, frostMargin: Double = 0) -> String? {
         guard !hours.isEmpty else { return nil }
         let duration = hours.count
         let durationText = "\(duration) \(duration == 1 ? "time" : "timer")"
@@ -381,9 +381,15 @@ enum Planner {
             let value = amount.formatted(.number.precision(.fractionLength(0...1)))
             return "Anslått \(possible ? "opptil " : "")\(value) mm snø over \(durationText)."
         case .vind:
-            let strongest = hours.map(\.effectiveWind).max() ?? 0
-            let level = WindGustLevel.forSpeed(strongest)
-            return "\(level.guidance) Opp mot \(strongest.formatted(.number.precision(.fractionLength(0...1)))) m/s (\(windStrengthLabel(for: strongest))) i \(durationText)."
+            let wind = hours.map(\.wind).max() ?? 0
+            let gust = hours.compactMap(\.gust).max()
+            let number: (Double) -> String = { $0.formatted(.number.precision(.fractionLength(0...1))) }
+            let windText = "Vind opptil \(number(wind)) m/s."
+            guard let gust else { return "\(windText) Kast ikke oppgitt. Varighet \(durationText)." }
+            let partial = hours.contains { $0.gust == nil } ? " Kast mangler for deler av perioden." : ""
+            let guidance = gust >= WindGustLevel.looseObjects.threshold
+                ? " \(WindGustLevel.forSpeed(gust).guidance)" : ""
+            return "\(windText) Kast opptil \(number(gust)) m/s. Varighet \(durationText).\(partial)\(guidance)"
         case .frost:
             let lowest = hours.map(\.temp).min() ?? 0
             let label = hours.contains { $0.yrTemperature != nil } ? "Lokalt anslag ned mot" : "Yr melder ned mot"

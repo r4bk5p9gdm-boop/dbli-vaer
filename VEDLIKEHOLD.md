@@ -158,7 +158,8 @@ deretter AUTO 25.
    personlige terskler automatisk. Skill vind og kast i tekst, og unngå bare
    «Vind i natt kl. 01» uten styrke. Rullerende overskrift sier nå «Vindkast»,
    og detaljlinjen viser vind og kast separat (eller «kast ikke oppgitt»).
-   Kontroller videre push, live-målefelter og maler med
+   Pushdetaljer skiller også vind/kast, merker manglende kast og unngår
+   styrkebetegnelser for middelvind på kastverdier. Kontroller videre live-målefelter og maler med
    grensetester. effectiveWind bruker max(middelvind, kast); vurder eksplisitt
    merking når kast mangler. Brukerens konkrete Yr-observasjon er ikke hentet.
 38. **BRUKER · TRENGER AVKLARING** — «Ser ikke at årsplaner blir lagret?»:
@@ -171,6 +172,11 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-12: Pushdetalj viser høyeste vind og høyeste oppgitte kast separat.
+  Manglende kast merkes også når bare deler av perioden mangler data. Generelt
+  sikringsråd tilføyes først fra 12 m/s i kast; 9 m/s kan fortsatt utløse regel
+  med valgt grense 9. Alle 85 tester bestod, inkludert tekst for 9 m/s, manglende
+  kast og delvis dekning med kraftigere kast. Ingen fysisk installasjon.
 - 2026-09-12: Rullerende vindhendelser omtales som vindkast; nå-hendelser
   uten kastdata sier vind. Detaljlinjen viser begge Yr-verdier separat og
   merker manglende kast eksplisitt. Ingen endring i terskler eller pushoverskrift.

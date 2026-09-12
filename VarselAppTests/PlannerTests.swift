@@ -5,6 +5,20 @@ import UserNotifications
 final class PlannerTests: XCTestCase {
     private let base = Date(timeIntervalSince1970: 2_000_000_000)
 
+    func testWindPushDetailNamesBothValuesAndMissingGusts() throws {
+        let rule = Rule(type: .vind)
+        var hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 3, cloud: 20, dew: 4)
+        hour.gust = 9
+        XCTAssertEqual(Planner.notificationEventDetail(rule: rule, hours: [hour], possible: false), "Vind opptil 3 m/s. Kast opptil 9 m/s. Varighet 1 time.")
+        hour.gust = nil
+        XCTAssertEqual(Planner.notificationEventDetail(rule: rule, hours: [hour], possible: false), "Vind opptil 3 m/s. Kast ikke oppgitt. Varighet 1 time.")
+        var strong = hour
+        strong.gust = 20
+        let text = try XCTUnwrap(Planner.notificationEventDetail(rule: rule, hours: [hour, strong], possible: false))
+        XCTAssertTrue(text.contains("Kast mangler for deler av perioden."))
+        XCTAssertTrue(text.contains(WindGustLevel.powerful.guidance))
+    }
+
     func testWindStatusSeparatesWindAndGust() throws {
         var rule = Rule(type: .vind)
         rule.threshold = 9
