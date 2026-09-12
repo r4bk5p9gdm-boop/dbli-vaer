@@ -40,7 +40,16 @@ struct WatchWeatherWidgetView: View {
     private var current: ForecastHour? { entry.snapshot?.forecast.first }
     private var status: WeatherStatus? {
         guard let snapshot = entry.snapshot else { return nil }
-        return Planner.statuses(for: snapshot.place, forecast: snapshot.forecast, now: entry.date).first
+        let statuses = WeatherGlance.upcoming(
+            Planner.statuses(for: snapshot.place, forecast: snapshot.forecast, now: entry.date),
+            now: entry.date
+        )
+        guard !statuses.isEmpty else { return nil }
+        // The small complications always retain the nearest event. Only the
+        // rectangular widget rotates, using the existing 15-minute timeline.
+        guard family == .accessoryRectangular else { return statuses.first }
+        let slot = Int(entry.date.timeIntervalSince1970 / (15 * 60))
+        return statuses[((slot % statuses.count) + statuses.count) % statuses.count]
     }
     private var icon: String {
         if let status { return status.type.systemImage }
@@ -63,10 +72,15 @@ struct WatchWeatherWidgetView: View {
                     AccessoryWidgetBackground()
                     VStack(spacing: 1) {
                         Image(systemName: icon).font(.headline)
-                        Text(temperature).font(.caption2.bold())
+                        Text(status.map { $0.isNow ? "Nå" : shortClockLabel($0.eventAt) } ?? temperature)
+                            .font(.caption2.bold().monospacedDigit())
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
                     }
                 }
                 .widgetAccentable()
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(status?.text ?? temperature)
             case .accessoryCorner:
                 Image(systemName: icon)
                     .font(.title3)
@@ -85,12 +99,13 @@ struct WatchWeatherWidgetView: View {
         VStack(alignment: .leading, spacing: 3) {
             HStack(spacing: 4) {
                 Image(systemName: icon).foregroundStyle(tint).widgetAccentable()
-                Text(AppCopy.name).font(.caption.bold()).widgetAccentable()
+                Text(entry.snapshot?.place.displayName ?? AppCopy.name)
+                    .font(.caption.bold()).lineLimit(1).widgetAccentable()
                 Spacer(minLength: 0)
                 Text(temperature).font(.caption.bold())
             }
-            if let snapshot = entry.snapshot {
-                Text(snapshot.place.nameWithPreposition)
+            if entry.snapshot != nil {
+                Text("Neste 12 timer")
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(.secondary)
                     .lineLimit(1)

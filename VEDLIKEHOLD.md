@@ -117,8 +117,9 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
 31. **BRUKER · DELVIS FERDIG** — Watch-toppfelt har nå sted, temperatur og
    værikon på én rad uten duplisert appnavn. Unike hendelsesikoner for neste
    12 timer er implementert med tidspunkt og full VoiceOver-tekst.
-   Sirkulær komplikasjon skal vise neste hendelses symbol og tidspunkt;
-   Smartstabel-widget kan veksle mellom kommende hendelser via tidslinjen.
+   Sirkulær komplikasjon viser neste hendelses symbol og tidspunkt («Nå» ved
+   pågående vær), ellers temperatur. Smartstabel-widget veksler mellom hendelser
+   i 15-minutters tidslinjesteg. Visuell kontroll på klokka gjenstår.
    Bruker har bedt om denne UI-retningen. Avklar/utred stedskilde (hjem,
    valgt eller nåværende sted) uten å fremstille et lagret sted som GPS-posisjon.
    Eksisterende ulagrede Watch-endringer må avgrenses før implementering.
@@ -141,6 +142,13 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-12: Sirkulær komplikasjon viser nærmeste hendelse innen 12 timer med
+  ikon og tidspunkt, med full tekst for VoiceOver. Rektangulær widget viser
+  stedsnavn/temperatur og veksler mellom unike værtyper i eksisterende tidslinje.
+  Systemet bestemmer faktisk oppdateringstid; ingen sekundtimer eller økt
+  tidslinjefrekvens. Watch-bygg og diff-kontroll bestod. Ingen simulator,
+  kjørt enhetstest, visuell kontroll eller installasjon. Tidligere brukerendringer
+  er holdt utenfor commit. Stedskilde følger fortsatt valgt sted på iPhone.
 - 2026-09-12: Watch viser nærmeste hendelse per værtype i et kompakt rutenett
   for neste 12 timer, med pågående vær først. Visningen revurderes hvert minutt
   mens den vises. Felles utvalgsfunksjon sorterer deterministisk og fjerner
