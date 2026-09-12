@@ -20,6 +20,17 @@ struct WidgetWeatherSnapshot: Codable {
     let place: Place
     let forecast: [ForecastHour]
     let updatedAt: Date
+
+    /// A phone transfer (including clearing the place) invalidates an in-flight
+    /// Watch request even when it happens to refer to the same coordinates.
+    func refreshed(with hours: [ForecastHour], at date: Date, requestRevision: UUID, currentRevision: UUID) -> WidgetWeatherSnapshot? {
+        guard requestRevision == currentRevision, !hours.isEmpty else { return nil }
+        return WidgetWeatherSnapshot(
+            place: place,
+            forecast: hours.map { $0.locallyAdjusted(by: place.localTemperatureOffset) },
+            updatedAt: date
+        )
+    }
 }
 
 /// Versioned payload semantics for iPhone → Watch application context.

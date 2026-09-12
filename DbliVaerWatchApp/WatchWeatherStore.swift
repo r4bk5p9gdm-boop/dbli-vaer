@@ -11,6 +11,7 @@ final class WatchWeatherStore: ObservableObject {
     private let receiver = WatchSnapshotReceiver()
     private let lastTransferKey = "watch.lastWeatherTransferAt"
     private var lastTransferAt: Date
+    private var snapshotRevision = UUID()
 
     init() {
         snapshot = SharedWidgetData.load()
@@ -24,19 +25,27 @@ final class WatchWeatherStore: ObservableObject {
     }
 
     func refresh() async {
-        guard !isRefreshing, let place = snapshot?.place else { return }
+        guard !isRefreshing, let startingSnapshot = snapshot else { return }
+        let revision = snapshotRevision
+        let place = startingSnapshot.place
         isRefreshing = true
         defer { isRefreshing = false }
         do {
             let forecast = try await YrService.fetch(lat: place.lat, lon: place.lon)
-            accept(WidgetWeatherSnapshot(place: place, forecast: forecast, updatedAt: Date()))
-            message = nil
+            try Task.checkCancellation()
+            guard let updated = startingSnapshot.refreshed(
+                with: forecast, at: Date(), requestRevision: revision, currentRevision: snapshotRevision
+            ) else { return }
+            accept(updated)
         } catch {
+            guard !Task.isCancelled, revision == snapshotRevision else { return }
             message = "Kunne ikke oppdatere. Viser sist hentede vær."
         }
     }
 
     private func accept(_ snapshot: WidgetWeatherSnapshot) {
+        snapshotRevision = UUID()
+        message = nil
         self.snapshot = snapshot
         SharedWidgetData.save(place: snapshot.place, forecast: snapshot.forecast, updatedAt: snapshot.updatedAt)
         WidgetCenter.shared.reloadAllTimelines()
@@ -47,6 +56,8 @@ final class WatchWeatherStore: ObservableObject {
         lastTransferAt = transfer.sentAt
         UserDefaults.standard.set(transfer.sentAt, forKey: lastTransferKey)
         guard let snapshot = transfer.snapshot else {
+            snapshotRevision = UUID()
+            message = nil
             self.snapshot = nil
             SharedWidgetData.clear()
             WidgetCenter.shared.reloadAllTimelines()

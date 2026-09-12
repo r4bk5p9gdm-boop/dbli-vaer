@@ -143,14 +143,13 @@ deretter AUTO 25.
    Nåværende posisjon må ha eget oppdateringstidspunkt/nøyaktighet og skille
    tydelig mellom fersk GPS, sist kjente posisjon og nektet tilgang.
    Del visningssted/vær med Watch; ikke bruk 5-km nærhetsregion som GPS-posisjon.
-36. **BRUKER · ÅPEN · GRUNNLAG FOR 35** — Sikre posisjon og Watch-henting før
+36. **BRUKER · DELVIS FERDIG · GRUNNLAG FOR 35** — Sikre posisjon og Watch-henting før
    automatisk stedsskifte. LocationManager.current lagrer bare én continuation:
    overlappende kall kan overskrive en venter, og avbrudd/tidsavbrudd mangler.
-   WatchWeatherStore.refresh fanger sted før await og aksepterer resultatet
-   ubetinget etterpå: et stedsskifte eller tømming fra iPhone under henting kan
-   overskrives av det gamle svaret. Den lokale Watch-hentingen bruker dessuten
-   rå Yr-temperatur uten stedets lokale temperaturjustering. Legg til regresjons-
-   dekning og avvis utdaterte svar; behold nye innstillinger ved oppdatering.
+   Watch-refresh har nå revisjonsvern: ny iPhone-overføring eller tømming
+   ugyldiggjør eldre pågående henting, inkludert dens feilmelding. Kansellerte
+   svar ignoreres. Lokalt temperaturavvik brukes på nye Watch-prognoser uten
+   akkumulering. Posisjonshentingens samtidighet og avbrudd gjenstår.
 
 ## Forslag som venter på godkjenning
 
@@ -158,6 +157,12 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-12: Sikret Watch-refresh mot nyere iPhone-overføringer og tømming
+  med revisjons-ID, og ignorerer kansellering/foreldede feilmeldinger. Nye
+  prognoser bruker lokal temperaturjustering. Regresjonstest dekker ugyldig
+  revisjon, tomt svar, bevart sted/hentetid, Yr-original og ikke-akkumulering.
+  Alle 82 tester og Watch-bygg bestod med to jobber. Ingen simulator var igjen
+  startet etter testene. Ingen fysisk installasjon. Neste: robust GPS-henting.
 - 2026-09-12: Utredet grunnlaget for sveipesider og felles posisjon med Watch.
   Eksisterende LocationManager kan hente GPS og navn, men Store/Watch deler
   bare valgt lagret sted uten GPS-alder/nøyaktighet. Nærhetsmonitoren gjelder

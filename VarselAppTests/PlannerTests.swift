@@ -5,6 +5,23 @@ import UserNotifications
 final class PlannerTests: XCTestCase {
     private let base = Date(timeIntervalSince1970: 2_000_000_000)
 
+    func testWatchRefreshRejectsInvalidatedRequestAndPreservesLocalAdjustment() throws {
+        var place = Place(name: "Klinga", lat: 64, lon: 11)
+        place.temperatureOffset = -2
+        let hour = ForecastHour(time: base, temp: 4, precip: 0, wind: 1, cloud: 0, dew: 1)
+        let snapshot = WidgetWeatherSnapshot(place: place, forecast: [hour], updatedAt: base)
+        let revision = UUID()
+        XCTAssertNil(snapshot.refreshed(with: [hour], at: base, requestRevision: revision, currentRevision: UUID()))
+        XCTAssertNil(snapshot.refreshed(with: [], at: base, requestRevision: revision, currentRevision: revision))
+        let refreshed = try XCTUnwrap(snapshot.refreshed(with: [hour], at: base.addingTimeInterval(60), requestRevision: revision, currentRevision: revision))
+        XCTAssertEqual(refreshed.forecast.first?.temp, 2)
+        XCTAssertEqual(refreshed.forecast.first?.yrTemperature, 4)
+        XCTAssertEqual(refreshed.place.id, place.id)
+        XCTAssertEqual(refreshed.updatedAt, base.addingTimeInterval(60))
+        let twice = refreshed.refreshed(with: refreshed.forecast, at: base, requestRevision: revision, currentRevision: revision)
+        XCTAssertEqual(twice?.forecast.first?.temp, 2)
+    }
+
     func testSharedWeatherLanguageForHomeAndPush() {
         let source = "Mulig regn i morgen kl. 07."
         XCTAssertEqual(WeatherLanguage.text(source, style: .bokmal), source)
