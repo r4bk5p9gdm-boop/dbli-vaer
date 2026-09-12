@@ -5,6 +5,19 @@ import UserNotifications
 final class PlannerTests: XCTestCase {
     private let base = Date(timeIntervalSince1970: 2_000_000_000)
 
+    func testWeatherGlanceUsesTwelveHoursAndOneEventPerType() {
+        func event(_ type: AlertType, _ hours: Double, isNow: Bool = false) -> WeatherStatus {
+            WeatherStatus(ruleID: UUID(), type: type, text: "Test", eventAt: base.addingTimeInterval(hours * 3600), isNow: isNow)
+        }
+        let rain = event(.regn, 1)
+        let dew = event(.dugg, 12)
+        let frost = event(.frost, -0.5, isNow: true)
+        let input = [event(.regn, 3), dew, event(.sol, 12.01), event(.sno, -1), rain, frost]
+        XCTAssertEqual(WeatherGlance.upcoming(input, now: base), [frost, rain, dew])
+        XCTAssertEqual(WeatherGlance.upcoming(Array(input.reversed()), now: base), [frost, rain, dew])
+        XCTAssertTrue(WeatherGlance.upcoming([], now: base).isEmpty)
+    }
+
     func testLocalAdjustmentPreservesYrAndDoesNotAccumulate() throws {
         let hour = ForecastHour(time: base, temp: 4, precip: 0, wind: 1, cloud: 0, dew: 1)
         let local = hour.locallyAdjusted(by: -2)

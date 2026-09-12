@@ -115,8 +115,8 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
    Observasjoner beholder nødvendig prognosegrunnlag etter opprydding. Målt
    avvik vises uten automatisk endring; Netatmo og kurvejustering er utsatt.
 31. **BRUKER · DELVIS FERDIG** — Watch-toppfelt har nå sted, temperatur og
-   værikon på én rad uten duplisert appnavn. Gjenstår: unike hendelsesikoner
-   for neste 12 timer.
+   værikon på én rad uten duplisert appnavn. Unike hendelsesikoner for neste
+   12 timer er implementert med tidspunkt og full VoiceOver-tekst.
    Sirkulær komplikasjon skal vise neste hendelses symbol og tidspunkt;
    Smartstabel-widget kan veksle mellom kommende hendelser via tidslinjen.
    Bruker har bedt om denne UI-retningen. Avklar/utred stedskilde (hjem,
@@ -141,6 +141,13 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-12: Watch viser nærmeste hendelse per værtype i et kompakt rutenett
+  for neste 12 timer, med pågående vær først. Visningen revurderes hvert minutt
+  mens den vises. Felles utvalgsfunksjon sorterer deterministisk og fjerner
+  duplikate værtyper. Regresjonstest lagt til for 12-timersgrensen, duplikater,
+  omvendt input og tom liste; testen er ikke kjørt (ingen ny simulator).
+  Watch-bygg med to jobber bestod, samt diff-kontroll. Ikke visuelt kontrollert
+  eller installert. Neste del er sirkulær komplikasjon og Smartstabel-widget.
 - 2026-09-12: Kompakt Watch-toppfelt med eget stedsnavn, temperatur og værikon.
   Lange navn kan forkortes; temperatur og ikon beholder plassen. Watch-bygg
   bestod med to jobber og gjenbruk av eksisterende DerivedData. Ingen simulator,

@@ -29,18 +29,28 @@ struct WatchContentView: View {
                             .padding(.vertical, 3)
                         }
 
-                        let statuses = Planner.statuses(for: snapshot.place, forecast: snapshot.forecast)
-                        Section("Aktuelt") {
-                            if statuses.isEmpty {
-                                Label("Ingen aktuelle varsler", systemImage: "checkmark.circle")
-                                    .foregroundStyle(.secondary)
-                            } else {
-                                ForEach(statuses.prefix(5)) { status in
-                                    Label {
-                                        Text(status.text).font(.footnote)
-                                    } icon: {
-                                        Image(systemName: status.type.systemImage)
-                                            .foregroundStyle(status.type.color)
+                        Section("Neste 12 timer") {
+                            TimelineView(.periodic(from: .now, by: 60)) { timeline in
+                                let statuses = WeatherGlance.upcoming(
+                                    Planner.statuses(for: snapshot.place, forecast: snapshot.forecast, now: timeline.date),
+                                    now: timeline.date
+                                )
+                                if statuses.isEmpty {
+                                    Text("Ingen aktuelle hendelser").font(.caption).foregroundStyle(.secondary)
+                                } else {
+                                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 44))], spacing: 10) {
+                                        ForEach(statuses) { status in
+                                            VStack(spacing: 4) {
+                                                Image(systemName: status.type.systemImage)
+                                                    .font(.title3)
+                                                    .foregroundStyle(status.type.color)
+                                                Text(status.isNow ? "Nå" : shortClockLabel(status.eventAt))
+                                                    .font(.caption2.monospacedDigit())
+                                            }
+                                            .frame(maxWidth: .infinity)
+                                            .accessibilityElement(children: .ignore)
+                                            .accessibilityLabel(status.text)
+                                        }
                                     }
                                 }
                             }
