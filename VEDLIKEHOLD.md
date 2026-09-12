@@ -27,7 +27,7 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
 
 ## Nummerert kø
 
-Åpne BRUKER-oppgaver prioriteres nå: 35 (grunnlag 36), 31, 33, 32,
+Åpne BRUKER-oppgaver prioriteres nå: 37, 35 (grunnlag 36), 31, 33, 32,
 deretter AUTO 25.
 
 1. **BRUKER · FERDIG** — Etabler kontinuerlig vedlikehold, Git-grunnlinje,
@@ -150,6 +150,18 @@ deretter AUTO 25.
    ugyldiggjør eldre pågående henting, inkludert dens feilmelding. Kansellerte
    svar ignoreres. Lokalt temperaturavvik brukes på nye Watch-prognoser uten
    akkumulering. Posisjonshentingens samtidighet og avbrudd gjenstår.
+
+37. **BRUKER · ÅPEN** — Vindkast på 9 m/s skal kunne varsles (brukerens
+   eksempel fra Steinkjer). Editor tilbyr bare nivåene 12/20/30/40, mens
+   AlertType.defaultThreshold for vind er 10: standardene er inkonsistente.
+   Gi tydelig justerbar nedre grense som inkluderer 9; ikke overskriv lagrede
+   personlige terskler automatisk. Skill vind og kast i tekst, og unngå bare
+   «Vind i natt kl. 01» uten styrke. Kontroller push, rullering og maler med
+   grensetester. effectiveWind bruker max(middelvind, kast); vurder eksplisitt
+   merking når kast mangler. Brukerens konkrete Yr-observasjon er ikke hentet.
+38. **BRUKER · TRENGER AVKLARING** — «Ser ikke at årsplaner blir lagret?»:
+   avklar hvilken app/skjerm og hva som forsvinner; ikke anta at dette gjelder
+   værregler eller endre en annen app uten avklart mål.
 
 ## Forslag som venter på godkjenning
 
