@@ -126,13 +126,12 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
 32. **BRUKER · DELVIS FERDIG** — Hjemstatus heter nå «Sol» også ved overskyet
    vær, og «solgløtt» erstatter «gløtt». Gjenstår: vurder stiplet markering i solraden
    som ren visning, uten å endre normale pushterskler.
-33. **BRUKER · DIAGNOSTISERT / ÅPEN** — Språkvalget påvirker ikke rullerende
-   hjemstatus. ContentView viser Planner.statuses-text direkte; Planner bruker
-   weatherAlertText og hardkodede nå-tekster uten språkparameter. Rule.statusText
-   returnerer teksten uendret. NotificationCopy bruker derimot språkvalget.
-   Neste interne forbedring: felles språkstyrt tekstkilde med kompakte varianter,
-   overføring av språk til widget/Watch og tester for umiddelbar endring på hjem.
-   Behold valgte stedspreposisjoner. Diagnosen er rapportert; ingen retting ennå.
+33. **BRUKER · DELVIS FERDIG** — Hjem- og stedskort får nå globalt språkvalg
+   direkte fra Store og bruker WeatherLanguage for rullerende tekst/detaljer.
+   Push bruker samme ordbok for tidspunkt og værdetaljer. Inntrøndersk bruker
+   «i mårrå», «i overmårrå», «te» og «sjer d ut som» ved mulig vær.
+   Stedsnavn, preposisjoner og huskelapper sendes ikke gjennom ordboken.
+   Gjenstår: overføring av språk til widget/Watch og visuell kontroll av bytte.
 34. **BRUKER · FERDIG** — Gjenoppta vedlikehold hvert tredje minutt med
    ressursvern for parallelt Claude-arbeid. Aktiv automasjon er oppdatert.
 
@@ -142,6 +141,12 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-12: Koblet rullerende hjem-/stedstekst til globalt språkvalg og
+  samlet dialektord i WeatherLanguage, også brukt av push. Alle 81 tester
+  bestod på én simulator uten parallell testing, inkludert den nye språk-
+  testen og tidligere ukjørt Watch-utvalgstest. Simulatoren var avsluttet
+  etter testkjøringen. Watch-bygg bestod også. Ingen fysisk installasjon;
+  widget/Watch-språk gjenstår.
 - 2026-09-12: Sirkulær komplikasjon viser nærmeste hendelse innen 12 timer med
   ikon og tidspunkt, med full tekst for VoiceOver. Rektangulær widget viser
   stedsnavn/temperatur og veksler mellom unike værtyper i eksisterende tidslinje.

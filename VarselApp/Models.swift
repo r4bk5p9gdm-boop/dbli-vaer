@@ -45,6 +45,27 @@ enum AlertLanguageStyle: String, Codable, CaseIterable, Identifiable {
     }
 }
 
+/// Only generated weather copy goes through this dictionary. Place names,
+/// prepositions and the user's reminder are deliberately kept verbatim.
+enum WeatherLanguage {
+    static func text(_ text: String, style: AlertLanguageStyle) -> String {
+        guard style == .inntrondersk else { return text }
+        var result = text
+            .replacingOccurrences(of: "i overmorgen", with: "i overmårrå")
+            .replacingOccurrences(of: "I overmorgen", with: "I overmårrå")
+            .replacingOccurrences(of: "i morgen", with: "i mårrå")
+            .replacingOccurrences(of: "I morgen", with: "I mårrå")
+            .replacingOccurrences(of: " til ", with: " te ")
+        if result.hasPrefix("Mulig ") {
+            result = String(result.dropFirst(6))
+            result = result.prefix(1).uppercased() + result.dropFirst()
+            if result.hasSuffix(".") { result.removeLast() }
+            result += ", sjer d ut som."
+        }
+        return result
+    }
+}
+
 enum WindGustLevel: Int, CaseIterable, Identifiable {
     case looseObjects = 12
     case powerful = 20

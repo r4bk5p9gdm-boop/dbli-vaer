@@ -5,6 +5,15 @@ import UserNotifications
 final class PlannerTests: XCTestCase {
     private let base = Date(timeIntervalSince1970: 2_000_000_000)
 
+    func testSharedWeatherLanguageForHomeAndPush() {
+        let source = "Mulig regn i morgen kl. 07."
+        XCTAssertEqual(WeatherLanguage.text(source, style: .bokmal), source)
+        XCTAssertEqual(WeatherLanguage.text(source, style: .inntrondersk), "Regn i mårrå kl. 07, sjer d ut som.")
+        XCTAssertEqual(WeatherLanguage.text("I overmorgen kl. 09.", style: .inntrondersk), "I overmårrå kl. 09.")
+        XCTAssertEqual(WeatherLanguage.text("Fra 2 til 4 mm", style: .inntrondersk), "Fra 2 te 4 mm")
+        XCTAssertEqual(WeatherLanguage.text("Duggfall i natt kl. 02.", style: .inntrondersk), "Duggfall i natt kl. 02.")
+    }
+
     func testWeatherGlanceUsesTwelveHoursAndOneEventPerType() {
         func event(_ type: AlertType, _ hours: Double, isNow: Bool = false) -> WeatherStatus {
             WeatherStatus(ruleID: UUID(), type: type, text: "Test", eventAt: base.addingTimeInterval(hours * 3600), isNow: isNow)

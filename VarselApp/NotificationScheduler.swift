@@ -33,12 +33,7 @@ enum NotificationCopy {
     }
 
     static func message(for rule: Rule, eventAt: Date, referenceAt: Date, possible: Bool = false, eventDetail: String? = nil, languageStyle: AlertLanguageStyle = .bokmal) -> String {
-        var timing = eventTimePhrase(eventAt, relativeTo: referenceAt)
-        if languageStyle == .inntrondersk {
-            timing = timing
-                .replacingOccurrences(of: "i overmorgen", with: "i overmårrå")
-                .replacingOccurrences(of: "i morgen", with: "i mårrå")
-        }
+        var timing = WeatherLanguage.text(eventTimePhrase(eventAt, relativeTo: referenceAt), style: languageStyle)
         if rule.type == .sol {
             timing = "\(rule.durationHours) \(rule.durationHours == 1 ? "time" : "timer") \(timing)"
         } else {
@@ -46,9 +41,7 @@ enum NotificationCopy {
         }
         if !timing.hasSuffix(".") { timing += "." }
         if let eventDetail {
-            let styledDetail = languageStyle == .inntrondersk
-                ? eventDetail.replacingOccurrences(of: " til ", with: " te ")
-                : eventDetail
+            let styledDetail = WeatherLanguage.text(eventDetail, style: languageStyle)
             timing += "\n\(styledDetail)"
         }
         if let name = rule.cleanedCustomName { timing += "\n\(name)" }

@@ -159,6 +159,7 @@ struct HomeView: View {
                                 place: p,
                                 places: store.places,
                                 forecast: visibleForecast,
+                                languageStyle: store.alertLanguageStyle,
                                 onSelect: store.select
                             )
                         }
@@ -213,6 +214,7 @@ private struct CurrentWeatherCard: View {
     let place: Place
     let places: [Place]
     let forecast: [ForecastHour]
+    let languageStyle: AlertLanguageStyle
     let onSelect: (Place) -> Void
     var showsPlaceMenu = true
 
@@ -321,16 +323,17 @@ private struct CurrentWeatherCard: View {
                 let index = Int(timeline.date.timeIntervalSince1970 / 6) % max(count, 1)
                 if index == 0 {
                     headline(
-                        title: precipitation.title,
-                        detail: precipitation.detail,
+                        title: WeatherLanguage.text(precipitation.title, style: languageStyle),
+                        detail: WeatherLanguage.text(precipitation.detail, style: languageStyle),
                         systemImage: precipitation.systemImage,
                         color: precipitation.color
                     )
                 } else {
                     let status = rotatingStatuses[index - 1]
                     headline(
-                        title: status.text,
-                        detail: Planner.statusDetail(for: status, place: place, forecast: forecast),
+                        title: WeatherLanguage.text(status.text, style: languageStyle),
+                        detail: Planner.statusDetail(for: status, place: place, forecast: forecast)
+                            .map { WeatherLanguage.text($0, style: languageStyle) },
                         systemImage: status.type.systemImage,
                         color: status.type.color
                     )
@@ -943,6 +946,7 @@ struct PlacesView: View {
                                         place: place,
                                         places: store.places,
                                         forecast: forecast,
+                                        languageStyle: store.alertLanguageStyle,
                                         onSelect: store.select,
                                         showsPlaceMenu: false
                                     )
