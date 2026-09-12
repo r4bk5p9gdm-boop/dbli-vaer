@@ -151,8 +151,8 @@ deretter AUTO 25.
    svar ignoreres. Lokalt temperaturavvik brukes på nye Watch-prognoser uten
    akkumulering. Posisjonshentingens samtidighet og avbrudd gjenstår.
 
-37. **BRUKER · ÅPEN** — Vindkast på 9 m/s skal kunne varsles (brukerens
-   eksempel fra Steinkjer). Editor tilbyr bare nivåene 12/20/30/40, mens
+37. **BRUKER · DELVIS FERDIG** — Vindkast på 9 m/s kan nå velges med egen
+   nedre grense 4–50 m/s i editoren. Forhåndsnivåer er fortsatt 12/20/30/40, mens
    AlertType.defaultThreshold for vind er 10: standardene er inkonsistente.
    Gi tydelig justerbar nedre grense som inkluderer 9; ikke overskriv lagrede
    personlige terskler automatisk. Skill vind og kast i tekst, og unngå bare
@@ -169,6 +169,11 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-12: Vindeditoren har egen justerbar grense 4–50 m/s og viser
+  «Egen grense» når verdien ikke er et forhåndsnivå. Lagrede regler endres ikke.
+  Regresjonstest bekrefter lagring av 9 m/s og at 8,9 ikke treffer mens 9 gjør.
+  Alle 83 tester bestod på én simulator uten parallell testing. Ingen endring
+  i Watch-kode eller fysisk installasjon. Standardgrenser og vindtekst gjenstår.
 - 2026-09-12: Sikret Watch-refresh mot nyere iPhone-overføringer og tømming
   med revisjons-ID, og ignorerer kansellering/foreldede feilmeldinger. Nye
   prognoser bruker lokal temperaturjustering. Regresjonstest dekker ugyldig

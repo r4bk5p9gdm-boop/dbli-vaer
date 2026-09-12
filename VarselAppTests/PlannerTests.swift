@@ -5,6 +5,18 @@ import UserNotifications
 final class PlannerTests: XCTestCase {
     private let base = Date(timeIntervalSince1970: 2_000_000_000)
 
+    func testCustomNineMeterGustThresholdSurvivesSaving() throws {
+        var rule = Rule(type: .vind)
+        rule.threshold = 9
+        let restored = try JSONDecoder().decode(Rule.self, from: JSONEncoder().encode(rule))
+        XCTAssertEqual(restored.threshold, 9)
+        var hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 3, cloud: 20, dew: 4)
+        hour.gust = 8.9
+        XCTAssertFalse(restored.matches(hour))
+        hour.gust = 9
+        XCTAssertTrue(restored.matches(hour))
+    }
+
     func testWatchRefreshRejectsInvalidatedRequestAndPreservesLocalAdjustment() throws {
         var place = Place(name: "Klinga", lat: 64, lon: 11)
         place.temperatureOffset = -2

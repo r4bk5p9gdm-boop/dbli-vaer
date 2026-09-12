@@ -45,10 +45,16 @@ struct RuleEditorView: View {
                     }
 
                     if rule.type == .vind {
-                        Picker("Nivå", selection: windLevel) {
-                            ForEach(WindGustLevel.allCases) { level in
-                                Text("\(level.label) · \(level.rawValue) m/s").tag(level)
+                        Picker("Forslag", selection: $rule.threshold) {
+                            if !WindGustLevel.allCases.contains(where: { $0.threshold == rule.threshold }) {
+                                Text("Egen grense").tag(rule.threshold)
                             }
+                            ForEach(WindGustLevel.allCases) { level in
+                                Text("\(level.label) · \(level.rawValue) m/s").tag(level.threshold)
+                            }
+                        }
+                        Stepper(value: $rule.threshold, in: rule.type.range, step: 1) {
+                            Text("Varsle fra \(rule.threshold.formatted(.number.precision(.fractionLength(0...1)))) m/s i kastene")
                         }
                         Text("Valgt nivå utløses av varslede vindkast, ikke middelvind. Orkan er derfor ikke brukt som nivånavn.")
                             .font(.footnote)
