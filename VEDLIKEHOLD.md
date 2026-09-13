@@ -163,6 +163,14 @@ deretter AUTO 25.
    Watch viser nå vind/kast separat, med strek når kast mangler. Kontroller maler med
    grensetester. effectiveWind bruker max(middelvind, kast); vurder eksplisitt
    merking når kast mangler. Brukerens konkrete Yr-observasjon er ikke hentet.
+   Gjennomgang 2026-09-13: Fire vindmaler i RulePresetPickerView hardkoder
+   12 både i tall og beskrivelse. Rule.init og typebytte i RuleEditor bruker
+   defaultThreshold (10), men også decoder bruker samme verdi når threshold
+   mangler i eldre data. Neste endring: felles 9 m/s for nye vindregler og
+   maler i tråd med brukerens siste ønske, men behold historisk fallback 10
+   ved dekoding og alle eksplisitt lagrede grenser. Behold rådgivningsnivået
+   «Fest løse gjenstander» på 12; det er ikke samme valg som varslingsgrensen.
+   Test nye regler, alle fire maler, typebytte og gammel JSON uten threshold.
 38. **BRUKER · TRENGER AVKLARING** — «Ser ikke at årsplaner blir lagret?»:
    avklar hvilken app/skjerm og hva som forsvinner; ikke anta at dette gjelder
    værregler eller endre en annen app uten avklart mål.
@@ -173,6 +181,10 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-13: Avgrenset gjennomgang av vindstandarder fant felles standard
+  brukt både for nye regler og migrering. Dokumentert alle fire maler og
+  nødvendig migreringsvern før endring til 9 m/s for nye regler. Kun
+  dokumentasjon; diff-kontroll bestod, ingen nye bygg eller installasjon.
 - 2026-09-12, ressurskontroll: Samkjøring av livefelt «Vind / kast» på
   iPhone og Watch er påbegynt med regresjonstest, men ikke ferdig eller
   committet. Forrige testlogg finnes ikke lenger, så testresultatet kan ikke
