@@ -297,8 +297,8 @@ private struct CurrentWeatherCard: View {
                 )
                 LiveWeatherMetric(
                     icon: AlertType.vind.systemImage,
-                    label: "Vindkast",
-                    value: "\(current.effectiveWind.formatted(.number.precision(.fractionLength(0...1)))) m/s · \(windStrengthLabel(for: current.effectiveWind))",
+                    label: "Vind / kast",
+                    value: current.compactWindAndGust,
                     color: AlertType.vind.color,
                     isActive: current.effectiveWind >= WindGustLevel.looseObjects.threshold
                 )

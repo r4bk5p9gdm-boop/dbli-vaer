@@ -5,6 +5,15 @@ import UserNotifications
 final class PlannerTests: XCTestCase {
     private let base = Date(timeIntervalSince1970: 2_000_000_000)
 
+    func testCompactWindDoesNotInventMissingGust() {
+        var hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 3, cloud: 20, dew: 4)
+        XCTAssertEqual(hour.compactWindAndGust, "3 / – m/s")
+        hour.gust = 9
+        XCTAssertEqual(hour.compactWindAndGust, "3 / 9 m/s")
+        hour.gust = 0
+        XCTAssertEqual(hour.compactWindAndGust, "3 / 0 m/s")
+    }
+
     func testWindPushDetailNamesBothValuesAndMissingGusts() throws {
         let rule = Rule(type: .vind)
         var hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 3, cloud: 20, dew: 4)

@@ -159,7 +159,8 @@ deretter AUTO 25.
    «Vind i natt kl. 01» uten styrke. Rullerende overskrift sier nå «Vindkast»,
    og detaljlinjen viser vind og kast separat (eller «kast ikke oppgitt»).
    Pushdetaljer skiller også vind/kast, merker manglende kast og unngår
-   styrkebetegnelser for middelvind på kastverdier. Kontroller videre live-målefelter og maler med
+   styrkebetegnelser for middelvind på kastverdier. Livefeltene på iPhone og
+   Watch viser nå vind/kast separat, med strek når kast mangler. Kontroller maler med
    grensetester. effectiveWind bruker max(middelvind, kast); vurder eksplisitt
    merking når kast mangler. Brukerens konkrete Yr-observasjon er ikke hentet.
 38. **BRUKER · TRENGER AVKLARING** — «Ser ikke at årsplaner blir lagret?»:
@@ -172,6 +173,17 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-12, ressurskontroll: Samkjøring av livefelt «Vind / kast» på
+  iPhone og Watch er påbegynt med regresjonstest, men ikke ferdig eller
+  committet. Forrige testlogg finnes ikke lenger, så testresultatet kan ikke
+  bekreftes. Bare 4,9 GiB ledig disk (99 % brukt); ingen aktive bygg eller
+  startede simulatorer. Nye tunge tester/bygg utsettes av ressurshensyn.
+  Fullført 2026-09-13 etter økt ledig diskplass, se nedenfor.
+- 2026-09-13: Livefelt på iPhone og Watch bruker samme «Vind / kast»-tekst
+  og viser begge verdier separat. Manglende kast vises som strek, ikke som
+  middelvind eller null. Alle 86 tester og Watch-bygg bestod med to jobber
+  og gjenbruk av byggedata; diskplass 8,0 GiB etterpå. Ingen fysisk installasjon
+  eller visuell kontroll. Neste prioritet: konsistente vindmaler/standardgrenser.
 - 2026-09-12: Pushdetalj viser høyeste vind og høyeste oppgitte kast separat.
   Manglende kast merkes også når bare deler av perioden mangler data. Generelt
   sikringsråd tilføyes først fra 12 m/s i kast; 9 m/s kan fortsatt utløse regel

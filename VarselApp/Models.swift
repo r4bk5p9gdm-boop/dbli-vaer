@@ -454,6 +454,11 @@ struct ForecastHour: Codable, Identifiable, Hashable {
     }
 
     var effectiveWind: Double { max(wind, gust ?? wind) }
+    var compactWindAndGust: String {
+        let windText = wind.formatted(.number.precision(.fractionLength(0...1)))
+        let gustText = gust.map { $0.formatted(.number.precision(.fractionLength(0...1))) } ?? "–"
+        return "\(windText) / \(gustText) m/s"
+    }
 
     func precipitationOnset(atOrAbove threshold: Double, after date: Date? = nil) -> Date? {
         radarSamples?.first {
