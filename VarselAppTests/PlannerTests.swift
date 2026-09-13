@@ -5,6 +5,18 @@ import UserNotifications
 final class PlannerTests: XCTestCase {
     private let base = Date(timeIntervalSince1970: 2_000_000_000)
 
+    func testHomeFavoritesPreserveIdentityAndRejectDuplicatesOrDeletedPlaces() throws {
+        let a = UUID(), b = UUID()
+        let favorites = HomeFavorites(left: a, right: b)
+        let restored = try JSONDecoder().decode(HomeFavorites.self, from: JSONEncoder().encode(favorites))
+        XCTAssertEqual(restored, favorites)
+        XCTAssertEqual(restored.resolved(availableIDs: [b, a]), favorites)
+        XCTAssertEqual(restored.resolved(availableIDs: [b]), HomeFavorites(left: nil, right: b))
+        XCTAssertEqual(restored.resolved(availableIDs: []), HomeFavorites())
+        XCTAssertEqual(HomeFavorites(left: a, right: a).resolved(availableIDs: [a]), HomeFavorites(left: a))
+        XCTAssertEqual(try JSONDecoder().decode(HomeFavorites.self, from: Data("{}".utf8)), HomeFavorites())
+    }
+
     @MainActor
     func testCancelledLocationRequestDoesNotStartLocationLookup() async {
         let location = LocationManager()

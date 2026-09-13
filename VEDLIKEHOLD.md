@@ -157,6 +157,10 @@ deretter AUTO 25.
 34. **BRUKER · FERDIG** — Gjenoppta vedlikehold hvert tredje minutt med
    ressursvern for parallelt Claude-arbeid. Aktiv automasjon er oppdatert.
 35. **BRUKER · ÅPEN** — Sveip mellom tre hjemmesider: favoritt 2 til venstre,
+   Grunnmodell HomeFavorites lagt til med Codable og ID-basert oppløsning:
+   slettede steder og duplikater utelates, uten automatisk erstatning.
+   89 tester og Watch-bygg bestod 2026-09-13. Modellen er ennå ikke koblet
+   til Store, innstillinger eller sveiping; ingen synlig endring/installasjon.
    nåværende posisjon i midten og favoritt 1 til høyre. Åpne på posisjonssiden;
    vis nabostedenes navn/piler. Bruker har bedt om denne navigasjonsretningen.
    Favoritter velges eksplisitt, ikke ved å omdefinere dagens stedsrekkefølge.

@@ -1,5 +1,18 @@
 import SwiftUI
 
+/// Explicit favorites for the sides of the current-location home page.
+/// IDs survive renaming and list sorting; deleted places are not substituted.
+struct HomeFavorites: Codable, Equatable {
+    var left: UUID?
+    var right: UUID?
+
+    func resolved(availableIDs: Set<UUID>) -> HomeFavorites {
+        let validLeft = left.flatMap { availableIDs.contains($0) ? $0 : nil }
+        let validRight = right.flatMap { availableIDs.contains($0) && $0 != validLeft ? $0 : nil }
+        return HomeFavorites(left: validLeft, right: validRight)
+    }
+}
+
 enum AppCopy {
     static let name = "D bli Vær!"
 
