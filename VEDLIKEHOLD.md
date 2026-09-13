@@ -34,6 +34,14 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
 
 ## Nummerert kø
 
+40. **BRUKER · DELVIS FERDIG** — Sprak.json med engelsk, bokmål og
+   inntrøndersk: 61 tekstnøkler, engelsk appnavn «It’s Weather» og egne
+   værtypeoverskrifter som «It’s Raining!». validate_language.rb kontrollerer
+   språk, tomme verdier og samsvarende plassholdere. Fire kontrolltester og
+   validering av språkfilen bestod. Fortsatt utkast: tilkobling til app/push/
+   Watch/widget og full tekstdekning gjenstår. Ingen appbygg nødvendig for
+   denne filkontrollen; ingenting installert.
+
 39. **BRUKER · FERDIG** — Erstatt hyppige oppstarter med firetimersoppstart,
    sekvensielt arbeid i samme kjøring og eksplisitt stopp ved blokkering eller
    to forsøk uten fremdrift. Samlet rapport ved avslutning, ingen repeterte

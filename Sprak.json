@@ -1,0 +1,318 @@
+{
+  "_les_meg": {
+    "status": "Første redigerbare utkast. Ikke koblet til appen ennå. Ikke en fullstendig eksport av alle tekster.",
+    "redigering": "Endre kun tekstverdier, behold nøkler og plassholdere. Gyldig JSON tillater ikke kommentarer eller komma etter siste felt.",
+    "sprak": "en = engelsk, nb = bokmål, tr = inntrøndersk. Engelsk og nye dialektord er forslag til gjennomlesing.",
+    "plassholdere": "{sted} inkluderer brukerens valgte preposisjon og stedsnavn. Ikke oversett disse eller brukerens huskelapp. {tid} er ferdig tidsuttrykk; {varighet} inkluderer enhet.",
+    "tid": "Klokkeslett bruker to sifre, f.eks. 07 og 07.30. Før kl. 06 omtales som natt. Ikke gjenta ukedag ved i dag/i natt.",
+    "stil": "Engelsk appnavn er It’s Weather. Bokmål og inntrøndersk beholder D bli Vær!. Engelske varsler bruker værtypespesifikke push.title.*-maler, ikke substantivet fra weather.*. Tidspunkt i varselteksten viser om hendelsen er kommende. Rene appvarsler bruker app.name. Huskelapp tilføyes separat og uendret.",
+    "bruk": "Tilkobling av tekstnøkler til app, push, Watch og widget gjenstår. Å endre denne filen alene endrer ikke appen, heller ikke ved bygg før tilkoblingen er implementert."
+  },
+  "tekster": {
+    "app.name": {
+      "en": "It’s Weather",
+      "nb": "D bli Vær!",
+      "tr": "D bli Vær!"
+    },
+    "nav.home": {
+      "en": "Home",
+      "nb": "Hjem",
+      "tr": "Hjem"
+    },
+    "nav.queue": {
+      "en": "Upcoming alerts",
+      "nb": "Varselkø",
+      "tr": "Varselkø"
+    },
+    "nav.places": {
+      "en": "Places",
+      "nb": "Steder",
+      "tr": "Steder"
+    },
+    "nav.settings": {
+      "en": "Settings",
+      "nb": "Innstillinger",
+      "tr": "Innstillinger"
+    },
+    "action.edit": {
+      "en": "Edit",
+      "nb": "Rediger",
+      "tr": "Rediger"
+    },
+    "action.save": {
+      "en": "Save",
+      "nb": "Lagre",
+      "tr": "Lagre"
+    },
+    "action.cancel": {
+      "en": "Cancel",
+      "nb": "Avbryt",
+      "tr": "Avbryt"
+    },
+    "action.new_alert": {
+      "en": "New alert",
+      "nb": "Nytt varsel",
+      "tr": "Nytt varsel"
+    },
+    "action.test_alert": {
+      "en": "Send test alert",
+      "nb": "Send testvarsel",
+      "tr": "Send testvarsel"
+    },
+    "settings.language": {
+      "en": "Language",
+      "nb": "Språk",
+      "tr": "Språk"
+    },
+    "settings.memo": {
+      "en": "Reminder",
+      "nb": "Huskelapp",
+      "tr": "Huskelapp"
+    },
+    "settings.alerts_for": {
+      "en": "Alert settings for {sted}",
+      "nb": "Varselinnstillinger for {sted}",
+      "tr": "Varselinnstillinger for {sted}"
+    },
+    "weather.rain": {
+      "en": "Rain",
+      "nb": "Regn",
+      "tr": "Regn"
+    },
+    "weather.snow": {
+      "en": "Snow",
+      "nb": "Snø",
+      "tr": "Snø"
+    },
+    "weather.dew": {
+      "en": "Dew",
+      "nb": "Duggfall",
+      "tr": "Duggfall"
+    },
+    "weather.frost": {
+      "en": "Frost",
+      "nb": "Frost",
+      "tr": "Frost"
+    },
+    "weather.sun": {
+      "en": "Sun",
+      "nb": "Sol",
+      "tr": "Sol"
+    },
+    "weather.sun_breaks": {
+      "en": "Sunny spells",
+      "nb": "Solgløtt",
+      "tr": "Solgløtt"
+    },
+    "weather.wind": {
+      "en": "Wind",
+      "nb": "Vind",
+      "tr": "Vind"
+    },
+    "weather.gust": {
+      "en": "Wind gusts",
+      "nb": "Vindkast",
+      "tr": "Vindkast"
+    },
+    "weather.wind_and_gust": {
+      "en": "Wind / gusts",
+      "nb": "Vind / kast",
+      "tr": "Vind / kast"
+    },
+    "weather.temperature_below": {
+      "en": "Below {temperatur}°",
+      "nb": "Under {temperatur}°",
+      "tr": "Under {temperatur}°"
+    },
+    "push.title": {
+      "en": "It’s {vaertype}! {sted}",
+      "nb": "D bli {vaertype}! {sted}",
+      "tr": "D bli {vaertype}! {sted}"
+    },
+    "push.title_possible": {
+      "en": "Possible {vaertype}! {sted}",
+      "nb": "D kan bli {vaertype}! {sted}",
+      "tr": "D bli {vaertype}! {sted}, sjer d ut som"
+    },
+    "push.title.rain": {
+      "en": "It’s Raining! {sted}",
+      "nb": "D bli Regn! {sted}",
+      "tr": "D bli Regn! {sted}"
+    },
+    "push.title.snow": {
+      "en": "It’s Snowing! {sted}",
+      "nb": "D bli Snø! {sted}",
+      "tr": "D bli Snø! {sted}"
+    },
+    "push.title.sun": {
+      "en": "It’s Sunny! {sted}",
+      "nb": "D bli Sol! {sted}",
+      "tr": "D bli Sol! {sted}"
+    },
+    "push.title.wind": {
+      "en": "It’s Windy! {sted}",
+      "nb": "D bli Vind! {sted}",
+      "tr": "D bli Vind! {sted}"
+    },
+    "push.title.frost": {
+      "en": "It’s Frosty! {sted}",
+      "nb": "D bli Frost! {sted}",
+      "tr": "D bli Frost! {sted}"
+    },
+    "push.title.dew": {
+      "en": "It’s Dewy! {sted}",
+      "nb": "D bli Duggfall! {sted}",
+      "tr": "D bli Duggfall! {sted}"
+    },
+    "push.title.temperature_below": {
+      "en": "It’s Below {temperatur}°! {sted}",
+      "nb": "D bli Under {temperatur}°! {sted}",
+      "tr": "D bli Under {temperatur}°! {sted}"
+    },
+    "push.activation_required": {
+      "en": "Open the app to activate alerts.",
+      "nb": "Appen må startes for å aktivere varsler.",
+      "tr": "Appen må startes for å aktivere varsler."
+    },
+    "status.event": {
+      "en": "{vaertype} {tid}.",
+      "nb": "{vaertype} {tid}.",
+      "tr": "{vaertype} {tid}."
+    },
+    "status.possible": {
+      "en": "Possible {vaertype} {tid}.",
+      "nb": "Mulig {vaertype} {tid}.",
+      "tr": "{vaertype} {tid}, sjer d ut som."
+    },
+    "status.sun_duration": {
+      "en": "Sun for {varighet} {tid}.",
+      "nb": "Sol i {varighet} {tid}.",
+      "tr": "Sol i {varighet} {tid}."
+    },
+    "time.now": {
+      "en": "now",
+      "nb": "nå",
+      "tr": "nå"
+    },
+    "time.quarter": {
+      "en": "in fifteen minutes",
+      "nb": "om et kvarter",
+      "tr": "om et kvarter"
+    },
+    "time.half_hour": {
+      "en": "in half an hour",
+      "nb": "om en halvtime",
+      "tr": "om en halvtime"
+    },
+    "time.three_quarters": {
+      "en": "in forty-five minutes",
+      "nb": "om tre kvarter",
+      "tr": "om tre kvarter"
+    },
+    "time.one_hour": {
+      "en": "in an hour",
+      "nb": "om en time",
+      "tr": "om en time"
+    },
+    "time.two_hours": {
+      "en": "in two hours",
+      "nb": "om to timer",
+      "tr": "om to tima"
+    },
+    "time.three_hours": {
+      "en": "in three hours",
+      "nb": "om tre timer",
+      "tr": "om tre tima"
+    },
+    "time.today": {
+      "en": "today at {klokkeslett}",
+      "nb": "i dag kl. {klokkeslett}",
+      "tr": "i dag kl. {klokkeslett}"
+    },
+    "time.tonight": {
+      "en": "tonight at {klokkeslett}",
+      "nb": "i natt kl. {klokkeslett}",
+      "tr": "i natt kl. {klokkeslett}"
+    },
+    "time.tomorrow": {
+      "en": "tomorrow, {ukedag} at {klokkeslett}",
+      "nb": "i morgen, {ukedag} kl. {klokkeslett}",
+      "tr": "i mårrå, {ukedag} kl. {klokkeslett}"
+    },
+    "time.day_after_tomorrow": {
+      "en": "the day after tomorrow, {ukedag} at {klokkeslett}",
+      "nb": "i overmorgen, {ukedag} kl. {klokkeslett}",
+      "tr": "i overmårrå, {ukedag} kl. {klokkeslett}"
+    },
+    "time.night_before": {
+      "en": "early {ukedag} at {klokkeslett}",
+      "nb": "natt til {ukedag} kl. {klokkeslett}",
+      "tr": "natt te {ukedag} kl. {klokkeslett}"
+    },
+    "period.day": {
+      "en": "Day",
+      "nb": "Dag",
+      "tr": "Dag"
+    },
+    "period.evening": {
+      "en": "Evening",
+      "nb": "Kveld",
+      "tr": "Kveld"
+    },
+    "period.night": {
+      "en": "Night",
+      "nb": "Natt",
+      "tr": "Natt"
+    },
+    "detail.rain_light": {
+      "en": "Light rain {tid}.",
+      "nb": "Litt regn {tid}.",
+      "tr": "Litt regn {tid}."
+    },
+    "detail.rain_heavy": {
+      "en": "Heavy rain {tid}.",
+      "nb": "Mye regn {tid}.",
+      "tr": "My regn {tid}."
+    },
+    "detail.drizzle": {
+      "en": "Drizzle {tid}.",
+      "nb": "Yr {tid}.",
+      "tr": "Yr {tid}."
+    },
+    "detail.precipitation": {
+      "en": "Up to {mengde} mm over {varighet}.",
+      "nb": "Opptil {mengde} mm over {varighet}.",
+      "tr": "Opptil {mengde} mm over {varighet}."
+    },
+    "detail.snow": {
+      "en": "Estimated {mengde} mm of snow over {varighet}.",
+      "nb": "Anslått {mengde} mm snø over {varighet}.",
+      "tr": "Anslått {mengde} mm snø over {varighet}."
+    },
+    "detail.wind": {
+      "en": "Wind up to {vind} m/s. Gusts up to {kast} m/s.",
+      "nb": "Vind opptil {vind} m/s. Kast opptil {kast} m/s.",
+      "tr": "Vind opptil {vind} m/s. Kast opptil {kast} m/s."
+    },
+    "detail.gust_missing": {
+      "en": "Gust data unavailable.",
+      "nb": "Kast ikke oppgitt.",
+      "tr": "Kast ikke oppgitt."
+    },
+    "guidance.secure_objects": {
+      "en": "Secure loose objects.",
+      "nb": "Fest løse gjenstander.",
+      "tr": "Fest løse gjenstander."
+    },
+    "location.waiting": {
+      "en": "Getting your location…",
+      "nb": "Henter posisjon …",
+      "tr": "Henter posisjon …"
+    },
+    "location.timeout": {
+      "en": "Location is taking too long. Try again.",
+      "nb": "Posisjonen lot vente på seg. Prøv igjen.",
+      "tr": "Posisjonen lot vente på seg. Prøv igjen."
+    }
+  }
+}

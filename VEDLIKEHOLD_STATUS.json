@@ -1,7 +1,7 @@
 {
-  "continue": false,
+  "continue": true,
   "lastScheduledStart": "2026-09-13T05:15:12.787Z",
   "noProgressCount": 0,
-  "lastProgress": "Vedlikeholdsoppsett endret til firetimersoppstart med stoppvern.",
-  "stopReason": "Avsluttet omlegging. Vent på neste gyldige firetimersoppstart eller uttrykkelig brukerbeskjed."
+  "lastProgress": "Språkfil sikret med kontroll av språk og plassholdere. App-tilkobling gjenstår.",
+  "stopReason": ""
 }
