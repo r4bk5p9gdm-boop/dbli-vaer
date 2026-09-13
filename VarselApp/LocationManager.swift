@@ -2,26 +2,89 @@ import CoreLocation
 
 @MainActor
 final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
-    private let manager = CLLocationManager()
+    private var manager: CLLocationManager?
     private var continuation: CheckedContinuation<CLLocation, Error>?
+    private var requestID: UUID?
+    private var timeout: Task<Void, Never>?
+
+    enum RequestError: LocalizedError {
+        case busy, timedOut
+        var errorDescription: String? {
+            switch self {
+            case .busy: "Henter allerede posisjon. Prøv igjen om litt."
+            case .timedOut: "Posisjonen lot vente på seg. Prøv igjen."
+            }
+        }
+    }
 
     func current() async throws -> CLLocation {
-        manager.delegate = self
-        manager.requestWhenInUseAuthorization()
-        return try await withCheckedThrowingContinuation { c in
-            continuation = c
-            manager.requestLocation()
+        try Task.checkCancellation()
+        guard continuation == nil else { throw RequestError.busy }
+        let id = UUID()
+        return try await withTaskCancellationHandler {
+            try await withCheckedThrowingContinuation { c in
+                continuation = c
+                requestID = id
+                // A fresh manager prevents late callbacks from a previous request
+                // from completing the next request.
+                let source = CLLocationManager()
+                manager = source
+                source.delegate = self
+                timeout = Task { [weak self] in
+                    do { try await Task.sleep(nanoseconds: 30_000_000_000) }
+                    catch { return }
+                    guard self?.requestID == id else { return }
+                    self?.finish(.failure(RequestError.timedOut))
+                }
+                requestIfAuthorized(source)
+            }
+        } onCancel: {
+            Task { @MainActor [weak self] in
+                guard self?.requestID == id else { return }
+                self?.finish(.failure(CancellationError()))
+            }
+        }
+    }
+
+    private func finish(_ result: Result<CLLocation, Error>) {
+        let pending = continuation
+        continuation = nil
+        requestID = nil
+        timeout?.cancel()
+        timeout = nil
+        manager?.delegate = nil
+        manager = nil
+        pending?.resume(with: result)
+    }
+
+    private func requestIfAuthorized(_ source: CLLocationManager) {
+        switch source.authorizationStatus {
+        case .notDetermined: source.requestWhenInUseAuthorization()
+        case .authorizedAlways, .authorizedWhenInUse: source.requestLocation()
+        case .denied, .restricted: finish(.failure(CLError(.denied)))
+        @unknown default: finish(.failure(CLError(.denied)))
+        }
+    }
+
+    nonisolated func locationManagerDidChangeAuthorization(_ source: CLLocationManager) {
+        Task { @MainActor in
+            guard self.manager === source else { return }
+            self.requestIfAuthorized(source)
         }
     }
 
     nonisolated func locationManager(_ m: CLLocationManager, didUpdateLocations locs: [CLLocation]) {
         Task { @MainActor in
-            if let l = locs.last { continuation?.resume(returning: l) }
-            continuation = nil
+            guard self.manager === m, let l = locs.last,
+                  l.horizontalAccuracy >= 0 else { return }
+            finish(.success(l))
         }
     }
     nonisolated func locationManager(_ m: CLLocationManager, didFailWithError e: Error) {
-        Task { @MainActor in continuation?.resume(throwing: e); continuation = nil }
+        Task { @MainActor in
+            guard self.manager === m else { return }
+            finish(.failure(e))
+        }
     }
 
     static func name(for loc: CLLocation) async -> String {

@@ -162,7 +162,9 @@ deretter AUTO 25.
    Watch-refresh har nå revisjonsvern: ny iPhone-overføring eller tømming
    ugyldiggjør eldre pågående henting, inkludert dens feilmelding. Kansellerte
    svar ignoreres. Lokalt temperaturavvik brukes på nye Watch-prognoser uten
-   akkumulering. Posisjonshentingens samtidighet og avbrudd gjenstår.
+   akkumulering. Posisjonshenting avviser nå overlapp, støtter kansellering
+   og 30-sekunders tidsavbrudd, venter på tillatelse og avviser svar fra eldre
+   manager. Fysisk GPS-test og flere samtidighets-/timeouttester gjenstår.
 
 37. **BRUKER · DELVIS FERDIG** — Vindkast på 9 m/s kan nå velges med egen
    nedre grense 4–50 m/s i editoren. Forhåndsnivåer er fortsatt 12/20/30/40, mens
@@ -195,6 +197,10 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-13: Installert signert iPhone-bygg med vindstandard 9 m/s.
+  Deretter lagt til GPS-vern som grunnlag for sveiping. 88 tester og iOS-bygg
+  bestod, inkludert kansellering før GPS-oppstart. GPS-endringen er ikke
+  installert; sveipesidene er heller ikke implementert ennå.
 - 2026-09-13: Nye vindregler og fire vanlige vindmaler samkjørt til 9 m/s.
   Maltekst viser samme verdi og sier «i kastene». Historisk dekodingsfallback
   beholdt på 10 og lagrede terskler endres ikke. 87 tester og Watch-bygg

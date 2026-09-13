@@ -5,6 +5,19 @@ import UserNotifications
 final class PlannerTests: XCTestCase {
     private let base = Date(timeIntervalSince1970: 2_000_000_000)
 
+    @MainActor
+    func testCancelledLocationRequestDoesNotStartLocationLookup() async {
+        let location = LocationManager()
+        let task = Task { @MainActor in try await location.current() }
+        task.cancel()
+        do {
+            _ = try await task.value
+            XCTFail("Cancelled request should not return a position")
+        } catch {
+            XCTAssertTrue(error is CancellationError)
+        }
+    }
+
     func testWindDefaultsPreserveExistingRules() throws {
         XCTAssertEqual(Rule(type: .vind).threshold, 9)
         let legacy = try JSONDecoder().decode(Rule.self, from: Data("{\"type\":\"vind\"}".utf8))
