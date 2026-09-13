@@ -7,7 +7,14 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
 ## Arbeidsregler
 
 - Ta én avgrenset oppgave om gangen og revurder prioriteringen før hver økt.
-- Planlagt rytme er nå tre minutter. Ikke kjør overlappende økter.
+- Planlagt oppstart er hver fjerde time. Fortsett direkte med neste oppgave
+  i samme kjøring ved reell fremdrift; ikke bruk korte gjentatte oppstarter.
+- `VEDLIKEHOLD_STATUS.json` lagrer continue og fremdrifts-/stoppstatus.
+  Ny gyldig firetimersoppstart setter continue=true. Klar blokkering stopper
+  straks; to forsøk uten fremdrift stopper også. Sett continue=false og vent
+  til neste planlagte oppstart eller uttrykkelig brukerbeskjed. Ingen polling
+  etter stopp, ingen selvstartinger eller overlapp. Maks tre timer per økt.
+  Statusflagget er en arbeidsinstruks, ikke en innebygd scheduler-funksjon.
 - Claude kan arbeide samtidig. Kontroller diskplass, minnepress, belastning,
   aktive bygg og simulatorer før tungt arbeid. Maks én tung simulator om gangen;
   ikke stopp Claudes prosesser. Gjenbruk byggedata og utsett tunge tester ved
@@ -26,6 +33,12 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
   uttrykkelig beskjed.
 
 ## Nummerert kø
+
+39. **BRUKER · FERDIG** — Erstatt hyppige oppstarter med firetimersoppstart,
+   sekvensielt arbeid i samme kjøring og eksplisitt stopp ved blokkering eller
+   to forsøk uten fremdrift. Samlet rapport ved avslutning, ingen repeterte
+   stoppmeldinger. Enkeltmeldinger i samtalen kan ikke slettes med tilgjengelige
+   verktøy; samtaledatabasen er ikke endret. Ny kjøring er ikke funksjonstestet.
 
 Åpne BRUKER-oppgaver prioriteres nå: 37, 35 (grunnlag 36), 31, 33, 32,
 deretter AUTO 25.
