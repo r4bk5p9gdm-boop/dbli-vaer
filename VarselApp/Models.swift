@@ -174,7 +174,7 @@ enum AlertType: String, Codable, CaseIterable, Identifiable {
         }
     }
     var defaultThreshold: Double {
-        switch self { case .regn: 0.5; case .frost: 0; case .temperatur: 10; case .sno: 0.3; case .vind: 10; case .dugg: 1; case .sol: 20 }
+        switch self { case .regn: 0.5; case .frost: 0; case .temperatur: 10; case .sno: 0.3; case .vind: 9; case .dugg: 1; case .sol: 20 }
     }
     var range: ClosedRange<Double> {
         switch self { case .regn, .sno: 0.1...5; case .frost: -10...4; case .temperatur: -20...30; case .vind: 4...50; case .dugg: 0...3; case .sol: 0...50 }
@@ -316,7 +316,8 @@ struct Rule: Codable, Identifiable, Hashable {
         customName = try values.decodeIfPresent(String.self, forKey: .customName) ?? ""
         memoSuggestion = try values.decodeIfPresent(String.self, forKey: .memoSuggestion) ?? ""
         type = try values.decode(AlertType.self, forKey: .type)
-        threshold = try values.decodeIfPresent(Double.self, forKey: .threshold) ?? type.defaultThreshold
+        // Preserve the historical wind default for older saved rules.
+        threshold = try values.decodeIfPresent(Double.self, forKey: .threshold) ?? (type == .vind ? 10 : type.defaultThreshold)
         durationHours = try values.decodeIfPresent(Int.self, forKey: .durationHours) ?? 4
         leadMinutes = try values.decodeIfPresent(Int.self, forKey: .leadMinutes) ?? 120
         previousDayNotificationHour = try values.decodeIfPresent(Int.self, forKey: .previousDayNotificationHour)

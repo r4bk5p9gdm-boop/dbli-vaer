@@ -1,7 +1,7 @@
 import CoreLocation
 import SwiftUI
 
-private struct RulePreset: Identifiable {
+struct RulePreset: Identifiable {
     let id: String
     let title: String
     let detail: String
@@ -18,17 +18,17 @@ private struct RulePreset: Identifiable {
         make("sno-morgen", "Snø i morgen", "Fra kl. 06–22 · 0,3 mm vann/t · varsling kl. 21.00", "Finn fram snøskuffa", .sno, 0.3, 6, 22, 720, previousDayHour: 21),
         make("frost-natt", "Frost i natt", "Fra kl. 23–07 · 0 °C · varsling kl. 21.00", "Dekk til plantene", .frost, 0, 23, 7, 360, previousDayHour: 21),
         make("temp-natt", "Under 10 grader", "Fra kl. 23–07 · under 10 °C · varsling kl. 21.00", "Ta inn blomstene", .temperatur, 10, 23, 7, 360, previousDayHour: 21),
-        make("vind-natt", "Vind i natt", "Fra kl. 23–07 · 12 m/s · varsling kl. 21.00", "Sikre løse gjenstander", .vind, 12, 23, 7, 180, previousDayHour: 21),
-        make("vind-morgen", "Vind i morgen", "Fra kl. 07–22 · 12 m/s · varsling kl. 21.00", "Ta inn putene", .vind, 12, 7, 22, 720, previousDayHour: 21),
+        make("vind-natt", "Vind i natt", "Fra kl. 23–07 · \(AlertType.vind.defaultThreshold.formatted()) m/s i kastene · varsling kl. 21.00", "Sikre løse gjenstander", .vind, AlertType.vind.defaultThreshold, 23, 7, 180, previousDayHour: 21),
+        make("vind-morgen", "Vind i morgen", "Fra kl. 07–22 · \(AlertType.vind.defaultThreshold.formatted()) m/s i kastene · varsling kl. 21.00", "Ta inn putene", .vind, AlertType.vind.defaultThreshold, 7, 22, 720, previousDayHour: 21),
         make("vind-kraftig", "Kraftige vindkast", "Hele døgnet · fra 20 m/s · varsel 3 timer før", "Sikre utemøbler og trampoline", .vind, 20, 0, 0, 180),
         make("vind-ekstrem", "Ekstreme vindkast", "Hele døgnet · fra 40 m/s · varsel 3 timer før", "Følg farevarslene fra MET", .vind, 40, 0, 0, 180),
         sameDay(make("dag-regn", "Regn i dag", "Fra kl. 07–23 · 0,3 mm/t · varsling kl. 07.00", "Husk regntøy", .regn, 0.3, 7, 23, 180, previousDayHour: 7)),
         sameDay(make("dag-sol", "Sol i dag", "Fra kl. 07–21 · maks 20 % skyer i 4 t · varsling kl. 07.00", "Utnytt dagen!", .sol, 20, 7, 21, 180, duration: 4, previousDayHour: 7)),
         sameDay(make("dag-sno", "Snø i dag", "Fra kl. 07–23 · 0,3 mm vann/t · varsling kl. 07.00", "Beregn ekstra kjøretid", .sno, 0.3, 7, 23, 180, previousDayHour: 7)),
-        sameDay(make("dag-vind", "Vind i dag", "Fra kl. 07–23 · 12 m/s · varsling kl. 07.00", "Fest løse gjenstander", .vind, 12, 7, 23, 180, previousDayHour: 7)),
+        sameDay(make("dag-vind", "Vind i dag", "Fra kl. 07–23 · \(AlertType.vind.defaultThreshold.formatted()) m/s i kastene · varsling kl. 07.00", "Fest løse gjenstander", .vind, AlertType.vind.defaultThreshold, 7, 23, 180, previousDayHour: 7)),
         make("snart-regn", "Regn senere i dag", "Fra kl. 07–23 · 0,3 mm/t · varsel 3 timer før", "Husk regntøy", .regn, 0.3, 7, 23, 180),
         make("snart-sno", "Snø senere i dag", "Fra kl. 07–23 · 0,3 mm vann/t · varsel 3 timer før", "Beregn ekstra kjøretid", .sno, 0.3, 7, 23, 180),
-        make("snart-vind", "Vindkast senere i dag", "Fra kl. 07–23 · 12 m/s · varsel 3 timer før", "Fest løse gjenstander", .vind, 12, 7, 23, 180),
+        make("snart-vind", "Vindkast senere i dag", "Fra kl. 07–23 · \(AlertType.vind.defaultThreshold.formatted()) m/s i kastene · varsel 3 timer før", "Fest løse gjenstander", .vind, AlertType.vind.defaultThreshold, 7, 23, 180),
         weekendRain,
     ]
 

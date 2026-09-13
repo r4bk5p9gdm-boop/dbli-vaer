@@ -5,6 +5,26 @@ import UserNotifications
 final class PlannerTests: XCTestCase {
     private let base = Date(timeIntervalSince1970: 2_000_000_000)
 
+    func testWindDefaultsPreserveExistingRules() throws {
+        XCTAssertEqual(Rule(type: .vind).threshold, 9)
+        let legacy = try JSONDecoder().decode(Rule.self, from: Data("{\"type\":\"vind\"}".utf8))
+        XCTAssertEqual(legacy.threshold, 10)
+        for threshold in [4.0, 9, 10, 12, 20, 40] {
+            var rule = Rule(type: .vind)
+            rule.threshold = threshold
+            let restored = try JSONDecoder().decode(Rule.self, from: JSONEncoder().encode(rule))
+            XCTAssertEqual(restored.threshold, threshold)
+        }
+        let ids = Set(["vind-natt", "vind-morgen", "dag-vind", "snart-vind"])
+        let presets = RulePreset.all.filter { ids.contains($0.id) }
+        XCTAssertEqual(presets.count, 4)
+        for preset in presets {
+            XCTAssertEqual(preset.rule.threshold, 9)
+            XCTAssertTrue(preset.detail.contains("9 m/s i kastene"))
+        }
+        XCTAssertEqual(WindGustLevel.looseObjects.threshold, 12)
+    }
+
     func testCompactWindDoesNotInventMissingGust() {
         var hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 3, cloud: 20, dew: 4)
         XCTAssertEqual(hour.compactWindAndGust, "3 / – m/s")

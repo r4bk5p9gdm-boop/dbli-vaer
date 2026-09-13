@@ -166,7 +166,8 @@ deretter AUTO 25.
 
 37. **BRUKER · DELVIS FERDIG** — Vindkast på 9 m/s kan nå velges med egen
    nedre grense 4–50 m/s i editoren. Forhåndsnivåer er fortsatt 12/20/30/40, mens
-   AlertType.defaultThreshold for vind er 10: standardene er inkonsistente.
+   Nye vindregler og de fire vanlige malene bruker nå 9 m/s. Eldre regler
+   uten lagret grense beholder historisk 10; eksplisitte grenser bevares.
    Gi tydelig justerbar nedre grense som inkluderer 9; ikke overskriv lagrede
    personlige terskler automatisk. Skill vind og kast i tekst, og unngå bare
    «Vind i natt kl. 01» uten styrke. Rullerende overskrift sier nå «Vindkast»,
@@ -194,6 +195,10 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-13: Nye vindregler og fire vanlige vindmaler samkjørt til 9 m/s.
+  Maltekst viser samme verdi og sier «i kastene». Historisk dekodingsfallback
+  beholdt på 10 og lagrede terskler endres ikke. 87 tester og Watch-bygg
+  bestod. Rådgivningsnivå 12 og kraftig/ekstremmaler er uendret. Ikke installert.
 - 2026-09-13: Kontrollert lokal test i maintenance_stop_test.rb bestod:
   Git-diff-kontroll ga fremdrift, to simulerte tomme forsøk slo continue av,
   og neste oppgave ble ikke kalt. Testen endrer ikke produksjonsstatus eller
