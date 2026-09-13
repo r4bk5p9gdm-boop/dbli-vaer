@@ -194,6 +194,11 @@ Ingen.
 
 ## Ferdig
 
+- 2026-09-13: Kontrollert lokal test i maintenance_stop_test.rb bestod:
+  Git-diff-kontroll ga fremdrift, to simulerte tomme forsøk slo continue av,
+  og neste oppgave ble ikke kalt. Testen endrer ikke produksjonsstatus eller
+  planlegger. Dette tester en lokal modell av instruksen, IKKE integrasjonen
+  med Codex-agenten eller planleggeren; ende-til-ende-verifisering gjenstår.
 - 2026-09-13: Avgrenset gjennomgang av vindstandarder fant felles standard
   brukt både for nye regler og migrering. Dokumentert alle fire maler og
   nødvendig migreringsvern før endring til 9 m/s for nye regler. Kun
