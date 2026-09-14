@@ -4,6 +4,13 @@ Dette dokumentet er den nummererte arbeidskøen for den kontinuerlige
 vedlikeholdsarbeideren. Nye oppgaver fra Mathias legges øverst blant åpne
 oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
 
+## Nummerering fra 2026-09-14
+
+Nye bestillinger fra Mathias får fortløpende nummer `BRUKER-001`,
+`BRUKER-002` osv. Når en bestilling er ferdig, brukes samme nummer i
+rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
+`AUTO-001`, `AUTO-002` osv. Historiske nummer under er beholdt for sporbarhet.
+
 ## Arbeidsregler
 
 - Ta én avgrenset oppgave om gangen og revurder prioriteringen før hver økt.
@@ -33,6 +40,66 @@ oppgaver og merkes `BRUKER`. De går alltid foran oppgaver merket `AUTO`.
   uttrykkelig beskjed.
 
 ## Nummerert kø
+
+**BRUKER-001 · DELVIS IMPLEMENTERT** — CarPlay følger foreslått stedskilde: nåværende
+GPS-sted, favoritt 1 og favoritt 2. Watch følger valgt sted som standard.
+Tre valg kan nå aktiveres i globale iPhone-innstillinger, og første aktive
+sted brukes som felles widget-/CarPlay-kilde; Watch beholder valgt sted som
+standard. Gjenstår: faktisk CarPlay-scene med opptil tre steder, fersk/sist
+kjent GPS-status og fysisk kontroll på telefon/Watch/CarPlay.
+
+46. **BRUKER · DELVIS IMPLEMENTERT** — Vindkastnivåer har navn og tall i
+   regelvelgeren; kompakt værtekst viser bare kast. Små nedbørsmengder (fra
+   0,1 mm/t) får blå markering selv uten aktiv regnregel. Radstripen viser
+   start/slutt-timer og Dag/Kveld/Natt. «% sannsynlig» og duggpunktforklaring
+   er gjort mer selvforklarende. Snømengdevarsel og høy/lav temperaturregel
+   Temperaturregel kan nå velge over/under, og snømalen forklarer
+   nedbørsmengde/anslått snø. Varighet for høy/lav temperatur og mer direkte
+   snømengde i mm snø gjenstår. 96 tester bestod etter retningen.
+
+45. **BRUKER · IMPLEMENTERT, TESTET** — Bare vindkast i tekst/tall;
+   egen radgrense for kast uten aktiv regel. Steder er fane 2, Varslingsregler
+   fane 3. Dugg følger regn i radinnstillingene; frostmargin ved frostbryteren.
+   Lokal temperatur sier temperatur + preposisjon/sted + nå. Inntrøndersk
+   tall + timer blir tima. 95 iOS-tester bestod. Fysisk installasjon og
+   visuell kontroll gjenstår.
+
+44. **BRUKER · IMPLEMENTERT, TESTET** — Inntrøndersk «Under 10 no» og
+   Duggfall; globale valg for mellomrom/komma/punkt/tankestrek før klokkeslett.
+   Skilletegn overføres til Watch. Stedskort åpner Hjem for valgt sted.
+   Vind vises med kast i parentes, terskel gjelder fortsatt kast. Lokal
+   temperatur øverst under stedsoverskrift med Yr-verdi strøket ved justering
+   og korrigert verdi. Temperatur-/dugg-/solgrense ved respektiv radbryter;
+   ingen endring av pushregler eller Yr-duggpunkt. Visningsgrenser gjelder
+   uten aktive regler; aktive regler har fortsatt egne terskler.
+   95 tester og Watch-bygg bestod 2026-09-14. Ikke installert eller visuelt
+   kontrollert på fysisk enhet ennå.
+
+43. **BRUKER · DELVIS IMPLEMENTERT** — CarPlay/Watch skal oppdateres med ny
+   vindkastlogikk og språk. Språkvalg sendes nå med snapshot, bevares ved
+   Watch-refresh og brukes i widgettekst/VoiceOver. Eldre data gir bokmål.
+   Test lagt til; full bygg/test/installasjon gjenstår.
+   Neste: fysisk scene/widget-kontroll og opptil tre steder i CarPlay,
+   separat CarPlay-/Watch-valg, Watch følger valgt sted som standard.
+   CarPlay bør ha stabilt stedsnavn og én prioritert hendelse; eventuell
+   stedsrullering må være langsom og systemstyrt, ikke lovet sanntid.
+   GPS må merkes som faktisk/sist kjent posisjon, ikke likestilles med valgt
+   lagret sted. Stedsvelger og flerstedsoverføring er ennå ikke implementert.
+
+42. **BRUKER · TESTET** — Vindregel matcher kun oppgitt
+   vindkast, aldri middelvind som reserve. Raden bruker kaststyrke; push sier
+   Vindkast og beskriver varigheten som en periode med kast. Middelvind beholdes
+   i detaljer. Ukedager på inntrøndersk bruker manda'n–sønda'n, også registrert
+   i Sprak.json. 96-testerkjøring bestod. Watch/CarPlay visuell kontroll
+   gjenstår.
+
+41. **BRUKER · TESTET** — Egen temperaturgrense for
+   visning uten aktiv temperaturregel. Justeres under Hjem-redigering → Lokal
+   temperatur, lagres per sted og oppretter ingen pushregel. Aktive regler
+   beholder egne grenser; eldre steder bruker 10 °C. Regresjonstest lagt til
+   for lagring, standardverdi, avslått/aktiv regel og regelstyrt visning.
+   96-testerkjøring bestod. Ikke egen fysisk installasjon etter siste
+   temperaturretning.
 
 40. **BRUKER · DELVIS FERDIG** — Sprak.json med engelsk, bokmål og
    inntrøndersk: 61 tekstnøkler, engelsk appnavn «It’s Weather» og egne
@@ -156,7 +223,11 @@ deretter AUTO 25.
    Gjenstår: overføring av språk til widget/Watch og visuell kontroll av bytte.
 34. **BRUKER · FERDIG** — Gjenoppta vedlikehold hvert tredje minutt med
    ressursvern for parallelt Claude-arbeid. Aktiv automasjon er oppdatert.
-35. **BRUKER · ÅPEN** — Sveip mellom tre hjemmesider: favoritt 2 til venstre,
+35. **BRUKER · DELVIS IMPLEMENTERT** — Hjem kan nå sveipes mellom valgt sted
+   og eksplisitt valgte favoritter; favoritt 2 ligger til venstre og favoritt 1
+   til høyre i den lagrede rekkefølgen. Visuelle nabopiler og faktisk GPS-
+   midtsted gjenstår.
+   Sveip mellom tre hjemmesider: favoritt 2 til venstre,
    Grunnmodell HomeFavorites lagt til med Codable og ID-basert oppløsning:
    slettede steder og duplikater utelates, uten automatisk erstatning.
    89 tester og Watch-bygg bestod 2026-09-13. Modellen er ennå ikke koblet
@@ -199,15 +270,21 @@ deretter AUTO 25.
    ved dekoding og alle eksplisitt lagrede grenser. Behold rådgivningsnivået
    «Fest løse gjenstander» på 12; det er ikke samme valg som varslingsgrensen.
    Test nye regler, alle fire maler, typebytte og gammel JSON uten threshold.
-38. **BRUKER · TRENGER AVKLARING** — «Ser ikke at årsplaner blir lagret?»:
-   avklar hvilken app/skjerm og hva som forsvinner; ikke anta at dette gjelder
-   værregler eller endre en annen app uten avklart mål.
-
 ## Forslag som venter på godkjenning
 
 Ingen.
 
 ## Ferdig
+
+- 2026-09-13: Sprak.json bygges nå inn i iPhone, Watch og begge widgetmål.
+  Appnavn, generiske pushoverskrifter, inntrønderske tidsuttrykk og ukedager
+  leses fra filen. Språk følger snapshot til Watch/widgets og beholdes ved
+  Watch-refresh. Engelsk/full tekstdekning og øvrige katalogmaler gjenstår.
+  94 tester bestod, inkludert faktisk bundlet språkfil, trygg innsetting av
+  stedsnavn, vindkast uten middelvind-reserve og separat visningstemperatur.
+  Signert iPhone/Watch-bygg bestod og iPhone-installasjon ble bekreftet.
+  Sprak.json kontrollert i alle fire ferdige pakker. Installasjon på selve
+  klokka og visuell kontroll i CarPlay er ikke bekreftet.
 
 - 2026-09-13: Installert signert iPhone-bygg med vindstandard 9 m/s.
   Deretter lagt til GPS-vern som grunnlag for sveiping. 88 tester og iOS-bygg
