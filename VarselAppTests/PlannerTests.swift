@@ -865,6 +865,30 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(eventTimePhrase(atSix, relativeTo: reference, calendar: calendar), "i morgen, tirsdag kl. 06")
     }
 
+    func testPlannerUsesInjectedOsloCalendarAcrossDaylightSavingTransition() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let now = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 3, day: 30, hour: 20)))
+        let event = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 3, day: 31, hour: 8)))
+        var rule = Rule(type: .regn)
+        rule.activeFromHour = 7
+        rule.activeToHour = 22
+        rule.previousDayNotificationHour = 21
+
+        let result = Planner.plan(
+            rule: rule,
+            forecast: [ForecastHour(time: event, temp: 6, precip: 1, wind: 2, cloud: 100, dew: 5)],
+            placeName: "Oslo",
+            now: now,
+            calendar: calendar
+        )
+        let alert = try XCTUnwrap(result.alerts.first)
+        let expectedFire = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 3, day: 30, hour: 21)))
+
+        XCTAssertEqual(alert.eventAt, event)
+        XCTAssertEqual(alert.fireAt, expectedFire)
+    }
+
     func testTodayAndTonightDoNotRepeatTheWeekday() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))

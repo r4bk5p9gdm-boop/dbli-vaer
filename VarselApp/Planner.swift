@@ -12,12 +12,12 @@ enum Planner {
         var possible = false
     }
 
-    private static func matches(_ rule: Rule, hour: ForecastHour, frostMargin: Double = 0) -> Bool {
-        rule.isActive(at: hour.time) && rule.matches(hour, frostMargin: frostMargin)
+    private static func matches(_ rule: Rule, hour: ForecastHour, frostMargin: Double = 0, calendar: Calendar = .current) -> Bool {
+        rule.isActive(at: hour.time, calendar: calendar) && rule.matches(hour, frostMargin: frostMargin)
     }
 
-    private static func matches(_ rule: Rule, at index: Int, in forecast: [ForecastHour], frostMargin: Double = 0) -> Bool {
-        guard forecast.indices.contains(index), matches(rule, hour: forecast[index], frostMargin: frostMargin) else { return false }
+    private static func matches(_ rule: Rule, at index: Int, in forecast: [ForecastHour], frostMargin: Double = 0, calendar: Calendar = .current) -> Bool {
+        guard forecast.indices.contains(index), matches(rule, hour: forecast[index], frostMargin: frostMargin, calendar: calendar) else { return false }
         guard rule.type == .dugg else { return true }
 
         let eventAt = forecast[index].time
@@ -40,8 +40,8 @@ enum Planner {
         return isPrecipitationRule(rule) && hour.isPossiblePrecipitation(atOrAbove: rule.threshold)
     }
 
-    private static func sampleMatches(_ sample: PrecipitationSample, rule: Rule, hour: ForecastHour) -> Bool {
-        guard sample.rate >= rule.threshold, rule.isActive(at: sample.time) else { return false }
+    private static func sampleMatches(_ sample: PrecipitationSample, rule: Rule, hour: ForecastHour, calendar: Calendar = .current) -> Bool {
+        guard sample.rate >= rule.threshold, rule.isActive(at: sample.time, calendar: calendar) else { return false }
         switch rule.type {
         case .regn: return hour.temp > 1
         case .sno: return hour.temp <= 1
@@ -53,7 +53,8 @@ enum Planner {
         rule: Rule,
         forecast: [ForecastHour],
         run: Range<Int>? = nil,
-        now: Date
+        now: Date,
+        calendar: Calendar = .current
     ) -> (date: Date, isNow: Bool)? {
         guard isPrecipitationRule(rule) else { return nil }
         let selectedHours = run.map { Array(forecast[$0]) } ?? forecast
@@ -65,22 +66,22 @@ enum Planner {
         let nearNow = samples
             .filter { abs($0.sample.time.timeIntervalSince(now)) <= 7.5 * 60 }
             .min { abs($0.sample.time.timeIntervalSince(now)) < abs($1.sample.time.timeIntervalSince(now)) }
-        if let nearNow, sampleMatches(nearNow.sample, rule: rule, hour: nearNow.hour) {
+        if let nearNow, sampleMatches(nearNow.sample, rule: rule, hour: nearNow.hour, calendar: calendar) {
             return (nearNow.sample.time, true)
         }
         if let upcoming = samples.first(where: {
-            $0.sample.time > now && sampleMatches($0.sample, rule: rule, hour: $0.hour)
+            $0.sample.time > now && sampleMatches($0.sample, rule: rule, hour: $0.hour, calendar: calendar)
         }) {
             return (upcoming.sample.time, false)
         }
         return nil
     }
 
-    private static func matchingRuns(rule: Rule, forecast: [ForecastHour], frostMargin: Double = 0) -> [Range<Int>] {
+    private static func matchingRuns(rule: Rule, forecast: [ForecastHour], frostMargin: Double = 0, calendar: Calendar = .current) -> [Range<Int>] {
         var runs: [Range<Int>] = []
         var start: Int?
         for index in 0...forecast.count {
-            let isMatch = index < forecast.count && matches(rule, at: index, in: forecast, frostMargin: frostMargin)
+            let isMatch = index < forecast.count && matches(rule, at: index, in: forecast, frostMargin: frostMargin, calendar: calendar)
             if isMatch, start == nil { start = index }
             if !isMatch, let first = start {
                 runs.append(first..<index)
@@ -129,18 +130,18 @@ enum Planner {
         )
     }
 
-    static func plan(rule: Rule, forecast: [ForecastHour], placeName: String, placeID: UUID? = nil, frostMargin: Double = 0, now: Date = Date()) -> Result {
+    static func plan(rule: Rule, forecast: [ForecastHour], placeName: String, placeID: UUID? = nil, frostMargin: Double = 0, now: Date = Date(), calendar: Calendar = .current) -> Result {
         var res = Result()
         res.hitIndices = Set(forecast.indices.filter {
-            matches(rule, at: $0, in: forecast, frostMargin: frostMargin)
+            matches(rule, at: $0, in: forecast, frostMargin: frostMargin, calendar: calendar)
         })
 
-        let runs = matchingRuns(rule: rule, forecast: forecast, frostMargin: frostMargin)
+        let runs = matchingRuns(rule: rule, forecast: forecast, frostMargin: frostMargin, calendar: calendar)
         if rule.previousDayNotificationHour != nil {
             var seenFireDates: Set<Date> = []
             let scheduledRuns: [(run: Range<Int>, fireAt: Date)] = runs.compactMap { run in
                 let eventAt = forecast[run.lowerBound].time
-                guard let fireAt = previousDayFireDate(for: eventAt, rule: rule),
+                guard let fireAt = previousDayFireDate(for: eventAt, rule: rule, calendar: calendar),
                       fireAt > now,
                       seenFireDates.insert(fireAt).inserted else { return nil }
                 return (run, fireAt)
@@ -152,7 +153,7 @@ enum Planner {
                 let eventAt = forecast[scheduled.run.lowerBound].time
                 let possible = isPossible(rule: rule, hour: forecast[scheduled.run.lowerBound], frostMargin: frostMargin)
                 let hours = Array(forecast[scheduled.run])
-                let fireHour = Calendar.current.component(.hour, from: scheduled.fireAt)
+                let fireHour = calendar.component(.hour, from: scheduled.fireAt)
                 let quiet = rule.quiet && (fireHour >= rule.quietFrom || fireHour < rule.quietTo)
                 return PlannedAlert(
                     rule: rule,
@@ -171,18 +172,18 @@ enum Planner {
         }
 
         guard let firstRun = runs.first else { return res }
-        let firstRadarEvent = radarEvent(rule: rule, forecast: forecast, run: firstRun, now: now)
+        let firstRadarEvent = radarEvent(rule: rule, forecast: forecast, run: firstRun, now: now, calendar: calendar)
         res.eventAt = firstRadarEvent?.date ?? forecast[firstRun.lowerBound].time
         res.possible = firstRadarEvent == nil
             && isPossible(rule: rule, hour: forecast[firstRun.lowerBound], frostMargin: frostMargin)
 
         for run in runs {
             let start = run.lowerBound
-            let preciseRadarEvent = radarEvent(rule: rule, forecast: forecast, run: run, now: now)
+            let preciseRadarEvent = radarEvent(rule: rule, forecast: forecast, run: run, now: now, calendar: calendar)
             let eventAt = preciseRadarEvent?.date ?? forecast[start].time
             let possible = preciseRadarEvent == nil
                 && isPossible(rule: rule, hour: forecast[start], frostMargin: frostMargin)
-            let candidates = notificationCandidates(for: eventAt, rule: rule, now: now)
+            let candidates = notificationCandidates(for: eventAt, rule: rule, now: now, calendar: calendar)
             guard !candidates.isEmpty else { continue }
 
             res.eventAt = eventAt
@@ -213,13 +214,13 @@ enum Planner {
         return res
     }
 
-    private static func notificationCandidates(for eventAt: Date, rule: Rule, now: Date) -> [(date: Date, quiet: Bool)] {
+    private static func notificationCandidates(for eventAt: Date, rule: Rule, now: Date, calendar: Calendar = .current) -> [(date: Date, quiet: Bool)] {
         (0..<rule.alertCount).compactMap { index in
             let date = eventAt.addingTimeInterval(
                 TimeInterval(-rule.leadMinutes * 60 + index * rule.intervalMinutes * 60)
             )
             guard date > now, date < eventAt else { return nil }
-            let hour = Calendar.current.component(.hour, from: date)
+            let hour = calendar.component(.hour, from: date)
             let quiet = rule.quiet && (hour >= rule.quietFrom || hour < rule.quietTo)
             return (date, quiet)
         }
@@ -242,7 +243,7 @@ enum Planner {
         let number: (Double) -> String = {
             $0.formatted(.number.precision(.fractionLength(0...1)))
         }
-        let probability = hour.precipProbability.map { " · \(Int($0.rounded())) % sannsynlighet" } ?? ""
+        let probability = hour.precipProbability.map { " · \(Int($0.rounded())) % sannsynlig" } ?? ""
 
         switch status.type {
         case .regn:
@@ -258,7 +259,7 @@ enum Planner {
             return "Anslått \(status.possible == true ? "opptil " : "")\(number(snow)) mm snø\(probability)"
         case .dugg:
             let gap = max(0, hour.temp - hour.dew)
-            return "Duggpunkt \(number(hour.dew))° · \(number(gap))° fra lufta"
+            return "Duggpunkt \(number(hour.dew))° · \(number(gap))° forskjell fra lufttemperaturen"
         case .frost:
             let margin = place.localFrostMargin > 0 ? " · lokal margin +\(number(place.localFrostMargin))°" : ""
             let label = hour.yrTemperature == nil ? "Yr melder" : "Lokalt anslag"
@@ -267,9 +268,9 @@ enum Planner {
             return "\(hour.yrTemperature == nil ? "Yr melder" : "Lokalt anslag") \(number(hour.temp))°"
         case .vind:
             if let gust = hour.gust {
-                return "Vind \(number(hour.wind)) m/s · kast \(number(gust)) m/s"
+                return "Vindkast \(number(gust)) m/s"
             }
-            return "Vind \(number(hour.wind)) m/s · kast ikke oppgitt"
+            return "Vindkast ikke oppgitt"
         case .sol:
             return "Skydekke \(Int(hour.cloud.rounded())) %"
         }
@@ -381,15 +382,13 @@ enum Planner {
             let value = amount.formatted(.number.precision(.fractionLength(0...1)))
             return "Anslått \(possible ? "opptil " : "")\(value) mm snø over \(durationText)."
         case .vind:
-            let wind = hours.map(\.wind).max() ?? 0
             let gust = hours.compactMap(\.gust).max()
             let number: (Double) -> String = { $0.formatted(.number.precision(.fractionLength(0...1))) }
-            let windText = "Vind opptil \(number(wind)) m/s."
-            guard let gust else { return "\(windText) Kast ikke oppgitt. Varighet \(durationText)." }
+            guard let gust else { return "Vindkast ikke oppgitt. Varighet \(durationText)." }
             let partial = hours.contains { $0.gust == nil } ? " Kast mangler for deler av perioden." : ""
             let guidance = gust >= WindGustLevel.looseObjects.threshold
                 ? " \(WindGustLevel.forSpeed(gust).guidance)" : ""
-            return "\(windText) Kast opptil \(number(gust)) m/s. Varighet \(durationText).\(partial)\(guidance)"
+            return "Vindkast opptil \(number(gust)) m/s. Periode med vindkast: \(durationText).\(partial)\(guidance)"
         case .frost:
             let lowest = hours.map(\.temp).min() ?? 0
             let label = hours.contains { $0.yrTemperature != nil } ? "Lokalt anslag ned mot" : "Yr melder ned mot"

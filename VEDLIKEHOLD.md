@@ -128,9 +128,11 @@ eller konkurrere med en allerede aktiv simulator/byggprosess.
 fallback. Regresjonstest verifiserer at mengde oversettes, mens stedsnavn,
 preposisjon og huskelapp beholdes uendret. 74 språkoppføringer valideres.
 
-**AUTO-012 · ÅPEN** — Planleggingsrevisjon: utvid deterministiske tester for
-tidssone, overgang over midnatt og duplikatdemping når samme værhendelse
-kommer fra flere prognosekilder.
+**AUTO-012 · FULLFØRT 2026-09-15** — Planleggingen kan nå få en eksplisitt
+`Calendar` gjennom hele varselkjeden, inkludert aktive timer, stilleperioder,
+radarprøver og fast kveldsvarsel. Dette gjør tidssone- og sommertidslogikk
+deterministisk uten å endre standardkallet. Regresjonstest dekker Europe/Oslo
+over sommertidsskiftet; testmål kompilert.
 
 **AUTO-013 · ÅPEN** — Snapshot-migrering: sørg for at eldre eller ukjente
 språkfelt i Watch/widget-data faller trygt tilbake til bokmål uten å skjule
