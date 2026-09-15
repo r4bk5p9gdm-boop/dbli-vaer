@@ -19,8 +19,10 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 - Hver aktiv kjøring skal gjøre én konkret kode-, test- eller dokumentasjons-
   endring. Ikke bruk kjøringen på bare statuskontroll eller fremdriftsrapport.
 - Hvis en oppgave feiler eller mangler et nødvendig teknisk grunnlag, merk den
-  `PÅ VENT` med dato og årsak og gå videre til neste laveste ublokkerte oppgave.
-  Stopp bare når alle gjenstående oppgaver er blokkert eller utrygge.
+  `PÅ VENT` med dato og årsak og gå videre til neste laveste ublokkerte oppgave
+  i samme eller neste kjøring. En enkelt blokkert oppgave stopper aldri køen;
+  stopp bare når alle gjenstående oppgaver er blokkert/utrygge, eller to
+  kjøringer ikke gir fremdrift på noen tilgjengelig oppgave.
 - Avslutt hver økt med utført oppgavenummer, kort resultat, test/ blokkering,
   eventuell commit og de tre neste oppgavenumrene i køen.
 - Ønskelisten kan utvides fortløpende til 010 og videre. Bruk neste ledige
