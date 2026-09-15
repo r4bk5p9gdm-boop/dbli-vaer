@@ -86,10 +86,10 @@ helflate-DragGesture på Hjem med horisontal filtrering, terskel og animert
 stedsskifte til høyre/venstre. Gesten ligger utenfor innholdscellene slik at
 hele siden kan brukes. Fysisk UX-kontroll gjenstår ved neste enhetstest.
 
-**AUTO-002 · DELVIS IMPLEMENTERT 2026-09-15** — Robust oppstarts- og
-konfigurasjonsflyt: PersistedStoreState uten valgt sted er nå dekket av
-regresjonstest og iOS-bygg. Første åpning, posisjonstillatelse og første
-prognose ved avbrudd/manglende nett må fortsatt gjennomgås.
+**AUTO-002 · FULLFØRT 2026-09-15** — Robust oppstarts- og konfigurasjonsflyt:
+PersistedStoreState uten valgt sted, kansellert posisjonsforespørsel,
+kansellert refresh og refresh-kø som fortsetter etter avbrudd er dekket av
+regresjonstester. iOS-bygg bestått.
 
 **AUTO-003 · ÅPEN** — Testplanleggingens grenser: kontroller 64-varselsgrensen,
 duplikatdemping og at delvis feilet prognose ikke sletter gyldige varsler.
