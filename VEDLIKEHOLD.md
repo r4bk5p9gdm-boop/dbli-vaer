@@ -162,6 +162,9 @@ Watch-synkronisering.
 stedshenting beholder siste gyldige prognose og varsler uten å tømme andre
 steders data.
 
+**AUTO-019 · ÅPEN** — Varslingsgrenser: test at iOS-grensen på 64 forespørsler
+og avviste/feilede varsler ikke sletter gyldige eksisterende varsler.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
