@@ -295,14 +295,18 @@ regel ikke produserer push-varsel ved neste planlegging.
 temperaturjustering er verdien som krysser «Temp under/over»-grensene i
 visningen, mens rå Yr-temperatur beholdes separat som referanse.
 
-**AUTO-039 · ÅPEN** — Test at manglende vindkastdata ikke gir falsk
-vindkastvarsling eller blå vindstripe.
+**AUTO-039 · FULLFØRT 2026-09-15** — Regresjonstest dekker både manglende
+(`nil`) og ugyldig (`NaN`) vindkast. Begge gir ingen vindkastmatch, slik at
+verken varsel eller stripe vises uten målt kast.
 
 **AUTO-040 · ÅPEN** — Kontroller at varselnavn/huskelapp ikke påvirker
 duplikatdemping av ellers identiske værvarsler.
 
 **AUTO-041 · ÅPEN** — Test at tidskortets temperaturfarger ikke endrer
- tilgjengelighetsbeskrivelsen eller tallformatet.
+tilgjengelighetsbeskrivelsen eller tallformatet.
+
+**AUTO-042 · ÅPEN** — Kontroller at snøens estimerte mengde aldri blir
+negativ ved manglende eller uvanlige temperaturverdier.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.

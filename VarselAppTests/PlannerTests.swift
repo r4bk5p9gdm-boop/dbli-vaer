@@ -194,6 +194,8 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(AlertType.vind.matches(hour, threshold: 9))
         hour.gust = 9
         XCTAssertTrue(AlertType.vind.matches(hour, threshold: 9))
+        hour.gust = nil
+        XCTAssertFalse(AlertType.vind.matches(hour, threshold: 9))
         hour.gust = .nan
         XCTAssertFalse(AlertType.vind.matches(hour, threshold: 9))
     }
