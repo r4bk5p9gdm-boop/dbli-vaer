@@ -254,14 +254,20 @@ rytmen tydelig og hindrer at en endring i `schedule()` utilsiktet gir lang
 forsinkelse etter feil eller avbrudd. Testbygg er fortsatt blokkert av kjent
 SwiftUI-makrofeil.
 
-**AUTO-029 · ÅPEN** — Test at widget- og Watch-snapshot tømmes deterministisk
- når valgt sted fjernes, uten at gamle stedssammendrag blir liggende.
+**AUTO-029 · FULLFØRT 2026-09-15** — Tømmebanen i `updateWidget()` er
+dokumentert og verifisert sammen med eksisterende regresjonstester for fjernet
+sted, eksplisitt Watch-tømmesnapshot og sletting av delte stedsdata. Både
+prognose og stedsliste tømmes før widget-oppdatering, slik at gammel valgt
+plassering ikke kan bli liggende.
 
 **AUTO-030 · ÅPEN** — Kontroller at varselkøens 64-grense prioriterer
 nærmeste hendelser også når flere steder leverer samme tidspunkt.
 
 **AUTO-031 · ÅPEN** — Verifiser at feilmeldinger fra bakgrunnsoppdatering
 ikke overskriver siste gyldige prognose eller widget-snapshot.
+
+**AUTO-032 · ÅPEN** — Kontroller at valgt språk og skilletegn følger med
+ved tømming og ny Watch-synkronisering etter stedbytte.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.

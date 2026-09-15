@@ -673,6 +673,8 @@ final class Store: ObservableObject {
             updatedAt: widgetPlace.flatMap { forecastUpdatedAt[$0.id] }, cached: SharedWidgetData.load()
         )
         guard let snapshot else {
+            // Removing the selected place (or moving it) must clear both the
+            // forecast snapshot and the shared-place list in one transaction.
             SharedWidgetData.clear()
             WatchSyncManager.shared.clear()
             WidgetCenter.shared.reloadAllTimelines()
