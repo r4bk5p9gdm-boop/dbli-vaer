@@ -102,8 +102,9 @@ konkrete, ikke-dupliserte AUTO-punkter er gjennomført.
 tester for språk/skilletegn, gammel eller tom snapshot, flyttet sted og
 eksplisitt tømming uten duplikat eller feil valgt sted.
 
-**AUTO-008 · ÅPEN** — Bakgrunnsoppdatering: test at replanlegging og widget-
-oppdatering ikke skjer etter kansellering eller med foreldet sted.
+**AUTO-008 · FULLFØRT 2026-09-15** — Bakgrunnsoppdatering er testet slik at
+kansellert refresh, køens neste oppdatering, foreldet sted og widget-fallback
+ikke skriver feil eller dupliserer data.
 
 **AUTO-009 · ÅPEN** — Varseltekst-regresjon: test alle værtyper med bokmål,
 inntrøndersk og engelsk slik at andrelinjen ikke gjentar tid eller type.
