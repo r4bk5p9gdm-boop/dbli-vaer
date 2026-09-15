@@ -181,7 +181,7 @@ struct DbliVaerWidget: Widget {
             WeatherWidgetView(entry: entry)
         }
         .configurationDisplayName("D bli Vær!")
-        .description("Aktuelle værvarsler for valgt sted på iPhone og i CarPlay.")
+        .description("Aktuelle værvarsler for primærstedet og opptil to andre valgte steder på iPhone og i CarPlay.")
         .supportedFamilies([.systemSmall, .systemMedium])
         .containerBackgroundRemovable(true)
     }
