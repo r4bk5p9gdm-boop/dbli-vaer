@@ -617,6 +617,12 @@ struct Place: Codable, Identifiable, Hashable {
         guard let value = displayTemperatureThreshold, value.isFinite else { return AlertType.temperatur.defaultThreshold }
         return min(30, max(-20, value))
     }
+    var resolvedDisplaySunThreshold2: Double {
+        guard let value = displaySunThreshold2, value.isFinite else {
+            return min(50, displayThreshold(for: .sol) + 10)
+        }
+        return min(50, max(0, value))
+    }
     var localTemperatureOffset: Double { min(10, max(-10, temperatureOffset ?? 0)) }
 
     var areNotificationsEnabled: Bool { notificationsEnabled ?? true }

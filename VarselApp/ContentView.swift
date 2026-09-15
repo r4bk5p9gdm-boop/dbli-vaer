@@ -192,7 +192,7 @@ struct HomeView: View {
                                     rules: p.rulesForDisplay,
                                     frostMargin: p.localFrostMargin,
                                     mode: .weatherBands,
-                                    sunThreshold2: p.displaySunThreshold2
+                                    sunThreshold2: p.resolvedDisplaySunThreshold2
                                 )
                             }
                         }.card()
@@ -690,7 +690,7 @@ struct RulesView: View {
                                         .labelsHidden().pickerStyle(.menu)
                                         if type == .sol {
                                             Picker("Sol maks skyer 2", selection: Binding(
-                                                get: { p.displaySunThreshold2 ?? min(50, p.displayThreshold(for: .sol) + 10) },
+                                                get: { p.resolvedDisplaySunThreshold2 },
                                                 set: { p.displaySunThreshold2 = $0; store.update(p) }
                                             )) {
                                                 ForEach(Array(stride(from: 0.0, through: 50.0, by: 5.0)), id: \.self) { value in

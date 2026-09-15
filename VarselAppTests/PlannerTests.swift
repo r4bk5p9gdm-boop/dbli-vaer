@@ -35,6 +35,11 @@ final class PlannerTests: XCTestCase {
         place.displaySunThreshold2 = 20
         let decoded = try JSONDecoder().decode(Place.self, from: JSONEncoder().encode(place))
         XCTAssertEqual(decoded.displaySunThreshold2, 20)
+        XCTAssertEqual(decoded.resolvedDisplaySunThreshold2, 20)
+        place.displaySunThreshold2 = 99
+        XCTAssertEqual(place.resolvedDisplaySunThreshold2, 50)
+        place.displaySunThreshold2 = nil
+        XCTAssertEqual(place.resolvedDisplaySunThreshold2, 20)
     }
 
     func testMalformedPlaceSnapshotUsesSafeDefaults() throws {

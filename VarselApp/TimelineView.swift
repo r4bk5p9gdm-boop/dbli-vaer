@@ -20,7 +20,7 @@ struct ForecastVariantsView: View {
     let rules: [Rule]
     let frostMargin: Double
     let mode: ForecastDisplayMode
-    let sunThreshold2: Double?
+    let sunThreshold2: Double
 
     private var days: [ForecastDay] { ForecastDay.make(from: forecast) }
 
@@ -190,7 +190,7 @@ private struct WeatherBandsForecast: View {
     let day: ForecastDay
     let rules: [Rule]
     let frostMargin: Double
-    let sunThreshold2: Double?
+    let sunThreshold2: Double
     let now: Date
 
     private let labelWidth: CGFloat = 85
@@ -338,7 +338,7 @@ private struct CombinedDayBandTrack: View {
     let rules: [Rule]
     let type: AlertType
     let frostMargin: Double
-    let sunThreshold2: Double?
+    let sunThreshold2: Double
 
     var body: some View {
         HStack(spacing: 3) {
@@ -358,7 +358,7 @@ private struct CombinedHourBandCell: View {
     let type: AlertType
     let period: WeatherBandPeriod
     let frostMargin: Double
-    let sunThreshold2: Double?
+    let sunThreshold2: Double
 
     var body: some View {
         GeometryReader { proxy in
@@ -368,12 +368,12 @@ private struct CombinedHourBandCell: View {
                 ForEach(hours) { hour in
                     let hourNumber = Calendar.current.component(.hour, from: hour.time)
                     let offset = hourOffset(hourNumber, from: period.startHour)
-                    let matchesSunPreview = type == .sol && sunThreshold2.map { hour.cloud <= $0 } == true
+                    let matchesSunPreview = type == .sol && hour.cloud <= sunThreshold2
                     if offset < 8, matchesSunPreview || rules.contains(where: {
                         $0.isActive(at: hour.time) && $0.matches(hour, frostMargin: frostMargin)
                     }) {
                         Rectangle()
-                            .fill(type.color.opacity(type == .sol && sunThreshold2.map({ hour.cloud > $0 }) == true ? 0.35 : 0.78))
+                            .fill(type.color.opacity(type == .sol && hour.cloud > sunThreshold2 ? 0.35 : 0.78))
                             .frame(width: proxy.size.width / 8 + 0.5)
                             .offset(x: proxy.size.width * CGFloat(offset) / 8)
                     }

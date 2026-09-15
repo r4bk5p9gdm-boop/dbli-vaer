@@ -62,7 +62,8 @@ nærmeste sted ved oppstart. Gjenstår solnivå 1/2 og verifisering på enhet.
 Solinnstillingene har nå separate terskler for maks skyer 1 og 2, med lagring
 per sted. Velgerne vises som to separate valg i samme solrad, og solbåndet
 viser nå første terskel tydeligere og den andre som en svakere forhåndsvisning.
-iOS-bygg bestod 2026-09-15 etter korrigert SwiftUI-struktur.
+iOS-bygg bestod 2026-09-15 etter korrigert SwiftUI-struktur. Solgrense 2
+har nå én sentral, validerende standardverdi i modellen.
 Enhetsverifisering gjenstår.
 
 **AUTO-001 · DELVIS IMPLEMENTERT 2026-09-15** — Stabilitetsrunde for vedvarende
