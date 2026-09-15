@@ -537,7 +537,11 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(LiveWeatherActivityPolicy.canStart(current, now: base))
         XCTAssertTrue(LiveWeatherActivityPolicy.canContinue(tooSoon, now: base))
         XCTAssertTrue(LiveWeatherActivityPolicy.canContinue(current, now: base))
+        let atLatestStart = WeatherStatus(ruleID: rule.id, type: .regn, text: "", eventAt: base.addingTimeInterval(60 * 60), isNow: false)
+        XCTAssertTrue(LiveWeatherActivityPolicy.canContinue(atLatestStart, now: base))
         XCTAssertFalse(LiveWeatherActivityPolicy.canContinue(movedAway, now: base))
+        let pastLatestStart = WeatherStatus(ruleID: rule.id, type: .regn, text: "", eventAt: base.addingTimeInterval(60 * 60 + 1), isNow: false)
+        XCTAssertFalse(LiveWeatherActivityPolicy.canContinue(pastLatestStart, now: base))
     }
 
     func testClearSkyRequiresConfiguredDuration() {

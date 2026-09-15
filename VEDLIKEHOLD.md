@@ -235,12 +235,21 @@ Ingen produksjonskodeendring var nødvendig; eksisterende kontekstkontroll
 bevarer forespørselen uendret. Testbygg er fortsatt blokkert av SwiftUI-
 makroserverfeilen i `ContentView`.
 
-**AUTO-027 · ÅPEN** — Verifiser at replanlegging ikke holder store
-prognosekart lenger enn nødvendig etter widget-/Watch-synkronisering.
+**AUTO-027 · FULLFØRT 2026-09-15** — Live Activity-policyen er kontrollert
+med grenseverdier: aktivitet fortsetter til og med én time før hendelsen, men
+ikke etterpå. Regresjonstest sikrer at en replanlegging ikke lar en utløpt
+aktivitet bli hengende etter synkronisering. Ingen endring i UI eller
+prognosemodell.
 
 **AUTO-028 · ÅPEN** — Gjennomgå bakgrunnsoppdateringens planlagte tidspunkt
 og sikre at neste refresh ikke beholdes unødvendig lenge etter en mislykket
 eller avbrutt jobb.
+
+**AUTO-029 · ÅPEN** — Test at widget- og Watch-snapshot tømmes deterministisk
+ når valgt sted fjernes, uten at gamle stedssammendrag blir liggende.
+
+**AUTO-030 · ÅPEN** — Kontroller at varselkøens 64-grense prioriterer
+ nærmeste hendelser også når flere steder leverer samme tidspunkt.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
