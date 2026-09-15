@@ -1709,6 +1709,18 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(ids.contains("request-64"))
     }
 
+    func testNotificationCapacityBreaksEqualTimesByStableID() {
+        let sameTime = base.addingTimeInterval(3_600)
+        let dates = (0..<70).map { index in
+            (id: String(format: "place-%02d", index), date: sameTime)
+        }.reversed()
+        let ids = NotificationScheduler.nearestRequestIDs(Array(dates))
+        XCTAssertEqual(ids.count, 64)
+        XCTAssertTrue(ids.contains("place-00"))
+        XCTAssertTrue(ids.contains("place-63"))
+        XCTAssertFalse(ids.contains("place-64"))
+    }
+
     func testFailedNotificationReplacementKeepsExistingRequest() {
         let stale = NotificationScheduler.stalePendingRequestIDs(
             pendingIDs: ["old", "replace", "preserved"],

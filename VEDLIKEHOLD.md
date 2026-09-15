@@ -260,14 +260,18 @@ sted, eksplisitt Watch-tømmesnapshot og sletting av delte stedsdata. Både
 prognose og stedsliste tømmes før widget-oppdatering, slik at gammel valgt
 plassering ikke kan bli liggende.
 
-**AUTO-030 · ÅPEN** — Kontroller at varselkøens 64-grense prioriterer
-nærmeste hendelser også når flere steder leverer samme tidspunkt.
+**AUTO-030 · FULLFØRT 2026-09-15** — Regresjonstest dekker 70 samtidige
+varsler fra flere steder. De 64 nærmeste velges deterministisk med stabil
+ID-sortering, uavhengig av innkommende stedrekkefølge.
 
 **AUTO-031 · ÅPEN** — Verifiser at feilmeldinger fra bakgrunnsoppdatering
 ikke overskriver siste gyldige prognose eller widget-snapshot.
 
 **AUTO-032 · ÅPEN** — Kontroller at valgt språk og skilletegn følger med
 ved tømming og ny Watch-synkronisering etter stedbytte.
+
+**AUTO-033 · ÅPEN** — Test at varsler med ulik alvorlighetsgrad beholder
+prioritert rekkefølge når tidspunktet er likt.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
