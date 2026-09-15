@@ -1913,6 +1913,13 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(Store.isUsableForecast(forecast(values: [(8, 0, 1, 40, 3)])))
     }
 
+    func testEmptyForecastCreatesNoSnowAlert() {
+        let rule = Rule(type: .sno)
+        let result = Planner.plan(rule: rule, forecast: [], placeName: "Klinga", now: base)
+        XCTAssertTrue(result.alerts.isEmpty)
+        XCTAssertNil(result.eventAt)
+    }
+
     @MainActor
     func testSuccessfulAndIntentionallyEmptyRefreshCanFinalize() {
         XCTAssertTrue(Store.shouldFinalizeRefresh(successfulPlaceCount: 3, failedPlaceCount: 0))

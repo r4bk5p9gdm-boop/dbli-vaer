@@ -316,14 +316,18 @@ ved 1 °C: nøyaktig 1,0 °C gir snøikon/-regel, mens 1,1 °C gir regnikon/-reg
 **AUTO-044 · FULLFØRT 2026-09-16** — Tidskort og Watch-widget bruker nå
 samme `compactTemperatureText`-formatterer og regresjonstest for avrunding.
 
-**AUTO-045 · ÅPEN** — Kontroller at tomme prognoser ikke lager tomme
-snøvarsler eller negative mengdetekster.
+**AUTO-045 · FULLFØRT 2026-09-16** — Regresjonstest bekrefter at tom
+prognose gir null snøvarsler og ingen hendelsestid; mengdetekst kan derfor
+ikke bli negativ eller tom.
 
 **AUTO-046 · ÅPEN** — Kontroller at widgeten ikke viser temperaturfelt fra
 et annet sted etter raskt stedbytte.
 
 **AUTO-047 · ÅPEN** — Verifiser at temperaturformattereren håndterer
 ikke-finite verdier uten å krasje eller vise misvisende tekst.
+
+**AUTO-048 · ÅPEN** — Kontroller at varslingskøen rydder utløpte
+ forespørsler uten å fjerne fremtidige varsler.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
