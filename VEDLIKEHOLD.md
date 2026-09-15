@@ -41,6 +41,35 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-002 · DELVIS IMPLEMENTERT** — Forenkle tidslinjens klokkeslett til faste markører
+07/15/23 over raden uten gjentatt Dag/Kveld/Natt i hver blokk. Oppdater
+inntrøndersk («No e d doggfall», «No e d regn», «oppte»), kall regnraden
+«Nedbør», legg inn temp over samt solgrenser for maks skyer 1 og 2 med visuell
+støtte, og vis vindkastnivå med tekst («lett bris» osv.). Sveip er gjort
+helsides med animert sidebytte, og appen forsøker nå å velge/nye-lagre
+nærmeste sted ved oppstart. Gjenstår solnivå 1/2 og verifisering på enhet.
+
+**AUTO-001 · ÅPEN** — Stabilitetsrunde for vedvarende lagring og migrering:
+gå gjennom dekoding av eldre Place/Rule-data, sikre at ugyldige eller manglende
+felt ikke kan stoppe oppstart, og legg til målrettede regresjonstester.
+
+**BRUKER-003 · ÅPEN** — Sørg for at vedlikeholdskøen alltid har minst tre
+meningsfulle AUTO-oppgaver. Når en AUTO-oppgave fullføres skal arbeideren
+loggføre den, opprette neste unike AUTO-nummer ved behov og beholde en siste
+«kø-renser»-oppgave som fyller på tre nye punkter bare når det finnes reell
+vedlikeholdsverdi. Én oppgave/rad skal behandles per økt.
+
+**AUTO-002 · ÅPEN** — Robust oppstarts- og konfigurasjonsflyt: kontroller at
+første åpning, posisjonstillatelse, stedvalg og første prognose tåler avbrudd
+og manglende nett uten tom eller ødelagt tilstand.
+
+**AUTO-003 · ÅPEN** — Testplanleggingens grenser: kontroller 64-varselsgrensen,
+duplikatdemping og at delvis feilet prognose ikke sletter gyldige varsler.
+
+**AUTO-004 · ÅPEN** — Kø-renser: vurder om det finnes minst tre konkrete,
+ikke-dupliserte AUTO-punkter og opprett nye med neste nummer når det er reell
+verdi i dem. Denne oppgaven skal ikke lage tomme eller spekulative punkter.
+
 **BRUKER-001 · DELVIS IMPLEMENTERT** — CarPlay følger foreslått stedskilde: nåværende
 GPS-sted, favoritt 1 og favoritt 2. Watch følger valgt sted som standard.
 Tre valg kan nå aktiveres i globale iPhone-innstillinger, og første aktive

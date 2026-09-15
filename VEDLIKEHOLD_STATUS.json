@@ -1,7 +1,7 @@
 {
-  "continue": false,
+  "continue": true,
   "lastScheduledStart": "2026-09-13T05:15:12.787Z",
-  "noProgressCount": 2,
-  "lastProgress": "Kontrollerte prosjektets iOS-, Watch-app-, Watch-widget- og testskjema. BRUKER-001 står fortsatt delvis implementert; fysisk CarPlay/Watch-scene og kontroll gjenstår.",
-  "stopReason": "To vedlikeholdsforsøk uten reell fremdrift; fysisk CarPlay/Watch-enhet kreves for neste kontroll."
+  "noProgressCount": 0,
+  "lastProgress": "BRUKER-003 registrert: AUTO-køen skal ha minst tre meningsfulle oppgaver og fylles på med unike nummer ved reell verdi.",
+  "stopReason": "BRUKER-003 er åpen; brukeroppgave kjøres med 2-minuttersintervall."
 }
