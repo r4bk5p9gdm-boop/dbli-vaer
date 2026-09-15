@@ -99,6 +99,17 @@ som ikke skal slette gyldige varsler har regresjonstester.
 ikke-dupliserte AUTO-punkter og opprett nye med neste nummer når det er reell
 verdi i dem. Denne oppgaven skal ikke lage tomme eller spekulative punkter.
 
+**AUTO-005 · ÅPEN** — Lanseringssjekk for første åpning: kjør en lett,
+repeterbar smoke-test av seed-steder, valgt sted, prognosefeil og første
+varselsplan uten fysisk installasjon.
+
+**AUTO-006 · ÅPEN** — Tidsgrense-regresjon: utvid testene for tidssoner,
+midnatt, «i natt»/«i morgen» og varsel som krysser sommertid.
+
+**AUTO-007 · ÅPEN** — Widget-/Watch-stabilitet: test at gammel snapshot,
+tom prognose og raskt stedsskifte gir korrekt fallback uten duplikat eller
+feil valgt sted.
+
 **BRUKER-001 · DELT OPP** — Hovedønsket er delt i tre spor slik at hver
 leveranse kan fullføres og dokumenteres separat.
 
