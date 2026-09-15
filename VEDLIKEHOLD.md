@@ -268,14 +268,18 @@ ID-sortering, uavhengig av innkommende stedrekkefølge.
 prognose aldri regnes som vellykket bakgrunnsdata og derfor ikke kan erstatte
 en siste gyldig prognose eller widget-snapshot.
 
-**AUTO-032 · ÅPEN** — Kontroller at valgt språk og skilletegn følger med
-ved tømming og ny Watch-synkronisering etter stedbytte.
+**AUTO-032 · FULLFØRT 2026-09-15** — Widget-snapshot lagrer nå eksplisitt
+valgt skilletegn sammen med språkstil, slik Watch-synkroniseringen allerede
+gjør. Ved tømming sendes fortsatt et eksplisitt nil-snapshot.
 
 **AUTO-033 · ÅPEN** — Test at varsler med ulik alvorlighetsgrad beholder
 prioritert rekkefølge når tidspunktet er likt.
 
 **AUTO-034 · ÅPEN** — Verifiser at planleggeren ikke lager varsler for
 display-only-regler som bare skal vises i radene.
+
+**AUTO-035 · ÅPEN** — Test migrering av steder uten lagret «Temp over»-grense
+slik at standardverdien brukes uten å endre eldre stedsdata.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
