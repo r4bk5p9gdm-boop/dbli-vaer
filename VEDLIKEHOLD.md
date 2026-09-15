@@ -141,6 +141,10 @@ sted eller temperatur.
 **AUTO-014 · ÅPEN** — Varslingskopi: test at bakgrunnsplanlegging beholder
 språk, mengde/varighet og huskelapp uten gjentatt tidspunkt i andrelinjen.
 
+**AUTO-015 · ÅPEN** — Prognosekilder: test at sammenslåing av Yr-tabell og
+Nå-prøver gir ett deterministisk nedbørshendelsesforløp uten doble varsler
+eller at tørt Nå-varsel skjuler tabellnedbør.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
