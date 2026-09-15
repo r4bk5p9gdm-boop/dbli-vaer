@@ -143,9 +143,11 @@ standard. Regresjonstest og testmål bestått.
 separate linjer: først tidspunkt, deretter mengde/varighet, og til slutt
 aktivert huskelapp. Testen sikrer at andrelinjen ikke gjentar tidspunktet.
 
-**AUTO-015 · ÅPEN** — Prognosekilder: test at sammenslåing av Yr-tabell og
-Nå-prøver gir ett deterministisk nedbørshendelsesforløp uten doble varsler
-eller at tørt Nå-varsel skjuler tabellnedbør.
+**AUTO-015 · FULLFØRT 2026-09-15** — Nowcast-prøver normaliseres nå på
+tidsstempel før de flettes med Yr-tabellen. Ved duplikat beholdes høyeste
+nedbørsrate, slik at «Nå» blir deterministisk og konservativt uten doble
+hendelser. Eksisterende tørr-nowcast/tabellregn-test og ny
+duplikatregresjonstest består.
 
 **AUTO-016 · ÅPEN** — Bakgrunnsoppdatering: verifiser at lagret språkstil,
 sted og varselkontekst brukes likt etter app- og prosessrestart.

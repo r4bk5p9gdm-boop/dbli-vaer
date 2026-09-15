@@ -1389,6 +1389,20 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testNowcastDeduplicatesTimestampKeepingHighestRate() {
+        let samples = [
+            PrecipitationSample(time: base, rate: 0.2),
+            PrecipitationSample(time: base.addingTimeInterval(5 * 60), rate: 0.1),
+            PrecipitationSample(time: base.addingTimeInterval(5 * 60), rate: 0.8),
+            PrecipitationSample(time: base.addingTimeInterval(2 * 3_600), rate: 1.2)
+        ]
+
+        let normalized = YrService.ninetyMinuteNowcast(from: samples)
+
+        XCTAssertEqual(normalized.map(\.time), [base, base.addingTimeInterval(5 * 60)])
+        XCTAssertEqual(normalized.last?.rate, 0.8)
+    }
+
     func testWetNowcastFlowsFromYrPayloadToPushAndWidgetStatus() throws {
         let table = try YrService.decodeLocationForecast(Self.dryLocationForecastFixture)
         let nowcast = try YrService.decodeNowcast(Self.nowcastFixture(rateAtFiveMinutes: 0.8))

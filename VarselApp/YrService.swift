@@ -95,7 +95,16 @@ enum YrService {
         let sorted = samples.sorted { $0.time < $1.time }
         guard let start = sorted.first?.time else { return [] }
         let end = start.addingTimeInterval(90 * 60)
-        return sorted.filter { $0.time <= end }
+        var byTime: [Date: PrecipitationSample] = [:]
+        for sample in sorted where sample.time <= end {
+            // MET can repeat a timestamp when radar tiles are refreshed.
+            // Keep the highest rate so the short-range warning is safe and
+            // deterministic instead of producing duplicate samples/events.
+            if byTime[sample.time].map({ $0.rate >= sample.rate }) != true {
+                byTime[sample.time] = sample
+            }
+        }
+        return byTime.values.sorted { $0.time < $1.time }
     }
 
     static func merging(radarSamples: [PrecipitationSample], into forecast: [ForecastHour]) -> [ForecastHour] {
