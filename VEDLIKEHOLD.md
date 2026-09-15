@@ -69,11 +69,11 @@ Enhetsverifisering gjenstår.
 PÅ VENT fordi siste kontroll krever fysisk iPhone/Watch som ikke er tilgjengelig
 i denne vedlikeholdskjøringen. Kode og bygg er ferdig verifisert.
 
-**AUTO-001 · DELVIS IMPLEMENTERT 2026-09-15** — Stabilitetsrunde for vedvarende
-lagring og migrering: Place-dekoding tåler nå manglende/blankt navn, ugyldige
-koordinater og ødelagte nested-regler uten å stoppe oppstart. Regresjonstest
-lagt til og iOS-bygg bestått. Gjenstår tilsvarende gjennomgang av øvrige
-lagrede toppnivådata.
+**AUTO-001 · FULLFØRT 2026-09-15** — Stabilitetsrunde for vedvarende lagring
+og migrering: Place-dekoding tåler manglende/blankt navn, ugyldige koordinater
+og ødelagte nested-regler uten å stoppe oppstart. PersistedStoreState tåler
+manglende/ødelagte lister og faller tilbake til seed-data. Regresjonstest og
+iOS-bygg bestått.
 
 **BRUKER-003 · FULLFØRT 2026-09-15** — Vedlikeholdskøen har nå minst tre
 meningsfulle AUTO-oppgaver (AUTO-001 til AUTO-004), og automasjonsprompten
