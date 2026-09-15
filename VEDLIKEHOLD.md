@@ -18,6 +18,9 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
   AUTO-oppgaver. Ikke hopp til et høyere nummer fordi det står øverst i fila.
 - Hver aktiv kjøring skal gjøre én konkret kode-, test- eller dokumentasjons-
   endring. Ikke bruk kjøringen på bare statuskontroll eller fremdriftsrapport.
+- Hvis en oppgave feiler eller mangler et nødvendig teknisk grunnlag, merk den
+  `PÅ VENT` med dato og årsak og gå videre til neste laveste ublokkerte oppgave.
+  Stopp bare når alle gjenstående oppgaver er blokkert eller utrygge.
 - Avslutt hver økt med utført oppgavenummer, kort resultat, test/ blokkering,
   eventuell commit og de tre neste oppgavenumrene i køen.
 - Ønskelisten kan utvides fortløpende til 010 og videre. Bruk neste ledige
@@ -89,11 +92,12 @@ leveranse kan fullføres og dokumenteres separat.
 språkvalg og skilletegn er implementert og dekket av overføringstest.
 Fysisk enhetskontroll ligger separat i BRUKER-001.3.
 
-**BRUKER-001.2 · DELVIS IMPLEMENTERT** — CarPlay-/widget-data inkluderer nå
+**BRUKER-001.2 · PÅ VENT 2026-09-15** — CarPlay-/widget-data inkluderer nå
 opptil tre aktiverte steder med preposisjon og primærstedet først. Gjenstår
 selve CarPlay-scenen og fysisk kontroll. Widgetens flerstedsrad har nå også
 en samlet VoiceOver-etikett. Teknisk avgrensning: prosjektet har foreløpig
-ingen separat CarPlay-scene; CarPlay leveres via widgetmålet.
+ingen separat CarPlay-scene; CarPlay leveres via widgetmålet. Hoppes over til
+det finnes teknisk grunnlag, mens BRUKER-001.3 behandles videre.
 
 **BRUKER-001.3 · DELVIS IMPLEMENTERT** — GPS-/stedssynkronisering: nåværende sted, favoritt 1
 og favoritt 2, fersk/sist kjent-status og fysisk kontroll på enhetene. Appen

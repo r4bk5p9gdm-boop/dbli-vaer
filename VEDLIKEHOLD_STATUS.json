@@ -1,7 +1,7 @@
 {
-  "continue": false,
+  "continue": true,
   "lastScheduledStart": "2026-09-13T05:15:12.787Z",
-  "noProgressCount": 2,
-  "lastProgress": "BRUKER-004 registrert: helsides sveip mellom steder skal bli et ekte sidebytte med tydelig overgang.",
-  "stopReason": "To kjøringer uten ny kodeendring; separat CarPlay-scene krever ny teknisk avgrensning."
+  "noProgressCount": 0,
+  "lastProgress": "BRUKER-001.2 satt på vent 2026-09-15 fordi separat CarPlay-scene mangler. Neste ublokkerte oppgave er BRUKER-001.3.",
+  "stopReason": "Blokkerte oppgaver hoppes over; arbeidet fortsetter på neste ublokkerte oppgave."
 }
