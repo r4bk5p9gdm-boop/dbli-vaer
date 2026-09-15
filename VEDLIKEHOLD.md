@@ -81,8 +81,9 @@ verdi i dem. Denne oppgaven skal ikke lage tomme eller spekulative punkter.
 **BRUKER-001 · DELT OPP** — Hovedønsket er delt i tre spor slik at hver
 leveranse kan fullføres og dokumenteres separat.
 
-**BRUKER-001.1 · DELVIS IMPLEMENTERT** — Watch-synkronisering med språkvalg,
-skilletegn og valgt sted. Gjenstår samlet fysisk kontroll og ferdigmerking.
+**BRUKER-001.1 · FULLFØRT 2026-09-15** — Watch-synkronisering med valgt sted,
+språkvalg og skilletegn er implementert og dekket av overføringstest.
+Fysisk enhetskontroll ligger separat i BRUKER-001.3.
 
 **BRUKER-001.2 · ÅPEN** — CarPlay-visning med opptil tre aktiverte steder,
 stabilt stedsnavn og prioritert hendelse.
