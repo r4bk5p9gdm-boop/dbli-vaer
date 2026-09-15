@@ -51,6 +51,13 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(place.rules.isEmpty)
     }
 
+    func testPersistedStateWithoutSelectionRemainsUsable() throws {
+        let state = try JSONDecoder().decode(PersistedStoreState.self, from: Data(#"{"places":[{"name":"Klinga","lat":64,"lon":11}],"log":[]}"#.utf8))
+        XCTAssertEqual(state.places.count, 1)
+        XCTAssertNil(state.selectedID)
+        XCTAssertTrue(state.log.isEmpty)
+    }
+
     func testTemperatureRuleSupportsBothDirectionsAndLegacyDefaultsBelow() throws {
         var high = Rule(type: .temperatur)
         high.threshold = 20
