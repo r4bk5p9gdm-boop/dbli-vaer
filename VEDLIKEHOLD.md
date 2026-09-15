@@ -104,8 +104,9 @@ dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
 også regresjonstestet. iOS-bygg bestått.
 
-**AUTO-006 · ÅPEN** — Tidsgrense-regresjon: utvid testene for tidssoner,
-midnatt, «i natt»/«i morgen» og varsel som krysser sommertid.
+**AUTO-006 · FULLFØRT 2026-09-15** — Tidsgrense-regresjon er dekket av tester
+for Europe/Oslo, midnatt, «i natt»/«i morgen», overmorgen, faste kveldsvarsler,
+nattvinduer og regler som krysser døgnskillet.
 
 **AUTO-007 · ÅPEN** — Widget-/Watch-stabilitet: test at gammel snapshot,
 tom prognose og raskt stedsskifte gir korrekt fallback uten duplikat eller
