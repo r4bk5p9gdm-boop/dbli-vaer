@@ -52,7 +52,7 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
-**BRUKER-002 · DELVIS IMPLEMENTERT** — Forenkle tidslinjens klokkeslett til faste markører
+**BRUKER-002 · PÅ VENT 2026-09-15** — Forenkle tidslinjens klokkeslett til faste markører
 07/15/23 over raden uten gjentatt Dag/Kveld/Natt i hver blokk. Oppdater
 inntrøndersk («No e d doggfall», «No e d regn», «oppte»), kall regnraden
 «Nedbør», legg inn temp over samt solgrenser for maks skyer 1 og 2 med visuell
@@ -66,17 +66,18 @@ iOS-bygg bestod 2026-09-15 etter korrigert SwiftUI-struktur. Solgrense 2
 har nå én sentral, validerende standardverdi i modellen.
 Enhetsverifisering gjenstår.
 
+PÅ VENT fordi siste kontroll krever fysisk iPhone/Watch som ikke er tilgjengelig
+i denne vedlikeholdskjøringen. Kode og bygg er ferdig verifisert.
+
 **AUTO-001 · DELVIS IMPLEMENTERT 2026-09-15** — Stabilitetsrunde for vedvarende
 lagring og migrering: Place-dekoding tåler nå manglende/blankt navn, ugyldige
 koordinater og ødelagte nested-regler uten å stoppe oppstart. Regresjonstest
 lagt til og iOS-bygg bestått. Gjenstår tilsvarende gjennomgang av øvrige
 lagrede toppnivådata.
 
-**BRUKER-003 · ÅPEN** — Sørg for at vedlikeholdskøen alltid har minst tre
-meningsfulle AUTO-oppgaver. Når en AUTO-oppgave fullføres skal arbeideren
-loggføre den, opprette neste unike AUTO-nummer ved behov og beholde en siste
-«kø-renser»-oppgave som fyller på tre nye punkter bare når det finnes reell
-vedlikeholdsverdi. Én oppgave/rad skal behandles per økt.
+**BRUKER-003 · FULLFØRT 2026-09-15** — Vedlikeholdskøen har nå minst tre
+meningsfulle AUTO-oppgaver (AUTO-001 til AUTO-004), og automasjonsprompten
+krever påfyll bare ved reell verdi. Én oppgave/rad behandles per økt.
 
 **BRUKER-004 · ÅPEN** — Sveip mellom steder skal oppføre seg som et ekte
 helsides sidebytte til høyre eller venstre, med tydelig overgang for hele
