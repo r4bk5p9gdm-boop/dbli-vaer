@@ -76,14 +76,17 @@ duplikatdemping og at delvis feilet prognose ikke sletter gyldige varsler.
 ikke-dupliserte AUTO-punkter og opprett nye med neste nummer når det er reell
 verdi i dem. Denne oppgaven skal ikke lage tomme eller spekulative punkter.
 
-**BRUKER-001 · ÅPEN** — CarPlay følger foreslått stedskilde: nåværende
-GPS-sted, favoritt 1 og favoritt 2. Watch følger valgt sted som standard.
-Tre valg kan nå aktiveres i globale iPhone-innstillinger, og første aktive
-sted brukes som felles widget-/CarPlay-kilde; Watch beholder valgt sted som
-standard. Gjenstår: faktisk CarPlay-scene med opptil tre steder, fersk/sist
-   kjent GPS-status og fysisk kontroll på telefon/Watch/CarPlay. Delendringer
-   i Watch-overføring teller ikke som fullføring. Først når hele oppgaven er
-   ferdig merkes nummeret med dato, og deretter velges BRUKER-002.
+**BRUKER-001 · DELT OPP** — Hovedønsket er delt i tre spor slik at hver
+leveranse kan fullføres og dokumenteres separat.
+
+**BRUKER-001.1 · DELVIS IMPLEMENTERT** — Watch-synkronisering med språkvalg,
+skilletegn og valgt sted. Gjenstår samlet fysisk kontroll og ferdigmerking.
+
+**BRUKER-001.2 · ÅPEN** — CarPlay-visning med opptil tre aktiverte steder,
+stabilt stedsnavn og prioritert hendelse.
+
+**BRUKER-001.3 · ÅPEN** — GPS-/stedssynkronisering: nåværende sted, favoritt 1
+og favoritt 2, fersk/sist kjent-status og fysisk kontroll på enhetene.
 
 46. **BRUKER · DELVIS IMPLEMENTERT** — Vindkastnivåer har navn og tall i
    regelvelgeren; kompakt værtekst viser bare kast. Små nedbørsmengder (fra
