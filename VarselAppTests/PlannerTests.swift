@@ -1783,6 +1783,16 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(stale, ["old"])
     }
 
+    func testStaleCleanupKeepsFutureNotificationRequests() {
+        let past = UNNotificationRequest(identifier: "past", content: UNMutableNotificationContent(), trigger: nil)
+        let future = UNNotificationRequest(identifier: "future", content: UNMutableNotificationContent(), trigger: UNTimeIntervalNotificationTrigger(timeInterval: 3_600, repeats: false))
+        let stale = NotificationScheduler.stalePendingRequestIDs(
+            pendingIDs: [past.identifier, future.identifier], preservedIDs: [],
+            successfulIDs: [future.identifier], failedIDs: []
+        )
+        XCTAssertEqual(stale, [past.identifier])
+    }
+
     @MainActor
     func testFailedReplacementFallbackRequiresMatchingPlanContext() throws {
         let rule = Rule(type: .regn)

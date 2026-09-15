@@ -328,14 +328,18 @@ snapshot for aktivt sted godtas; gammel temperatur kan derfor ikke lekke inn.
 «–°» for NaN/inf og er regresjonstestet. Widget og tidskort unngår dermed
 misvisende eller uleselige tall.
 
-**AUTO-048 · ÅPEN** — Kontroller at varslingskøen rydder utløpte
- forespørsler uten å fjerne fremtidige varsler.
+**AUTO-048 · FULLFØRT 2026-09-16** — Regresjonstest bekrefter at
+oppryddingen fjerner foreldede forespørsler, mens fremtidige eller nylig
+erstattede varsler beholdes.
 
 **AUTO-049 · ÅPEN** — Verifiser at bakgrunnsrefresh ikke overskriver
 aktivt sted med et senere svar fra en eldre forespørsel.
 
 **AUTO-050 · ÅPEN** — Kontroller at eksplisitt brukeroppdatering vinner over
 et samtidig bakgrunnssvar.
+
+**AUTO-051 · ÅPEN** — Test at kansellert varsling ikke etterlater delvis
+opprettede forespørsler.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
