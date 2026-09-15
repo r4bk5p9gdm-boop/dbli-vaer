@@ -288,14 +288,17 @@ forblir uendret og kan lagres senere.
 nå samme alvorlighetsrekkefølge som push-planlegging ved likt tidspunkt.
 Regresjonstest dekker snø før regn uavhengig av innkommende rekkefølge.
 
-**AUTO-037 · ÅPEN** — Test at inaktive regler ikke påvirker værbånd eller
-varslingskø etter en lagret regelendring.
+**AUTO-037 · FULLFØRT 2026-09-15** — Regresjonstest bekrefter at deaktivert
+regel ikke produserer push-varsel ved neste planlegging.
 
 **AUTO-038 · ÅPEN** — Kontroller at temperaturfargene bruker lokalt justert
 temperatur, ikke rå Yr-temperatur, i tidskortene.
 
 **AUTO-039 · ÅPEN** — Test at manglende vindkastdata ikke gir falsk
 vindkastvarsling eller blå vindstripe.
+
+**AUTO-040 · ÅPEN** — Kontroller at varselnavn/huskelapp ikke påvirker
+duplikatdemping av ellers identiske værvarsler.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
