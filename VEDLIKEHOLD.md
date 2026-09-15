@@ -146,6 +146,9 @@ språk, mengde/varighet og huskelapp uten gjentatt tidspunkt i andrelinjen.
 Nå-prøver gir ett deterministisk nedbørshendelsesforløp uten doble varsler
 eller at tørt Nå-varsel skjuler tabellnedbør.
 
+**AUTO-016 · ÅPEN** — Bakgrunnsoppdatering: verifiser at lagret språkstil,
+sted og varselkontekst brukes likt etter app- og prosessrestart.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
