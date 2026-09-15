@@ -1662,6 +1662,20 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testWidgetFreshnessUsesElapsedTimeAcrossOsloDSTChange() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "Europe/Oslo")!
+        let fetched = calendar.date(from: DateComponents(year: 2026, month: 3, day: 29, hour: 0, minute: 30))!
+        let afterFourElapsedHours = fetched.addingTimeInterval(4 * 3_600)
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let cached = WidgetWeatherSnapshot(place: place, forecast: forecast(values: [(10, 0, 1, 10, 5)]), updatedAt: fetched)
+
+        // The spring-forward hour is not an extra hour of snapshot age.
+        XCTAssertNotNil(Store.widgetSnapshot(place: place, forecast: [], updatedAt: nil, cached: cached, now: afterFourElapsedHours))
+        XCTAssertNil(Store.widgetSnapshot(place: place, forecast: [], updatedAt: nil, cached: cached, now: fetched.addingTimeInterval(6 * 3_600 + 1)))
+    }
+
+    @MainActor
     func testForecastCacheInvalidatesRemovedAndMovedPlaces() {
         let old = Place(name: "Klinga", lat: 64, lon: 11)
         var moved = old

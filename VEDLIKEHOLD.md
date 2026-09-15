@@ -222,8 +222,11 @@ kopier ved mange steder uten å endre varselresultatet.
 Språkfil og diff validerer; testbygg er fortsatt blokkert av eksisterende
 SwiftUI-/`ContentView`-feil.
 
-**AUTO-025 · ÅPEN** — Verifiser at ferskhetsgrensen følger lokal tidssone og
-ikke gir feilaktig foreldelse ved sommertidsskift.
+**AUTO-025 · FULLFØRT 2026-09-15** — Ferskhetsgrensen for widget/Watch er
+verifisert med en regresjonstest over vårskiftet i `Europe/Oslo`. Alderen
+beregnes som faktisk forløpt tid, ikke kalenderens lokale klokketimer, slik at
+den manglende timen ved sommertid ikke feilaktig gjør et snapshot foreldet.
+Testbygget er fortsatt blokkert av eksisterende SwiftUI-makrofeil.
 
 **AUTO-026 · ÅPEN** — Kontroller at varsler som beholdes ved nettverksfeil
 fortsatt åpner riktig sted når stedsliste eller valgt sted endres.
