@@ -89,8 +89,10 @@ Fysisk enhetskontroll ligger separat i BRUKER-001.3.
 opptil tre aktiverte steder med preposisjon og primærstedet først. Gjenstår
 selve CarPlay-scenen og fysisk kontroll.
 
-**BRUKER-001.3 · ÅPEN** — GPS-/stedssynkronisering: nåværende sted, favoritt 1
-og favoritt 2, fersk/sist kjent-status og fysisk kontroll på enhetene.
+**BRUKER-001.3 · DELVIS IMPLEMENTERT** — GPS-/stedssynkronisering: nåværende sted, favoritt 1
+og favoritt 2, fersk/sist kjent-status og fysisk kontroll på enhetene. Appen
+gjenbruker nå et eksisterende sted med samme navn i stedet for å lage
+duplikater ved hver oppstart.
 
 46. **BRUKER · DELVIS IMPLEMENTERT** — Vindkastnivåer har navn og tall i
    regelvelgeren; kompakt værtekst viser bare kast. Små nedbørsmengder (fra
