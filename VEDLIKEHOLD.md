@@ -215,14 +215,21 @@ dekker lik og ulik plan-kontekst.
 Språkfil og diff validerer; testbygg er fortsatt blokkert av eksisterende
 SwiftUI-makro-/`ContentView`-feil.
 
-**AUTO-024 · ÅPEN** — Mål minnebruk i prognose- og varselkøen og begrens
-unødvendige mellomkopier ved store flerstedsprognoser.
+**AUTO-024 · FULLFØRT 2026-09-15** — Replanlegging gjenbruker nå ett
+justert prognosekart for planlegging, manglende-data-sjekk og Live Activity.
+Tilstandssignaturen bruker også samme snapshot. Dette reduserer midlertidige
+kopier ved mange steder uten å endre varselresultatet.
+Språkfil og diff validerer; testbygg er fortsatt blokkert av eksisterende
+SwiftUI-/`ContentView`-feil.
 
 **AUTO-025 · ÅPEN** — Verifiser at ferskhetsgrensen følger lokal tidssone og
 ikke gir feilaktig foreldelse ved sommertidsskift.
 
 **AUTO-026 · ÅPEN** — Kontroller at varsler som beholdes ved nettverksfeil
 fortsatt åpner riktig sted når stedsliste eller valgt sted endres.
+
+**AUTO-027 · ÅPEN** — Verifiser at replanlegging ikke holder store
+prognosekart lenger enn nødvendig etter widget-/Watch-synkronisering.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.

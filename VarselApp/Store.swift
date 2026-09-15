@@ -546,15 +546,20 @@ final class Store: ObservableObject {
         ) else { return }
         lastReplanSignature = signature
         lastReplanAt = now
-        let alerts = Planner.planAll(places: places, forecasts: forecasts, nearbyPlaceIDs: nearbyPlaceIDs)
+        // The computed `forecasts` property applies local offsets and creates
+        // a map. Reuse one snapshot throughout this replan instead of making
+        // three identical copies for planning, missing-data checks and Live
+        // Activity synchronization.
+        let currentForecasts = forecasts
+        let alerts = Planner.planAll(places: places, forecasts: currentForecasts, nearbyPlaceIDs: nearbyPlaceIDs)
         let scheduleResult = await NotificationScheduler.reschedule(
             alerts, languageStyle: alertLanguageStyle, places: places,
-            missingForecastPlaceIDs: Set(places.filter { (forecasts[$0.id] ?? []).isEmpty }.map(\.id)),
+            missingForecastPlaceIDs: Set(places.filter { (currentForecasts[$0.id] ?? []).isEmpty }.map(\.id)),
             nearbyPlaceIDs: nearbyPlaceIDs
         )
         await LiveWeatherActivityManager.sync(
             places: places,
-            forecasts: forecasts,
+            forecasts: currentForecasts,
             nearbyPlaceIDs: nearbyPlaceIDs,
             forecastUpdatedAt: forecastUpdatedAt
         )
@@ -566,10 +571,11 @@ final class Store: ObservableObject {
 
     private func replanSignature() -> Int {
         var hasher = Hasher()
+        let currentForecasts = forecasts
         places.sorted { $0.id.uuidString < $1.id.uuidString }.forEach { hasher.combine($0) }
-        forecasts.keys.sorted { $0.uuidString < $1.uuidString }.forEach { id in
+        currentForecasts.keys.sorted { $0.uuidString < $1.uuidString }.forEach { id in
             hasher.combine(id)
-            forecasts[id, default: []].sorted { $0.time < $1.time }.forEach { hasher.combine($0) }
+            currentForecasts[id, default: []].sorted { $0.time < $1.time }.forEach { hasher.combine($0) }
         }
         nearbyPlaceIDs.sorted { $0.uuidString < $1.uuidString }.forEach { hasher.combine($0) }
         hasher.combine(alertLanguageStyle.rawValue)
