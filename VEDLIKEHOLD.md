@@ -59,6 +59,8 @@ inntrøndersk («No e d doggfall», «No e d regn», «oppte»), kall regnraden
 støtte, og vis vindkastnivå med tekst («lett bris» osv.). Sveip er gjort
 helsides med animert sidebytte, og appen forsøker nå å velge/nye-lagre
 nærmeste sted ved oppstart. Gjenstår solnivå 1/2 og verifisering på enhet.
+Solinnstillingene har nå separate terskler for maks skyer 1 og 2, med lagring
+per sted. Full visuell bruk i båndet og enhetsverifisering gjenstår.
 
 **AUTO-001 · ÅPEN** — Stabilitetsrunde for vedvarende lagring og migrering:
 gå gjennom dekoding av eldre Place/Rule-data, sikre at ugyldige eller manglende
