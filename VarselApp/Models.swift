@@ -130,9 +130,14 @@ enum WeatherLanguage {
         guard style == .inntrondersk else { return separator.format(text) }
         var result = text
             .replacingOccurrences(of: "\\b([0-9]+) timer\\b", with: "$1 tima", options: .regularExpression)
+            // «No e d» describes only something happening right now. Keep
+            // future dew forecasts as the plain weather name so a timestamp
+            // is not accidentally phrased as a present status.
+            .replacingOccurrences(of: "Fare for dugg nå", with: "No e d doggfall")
+            .replacingOccurrences(of: "Duggfall nå", with: "No e d doggfall")
+            .replacingOccurrences(of: "Fare for dugg", with: "Doggfall")
+            .replacingOccurrences(of: "Duggfall", with: "Doggfall")
             .replacingOccurrences(of: "\\bnå\\b", with: LanguageCatalog.value("time.now", language: "tr", fallback: "no"), options: .regularExpression)
-            .replacingOccurrences(of: "Fare for dugg", with: "No e d doggfall")
-            .replacingOccurrences(of: "Duggfall", with: "No e d doggfall")
             .replacingOccurrences(of: "Regn nå", with: "No e d regn")
             .replacingOccurrences(of: "Mulig regn nå", with: "No e d regn")
             .replacingOccurrences(of: "opptil", with: "oppte")

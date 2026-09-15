@@ -98,7 +98,7 @@
     "weather.dew": {
       "en": "Dew",
       "nb": "Duggfall",
-      "tr": "Duggfall"
+      "tr": "Doggfall"
     },
     "weather.frost": {
       "en": "Frost",
@@ -173,7 +173,7 @@
     "push.title.dew": {
       "en": "It’s Dewy! {sted}",
       "nb": "D bli Duggfall! {sted}",
-      "tr": "D bli Duggfall! {sted}"
+      "tr": "D bli Doggfall! {sted}"
     },
     "push.title.temperature_below": {
       "en": "It’s Below {temperatur}°! {sted}",

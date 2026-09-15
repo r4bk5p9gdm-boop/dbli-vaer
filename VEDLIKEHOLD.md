@@ -79,6 +79,15 @@ Watch/widget-fallback følger valgt språk, og språkvalget beholdes i eksport,
 Watch-synkronisering og planlagte varsler. Engelsk push- og tidsformat er
 dekket av regresjonstest; språkfilvalidering og iOS-bygg bestod.
 
+**BRUKER-006 · FULLFØRT 2026-09-15** — Inntrøndersk duggtekst skiller nå
+mellom nå-status og framtid. «No e d doggfall.» brukes bare når teksten
+uttrykkelig sier «nå», mens framtidige hendelser blir «Doggfall i natt kl.
+01.» eller tilsvarende. Værtype- og push-katalogen er oppdatert til
+«Doggfall», og regresjonstest dekker begge variantene.
+Språkfilen validerer. Generisk testbygg ble forsøkt, men Xcode stoppet i
+SwiftUI-makroserveren (`SwiftUIMacros.StateMacro`) før testene kunne kjøres;
+det er en lokal Xcode-/miljøfeil og ikke en feilrapport fra denne endringen.
+
 **AUTO-001 · FULLFØRT 2026-09-15** — Stabilitetsrunde for vedvarende lagring
 og migrering: Place-dekoding tåler manglende/blankt navn, ugyldige koordinater
 og ødelagte nested-regler uten å stoppe oppstart. PersistedStoreState tåler

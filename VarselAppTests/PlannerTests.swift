@@ -117,7 +117,7 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(copy.rulesForDisplay.first { $0.type == .dugg }?.threshold, 2)
         XCTAssertEqual(copy.rulesForDisplay.first { $0.type == .sol }?.threshold, 35)
         XCTAssertEqual(WeatherLanguage.text("Under 10° nå", style: .inntrondersk, separator: .dash), "Under 10 no")
-        XCTAssertEqual(WeatherLanguage.text("Duggfall natt til onsdag kl. 05", style: .inntrondersk, separator: .dash), "Duggfall natt te onsda'n — kl. 05")
+        XCTAssertEqual(WeatherLanguage.text("Duggfall natt til onsdag kl. 05", style: .inntrondersk, separator: .dash), "Doggfall natt te onsda'n — kl. 05")
         XCTAssertEqual(WeatherTextSeparator.comma.format("onsdag kl. 05"), "onsdag, kl. 05")
         XCTAssertEqual(WeatherTextSeparator.bullet.format("onsdag kl. 05"), "onsdag • kl. 05")
     }
@@ -326,7 +326,13 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(WeatherLanguage.text(source, style: .inntrondersk), "Regn i mårrå kl. 07, sjer d ut som.")
         XCTAssertEqual(WeatherLanguage.text("I overmorgen kl. 09.", style: .inntrondersk), "I overmårrå kl. 09.")
         XCTAssertEqual(WeatherLanguage.text("Fra 2 til 4 mm", style: .inntrondersk), "Fra 2 te 4 mm")
-        XCTAssertEqual(WeatherLanguage.text("Duggfall i natt kl. 02.", style: .inntrondersk), "Duggfall i natt kl. 02.")
+        XCTAssertEqual(WeatherLanguage.text("Duggfall i natt kl. 02.", style: .inntrondersk), "Doggfall i natt kl. 02.")
+    }
+
+    func testDialectUsesNoEOnlyForCurrentDewStatus() {
+        XCTAssertEqual(WeatherLanguage.text("Fare for dugg nå.", style: .inntrondersk), "No e d doggfall.")
+        XCTAssertEqual(WeatherLanguage.text("Fare for dugg i natt kl. 01.", style: .inntrondersk), "Doggfall i natt kl. 01.")
+        XCTAssertEqual(WeatherLanguage.text("Duggfall i morgen kl. 07.", style: .inntrondersk), "Doggfall i mårrå kl. 07.")
     }
 
     func testWeatherGlanceUsesTwelveHoursAndOneEventPerType() {
