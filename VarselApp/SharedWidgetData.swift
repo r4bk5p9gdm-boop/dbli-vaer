@@ -20,6 +20,12 @@ struct WidgetWeatherSnapshot: Codable {
     let place: Place
     let forecast: [ForecastHour]
     let updatedAt: Date
+    var languageStyle: AlertLanguageStyle? = nil
+    var textSeparator: WeatherTextSeparator? = .current
+
+    func localized(_ text: String) -> String {
+        WeatherLanguage.text(text, style: languageStyle ?? .bokmal, separator: textSeparator ?? .space)
+    }
 
     /// A phone transfer (including clearing the place) invalidates an in-flight
     /// Watch request even when it happens to refer to the same coordinates.
@@ -28,8 +34,21 @@ struct WidgetWeatherSnapshot: Codable {
         return WidgetWeatherSnapshot(
             place: place,
             forecast: hours.map { $0.locallyAdjusted(by: place.localTemperatureOffset) },
-            updatedAt: date
+            updatedAt: date,
+            languageStyle: languageStyle,
+            textSeparator: textSeparator
         )
+    }
+}
+
+struct WidgetPlaceSummary: Codable, Identifiable, Equatable {
+    let id: UUID
+    let name: String
+    let preposition: PlacePreposition?
+
+    var label: String {
+        let place = Place(name: name, lat: 0, lon: 0, preposition: preposition)
+        return place.nameWithPreposition
     }
 }
 
@@ -43,13 +62,14 @@ struct WatchWeatherTransfer: Codable {
 enum SharedWidgetData {
     static let appGroup = "group.no.mathias.dblivaer"
     private static let snapshotKey = "widget.weather.snapshot"
+    private static let placesKey = "widget.weather.places"
 
     private static var defaults: UserDefaults {
         UserDefaults(suiteName: appGroup) ?? .standard
     }
 
-    static func save(place: Place, forecast: [ForecastHour], updatedAt: Date = Date()) {
-        let snapshot = WidgetWeatherSnapshot(place: place, forecast: forecast, updatedAt: updatedAt)
+    static func save(place: Place, forecast: [ForecastHour], updatedAt: Date = Date(), languageStyle: AlertLanguageStyle? = nil, textSeparator: WeatherTextSeparator? = .current) {
+        let snapshot = WidgetWeatherSnapshot(place: place, forecast: forecast, updatedAt: updatedAt, languageStyle: languageStyle, textSeparator: textSeparator)
         if let data = try? JSONEncoder().encode(snapshot) {
             defaults.set(data, forKey: snapshotKey)
         }
@@ -62,5 +82,16 @@ enum SharedWidgetData {
 
     static func clear() {
         defaults.removeObject(forKey: snapshotKey)
+        defaults.removeObject(forKey: placesKey)
+    }
+
+    static func saveSharedPlaces(_ places: [Place]) {
+        let summaries = places.prefix(3).map { WidgetPlaceSummary(id: $0.id, name: $0.displayName, preposition: $0.preposition) }
+        if let data = try? JSONEncoder().encode(summaries) { defaults.set(data, forKey: placesKey) }
+    }
+
+    static func loadSharedPlaces() -> [WidgetPlaceSummary] {
+        guard let data = defaults.data(forKey: placesKey) else { return [] }
+        return (try? JSONDecoder().decode([WidgetPlaceSummary].self, from: data)) ?? []
     }
 }

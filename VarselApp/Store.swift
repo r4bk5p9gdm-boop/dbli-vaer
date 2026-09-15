@@ -611,6 +611,8 @@ final class Store: ObservableObject {
             return
         }
         SharedWidgetData.save(place: snapshot.place, forecast: snapshot.forecast, updatedAt: snapshot.updatedAt, languageStyle: alertLanguageStyle)
+        let sharedPlaces = resolvedSharedPlaceIDs.compactMap { id in places.first { $0.id == id } }
+        SharedWidgetData.saveSharedPlaces(sharedPlaces)
         WatchSyncManager.shared.send(place: snapshot.place, forecast: snapshot.forecast, updatedAt: snapshot.updatedAt, languageStyle: alertLanguageStyle, textSeparator: WeatherTextSeparator.current)
         WidgetCenter.shared.reloadAllTimelines()
     }

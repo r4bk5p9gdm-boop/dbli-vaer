@@ -20,6 +20,11 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(decoded.snapshot?.textSeparator, .dash)
     }
 
+    func testWidgetPlaceSummaryKeepsPrepositionForSharedPlaces() {
+        let summary = WidgetPlaceSummary(id: UUID(), name: "Namsos", preposition: .nerri)
+        XCTAssertEqual(summary.label, "nerri Namsos")
+    }
+
     func testTemperatureRuleSupportsBothDirectionsAndLegacyDefaultsBelow() throws {
         var high = Rule(type: .temperatur)
         high.threshold = 20

@@ -7,6 +7,8 @@ struct WeatherWidgetEntry: TimelineEntry {
     let placeName: String
     let statuses: [WeatherStatus]
     let updatedAt: Date?
+    var languageStyle: AlertLanguageStyle = .bokmal
+    var sharedPlaces: [WidgetPlaceSummary] = []
 }
 
 struct WeatherWidgetProvider: TimelineProvider {
@@ -44,7 +46,9 @@ struct WeatherWidgetProvider: TimelineProvider {
             date: date,
             placeName: snapshot.place.nameWithPreposition,
             statuses: Planner.statuses(for: snapshot.place, forecast: snapshot.forecast, now: date),
-            updatedAt: snapshot.updatedAt
+            updatedAt: snapshot.updatedAt,
+            sharedPlaces: SharedWidgetData.loadSharedPlaces(),
+            languageStyle: snapshot.languageStyle ?? .bokmal
         )
     }
 }
@@ -91,6 +95,13 @@ struct WeatherWidgetView: View {
     private var carReadySmallView: some View {
         VStack(alignment: .leading, spacing: 7) {
             heading
+
+            if entry.sharedPlaces.count > 1 {
+                Text("Også: " + entry.sharedPlaces.dropFirst().map(\.label).joined(separator: " · "))
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
             if let first = entry.statuses.first {
                 Spacer(minLength: 1)
                 HStack(alignment: .top, spacing: 8) {
@@ -100,7 +111,7 @@ struct WeatherWidgetView: View {
                         .foregroundStyle(first.type.color)
                         .widgetAccentable()
                         .frame(width: 32)
-                    Text(first.text)
+                    Text(WeatherLanguage.text(first.text, style: entry.languageStyle))
                         .font(.headline)
                         .fontWeight(first.isNow ? .bold : .semibold)
                         .lineLimit(3)
@@ -112,7 +123,7 @@ struct WeatherWidgetView: View {
                         Image(systemName: next.type.systemImage)
                             .foregroundStyle(next.type.color)
                             .widgetAccentable()
-                        Text("Neste: \(next.text)")
+                        Text("Neste: \(WeatherLanguage.text(next.text, style: entry.languageStyle))")
                             .lineLimit(1)
                             .minimumScaleFactor(0.72)
                     }
@@ -149,7 +160,7 @@ struct WeatherWidgetView: View {
                         Image(systemName: status.type.systemImage)
                             .foregroundStyle(status.type.color)
                             .frame(width: 16)
-                        Text(status.text)
+                        Text(WeatherLanguage.text(status.text, style: entry.languageStyle))
                             .font(.caption)
                             .fontWeight(status.isNow ? .semibold : .regular)
                             .lineLimit(2)
