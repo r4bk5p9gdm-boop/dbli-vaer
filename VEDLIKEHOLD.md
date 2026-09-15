@@ -85,8 +85,9 @@ leveranse kan fullføres og dokumenteres separat.
 språkvalg og skilletegn er implementert og dekket av overføringstest.
 Fysisk enhetskontroll ligger separat i BRUKER-001.3.
 
-**BRUKER-001.2 · ÅPEN** — CarPlay-visning med opptil tre aktiverte steder,
-stabilt stedsnavn og prioritert hendelse.
+**BRUKER-001.2 · DELVIS IMPLEMENTERT** — CarPlay-/widget-data inkluderer nå
+opptil tre aktiverte steder med preposisjon og primærstedet først. Gjenstår
+selve CarPlay-scenen og fysisk kontroll.
 
 **BRUKER-001.3 · ÅPEN** — GPS-/stedssynkronisering: nåværende sted, favoritt 1
 og favoritt 2, fersk/sist kjent-status og fysisk kontroll på enhetene.
