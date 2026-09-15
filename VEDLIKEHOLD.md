@@ -13,9 +13,11 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Arbeidsregler
 
-- Ta én avgrenset oppgave om gangen og revurder prioriteringen før hver økt.
-- Planlagt oppstart er hver fjerde time. Fortsett direkte med neste oppgave
-  i samme kjøring ved reell fremdrift; ikke bruk korte gjentatte oppstarter.
+- Ta én avgrenset oppgave om gangen. Velg alltid laveste numeriske ubehandlede
+  BRUKER-oppgave først (delvis implementert teller som ubehandlet), deretter
+  AUTO-oppgaver. Ikke hopp til et høyere nummer fordi det står øverst i fila.
+- Planlagt intervall styres av automasjonen: 2 minutter mens en brukeroppgave
+  er åpen, 15 minutter i egenstyrt vedlikehold og 240 minutter etter stopp.
 - `VEDLIKEHOLD_STATUS.json` lagrer continue og fremdrifts-/stoppstatus.
   Ny gyldig firetimersoppstart setter continue=true. Klar blokkering stopper
   straks; to forsøk uten fremdrift stopper også. Sett continue=false og vent
