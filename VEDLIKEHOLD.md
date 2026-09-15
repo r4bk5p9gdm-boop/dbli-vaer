@@ -118,8 +118,10 @@ ikke skriver feil eller dupliserer data.
 inntrøndersk og engelsk. Engelsk språkvalg og katalogkobling ble ferdigstilt
 som BRUKER-005, med push- og tidsuttrykkstest.
 
-**AUTO-010 · ÅPEN** — Ressurslett byggkontroll: dokumenter en repeterbar
-verifisering av iOS-, widget- og Watch-mål uten simulatorstart.
+**AUTO-010 · FULLFØRT 2026-09-15** — Ressurslett byggkontroll er dokumentert
+og automatisert i `verify_targets.sh`. Skriptet bygger alle fire mål mot
+generiske iOS/watchOS-enheter, gjenbruker avledede data og nekter å starte
+eller konkurrere med en allerede aktiv simulator/byggprosess.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.

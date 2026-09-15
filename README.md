@@ -38,3 +38,11 @@ skal godkjennes før de gjennomføres.
 ## Widget og signering
 
 Appen og widgeten deler prognosen gjennom App Group `group.no.mathias.dblivaer`. Velg samme utviklerteam for begge targets i Xcode. Hvis du endrer bundle-ID eller App Group, må gruppen også oppdateres i begge entitlement-filene og i `SharedWidgetData.swift`.
+
+## Ressurslett byggkontroll uten simulator
+
+Kjør `./verify_targets.sh` fra prosjektmappen før en større endring. Skriptet
+bygger iPhone-, iPhone-widget-, Watch- og Watch-widget-målene mot generiske
+enheter, bruker en delt avledet-data-mappe og starter ingen simulator. Det
+stopper hvis et annet `xcodebuild` allerede kjører eller en simulator er
+startet, slik at vedlikehold og Claude ikke konkurrerer om ressurser.
