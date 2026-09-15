@@ -23,7 +23,7 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 - Ønskelisten kan utvides fortløpende til 010 og videre. Bruk neste ledige
   nummer eller undernummer; aldri renummerer ferdiglogg eller historikk.
 - Planlagt intervall styres av automasjonen: 2 minutter mens en brukeroppgave
-  er åpen, 15 minutter i egenstyrt vedlikehold og 240 minutter etter stopp.
+  er åpen, 15 minutter i AUTO-vedlikehold og 240 minutter etter stopp.
 - `VEDLIKEHOLD_STATUS.json` lagrer continue og fremdrifts-/stoppstatus.
   Ny gyldig firetimersoppstart setter continue=true. Klar blokkering stopper
   straks; to forsøk uten fremdrift stopper også. Sett continue=false og vent
