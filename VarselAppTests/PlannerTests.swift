@@ -228,6 +228,8 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(place.rulesForDisplay.contains { $0.type == .temperatur })
         let old = try JSONDecoder().decode(Place.self, from: Data(#"{"name":"Klinga","lat":64,"lon":11}"#.utf8))
         XCTAssertEqual(old.resolvedDisplayTemperatureThreshold, 10)
+        XCTAssertEqual(old.resolvedDisplayTemperatureHighThreshold, 20)
+        XCTAssertNil(old.displayTemperatureHighThreshold)
     }
 
     func testDisplayOnlyRuleNeverCreatesPushAlert() {

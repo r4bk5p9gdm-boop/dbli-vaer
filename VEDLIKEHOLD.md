@@ -280,14 +280,18 @@ fortsatt stabil ID som siste tie-breaker.
 display-only-regler før push-planlegging. Regresjonstest sikrer at en slik
 regel kan treffe i raden uten å opprette varsling.
 
-**AUTO-035 · ÅPEN** — Test migrering av steder uten lagret «Temp over»-grense
-slik at standardverdien brukes uten å endre eldre stedsdata.
+**AUTO-035 · FULLFØRT 2026-09-15** — Migrasjonsregresjonstest bekrefter at
+eldre steder får beregnet standard «Temp over» på 20 °C, mens feltet fortsatt
+forblir uendret og kan lagres senere.
 
 **AUTO-036 · ÅPEN** — Kontroller at varseltekst og rullerende visning bruker
 samme alvorlighetsprioritet ved samtidige hendelser.
 
 **AUTO-037 · ÅPEN** — Test at inaktive regler ikke påvirker værbånd eller
 varslingskø etter en lagret regelendring.
+
+**AUTO-038 · ÅPEN** — Kontroller at temperaturfargene bruker lokalt justert
+temperatur, ikke rå Yr-temperatur, i tidskortene.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
