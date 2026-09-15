@@ -156,6 +156,10 @@ sted og varselkontekst brukes likt etter app- og prosessrestart.
 flere steder deler samme koordinater, uten å endre valgt-sted- eller
 Watch-synkronisering.
 
+**AUTO-018 · ÅPEN** — Feilhåndtering: verifiser at delvis mislykket
+stedshenting beholder siste gyldige prognose og varsler uten å tømme andre
+steders data.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
