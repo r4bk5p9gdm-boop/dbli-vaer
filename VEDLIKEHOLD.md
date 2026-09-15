@@ -91,8 +91,9 @@ PersistedStoreState uten valgt sted, kansellert posisjonsforespørsel,
 kansellert refresh og refresh-kø som fortsetter etter avbrudd er dekket av
 regresjonstester. iOS-bygg bestått.
 
-**AUTO-003 · ÅPEN** — Testplanleggingens grenser: kontroller 64-varselsgrensen,
-duplikatdemping og at delvis feilet prognose ikke sletter gyldige varsler.
+**AUTO-003 · FULLFØRT 2026-09-15** — Testplanleggingens grenser er dekket:
+64-varselsgrensen, duplikatdemping, avviste varsler og delvis feilet prognose
+som ikke skal slette gyldige varsler har regresjonstester.
 
 **AUTO-004 · ÅPEN** — Kø-renser: vurder om det finnes minst tre konkrete,
 ikke-dupliserte AUTO-punkter og opprett nye med neste nummer når det er reell
