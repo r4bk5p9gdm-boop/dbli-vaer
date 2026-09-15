@@ -1,5 +1,9 @@
 import SwiftUI
 
+func compactTemperatureText(_ temperature: Double) -> String {
+    "\(temperature.formatted(.number.precision(.fractionLength(0))))°"
+}
+
 /// Explicit favorites for the sides of the current-location home page.
 /// IDs survive renaming and list sorting; deleted places are not substituted.
 struct HomeFavorites: Codable, Equatable {

@@ -169,7 +169,7 @@ private struct TimeCardsForecast: View {
                             .font(.title3)
                             .symbolRenderingMode(.multicolor)
                             .frame(height: 24)
-                        Text("\(Int(hour.temp.rounded()))°")
+                        Text(compactTemperatureText(hour.temp))
                             .font(.caption)
                             .foregroundStyle(hour.temp <= temperatureLowThreshold ? Color.secondary : hour.temp >= temperatureHighThreshold ? Color.orange : Color.primary)
                             .accessibilityLabel("Temperatur \(Int(hour.temp.rounded())) grader")

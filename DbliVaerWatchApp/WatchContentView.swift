@@ -17,7 +17,7 @@ struct WatchContentView: View {
                                     .minimumScaleFactor(0.8)
                                 Spacer(minLength: 0)
                                 HStack(spacing: 4) {
-                                    Text("\(current.temp.formatted(.number.precision(.fractionLength(0))))°")
+                                    Text(compactTemperatureText(current.temp))
                                         .font(.system(.title3, design: .rounded).weight(.medium))
                                     Image(systemName: currentCondition(current).systemImage)
                                         .font(.title3)

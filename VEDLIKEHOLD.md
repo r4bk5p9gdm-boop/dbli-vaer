@@ -313,14 +313,17 @@ ikke-negativt resultat.
 **AUTO-043 · FULLFØRT 2026-09-16** — Regresjonstest bekrefter felles grense
 ved 1 °C: nøyaktig 1,0 °C gir snøikon/-regel, mens 1,1 °C gir regnikon/-regel.
 
-**AUTO-044 · ÅPEN** — Test at widgetens temperaturformat følger samme
-avrunding som tidskortet.
+**AUTO-044 · FULLFØRT 2026-09-16** — Tidskort og Watch-widget bruker nå
+samme `compactTemperatureText`-formatterer og regresjonstest for avrunding.
 
 **AUTO-045 · ÅPEN** — Kontroller at tomme prognoser ikke lager tomme
 snøvarsler eller negative mengdetekster.
 
 **AUTO-046 · ÅPEN** — Kontroller at widgeten ikke viser temperaturfelt fra
 et annet sted etter raskt stedbytte.
+
+**AUTO-047 · ÅPEN** — Verifiser at temperaturformattereren håndterer
+ikke-finite verdier uten å krasje eller vise misvisende tekst.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.

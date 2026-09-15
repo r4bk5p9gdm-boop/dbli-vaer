@@ -250,6 +250,11 @@ final class PlannerTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(localHour.temp, 20)
     }
 
+    func testCompactTemperatureTextUsesSharedWholeDegreeFormat() {
+        XCTAssertEqual(compactTemperatureText(12.6), "13°")
+        XCTAssertEqual(compactTemperatureText(-0.4), "0°")
+    }
+
     func testDisplayOnlyRuleNeverCreatesPushAlert() {
         var rule = Rule(type: .regn)
         rule.isDisplayOnly = true
