@@ -200,6 +200,15 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(AlertType.vind.matches(hour, threshold: 9))
     }
 
+    func testRainSnowIconUsesSameOneDegreeBoundaryAsRules() {
+        let snow = ForecastHour(time: base, temp: 1, precip: 0.5, wind: 1, cloud: 100, dew: 0)
+        let rain = ForecastHour(time: base.addingTimeInterval(3_600), temp: 1.1, precip: 0.5, wind: 1, cloud: 100, dew: 0)
+        XCTAssertEqual(forecastSymbol(snow), "cloud.snow.fill")
+        XCTAssertEqual(forecastSymbol(rain), "cloud.rain.fill")
+        XCTAssertTrue(AlertType.sno.matches(snow, threshold: 0.1))
+        XCTAssertTrue(AlertType.regn.matches(rain, threshold: 0.1))
+    }
+
     func testDialectWeekdaysKeepBokmalUnchanged() {
         XCTAssertEqual(WeatherLanguage.text("Regn denne timen", style: .inntrondersk), "Regn herre tima")
         XCTAssertEqual(WeatherLanguage.text("Regn denne timen", style: .bokmal), "Regn denne timen")

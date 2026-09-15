@@ -670,7 +670,7 @@ private func hourClock(_ date: Date) -> String {
     String(format: "%02d", Calendar.current.component(.hour, from: date))
 }
 
-private func forecastSymbol(_ hour: ForecastHour) -> String {
+func forecastSymbol(_ hour: ForecastHour) -> String {
     if hour.precipitationRate >= 0.1 { return hour.temp <= 1 ? "cloud.snow.fill" : "cloud.rain.fill" }
     if hour.cloud <= 20 { return "sun.max.fill" }
     if hour.cloud <= 65 { return "cloud.sun.fill" }
