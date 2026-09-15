@@ -102,7 +102,9 @@ det finnes teknisk grunnlag, mens BRUKER-001.3 behandles videre.
 **BRUKER-001.3 · DELVIS IMPLEMENTERT** — GPS-/stedssynkronisering: nåværende sted, favoritt 1
 og favoritt 2, fersk/sist kjent-status og fysisk kontroll på enhetene. Appen
 gjenbruker nå et eksisterende sted med samme navn i stedet for å lage
-duplikater ved hver oppstart.
+duplikater ved hver oppstart. Fysisk kontroll sjekkes i denne rekkefølgen:
+posisjonstillatelse → valgt sted på Hjem → Watch-snapshot → widget/CarPlay-
+stedsliste, med fersk hentetid og korrekt fallback ved manglende GPS.
 
 46. **BRUKER · DELVIS IMPLEMENTERT** — Vindkastnivåer har navn og tall i
    regelvelgeren; kompakt værtekst viser bare kast. Små nedbørsmengder (fra
