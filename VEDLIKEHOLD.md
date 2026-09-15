@@ -60,9 +60,10 @@ støtte, og vis vindkastnivå med tekst («lett bris» osv.). Sveip er gjort
 helsides med animert sidebytte, og appen forsøker nå å velge/nye-lagre
 nærmeste sted ved oppstart. Gjenstår solnivå 1/2 og verifisering på enhet.
 Solinnstillingene har nå separate terskler for maks skyer 1 og 2, med lagring
-per sted. Velgerne vises som to separate valg i samme solrad; iOS-bygg bestod
-2026-09-15 etter korrigert SwiftUI-struktur. Full visuell bruk i båndet og
-enhetsverifisering gjenstår.
+per sted. Velgerne vises som to separate valg i samme solrad, og solbåndet
+viser nå første terskel tydeligere og den andre som en svakere forhåndsvisning.
+iOS-bygg bestod 2026-09-15 etter korrigert SwiftUI-struktur.
+Enhetsverifisering gjenstår.
 
 **AUTO-001 · ÅPEN** — Stabilitetsrunde for vedvarende lagring og migrering:
 gå gjennom dekoding av eldre Place/Rule-data, sikre at ugyldige eller manglende

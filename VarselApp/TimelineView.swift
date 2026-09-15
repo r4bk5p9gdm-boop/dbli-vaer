@@ -20,6 +20,7 @@ struct ForecastVariantsView: View {
     let rules: [Rule]
     let frostMargin: Double
     let mode: ForecastDisplayMode
+    let sunThreshold2: Double?
 
     private var days: [ForecastDay] { ForecastDay.make(from: forecast) }
 
@@ -33,7 +34,7 @@ struct ForecastVariantsView: View {
                         TimeCardsForecast(day: day, allForecast: forecast)
                     case .weatherBands:
                         SwiftUI.TimelineView(.periodic(from: .now, by: 60)) { timeline in
-                            WeatherBandsForecast(day: day, rules: rules, frostMargin: frostMargin, now: timeline.date)
+                            WeatherBandsForecast(day: day, rules: rules, frostMargin: frostMargin, sunThreshold2: sunThreshold2, now: timeline.date)
                         }
                     case .events:
                         WeatherEventsForecast(day: day, rules: rules, frostMargin: frostMargin)
@@ -189,6 +190,7 @@ private struct WeatherBandsForecast: View {
     let day: ForecastDay
     let rules: [Rule]
     let frostMargin: Double
+    let sunThreshold2: Double?
     let now: Date
 
     private let labelWidth: CGFloat = 85
@@ -218,12 +220,7 @@ private struct WeatherBandsForecast: View {
                     Color.clear.frame(width: 78, height: 1)
                     HStack(spacing: 3) {
                         ForEach(WeatherBandPeriod.all) { period in
-                            HStack(spacing: 2) {
-                                if period.isNight {
-                                    Image(systemName: "moon.stars.fill")
-                                }
-                                Text(period.label)
-                            }
+                            Text(String(format: "%02d", period.startHour))
                             .frame(maxWidth: .infinity)
                         }
                     }
@@ -241,7 +238,7 @@ private struct WeatherBandsForecast: View {
                     if !moistureRules.isEmpty {
                         HStack(spacing: 7) {
                             WeatherBandLabel(
-                                title: "Regn",
+                                title: "Nedbør",
                                 systemImage: "drop.fill",
                                 color: AlertType.regn.color,
                                 showsNotification: moistureRules.contains(where: { !$0.isDisplayOnly })
@@ -260,7 +257,7 @@ private struct WeatherBandsForecast: View {
                                 color: type.color,
                                 showsNotification: typeRules.contains(where: { !$0.isDisplayOnly })
                             )
-                            CombinedDayBandTrack(day: day, rules: typeRules, type: type, frostMargin: frostMargin)
+                            CombinedDayBandTrack(day: day, rules: typeRules, type: type, frostMargin: frostMargin, sunThreshold2: sunThreshold2)
                         }
                     }
                 }
@@ -341,11 +338,12 @@ private struct CombinedDayBandTrack: View {
     let rules: [Rule]
     let type: AlertType
     let frostMargin: Double
+    let sunThreshold2: Double?
 
     var body: some View {
         HStack(spacing: 3) {
             ForEach(WeatherBandPeriod.all) { period in
-                CombinedHourBandCell(hours: day.hours, rules: rules, type: type, period: period, frostMargin: frostMargin)
+                CombinedHourBandCell(hours: day.hours, rules: rules, type: type, period: period, frostMargin: frostMargin, sunThreshold2: sunThreshold2)
             }
         }
         .frame(height: 18)
@@ -360,6 +358,7 @@ private struct CombinedHourBandCell: View {
     let type: AlertType
     let period: WeatherBandPeriod
     let frostMargin: Double
+    let sunThreshold2: Double?
 
     var body: some View {
         GeometryReader { proxy in
@@ -369,11 +368,12 @@ private struct CombinedHourBandCell: View {
                 ForEach(hours) { hour in
                     let hourNumber = Calendar.current.component(.hour, from: hour.time)
                     let offset = hourOffset(hourNumber, from: period.startHour)
-                    if offset < 8, rules.contains(where: {
+                    let matchesSunPreview = type == .sol && sunThreshold2.map { hour.cloud <= $0 } == true
+                    if offset < 8, matchesSunPreview || rules.contains(where: {
                         $0.isActive(at: hour.time) && $0.matches(hour, frostMargin: frostMargin)
                     }) {
                         Rectangle()
-                            .fill(type.color.opacity(0.78))
+                            .fill(type.color.opacity(type == .sol && sunThreshold2.map({ hour.cloud > $0 }) == true ? 0.35 : 0.78))
                             .frame(width: proxy.size.width / 8 + 0.5)
                             .offset(x: proxy.size.width * CGFloat(offset) / 8)
                     }
@@ -389,12 +389,27 @@ private struct MoistureBandTrack: View {
     let rules: [Rule]
 
     var body: some View {
-        HStack(spacing: 3) {
-            ForEach(WeatherBandPeriod.all) { period in
-                MoistureHourBandCell(hours: day.hours, rules: rules, period: period)
+        VStack(spacing: 2) {
+            HStack(spacing: 3) {
+                ForEach(WeatherBandPeriod.all) { period in
+                    VStack(spacing: 1) {
+                        HStack {
+                            Text(String(format: "%02d", period.startHour)).font(.system(size: 8, weight: .semibold, design: .monospaced))
+                            Spacer()
+                            Text(String(format: "%02d", (period.startHour + 8) % 24)).font(.system(size: 8, weight: .semibold, design: .monospaced))
+                        }.foregroundStyle(.secondary)
+                        MoistureHourBandCell(hours: day.hours, rules: rules, period: period)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
             }
+            HStack(spacing: 3) {
+                ForEach(WeatherBandPeriod.all) { period in
+                    Text(period.label).font(.system(size: 8, weight: .medium)).frame(maxWidth: .infinity)
+                }
+            }.foregroundStyle(.secondary)
         }
-        .frame(height: 18)
+        .frame(height: 32)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Regnrad: regn, snø og fare for dugg vises med egne farger")
     }
@@ -444,6 +459,11 @@ private struct MoistureHourBandCell: View {
                         if let precipitationRule {
                             Rectangle()
                                 .fill(fill(for: precipitationRule, at: hour))
+                                .frame(width: proxy.size.width / 8 + 0.5, height: proxy.size.height)
+                                .offset(x: x)
+                        } else if hour.precipitationRate >= 0.1 && hour.temp > 1 {
+                            Rectangle()
+                                .fill(AlertType.regn.color.opacity(0.48))
                                 .frame(width: proxy.size.width / 8 + 0.5, height: proxy.size.height)
                                 .offset(x: x)
                         } else if let dewRule, !hadRecentPrecipitation(before: hour) {
@@ -606,7 +626,7 @@ private struct ForecastEvent: Identifiable {
             let lowest = matchingHours.map(\.temp).min() ?? 0
             return "ned mot \(lowest.formatted(.number.precision(.fractionLength(0...1))))° \(until)"
         case .vind:
-            let strongest = matchingHours.map(\.effectiveWind).max() ?? 0
+            let strongest = matchingHours.compactMap(\.gust).max() ?? 0
             return "opp mot \(strongest.formatted(.number.precision(.fractionLength(0...1)))) m/s \(until)"
         case .dugg:
             let closest = matchingHours.map { $0.temp - $0.dew }.min() ?? 0

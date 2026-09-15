@@ -191,7 +191,8 @@ struct HomeView: View {
                                     forecast: visibleForecast,
                                     rules: p.rulesForDisplay,
                                     frostMargin: p.localFrostMargin,
-                                    mode: .weatherBands
+                                    mode: .weatherBands,
+                                    sunThreshold2: p.displaySunThreshold2
                                 )
                             }
                         }.card()
