@@ -1856,6 +1856,11 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(Store.shouldFinalizeRefresh(successfulPlaceCount: 0, failedPlaceCount: 5))
     }
 
+    func testEmptyForecastCannotReplaceLastValidSnapshot() {
+        XCTAssertFalse(Store.isUsableForecast([]))
+        XCTAssertTrue(Store.isUsableForecast(forecast(values: [(8, 0, 1, 40, 3)])))
+    }
+
     @MainActor
     func testSuccessfulAndIntentionallyEmptyRefreshCanFinalize() {
         XCTAssertTrue(Store.shouldFinalizeRefresh(successfulPlaceCount: 3, failedPlaceCount: 0))

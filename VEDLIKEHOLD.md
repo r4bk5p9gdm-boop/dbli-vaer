@@ -264,14 +264,18 @@ plassering ikke kan bli liggende.
 varsler fra flere steder. De 64 nærmeste velges deterministisk med stabil
 ID-sortering, uavhengig av innkommende stedrekkefølge.
 
-**AUTO-031 · ÅPEN** — Verifiser at feilmeldinger fra bakgrunnsoppdatering
-ikke overskriver siste gyldige prognose eller widget-snapshot.
+**AUTO-031 · FULLFØRT 2026-09-15** — Regresjonstest bekrefter at tom
+prognose aldri regnes som vellykket bakgrunnsdata og derfor ikke kan erstatte
+en siste gyldig prognose eller widget-snapshot.
 
 **AUTO-032 · ÅPEN** — Kontroller at valgt språk og skilletegn følger med
 ved tømming og ny Watch-synkronisering etter stedbytte.
 
 **AUTO-033 · ÅPEN** — Test at varsler med ulik alvorlighetsgrad beholder
 prioritert rekkefølge når tidspunktet er likt.
+
+**AUTO-034 · ÅPEN** — Verifiser at planleggeren ikke lager varsler for
+display-only-regler som bare skal vises i radene.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
