@@ -1942,6 +1942,13 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(Set(result.map(\.id)), [selected.id, alerting.id])
     }
 
+    func testBackgroundRefreshSchedulesNextAttemptAfterThirtyMinutes() {
+        XCTAssertEqual(
+            BackgroundRefresh.earliestBeginDate(now: base),
+            base.addingTimeInterval(30 * 60)
+        )
+    }
+
     @MainActor
     func testForecastRequestsDeduplicateCoordinatesAtApiPrecision() {
         let first = Place(name: "Namsos", lat: 64.466241, lon: 11.495719)

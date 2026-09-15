@@ -2,6 +2,6 @@
   "continue": true,
   "lastScheduledStart": "2026-09-13T05:15:12.787Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-027 fullført: Live Activity fortsetter bare til én time før hendelsen og avsluttes etter grensen, med regresjonstest på grenseverdiene.",
+  "lastProgress": "AUTO-028 fullført: bakgrunnsoppdateringens 30-minutters minimumsperiode er navngitt og regresjonstestet.",
   "stopReason": "AUTO-modus aktiv: blokkerte brukeroppgaver hoppes over, og arbeidet fortsetter på neste ublokkerte oppgave."
 }

@@ -1,6 +1,8 @@
 import BackgroundTasks
 
 enum BackgroundRefresh {
+    static let minimumInterval: TimeInterval = 30 * 60
+
     static var id: String {
         (Bundle.main.bundleIdentifier ?? "no.mathias.VarselApp") + ".refresh"
     }
@@ -17,8 +19,12 @@ enum BackgroundRefresh {
 
     static func schedule() {
         let req = BGAppRefreshTaskRequest(identifier: id)
-        req.earliestBeginDate = Date(timeIntervalSinceNow: 30 * 60)
+        req.earliestBeginDate = earliestBeginDate()
         try? BGTaskScheduler.shared.submit(req)
+    }
+
+    static func earliestBeginDate(now: Date = Date()) -> Date {
+        now.addingTimeInterval(minimumInterval)
     }
 
     private static func handle(_ task: BGAppRefreshTask) {

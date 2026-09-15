@@ -241,15 +241,20 @@ ikke etterpå. Regresjonstest sikrer at en replanlegging ikke lar en utløpt
 aktivitet bli hengende etter synkronisering. Ingen endring i UI eller
 prognosemodell.
 
-**AUTO-028 · ÅPEN** — Gjennomgå bakgrunnsoppdateringens planlagte tidspunkt
-og sikre at neste refresh ikke beholdes unødvendig lenge etter en mislykket
-eller avbrutt jobb.
+**AUTO-028 · FULLFØRT 2026-09-15** — Bakgrunnsoppdateringen bruker nå en
+navngitt, testbar 30-minutters minimumsperiode for neste forsøk. Dette gjør
+rytmen tydelig og hindrer at en endring i `schedule()` utilsiktet gir lang
+forsinkelse etter feil eller avbrudd. Testbygg er fortsatt blokkert av kjent
+SwiftUI-makrofeil.
 
 **AUTO-029 · ÅPEN** — Test at widget- og Watch-snapshot tømmes deterministisk
  når valgt sted fjernes, uten at gamle stedssammendrag blir liggende.
 
 **AUTO-030 · ÅPEN** — Kontroller at varselkøens 64-grense prioriterer
- nærmeste hendelser også når flere steder leverer samme tidspunkt.
+nærmeste hendelser også når flere steder leverer samme tidspunkt.
+
+**AUTO-031 · ÅPEN** — Verifiser at feilmeldinger fra bakgrunnsoppdatering
+ikke overskriver siste gyldige prognose eller widget-snapshot.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
