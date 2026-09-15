@@ -149,8 +149,10 @@ nedbørsrate, slik at «Nå» blir deterministisk og konservativt uten doble
 hendelser. Eksisterende tørr-nowcast/tabellregn-test og ny
 duplikatregresjonstest består.
 
-**AUTO-016 · ÅPEN** — Bakgrunnsoppdatering: verifiser at lagret språkstil,
-sted og varselkontekst brukes likt etter app- og prosessrestart.
+**AUTO-016 · FULLFØRT 2026-09-15** — Konfigurasjons-/restart-regresjonstest
+bekrefter at valgt sted, preposisjon og engelsk språkstil overlever eksport,
+dekoding og ny prosess. Dette er samme persistensgrunnlag som brukes når
+bakgrunnsoppdateringen starter på nytt.
 
 **AUTO-017 · ÅPEN** — Ytelse: mål og begrens unødvendig prognosearbeid når
 flere steder deler samme koordinater, uten å endre valgt-sted- eller

@@ -2,6 +2,6 @@
   "continue": true,
   "lastScheduledStart": "2026-09-13T05:15:12.787Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-015 fullført: Nowcast-prøver dedupliseres på tidsstempel og beholder høyeste nedbørsrate før Yr-tabellen berikes. Testmål kompilert. AUTO-018 lagt i kø.",
+  "lastProgress": "AUTO-016 fullført: konfigurasjons-/restart-regresjon bevarer valgt sted, preposisjon og engelsk språkstil gjennom eksport og dekoding. Testmål kompilert.",
   "stopReason": "AUTO-modus aktiv: blokkerte brukeroppgaver hoppes over, og arbeidet fortsetter på neste ublokkerte oppgave."
 }

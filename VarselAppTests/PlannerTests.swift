@@ -1534,6 +1534,23 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(saved.rules[0].onlyWhenNearby)
     }
 
+    func testConfigurationExportPreservesLanguageAndSelectedPlaceAcrossRestart() throws {
+        let place = Place(name: "Namsos", lat: 64.5, lon: 11.5, preposition: .nerri)
+        let export = WeatherConfigurationExport(
+            places: [place], selectedPlaceID: place.id, alertLanguageStyle: .english
+        )
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+
+        let restored = try decoder.decode(WeatherConfigurationExport.self, from: encoder.encode(export))
+
+        XCTAssertEqual(restored.alertLanguageStyle, .english)
+        XCTAssertEqual(restored.selectedPlaceID, place.id)
+        XCTAssertEqual(restored.places.first?.nameWithPreposition, "nerri Namsos")
+    }
+
     @MainActor
     func testCancellingActiveRefreshDoesNotCancelFollowingRefresh() async {
         let queue = ForecastRefreshQueue()
