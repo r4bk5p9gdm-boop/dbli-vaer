@@ -20,6 +20,8 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
   endring. Ikke bruk kjøringen på bare statuskontroll eller fremdriftsrapport.
 - Avslutt hver økt med utført oppgavenummer, kort resultat, test/ blokkering,
   eventuell commit og de tre neste oppgavenumrene i køen.
+- Ønskelisten kan utvides fortløpende til 010 og videre. Bruk neste ledige
+  nummer eller undernummer; aldri renummerer ferdiglogg eller historikk.
 - Planlagt intervall styres av automasjonen: 2 minutter mens en brukeroppgave
   er åpen, 15 minutter i egenstyrt vedlikehold og 240 minutter etter stopp.
 - `VEDLIKEHOLD_STATUS.json` lagrer continue og fremdrifts-/stoppstatus.
