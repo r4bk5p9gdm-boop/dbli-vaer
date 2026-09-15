@@ -1,5 +1,6 @@
 import Foundation
 import WidgetKit
+import CoreLocation
 
 struct CalibrationForecast: Codable, Identifiable {
     var id = UUID()
@@ -156,6 +157,27 @@ final class Store: ObservableObject {
         }
     }
     @Published var selectedID: UUID? { didSet { save() } }
+    @Published var homeFavorites: HomeFavorites = {
+        guard let data = UserDefaults.standard.data(forKey: "varsel.homeFavorites"),
+              let value = try? JSONDecoder().decode(HomeFavorites.self, from: data) else { return HomeFavorites() }
+        return value
+    }() {
+        didSet {
+            if let data = try? JSONEncoder().encode(homeFavorites) {
+                UserDefaults.standard.set(data, forKey: "varsel.homeFavorites")
+            }
+        }
+    }
+    var resolvedHomeFavorites: HomeFavorites {
+        homeFavorites.resolved(availableIDs: Set(places.map(\.id)))
+    }
+    @Published var sharedPlaceSelection: SharedPlaceSelection = {
+        guard let data = UserDefaults.standard.data(forKey: "varsel.sharedPlaces"), let value = try? JSONDecoder().decode(SharedPlaceSelection.self, from: data) else { return SharedPlaceSelection() }
+        return value
+    }() {
+        didSet { if let data = try? JSONEncoder().encode(sharedPlaceSelection) { UserDefaults.standard.set(data, forKey: "varsel.sharedPlaces") } }
+    }
+    var resolvedSharedPlaceIDs: [UUID] { sharedPlaceSelection.resolved(available: places) }
     @Published private var rawForecasts: [UUID: [ForecastHour]] = [:]
     var forecasts: [UUID: [ForecastHour]] {
         get {
@@ -175,6 +197,7 @@ final class Store: ObservableObject {
     @Published var alertLanguageStyle: AlertLanguageStyle {
         didSet {
             UserDefaults.standard.set(alertLanguageStyle.rawValue, forKey: languageStyleKey)
+            updateWidget()
             Task { await replan() }
         }
     }
@@ -320,6 +343,26 @@ final class Store: ObservableObject {
     var selected: Place? { places.first { $0.id == selectedID } ?? places.first }
     var selectedForecast: [ForecastHour] { selected.flatMap { forecasts[$0.id] } ?? [] }
     var error: String? { selected.flatMap { forecastErrors[$0.id] } }
+
+    /// Select the saved place nearest the phone at launch, or add a lightweight
+    /// current-location place when no saved place is nearby.
+    func selectCurrentLocationIfPossible() async {
+        let locationManager = LocationManager()
+        guard let location = try? await locationManager.current() else { return }
+        let nearest = places.min { a, b in
+            CLLocation(latitude: a.lat, longitude: a.lon).distance(from: location)
+                < CLLocation(latitude: b.lat, longitude: b.lon).distance(from: location)
+        }
+        if let nearest,
+           CLLocation(latitude: nearest.lat, longitude: nearest.lon).distance(from: location) <= 15_000 {
+            selectedID = nearest.id
+            return
+        }
+        let name = await LocationManager.name(for: location)
+        let place = Place(name: name, lat: location.coordinate.latitude, lon: location.coordinate.longitude, preposition: .pa)
+        places.append(place)
+        selectedID = place.id
+    }
 
     func update(_ place: Place) {
         if let i = places.firstIndex(where: { $0.id == place.id }) { places[i] = place } else { places.append(place) }
@@ -548,10 +591,18 @@ final class Store: ObservableObject {
         return WidgetWeatherSnapshot(place: place, forecast: cached.forecast.map { $0.locallyAdjusted(by: place.localTemperatureOffset) }, updatedAt: cached.updatedAt)
     }
 
+    func refreshDisplaySettings() {
+        objectWillChange.send()
+        updateWidget()
+        Task { await replan() }
+    }
+
     private func updateWidget() {
+        let sharedPrimary = resolvedSharedPlaceIDs.first.flatMap { id in places.first { $0.id == id } }
+        let widgetPlace = sharedPrimary ?? selected
         let snapshot = Self.widgetSnapshot(
-            place: selected, forecast: selectedForecast,
-            updatedAt: selected.flatMap { forecastUpdatedAt[$0.id] }, cached: SharedWidgetData.load()
+            place: widgetPlace, forecast: widgetPlace.flatMap { forecasts[$0.id] } ?? [],
+            updatedAt: widgetPlace.flatMap { forecastUpdatedAt[$0.id] }, cached: SharedWidgetData.load()
         )
         guard let snapshot else {
             SharedWidgetData.clear()
@@ -559,8 +610,8 @@ final class Store: ObservableObject {
             WidgetCenter.shared.reloadAllTimelines()
             return
         }
-        SharedWidgetData.save(place: snapshot.place, forecast: snapshot.forecast, updatedAt: snapshot.updatedAt)
-        WatchSyncManager.shared.send(place: snapshot.place, forecast: snapshot.forecast, updatedAt: snapshot.updatedAt)
+        SharedWidgetData.save(place: snapshot.place, forecast: snapshot.forecast, updatedAt: snapshot.updatedAt, languageStyle: alertLanguageStyle)
+        WatchSyncManager.shared.send(place: snapshot.place, forecast: snapshot.forecast, updatedAt: snapshot.updatedAt, languageStyle: alertLanguageStyle, textSeparator: WeatherTextSeparator.current)
         WidgetCenter.shared.reloadAllTimelines()
     }
 

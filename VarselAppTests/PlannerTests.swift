@@ -5,6 +5,114 @@ import UserNotifications
 final class PlannerTests: XCTestCase {
     private let base = Date(timeIntervalSince1970: 2_000_000_000)
 
+    func testSharedPlaceSelectionResolvesOnlyExistingUniquePlacesAndCapsAtThree() {
+        let a = Place(name: "A", lat: 1, lon: 1), b = Place(name: "B", lat: 2, lon: 2), c = Place(name: "C", lat: 3, lon: 3)
+        XCTAssertEqual(SharedPlaceSelection(ids: [a.id, a.id, b.id, c.id, UUID()]).resolved(available: [a,b,c]), [a.id,b.id,c.id])
+    }
+
+    func testWatchTransferCarriesLanguageAndSeparator() throws {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let hour = ForecastHour(time: base, temp: 8, precip: 0, wind: 2, cloud: 20, dew: 3)
+        let snapshot = WidgetWeatherSnapshot(place: place, forecast: [hour], updatedAt: base, languageStyle: .inntrondersk, textSeparator: .dash)
+        let transfer = WatchWeatherTransfer(snapshot: snapshot, sentAt: base)
+        let decoded = try JSONDecoder().decode(WatchWeatherTransfer.self, from: JSONEncoder().encode(transfer))
+        XCTAssertEqual(decoded.snapshot?.languageStyle, .inntrondersk)
+        XCTAssertEqual(decoded.snapshot?.textSeparator, .dash)
+    }
+
+    func testTemperatureRuleSupportsBothDirectionsAndLegacyDefaultsBelow() throws {
+        var high = Rule(type: .temperatur)
+        high.threshold = 20
+        high.temperatureDirection = .above
+        var warm = ForecastHour(time: base, temp: 21, precip: 0, wind: 1, cloud: 0, dew: 10)
+        XCTAssertTrue(high.matches(warm))
+        warm.temp = 20
+        XCTAssertFalse(high.matches(warm))
+        let legacy = try JSONDecoder().decode(Rule.self, from: Data(#"{"type":"temperatur","threshold":10}"#.utf8))
+        XCTAssertEqual(legacy.temperatureDirection, .below)
+    }
+
+    func testDisplayThresholdsAndDialectSeparator() throws {
+        XCTAssertEqual(WeatherLanguage.text("om 2 timer", style: .inntrondersk), "om 2 tima")
+        var place = Place(name: "Klinga", lat: 64, lon: 11)
+        place.displayDewThreshold = 2
+        place.displaySunThreshold = 35
+        place.displayGustThreshold = 11
+        let copy = try JSONDecoder().decode(Place.self, from: JSONEncoder().encode(place))
+        XCTAssertTrue(copy.rules.isEmpty)
+        XCTAssertEqual(copy.rulesForDisplay.first { $0.type == .vind }?.threshold, 11)
+        XCTAssertEqual(copy.rulesForDisplay.first { $0.type == .dugg }?.threshold, 2)
+        XCTAssertEqual(copy.rulesForDisplay.first { $0.type == .sol }?.threshold, 35)
+        XCTAssertEqual(WeatherLanguage.text("Under 10° nå", style: .inntrondersk, separator: .dash), "Under 10 no")
+        XCTAssertEqual(WeatherLanguage.text("Duggfall natt til onsdag kl. 05", style: .inntrondersk, separator: .dash), "Duggfall natt te onsda'n — kl. 05")
+        XCTAssertEqual(WeatherTextSeparator.comma.format("onsdag kl. 05"), "onsdag, kl. 05")
+        XCTAssertEqual(WeatherTextSeparator.bullet.format("onsdag kl. 05"), "onsdag • kl. 05")
+    }
+
+    func testLanguageCatalogIsBundledAndDoesNotTranslateInsertedPlaceholders() {
+        XCTAssertFalse(LanguageCatalog.entries.isEmpty)
+        XCTAssertEqual(LanguageCatalog.value("weekday.monday", language: "tr", fallback: "MISSING"), "manda'n")
+        XCTAssertEqual(LanguageCatalog.value("app.name", language: "en", fallback: "MISSING"), "It’s Weather")
+        XCTAssertEqual(LanguageCatalog.value("push.title", language: "nb", fallback: "MISSING", arguments: ["sted": "på {vaertype}", "vaertype": "Regn"]), "D bli Regn! på {vaertype}")
+    }
+
+    func testSharedSnapshotPreservesDialectDuringWatchRefresh() throws {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 3, cloud: 0, dew: 0)
+        let snapshot = WidgetWeatherSnapshot(place: place, forecast: [hour], updatedAt: base, languageStyle: .inntrondersk)
+        let restored = try JSONDecoder().decode(WidgetWeatherSnapshot.self, from: JSONEncoder().encode(snapshot))
+        XCTAssertEqual(restored.localized("Regn denne timen"), "Regn herre tima")
+        let revision = UUID()
+        let refreshed = try XCTUnwrap(restored.refreshed(with: [hour], at: base, requestRevision: revision, currentRevision: revision))
+        XCTAssertEqual(refreshed.localized("mandag"), "manda'n")
+        let legacy = WidgetWeatherSnapshot(place: place, forecast: [hour], updatedAt: base)
+        let old = try JSONDecoder().decode(WidgetWeatherSnapshot.self, from: JSONEncoder().encode(legacy))
+        XCTAssertEqual(old.localized("mandag"), "mandag")
+    }
+
+    func testGustThresholdNeverFallsBackToMeanWind() {
+        var hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 20, cloud: 0, dew: 0)
+        XCTAssertFalse(AlertType.vind.matches(hour, threshold: 9))
+        hour.gust = 8.9
+        XCTAssertFalse(AlertType.vind.matches(hour, threshold: 9))
+        hour.gust = 9
+        XCTAssertTrue(AlertType.vind.matches(hour, threshold: 9))
+        hour.gust = .nan
+        XCTAssertFalse(AlertType.vind.matches(hour, threshold: 9))
+    }
+
+    func testDialectWeekdaysKeepBokmalUnchanged() {
+        XCTAssertEqual(WeatherLanguage.text("Regn denne timen", style: .inntrondersk), "Regn herre tima")
+        XCTAssertEqual(WeatherLanguage.text("Regn denne timen", style: .bokmal), "Regn denne timen")
+        let source = fullDayNames.joined(separator: ", ")
+        XCTAssertEqual(WeatherLanguage.text(source, style: .inntrondersk), "manda'n, tirsda'n, onsda'n, torsda'n, freda'n, lørda'n, sønda'n")
+        XCTAssertEqual(WeatherLanguage.text(source, style: .bokmal), source)
+        XCTAssertEqual(WeatherLanguage.text("Mandag kl. 09", style: .inntrondersk), "Manda'n kl. 09")
+    }
+
+    func testTemperatureDisplayThresholdDoesNotCreateOrChangePushRules() throws {
+        var place = Place(name: "Klinga", lat: 64, lon: 11)
+        XCTAssertEqual(place.resolvedDisplayTemperatureThreshold, 10)
+        place.displayTemperatureThreshold = 7.5
+        let restored = try JSONDecoder().decode(Place.self, from: JSONEncoder().encode(place))
+        XCTAssertEqual(restored.resolvedDisplayTemperatureThreshold, 7.5)
+        XCTAssertTrue(restored.rules.isEmpty)
+        let display = try XCTUnwrap(restored.rulesForDisplay.first { $0.type == .temperatur })
+        XCTAssertTrue(display.isDisplayOnly)
+        XCTAssertEqual(display.threshold, 7.5)
+        var rule = Rule(type: .temperatur)
+        rule.threshold = 3
+        place.rules = [rule]
+        XCTAssertEqual(place.rulesForDisplay.first { $0.type == .temperatur }?.threshold, 3)
+        place.rules[0].enabled = false
+        XCTAssertEqual(place.rulesForDisplay.first { $0.type == .temperatur }?.threshold, 7.5)
+        XCTAssertEqual(place.rules[0].threshold, 3)
+        place.rulesOnlyDisplay = true
+        XCTAssertFalse(place.rulesForDisplay.contains { $0.type == .temperatur })
+        let old = try JSONDecoder().decode(Place.self, from: Data(#"{"name":"Klinga","lat":64,"lon":11}"#.utf8))
+        XCTAssertEqual(old.resolvedDisplayTemperatureThreshold, 10)
+    }
+
     func testHomeFavoritesPreserveIdentityAndRejectDuplicatesOrDeletedPlaces() throws {
         let a = UUID(), b = UUID()
         let favorites = HomeFavorites(left: a, right: b)
@@ -52,20 +160,20 @@ final class PlannerTests: XCTestCase {
 
     func testCompactWindDoesNotInventMissingGust() {
         var hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 3, cloud: 20, dew: 4)
-        XCTAssertEqual(hour.compactWindAndGust, "3 / – m/s")
+        XCTAssertEqual(hour.compactWindAndGust, "– m/s")
         hour.gust = 9
-        XCTAssertEqual(hour.compactWindAndGust, "3 / 9 m/s")
+        XCTAssertEqual(hour.compactWindAndGust, "9 m/s")
         hour.gust = 0
-        XCTAssertEqual(hour.compactWindAndGust, "3 / 0 m/s")
+        XCTAssertEqual(hour.compactWindAndGust, "0 m/s")
     }
 
     func testWindPushDetailNamesBothValuesAndMissingGusts() throws {
         let rule = Rule(type: .vind)
         var hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 3, cloud: 20, dew: 4)
         hour.gust = 9
-        XCTAssertEqual(Planner.notificationEventDetail(rule: rule, hours: [hour], possible: false), "Vind opptil 3 m/s. Kast opptil 9 m/s. Varighet 1 time.")
+        XCTAssertEqual(Planner.notificationEventDetail(rule: rule, hours: [hour], possible: false), "Vindkast opptil 9 m/s. Periode med vindkast: 1 time.")
         hour.gust = nil
-        XCTAssertEqual(Planner.notificationEventDetail(rule: rule, hours: [hour], possible: false), "Vind opptil 3 m/s. Kast ikke oppgitt. Varighet 1 time.")
+        XCTAssertEqual(Planner.notificationEventDetail(rule: rule, hours: [hour], possible: false), "Vindkast ikke oppgitt. Varighet 1 time.")
         var strong = hour
         strong.gust = 20
         let text = try XCTUnwrap(Planner.notificationEventDetail(rule: rule, hours: [hour, strong], possible: false))
@@ -80,9 +188,9 @@ final class PlannerTests: XCTestCase {
         let status = WeatherStatus(ruleID: rule.id, type: .vind, text: "", eventAt: base, isNow: false)
         var hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 3, cloud: 20, dew: 4)
         hour.gust = 9
-        XCTAssertEqual(Planner.statusDetail(for: status, place: place, forecast: [hour]), "Vind 3 m/s · kast 9 m/s")
+        XCTAssertEqual(Planner.statusDetail(for: status, place: place, forecast: [hour]), "Vindkast 9 m/s")
         hour.gust = nil
-        XCTAssertEqual(Planner.statusDetail(for: status, place: place, forecast: [hour]), "Vind 3 m/s · kast ikke oppgitt")
+        XCTAssertEqual(Planner.statusDetail(for: status, place: place, forecast: [hour]), "Vindkast ikke oppgitt")
         XCTAssertTrue(weatherAlertText(for: rule, eventAt: base.addingTimeInterval(3600), referenceAt: base).hasPrefix("Vindkast "))
     }
 
@@ -220,7 +328,8 @@ final class PlannerTests: XCTestCase {
         rule.leadMinutes = 60
         rule.count = 3
         rule.intervalMinutes = 30
-        let hours = forecast(values: [(5, 0, 12, 80, 2)])
+        var hours = forecast(values: [(5, 0, 12, 80, 2)])
+        hours[0].gust = 12
 
         let result = Planner.plan(rule: rule, forecast: hours, placeName: "Oslo", now: base)
 
@@ -468,7 +577,7 @@ final class PlannerTests: XCTestCase {
         let dew = WeatherStatus(ruleID: UUID(), type: .dugg, text: "Duggfall i dag kl. 20.", eventAt: base, isNow: false)
         XCTAssertEqual(
             Planner.statusDetail(for: dew, place: place, forecast: [hour]),
-            "Duggpunkt 2,9° · 0,4° fra lufta"
+            "Duggpunkt 2,9° · 0,4° forskjell fra lufttemperaturen"
         )
     }
 
@@ -480,7 +589,7 @@ final class PlannerTests: XCTestCase {
         var extreme = standard
         extreme.threshold = 40
 
-        XCTAssertEqual(NotificationCopy.title(for: standard), "D bli Vind!")
+        XCTAssertEqual(NotificationCopy.title(for: standard), "D bli Vindkast!")
         XCTAssertEqual(NotificationCopy.title(for: powerful), "D bli Kraftige vindkast!")
         XCTAssertEqual(NotificationCopy.title(for: extreme), "D bli Ekstreme vindkast!")
         XCTAssertEqual(WindGustLevel.forSpeed(31), .veryPowerful)

@@ -14,8 +14,8 @@ final class WatchSyncManager: NSObject, WCSessionDelegate {
         WCSession.default.activate()
     }
 
-    func send(place: Place, forecast: [ForecastHour], updatedAt: Date) {
-        let snapshot = WidgetWeatherSnapshot(place: place, forecast: forecast, updatedAt: updatedAt)
+    func send(place: Place, forecast: [ForecastHour], updatedAt: Date, languageStyle: AlertLanguageStyle? = nil, textSeparator: WeatherTextSeparator? = .current) {
+        let snapshot = WidgetWeatherSnapshot(place: place, forecast: forecast, updatedAt: updatedAt, languageStyle: languageStyle, textSeparator: textSeparator)
         enqueue(WatchWeatherTransfer(snapshot: snapshot, sentAt: Date()))
     }
 

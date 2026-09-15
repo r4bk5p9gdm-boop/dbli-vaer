@@ -2,6 +2,6 @@
   "continue": true,
   "lastScheduledStart": "2026-09-13T05:15:12.787Z",
   "noProgressCount": 0,
-  "lastProgress": "Rettet prioriteringsfeil: automasjonen skal alltid velge laveste åpne BRUKER-nummer først. BRUKER-001 kommer foran BRUKER-002 og AUTO-oppgaver.",
+  "lastProgress": "BRUKER-001: Watch-overføring sender nå språkvalg og skilletegn videre i snapshotet, med regresjonstest. Gjenstår faktisk CarPlay-scene, GPS-status og fysisk kontroll.",
   "stopReason": "BRUKER-003 er åpen; brukeroppgave kjøres med 2-minuttersintervall."
 }

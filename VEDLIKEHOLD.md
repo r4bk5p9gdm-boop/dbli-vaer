@@ -81,7 +81,8 @@ GPS-sted, favoritt 1 og favoritt 2. Watch følger valgt sted som standard.
 Tre valg kan nå aktiveres i globale iPhone-innstillinger, og første aktive
 sted brukes som felles widget-/CarPlay-kilde; Watch beholder valgt sted som
 standard. Gjenstår: faktisk CarPlay-scene med opptil tre steder, fersk/sist
-kjent GPS-status og fysisk kontroll på telefon/Watch/CarPlay.
+kjent GPS-status og fysisk kontroll på telefon/Watch/CarPlay. Watch-overføring
+bevarer nå også språkvalg og skilletegn i snapshotet; test lagt til.
 
 46. **BRUKER · DELVIS IMPLEMENTERT** — Vindkastnivåer har navn og tall i
    regelvelgeren; kompakt værtekst viser bare kast. Små nedbørsmengder (fra
