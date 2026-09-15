@@ -99,10 +99,11 @@ en samlet VoiceOver-etikett. Teknisk avgrensning: prosjektet har foreløpig
 ingen separat CarPlay-scene; CarPlay leveres via widgetmålet. Hoppes over til
 det finnes teknisk grunnlag, mens BRUKER-001.3 behandles videre.
 
-**BRUKER-001.3 · DELVIS IMPLEMENTERT** — GPS-/stedssynkronisering: nåværende sted, favoritt 1
+**BRUKER-001.3 · PÅ VENT 2026-09-15** — GPS-/stedssynkronisering: nåværende sted, favoritt 1
 og favoritt 2, fersk/sist kjent-status og fysisk kontroll på enhetene. Appen
 gjenbruker nå et eksisterende sted med samme navn i stedet for å lage
-duplikater ved hver oppstart. Fysisk kontroll sjekkes i denne rekkefølgen:
+duplikater ved hver oppstart. Fysisk kontroll krever tilgjengelig iPhone,
+Watch og CarPlay og gjenopptas når enhetene kan kontrolleres. Kontrollrekkefølgen er:
 posisjonstillatelse → valgt sted på Hjem → Watch-snapshot → widget/CarPlay-
 stedsliste, med fersk hentetid og korrekt fallback ved manglende GPS.
 
