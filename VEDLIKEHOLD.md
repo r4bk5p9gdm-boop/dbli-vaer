@@ -18,6 +18,8 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
   AUTO-oppgaver. Ikke hopp til et høyere nummer fordi det står øverst i fila.
 - Hver aktiv kjøring skal gjøre én konkret kode-, test- eller dokumentasjons-
   endring. Ikke bruk kjøringen på bare statuskontroll eller fremdriftsrapport.
+- Avslutt hver økt med utført oppgavenummer, kort resultat, test/ blokkering,
+  eventuell commit og de tre neste oppgavenumrene i køen.
 - Planlagt intervall styres av automasjonen: 2 minutter mens en brukeroppgave
   er åpen, 15 minutter i egenstyrt vedlikehold og 240 minutter etter stopp.
 - `VEDLIKEHOLD_STATUS.json` lagrer continue og fremdrifts-/stoppstatus.
