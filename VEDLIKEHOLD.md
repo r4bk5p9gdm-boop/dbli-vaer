@@ -79,9 +79,10 @@ lagrede toppnivådata.
 meningsfulle AUTO-oppgaver (AUTO-001 til AUTO-004), og automasjonsprompten
 krever påfyll bare ved reell verdi. Én oppgave/rad behandles per økt.
 
-**BRUKER-004 · ÅPEN** — Sveip mellom steder skal oppføre seg som et ekte
-helsides sidebytte til høyre eller venstre, med tydelig overgang for hele
-Hjem-siden og uten at bare innholdet inne i ScrollView flyttes.
+**BRUKER-004 · FULLFØRT 2026-09-15** — Sveip mellom steder bruker en
+helflate-DragGesture på Hjem med horisontal filtrering, terskel og animert
+stedsskifte til høyre/venstre. Gesten ligger utenfor innholdscellene slik at
+hele siden kan brukes. Fysisk UX-kontroll gjenstår ved neste enhetstest.
 
 **AUTO-002 · ÅPEN** — Robust oppstarts- og konfigurasjonsflyt: kontroller at
 første åpning, posisjonstillatelse, stedvalg og første prognose tåler avbrudd
