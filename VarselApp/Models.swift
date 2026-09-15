@@ -182,7 +182,7 @@ enum WeatherLanguage {
             .replacingOccurrences(of: "natt til ", with: LanguageCatalog.value("time.night_before", language: "en", fallback: "night before "))
             .replacingOccurrences(of: " kl. ", with: " at ")
             .replacingOccurrences(of: "Sol i ", with: "Sun for ")
-            .replacingOccurrences(of: "Fare for dugg", with: "Risk of dew")
+            .replacingOccurrences(of: "Fare for dugg", with: LanguageCatalog.value("detail.dew_risk", language: "en", fallback: "Risk of dew"))
             .replacingOccurrences(of: "Duggfall", with: LanguageCatalog.value("weather.dew", language: "en", fallback: "Dew"))
             .replacingOccurrences(of: "Regn", with: LanguageCatalog.value("weather.rain", language: "en", fallback: "Rain"))
             .replacingOccurrences(of: "Snø", with: LanguageCatalog.value("weather.snow", language: "en", fallback: "Snow"))
@@ -195,7 +195,9 @@ enum WeatherLanguage {
             .replacingOccurrences(of: "Yr melder", with: "Yr reports")
             .replacingOccurrences(of: "Lokalt anslag", with: "Local estimate")
             .replacingOccurrences(of: "Mulig", with: "Possible")
-            .replacingOccurrences(of: "oppte", with: "up to")
+            .replacingOccurrences(of: "Opptil", with: LanguageCatalog.value("detail.up_to", language: "en", fallback: "up to").capitalized)
+            .replacingOccurrences(of: "opptil", with: LanguageCatalog.value("detail.up_to", language: "en", fallback: "up to"))
+            .replacingOccurrences(of: "oppte", with: LanguageCatalog.value("detail.up_to", language: "en", fallback: "up to"))
         let weekdays = ["mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag", "søndag"]
         let english = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
         for (norwegian, translated) in zip(weekdays, english) {

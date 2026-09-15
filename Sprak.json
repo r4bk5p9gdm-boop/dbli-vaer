@@ -295,6 +295,16 @@
       "nb": "Opptil {mengde} mm over {varighet}.",
       "tr": "Opptil {mengde} mm over {varighet}."
     },
+    "detail.up_to": {
+      "en": "up to",
+      "nb": "opptil",
+      "tr": "oppte"
+    },
+    "detail.dew_risk": {
+      "en": "Risk of dew",
+      "nb": "Fare for dugg",
+      "tr": "No e d doggfall"
+    },
     "detail.snow": {
       "en": "Estimated {mengde} mm of snow over {varighet}.",
       "nb": "Anslått {mengde} mm snø over {varighet}.",

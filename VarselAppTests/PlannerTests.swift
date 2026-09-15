@@ -118,6 +118,10 @@ final class PlannerTests: XCTestCase {
             WeatherLanguage.text("Regn i morgen kl. 07", style: .english),
             "Rain tomorrow at 07"
         )
+        XCTAssertEqual(
+            WeatherLanguage.text("Opptil 0,9 mm på Klinga — Klipp gresset!", style: .english),
+            "Up to 0,9 mm på Klinga — Klipp gresset!"
+        )
         var temperature = Rule(type: .temperatur)
         temperature.threshold = 10
         XCTAssertEqual(
