@@ -320,14 +320,18 @@ samme `compactTemperatureText`-formatterer og regresjonstest for avrunding.
 prognose gir null snøvarsler og ingen hendelsestid; mengdetekst kan derfor
 ikke bli negativ eller tom.
 
-**AUTO-046 · ÅPEN** — Kontroller at widgeten ikke viser temperaturfelt fra
-et annet sted etter raskt stedbytte.
+**AUTO-046 · FULLFØRT 2026-09-16** — Eksisterende regresjonstest dekker
+raskt stedbytte med samme koordinater, flyttet sted og annet sted-ID. Bare
+snapshot for aktivt sted godtas; gammel temperatur kan derfor ikke lekke inn.
 
 **AUTO-047 · ÅPEN** — Verifiser at temperaturformattereren håndterer
 ikke-finite verdier uten å krasje eller vise misvisende tekst.
 
 **AUTO-048 · ÅPEN** — Kontroller at varslingskøen rydder utløpte
  forespørsler uten å fjerne fremtidige varsler.
+
+**AUTO-049 · ÅPEN** — Verifiser at bakgrunnsrefresh ikke overskriver
+aktivt sted med et senere svar fra en eldre forespørsel.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
