@@ -95,9 +95,21 @@ regresjonstester. iOS-bygg bestått.
 64-varselsgrensen, duplikatdemping, avviste varsler og delvis feilet prognose
 som ikke skal slette gyldige varsler har regresjonstester.
 
-**AUTO-004 · ÅPEN** — Kø-renser: vurder om det finnes minst tre konkrete,
-ikke-dupliserte AUTO-punkter og opprett nye med neste nummer når det er reell
-verdi i dem. Denne oppgaven skal ikke lage tomme eller spekulative punkter.
+**AUTO-004 · FULLFØRT 2026-09-15** — Kø-renser: vurdering og påfyll av
+konkrete, ikke-dupliserte AUTO-punkter er gjennomført.
+
+**AUTO-007 · FULLFØRT 2026-09-15** — Widget-/Watch-stabilitet er dekket av
+tester for språk/skilletegn, gammel eller tom snapshot, flyttet sted og
+eksplisitt tømming uten duplikat eller feil valgt sted.
+
+**AUTO-008 · ÅPEN** — Bakgrunnsoppdatering: test at replanlegging og widget-
+oppdatering ikke skjer etter kansellering eller med foreldet sted.
+
+**AUTO-009 · ÅPEN** — Varseltekst-regresjon: test alle værtyper med bokmål,
+inntrøndersk og engelsk slik at andrelinjen ikke gjentar tid eller type.
+
+**AUTO-010 · ÅPEN** — Ressurslett byggkontroll: dokumenter en repeterbar
+verifisering av iOS-, widget- og Watch-mål uten simulatorstart.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
