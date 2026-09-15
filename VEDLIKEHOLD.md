@@ -207,14 +207,22 @@ foreldet. Regresjonstest dekker både fersk og foreldet snapshot.
 Språkfil og diff validerer; testbygg er fortsatt blokkert av eksisterende
 SwiftUI-makro-/`ContentView`-feil.
 
-**AUTO-023 · ÅPEN** — Kontroller at varslingstekst og plan-kontekst fortsatt
-er språkkonsistente når en gammel forespørsel beholdes etter add-feil.
+**AUTO-023 · FULLFØRT 2026-09-15** — En gammel varsling beholdes etter
+add-feil bare når plan-konteksten er identisk med den nye forespørselen.
+Ved språk-, sted- eller regelendring fjernes ikke-verifiserbare gamle
+varsler, slik at gammel tekst ikke vises i ny språkstil. Regresjonstest
+dekker lik og ulik plan-kontekst.
+Språkfil og diff validerer; testbygg er fortsatt blokkert av eksisterende
+SwiftUI-makro-/`ContentView`-feil.
 
 **AUTO-024 · ÅPEN** — Mål minnebruk i prognose- og varselkøen og begrens
 unødvendige mellomkopier ved store flerstedsprognoser.
 
 **AUTO-025 · ÅPEN** — Verifiser at ferskhetsgrensen følger lokal tidssone og
 ikke gir feilaktig foreldelse ved sommertidsskift.
+
+**AUTO-026 · ÅPEN** — Kontroller at varsler som beholdes ved nettverksfeil
+fortsatt åpner riktig sted når stedsliste eller valgt sted endres.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.

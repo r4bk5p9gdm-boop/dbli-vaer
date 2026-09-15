@@ -1700,6 +1700,25 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testFailedReplacementFallbackRequiresMatchingPlanContext() throws {
+        let rule = Rule(type: .regn)
+        let place = Place(name: "Klinga", lat: 64, lon: 11, rules: [rule])
+        let context = try JSONEncoder().encode(NotificationPlanContext(place: place, rule: rule, languageStyle: .bokmal))
+        let content = UNMutableNotificationContent()
+        content.userInfo[NotificationScheduler.planContextKey] = context
+        let request = UNNotificationRequest(identifier: "same", content: content, trigger: nil)
+
+        XCTAssertEqual(
+            NotificationScheduler.failedReplacementFallbackIDs(
+                pending: [request], failedIDs: ["same"], replacementContexts: ["same": context]
+            ), ["same"]
+        )
+        XCTAssertTrue(NotificationScheduler.failedReplacementFallbackIDs(
+            pending: [request], failedIDs: ["same"], replacementContexts: ["same": Data("other".utf8)]
+        ).isEmpty)
+    }
+
+    @MainActor
     func testInjectedNotificationCenterKeepsFailedReplacement() async {
         let rule = Rule(type: .regn)
         let place = Place(name: "Klinga", lat: 64, lon: 11, rules: [rule])

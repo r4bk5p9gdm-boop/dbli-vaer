@@ -181,6 +181,18 @@ enum NotificationScheduler {
         }
     }
 
+    static func failedReplacementFallbackIDs(
+        pending: [UNNotificationRequest], failedIDs: Set<String>,
+        replacementContexts: [String: Data]
+    ) -> Set<String> {
+        Set(failedIDs.filter { id in
+            guard let old = pending.first(where: { $0.identifier == id }),
+                  let oldContext = old.content.userInfo[planContextKey] as? Data,
+                  let replacementContext = replacementContexts[id] else { return false }
+            return oldContext == replacementContext
+        })
+    }
+
     static func requestsToPreserve(
         _ requests: [UNNotificationRequest],
         places: [Place],
@@ -257,6 +269,7 @@ enum NotificationScheduler {
         var failedCount = 0
         var successfulIDs: Set<String> = []
         var failedIDs: Set<String> = []
+        var replacementContexts: [String: Data] = [:]
         var firstScheduledAt = preserved.compactMap { nextFireDate(for: $0) }.min()
         for a in requested {
             let c = UNMutableNotificationContent()
@@ -270,6 +283,7 @@ enum NotificationScheduler {
                 if let place = places.first(where: { $0.id == placeID }),
                    let data = try? JSONEncoder().encode(NotificationPlanContext(place: place, rule: a.rule, languageStyle: languageStyle)) {
                     c.userInfo[planContextKey] = data
+                    replacementContexts[a.id] = data
                 }
             }
             let trigger = UNTimeIntervalNotificationTrigger(timeInterval: max(1, a.fireAt.timeIntervalSince(now)), repeats: false)
@@ -285,7 +299,10 @@ enum NotificationScheduler {
         }
         let staleIDs = stalePendingRequestIDs(
             pendingIDs: pending.map(\.identifier), preservedIDs: preservedIDs,
-            successfulIDs: successfulIDs, failedIDs: failedIDs
+            successfulIDs: successfulIDs,
+            failedIDs: failedReplacementFallbackIDs(
+                pending: pending, failedIDs: failedIDs, replacementContexts: replacementContexts
+            )
         )
         center.removePendingNotificationRequests(withIdentifiers: staleIDs)
         return NotificationScheduleResult(
