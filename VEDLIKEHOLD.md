@@ -150,6 +150,10 @@ eller at tørt Nå-varsel skjuler tabellnedbør.
 **AUTO-016 · ÅPEN** — Bakgrunnsoppdatering: verifiser at lagret språkstil,
 sted og varselkontekst brukes likt etter app- og prosessrestart.
 
+**AUTO-017 · ÅPEN** — Ytelse: mål og begrens unødvendig prognosearbeid når
+flere steder deler samme koordinater, uten å endre valgt-sted- eller
+Watch-synkronisering.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
