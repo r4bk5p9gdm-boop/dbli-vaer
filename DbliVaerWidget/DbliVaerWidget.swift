@@ -101,6 +101,7 @@ struct WeatherWidgetView: View {
                     .font(.caption2)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
+                    .accessibilityLabel("Flere valgte steder: " + entry.sharedPlaces.dropFirst().map(\.label).joined(separator: ", "))
             }
             if let first = entry.statuses.first {
                 Spacer(minLength: 1)
