@@ -67,6 +67,10 @@ loggføre den, opprette neste unike AUTO-nummer ved behov og beholde en siste
 «kø-renser»-oppgave som fyller på tre nye punkter bare når det finnes reell
 vedlikeholdsverdi. Én oppgave/rad skal behandles per økt.
 
+**BRUKER-004 · ÅPEN** — Sveip mellom steder skal oppføre seg som et ekte
+helsides sidebytte til høyre eller venstre, med tydelig overgang for hele
+Hjem-siden og uten at bare innholdet inne i ScrollView flyttes.
+
 **AUTO-002 · ÅPEN** — Robust oppstarts- og konfigurasjonsflyt: kontroller at
 første åpning, posisjonstillatelse, stedvalg og første prognose tåler avbrudd
 og manglende nett uten tom eller ødelagt tilstand.

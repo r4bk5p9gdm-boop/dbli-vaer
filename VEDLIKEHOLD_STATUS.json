@@ -2,6 +2,6 @@
   "continue": true,
   "lastScheduledStart": "2026-09-13T05:15:12.787Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-001.2 delvis: widget-/CarPlay-data inkluderer opptil tre aktiverte steder med preposisjon og primærsted først. Språkvalidering og regresjonstest bestod. Selve CarPlay-scenen og fysisk kontroll gjenstår.",
+  "lastProgress": "BRUKER-004 registrert: helsides sveip mellom steder skal bli et ekte sidebytte med tydelig overgang.",
   "stopReason": "BRUKER-003 er åpen; brukeroppgave kjøres med 2-minuttersintervall."
 }
