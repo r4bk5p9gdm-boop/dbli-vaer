@@ -683,7 +683,10 @@ struct RulesView: View {
                                                     Text("\(value.formatted(.number.precision(.fractionLength(0...1)))) m/s · \(windStrengthLabel(for: value))").tag(value)
                                                 } else {
                                                     Text("\(value.formatted(.number.precision(.fractionLength(0...1))))\(type == .sol ? " %" : "°")").tag(value)
+                                                }
+                                            }
                                         }
+                                        .labelsHidden().pickerStyle(.menu)
                                         if type == .sol {
                                             Picker("Sol maks skyer 2", selection: Binding(
                                                 get: { p.displaySunThreshold2 ?? min(50, p.displayThreshold(for: .sol) + 10) },
@@ -692,14 +695,13 @@ struct RulesView: View {
                                                 ForEach(Array(stride(from: 0.0, through: 50.0, by: 5.0)), id: \.self) { value in
                                                     Text("2: \(value.formatted(.number.precision(.fractionLength(0)))) %").tag(value)
                                                 }
-                                            }.labelsHidden().pickerStyle(.menu)
+                                            }
+                                            .labelsHidden().pickerStyle(.menu)
                                         }
                                     }
                                     .padding(.horizontal, 5)
                                     .padding(.vertical, 3)
                                     .background(type.color.opacity(0.10), in: RoundedRectangle(cornerRadius: 6))
-                                        }.labelsHidden().pickerStyle(.menu)
-                                    }
                                 } else if type == .frost {
                                     Text("Frost")
                                     Picker("Frostmargin", selection: Binding(
