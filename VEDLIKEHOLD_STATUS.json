@@ -1,7 +1,7 @@
 {
-  "continue": true,
+  "continue": false,
   "lastScheduledStart": "2026-09-13T05:15:12.787Z",
-  "noProgressCount": 0,
+  "noProgressCount": 2,
   "lastProgress": "BRUKER-004 registrert: helsides sveip mellom steder skal bli et ekte sidebytte med tydelig overgang.",
-  "stopReason": "BRUKER-003 er åpen; brukeroppgave kjøres med 2-minuttersintervall."
+  "stopReason": "To kjøringer uten ny kodeendring; separat CarPlay-scene krever ny teknisk avgrensning."
 }
