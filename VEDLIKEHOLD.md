@@ -106,8 +106,10 @@ eksplisitt tømming uten duplikat eller feil valgt sted.
 kansellert refresh, køens neste oppdatering, foreldet sted og widget-fallback
 ikke skriver feil eller dupliserer data.
 
-**AUTO-009 · ÅPEN** — Varseltekst-regresjon: test alle værtyper med bokmål,
-inntrøndersk og engelsk slik at andrelinjen ikke gjentar tid eller type.
+**AUTO-009 · PÅ VENT 2026-09-15** — Varseltekst-regresjon for bokmål,
+inntrøndersk og engelsk. Engelsk kan ikke testes ennå fordi
+AlertLanguageStyle-modellen foreløpig bare har bokmål og inntrøndersk. Må
+gjenopptas når engelsk språkvalg er koblet inn.
 
 **AUTO-010 · ÅPEN** — Ressurslett byggkontroll: dokumenter en repeterbar
 verifisering av iOS-, widget- og Watch-mål uten simulatorstart.
