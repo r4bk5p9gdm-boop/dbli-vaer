@@ -32,6 +32,29 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(decoded.snapshot?.textSeparator, .dash)
     }
 
+    func testWidgetSnapshotUnknownLanguageKeepsWeatherDataAndUsesSafeFallback() throws {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let snapshot = WidgetWeatherSnapshot(
+            place: place,
+            forecast: [ForecastHour(time: base, temp: 8, precip: 0, wind: 2, cloud: 20, dew: 3)],
+            updatedAt: base,
+            languageStyle: .english,
+            textSeparator: .dash
+        )
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(snapshot)) as? [String: Any])
+        object["languageStyle"] = "esperanto"
+        object["textSeparator"] = "unknown-separator"
+        let data = try JSONSerialization.data(withJSONObject: object)
+
+        let restored = try JSONDecoder().decode(WidgetWeatherSnapshot.self, from: data)
+
+        XCTAssertEqual(restored.place.displayName, "Klinga")
+        XCTAssertEqual(restored.forecast.first?.temp, 8)
+        XCTAssertEqual(restored.languageStyle, .bokmal)
+        XCTAssertNil(restored.textSeparator)
+        XCTAssertEqual(restored.localized("Regn i morgen"), "Regn i morgen")
+    }
+
     func testWidgetPlaceSummaryKeepsPrepositionForSharedPlaces() {
         let summary = WidgetPlaceSummary(id: UUID(), name: "Namsos", preposition: .nerri)
         XCTAssertEqual(summary.label, "nerri Namsos")

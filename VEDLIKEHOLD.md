@@ -134,9 +134,10 @@ radarprøver og fast kveldsvarsel. Dette gjør tidssone- og sommertidslogikk
 deterministisk uten å endre standardkallet. Regresjonstest dekker Europe/Oslo
 over sommertidsskiftet; testmål kompilert.
 
-**AUTO-013 · ÅPEN** — Snapshot-migrering: sørg for at eldre eller ukjente
-språkfelt i Watch/widget-data faller trygt tilbake til bokmål uten å skjule
-sted eller temperatur.
+**AUTO-013 · FULLFØRT 2026-09-15** — Snapshot-migrering tåler nå ukjent eller
+ødelagt språk-/skilletegnfelt i Watch/widget-data. Værdata, sted og temperatur
+beholdes, mens ukjent språk faller tilbake til bokmål og ukjent skilletegn til
+standard. Regresjonstest og testmål bestått.
 
 **AUTO-014 · ÅPEN** — Varslingskopi: test at bakgrunnsplanlegging beholder
 språk, mengde/varighet og huskelapp uten gjentatt tidspunkt i andrelinjen.

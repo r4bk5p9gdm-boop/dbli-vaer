@@ -33,6 +33,45 @@ struct WidgetWeatherSnapshot: Codable {
     var languageStyle: AlertLanguageStyle? = nil
     var textSeparator: WeatherTextSeparator? = .current
 
+    private enum CodingKeys: String, CodingKey {
+        case place, forecast, updatedAt, languageStyle, textSeparator
+    }
+
+    init(
+        place: Place,
+        forecast: [ForecastHour],
+        updatedAt: Date,
+        languageStyle: AlertLanguageStyle? = nil,
+        textSeparator: WeatherTextSeparator? = .current
+    ) {
+        self.place = place
+        self.forecast = forecast
+        self.updatedAt = updatedAt
+        self.languageStyle = languageStyle
+        self.textSeparator = textSeparator
+    }
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        place = try values.decode(Place.self, forKey: .place)
+        forecast = try values.decode([ForecastHour].self, forKey: .forecast)
+        updatedAt = try values.decode(Date.self, forKey: .updatedAt)
+
+        // A newer phone may write a language that an older Watch build does
+        // not know. Keep the weather snapshot usable instead of discarding
+        // the place and temperature together with the unknown preference.
+        if let raw = try? values.decode(String.self, forKey: .languageStyle) {
+            languageStyle = AlertLanguageStyle.persisted(raw) ?? .bokmal
+        } else {
+            languageStyle = nil
+        }
+        if let raw = try? values.decode(String.self, forKey: .textSeparator) {
+            textSeparator = WeatherTextSeparator(rawValue: raw)
+        } else {
+            textSeparator = nil
+        }
+    }
+
     func localized(_ text: String) -> String {
         WeatherLanguage.text(text, style: languageStyle ?? .bokmal, separator: textSeparator ?? .space)
     }
