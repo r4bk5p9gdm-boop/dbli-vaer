@@ -1,7 +1,8 @@
 import SwiftUI
 
 func compactTemperatureText(_ temperature: Double) -> String {
-    "\(temperature.formatted(.number.precision(.fractionLength(0))))°"
+    guard temperature.isFinite else { return "–°" }
+    return "\(temperature.formatted(.number.precision(.fractionLength(0))))°"
 }
 
 /// Explicit favorites for the sides of the current-location home page.

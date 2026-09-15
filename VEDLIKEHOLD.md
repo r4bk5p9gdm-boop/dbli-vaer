@@ -324,14 +324,18 @@ ikke bli negativ eller tom.
 raskt stedbytte med samme koordinater, flyttet sted og annet sted-ID. Bare
 snapshot for aktivt sted godtas; gammel temperatur kan derfor ikke lekke inn.
 
-**AUTO-047 · ÅPEN** — Verifiser at temperaturformattereren håndterer
-ikke-finite verdier uten å krasje eller vise misvisende tekst.
+**AUTO-047 · FULLFØRT 2026-09-16** — Felles temperaturformatterer viser nå
+«–°» for NaN/inf og er regresjonstestet. Widget og tidskort unngår dermed
+misvisende eller uleselige tall.
 
 **AUTO-048 · ÅPEN** — Kontroller at varslingskøen rydder utløpte
  forespørsler uten å fjerne fremtidige varsler.
 
 **AUTO-049 · ÅPEN** — Verifiser at bakgrunnsrefresh ikke overskriver
 aktivt sted med et senere svar fra en eldre forespørsel.
+
+**AUTO-050 · ÅPEN** — Kontroller at eksplisitt brukeroppdatering vinner over
+et samtidig bakgrunnssvar.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.

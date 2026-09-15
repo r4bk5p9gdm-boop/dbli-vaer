@@ -253,6 +253,8 @@ final class PlannerTests: XCTestCase {
     func testCompactTemperatureTextUsesSharedWholeDegreeFormat() {
         XCTAssertEqual(compactTemperatureText(12.6), "13°")
         XCTAssertEqual(compactTemperatureText(-0.4), "0°")
+        XCTAssertEqual(compactTemperatureText(.nan), "–°")
+        XCTAssertEqual(compactTemperatureText(.infinity), "–°")
     }
 
     func testDisplayOnlyRuleNeverCreatesPushAlert() {
