@@ -656,10 +656,13 @@ struct Place: Codable, Identifiable, Hashable {
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         id = (try? values.decode(UUID.self, forKey: .id)) ?? UUID()
-        name = try values.decode(String.self, forKey: .name)
+        // Older or partially written snapshots must not prevent the app from
+        // starting. Keep a visible fallback name and neutral coordinates.
+        let decodedName = try? values.decode(String.self, forKey: .name)
+        name = decodedName?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false ? decodedName! : "Ukjent sted"
         customName = try? values.decode(String.self, forKey: .customName)
-        lat = try values.decode(Double.self, forKey: .lat)
-        lon = try values.decode(Double.self, forKey: .lon)
+        lat = (try? values.decode(Double.self, forKey: .lat)).flatMap { $0.isFinite ? $0 : nil } ?? 0
+        lon = (try? values.decode(Double.self, forKey: .lon)).flatMap { $0.isFinite ? $0 : nil } ?? 0
         let rawPreposition = try? values.decode(String.self, forKey: .preposition)
         preposition = rawPreposition.flatMap { PlacePreposition(rawValue: $0) }
         rules = (try? values.decode([LossyDecodable<Rule>].self, forKey: .rules))?.compactMap(\.value) ?? []

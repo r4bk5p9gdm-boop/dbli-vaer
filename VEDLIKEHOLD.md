@@ -65,9 +65,11 @@ viser nå første terskel tydeligere og den andre som en svakere forhåndsvisnin
 iOS-bygg bestod 2026-09-15 etter korrigert SwiftUI-struktur.
 Enhetsverifisering gjenstår.
 
-**AUTO-001 · ÅPEN** — Stabilitetsrunde for vedvarende lagring og migrering:
-gå gjennom dekoding av eldre Place/Rule-data, sikre at ugyldige eller manglende
-felt ikke kan stoppe oppstart, og legg til målrettede regresjonstester.
+**AUTO-001 · DELVIS IMPLEMENTERT 2026-09-15** — Stabilitetsrunde for vedvarende
+lagring og migrering: Place-dekoding tåler nå manglende/blankt navn, ugyldige
+koordinater og ødelagte nested-regler uten å stoppe oppstart. Regresjonstest
+lagt til og iOS-bygg bestått. Gjenstår tilsvarende gjennomgang av øvrige
+lagrede toppnivådata.
 
 **BRUKER-003 · ÅPEN** — Sørg for at vedlikeholdskøen alltid har minst tre
 meningsfulle AUTO-oppgaver. Når en AUTO-oppgave fullføres skal arbeideren

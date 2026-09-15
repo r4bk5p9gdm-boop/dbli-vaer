@@ -37,6 +37,15 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(decoded.displaySunThreshold2, 20)
     }
 
+    func testMalformedPlaceSnapshotUsesSafeDefaults() throws {
+        let data = Data(#"{"name":" ","lat":"bad","lon":null,"rules":[{"type":"vind","threshold":"bad"}]}"#.utf8)
+        let place = try JSONDecoder().decode(Place.self, from: data)
+        XCTAssertEqual(place.name, "Ukjent sted")
+        XCTAssertEqual(place.lat, 0)
+        XCTAssertEqual(place.lon, 0)
+        XCTAssertTrue(place.rules.isEmpty)
+    }
+
     func testTemperatureRuleSupportsBothDirectionsAndLegacyDefaultsBelow() throws {
         var high = Rule(type: .temperatur)
         high.threshold = 20
