@@ -272,14 +272,18 @@ en siste gyldig prognose eller widget-snapshot.
 valgt skilletegn sammen med språkstil, slik Watch-synkroniseringen allerede
 gjør. Ved tømming sendes fortsatt et eksplisitt nil-snapshot.
 
-**AUTO-033 · ÅPEN** — Test at varsler med ulik alvorlighetsgrad beholder
-prioritert rekkefølge når tidspunktet er likt.
+**AUTO-033 · FULLFØRT 2026-09-15** — Varselutvalget prioriterer nå
+alvorlighetsgrad ved likt tidspunkt (frost/snø før vind og regn), og bruker
+fortsatt stabil ID som siste tie-breaker.
 
 **AUTO-034 · ÅPEN** — Verifiser at planleggeren ikke lager varsler for
 display-only-regler som bare skal vises i radene.
 
 **AUTO-035 · ÅPEN** — Test migrering av steder uten lagret «Temp over»-grense
 slik at standardverdien brukes uten å endre eldre stedsdata.
+
+**AUTO-036 · ÅPEN** — Kontroller at varseltekst og rullerende visning bruker
+samme alvorlighetsprioritet ved samtidige hendelser.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.

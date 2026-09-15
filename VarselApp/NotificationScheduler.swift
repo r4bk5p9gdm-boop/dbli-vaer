@@ -327,12 +327,23 @@ enum NotificationScheduler {
             .sorted {
                 if $0.fireAt != $1.fireAt { return $0.fireAt < $1.fireAt }
                 if $0.eventAt != $1.eventAt { return $0.eventAt < $1.eventAt }
+                let firstSeverity = severity(of: $0.rule.type)
+                let secondSeverity = severity(of: $1.rule.type)
+                if firstSeverity != secondSeverity { return firstSeverity > secondSeverity }
                 return $0.id < $1.id
             }
             // One evening notification can represent several weather events.
             // Keep the nearest event regardless of the caller's input order.
             .filter { seenIDs.insert($0.id).inserted }
             .prefix(limit))
+    }
+
+    private static func severity(of type: AlertType) -> Int {
+        switch type {
+        case .frost, .sno: return 3
+        case .vind: return 2
+        default: return 1
+        }
     }
 
     static func sendTest(for place: Place, languageStyle: AlertLanguageStyle = .bokmal) async -> Bool {
