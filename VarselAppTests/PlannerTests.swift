@@ -1805,6 +1805,27 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testOfflinePreservationRetainsRouteWhenPlacesAreReordered() throws {
+        let rule = Rule(type: .regn)
+        let target = Place(name: "Klinga", lat: 64, lon: 11, rules: [rule])
+        let other = Place(name: "Namsos", lat: 64.46, lon: 11.49)
+        let content = UNMutableNotificationContent()
+        content.userInfo[NotificationRoute.placeIDKey] = target.id.uuidString
+        content.userInfo[NotificationScheduler.planContextKey] = try JSONEncoder().encode(
+            NotificationPlanContext(place: target, rule: rule, languageStyle: .bokmal)
+        )
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 3_600, repeats: false)
+        let request = UNNotificationRequest(identifier: "offline-route", content: content, trigger: trigger)
+
+        let preserved = NotificationScheduler.requestsToPreserve(
+            [request], places: [other, target], missingForecastPlaceIDs: [target.id],
+            nearbyPlaceIDs: [], languageStyle: .bokmal, now: base
+        )
+
+        XCTAssertEqual(preserved.first?.content.userInfo[NotificationRoute.placeIDKey] as? String, target.id.uuidString)
+    }
+
+    @MainActor
     func testOfflineNotificationPreservationRejectsUnverifiableRequests() {
         let request = UNNotificationRequest(identifier: "legacy", content: UNMutableNotificationContent(), trigger: nil)
         XCTAssertTrue(NotificationScheduler.requestsToPreserve(

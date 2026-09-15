@@ -228,8 +228,12 @@ beregnes som faktisk forløpt tid, ikke kalenderens lokale klokketimer, slik at
 den manglende timen ved sommertid ikke feilaktig gjør et snapshot foreldet.
 Testbygget er fortsatt blokkert av eksisterende SwiftUI-makrofeil.
 
-**AUTO-026 · ÅPEN** — Kontroller at varsler som beholdes ved nettverksfeil
-fortsatt åpner riktig sted når stedsliste eller valgt sted endres.
+**AUTO-026 · FULLFØRT 2026-09-15** — Regresjonstest bekrefter at et bevart
+offline-varsel beholder `placeID`-ruten når stedlisten sorteres eller valgt
+sted endres. Varslet åpner dermed fortsatt stedet som regelen faktisk gjelder.
+Ingen produksjonskodeendring var nødvendig; eksisterende kontekstkontroll
+bevarer forespørselen uendret. Testbygg er fortsatt blokkert av SwiftUI-
+makroserverfeilen i `ContentView`.
 
 **AUTO-027 · ÅPEN** — Verifiser at replanlegging ikke holder store
 prognosekart lenger enn nødvendig etter widget-/Watch-synkronisering.
