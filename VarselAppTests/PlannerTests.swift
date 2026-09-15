@@ -1087,6 +1087,7 @@ final class PlannerTests: XCTestCase {
         first.leadMinutes = 60
         var second = Rule(type: .regn)
         second.leadMinutes = 60
+        second.customName = "Ta med paraply"
         let place = Place(name: "Namsos", lat: 64.5, lon: 11.5, rules: [first, second])
         let event = Date().addingTimeInterval(3 * 3_600)
         let hours = [ForecastHour(time: event, temp: 5, precip: 1, wind: 2, cloud: 100, dew: 4)]

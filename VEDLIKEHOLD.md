@@ -299,14 +299,17 @@ visningen, mens rå Yr-temperatur beholdes separat som referanse.
 (`nil`) og ugyldig (`NaN`) vindkast. Begge gir ingen vindkastmatch, slik at
 verken varsel eller stripe vises uten målt kast.
 
-**AUTO-040 · ÅPEN** — Kontroller at varselnavn/huskelapp ikke påvirker
-duplikatdemping av ellers identiske værvarsler.
+**AUTO-040 · FULLFØRT 2026-09-15** — Regn-duplikatregresjonen bruker nå
+ulik huskelapp på den andre regelen og bekrefter fortsatt én varsling.
 
 **AUTO-041 · ÅPEN** — Test at tidskortets temperaturfarger ikke endrer
 tilgjengelighetsbeskrivelsen eller tallformatet.
 
 **AUTO-042 · ÅPEN** — Kontroller at snøens estimerte mengde aldri blir
 negativ ved manglende eller uvanlige temperaturverdier.
+
+**AUTO-043 · ÅPEN** — Verifiser at værikon og tekst bruker samme temperatur-
+grense ved regn/snø-overgang.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
