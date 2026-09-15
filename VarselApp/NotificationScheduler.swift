@@ -143,6 +143,14 @@ final class NotificationSchedulingQueue {
     }
 }
 
+protocol NotificationCenterClient: AnyObject {
+    func pendingNotificationRequests() async -> [UNNotificationRequest]
+    func add(_ request: UNNotificationRequest) async throws
+    func removePendingNotificationRequests(withIdentifiers identifiers: [String])
+}
+
+extension UNUserNotificationCenter: NotificationCenterClient {}
+
 enum NotificationScheduler {
     @MainActor private static let schedulingQueue = NotificationSchedulingQueue()
     static let pendingNotificationLimit = 64
@@ -222,14 +230,14 @@ enum NotificationScheduler {
     }
 
     @MainActor
-    private static func replacePendingAlerts(
+    static func replacePendingAlerts(
         _ alerts: [PlannedAlert],
         languageStyle: AlertLanguageStyle,
         places: [Place],
         missingForecastPlaceIDs: Set<UUID>,
-        nearbyPlaceIDs: Set<UUID>
+        nearbyPlaceIDs: Set<UUID>,
+        center: any NotificationCenterClient = UNUserNotificationCenter.current()
     ) async -> NotificationScheduleResult {
-        let center = UNUserNotificationCenter.current()
         let pending = await center.pendingNotificationRequests()
         let now = Date()
         var preserved = requestsToPreserve(

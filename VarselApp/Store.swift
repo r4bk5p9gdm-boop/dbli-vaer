@@ -442,7 +442,7 @@ final class Store: ObservableObject {
     /// A successful HTTP response is not useful when decoding produced no
     /// hours. Treat it as a failed place so the previous forecast remains
     /// available instead of being replaced by an empty result.
-    static func isUsableForecast(_ forecast: [ForecastHour]) -> Bool {
+    nonisolated static func isUsableForecast(_ forecast: [ForecastHour]) -> Bool {
         !forecast.isEmpty
     }
 

@@ -2,6 +2,26 @@ import XCTest
 import UserNotifications
 @testable import VarselApp
 
+private final class FakeNotificationCenter: NotificationCenterClient {
+    enum Failure: Error { case rejected }
+    var pending: [UNNotificationRequest]
+    var failedIDs: Set<String> = []
+
+    init(pending: [UNNotificationRequest] = []) { self.pending = pending }
+
+    func pendingNotificationRequests() async -> [UNNotificationRequest] { pending }
+
+    func add(_ request: UNNotificationRequest) async throws {
+        if failedIDs.contains(request.identifier) { throw Failure.rejected }
+        pending.removeAll { $0.identifier == request.identifier }
+        pending.append(request)
+    }
+
+    func removePendingNotificationRequests(withIdentifiers identifiers: [String]) {
+        pending.removeAll { identifiers.contains($0.identifier) }
+    }
+}
+
 final class PlannerTests: XCTestCase {
     private let base = Date(timeIntervalSince1970: 2_000_000_000)
 
@@ -1675,6 +1695,32 @@ final class PlannerTests: XCTestCase {
             preservedIDs: ["preserved"], successfulIDs: ["new"], failedIDs: ["replace"]
         )
         XCTAssertEqual(stale, ["old"])
+    }
+
+    @MainActor
+    func testInjectedNotificationCenterKeepsFailedReplacement() async {
+        let rule = Rule(type: .regn)
+        let place = Place(name: "Klinga", lat: 64, lon: 11, rules: [rule])
+        let fireAt = Date().addingTimeInterval(3_600)
+        let alert = PlannedAlert(
+            rule: rule, placeID: place.id, placeName: place.nameWithPreposition,
+            eventAt: fireAt, fireAt: fireAt, index: 1, total: 1,
+            quiet: false, possible: false, eventDetail: nil
+        )
+        let old = UNNotificationRequest(
+            identifier: alert.id, content: UNMutableNotificationContent(),
+            trigger: UNTimeIntervalNotificationTrigger(timeInterval: 3_600, repeats: false)
+        )
+        let center = FakeNotificationCenter(pending: [old])
+        center.failedIDs = [alert.id]
+
+        let result = await NotificationScheduler.replacePendingAlerts(
+            [alert], languageStyle: .bokmal, places: [place],
+            missingForecastPlaceIDs: [], nearbyPlaceIDs: [], center: center
+        )
+
+        XCTAssertEqual(result.failedCount, 1)
+        XCTAssertEqual(center.pending.map(\.identifier), [alert.id])
     }
 
     @MainActor

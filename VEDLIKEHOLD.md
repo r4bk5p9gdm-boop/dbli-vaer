@@ -186,15 +186,20 @@ transaksjonelle oppryddingen sammen med 64-grensen.
 Språkfil og diff validerer; generisk testbygg er fortsatt blokkert av lokal
 SwiftUI-makroserver og eksisterende ulagrede `$rule`-feil i `RuleEditorView.swift`.
 
-**AUTO-020 · ÅPEN** — Gjør varselplanleggeren testbar med en liten injiserbar
-notifikasjonssentral, slik at add-feil og opprydding kan testes uten fysisk
-enhet.
+**AUTO-020 · FULLFØRT 2026-09-15** — Varselplanleggeren tar nå en liten
+injiserbar `NotificationCenterClient`. Add-feil og opprydding kan dermed
+testes med en lokal fake uten fysisk enhet, og feilede erstatninger bekreftes
+å beholde gammel forespørsel. Språkfil og diff validerer. Testbygg forsøkt,
+men blokkert av eksisterende SwiftUI-makro-/`ContentView`-feil i arbeidsøkta.
 
 **AUTO-021 · ÅPEN** — Reduser unødvendige replanlegginger og loggskriving
 når flere bakgrunnsoppdateringer fullføres tett etter hverandre.
 
 **AUTO-022 · ÅPEN** — Legg inn regresjon for at foreldede prognoser ikke
 brukes i widget, Watch eller Live Activity etter en mislykket oppdatering.
+
+**AUTO-023 · ÅPEN** — Kontroller at varslingstekst og plan-kontekst fortsatt
+er språkkonsistente når en gammel forespørsel beholdes etter add-feil.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
