@@ -123,6 +123,14 @@ og automatisert i `verify_targets.sh`. Skriptet bygger alle fire mål mot
 generiske iOS/watchOS-enheter, gjenbruker avledede data og nekter å starte
 eller konkurrere med en allerede aktiv simulator/byggprosess.
 
+**AUTO-011 · ÅPEN** — Språkfilrevisjon: finn manglende katalognøkler og
+fallback-tekster i varsler, Watch og widget, og legg til regresjonstest uten
+å oversette brukerens sted/preposisjon eller huskelapp.
+
+**AUTO-012 · ÅPEN** — Planleggingsrevisjon: utvid deterministiske tester for
+tidssone, overgang over midnatt og duplikatdemping når samme værhendelse
+kommer fra flere prognosekilder.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
