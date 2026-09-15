@@ -608,6 +608,9 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(estimatedFreshSnowMillimeters(waterEquivalent: 1, temperature: 0), 4.179, accuracy: 0.01)
         XCTAssertEqual(estimatedFreshSnowMillimeters(waterEquivalent: 1, temperature: -2), 9.9, accuracy: 0.1)
         XCTAssertGreaterThan(estimatedFreshSnowMillimeters(waterEquivalent: 1, temperature: -5), 12)
+        XCTAssertEqual(estimatedFreshSnowMillimeters(waterEquivalent: -1, temperature: 0), 0)
+        XCTAssertEqual(estimatedFreshSnowMillimeters(waterEquivalent: .nan, temperature: 0), 0)
+        XCTAssertEqual(estimatedFreshSnowMillimeters(waterEquivalent: 1, temperature: .infinity), 0)
     }
 
     func testRadarRateSetsExactRainOnset() {

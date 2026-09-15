@@ -306,14 +306,18 @@ ulik huskelapp på den andre regelen og bekrefter fortsatt én varsling.
 tilgjengelighetslabel som kun leser tallet og grader. Fargene for under/over
 er dermed ren visuell støtte og påvirker ikke tale eller tallformat.
 
-**AUTO-042 · ÅPEN** — Kontroller at snøens estimerte mengde aldri blir
-negativ ved manglende eller uvanlige temperaturverdier.
+**AUTO-042 · FULLFØRT 2026-09-16** — Snøestimatet avviser nå ikke-finite
+inngangsverdier og negativt vanninnhold, og regresjonstest bekrefter alltid
+ikke-negativt resultat.
 
 **AUTO-043 · ÅPEN** — Verifiser at værikon og tekst bruker samme temperatur-
 grense ved regn/snø-overgang.
 
 **AUTO-044 · ÅPEN** — Test at widgetens temperaturformat følger samme
 avrunding som tidskortet.
+
+**AUTO-045 · ÅPEN** — Kontroller at tomme prognoser ikke lager tomme
+snøvarsler eller negative mengdetekster.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.

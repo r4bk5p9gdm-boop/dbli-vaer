@@ -626,6 +626,7 @@ struct ForecastHour: Codable, Identifiable, Hashable {
 /// Converts liquid-water equivalent from Yr to a rough depth of fresh snow.
 /// The temperature-dependent ratio is deliberately capped at 4:1–13:1.
 func estimatedFreshSnowMillimeters(waterEquivalent: Double, temperature: Double) -> Double {
+    guard waterEquivalent.isFinite, temperature.isFinite else { return 0 }
     let ratio = min(13, max(4.179, 13 * tanh((1 - temperature) / 3)))
     return max(0, waterEquivalent) * ratio
 }
