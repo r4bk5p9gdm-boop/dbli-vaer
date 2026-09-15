@@ -230,6 +230,14 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(old.resolvedDisplayTemperatureThreshold, 10)
     }
 
+    func testDisplayOnlyRuleNeverCreatesPushAlert() {
+        var rule = Rule(type: .regn)
+        rule.isDisplayOnly = true
+        let place = Place(name: "Klinga", lat: 64, lon: 11, rules: [rule])
+        let hours = forecast(values: [(6, 1, 1, 100, 4), (6, 1, 1, 100, 4)])
+        XCTAssertTrue(Planner.planAll(places: [place], forecasts: [place.id: hours]).isEmpty)
+    }
+
     func testHomeFavoritesPreserveIdentityAndRejectDuplicatesOrDeletedPlaces() throws {
         let a = UUID(), b = UUID()
         let favorites = HomeFavorites(left: a, right: b)

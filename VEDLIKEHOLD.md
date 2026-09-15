@@ -276,14 +276,18 @@ gjør. Ved tømming sendes fortsatt et eksplisitt nil-snapshot.
 alvorlighetsgrad ved likt tidspunkt (frost/snø før vind og regn), og bruker
 fortsatt stabil ID som siste tie-breaker.
 
-**AUTO-034 · ÅPEN** — Verifiser at planleggeren ikke lager varsler for
-display-only-regler som bare skal vises i radene.
+**AUTO-034 · FULLFØRT 2026-09-15** — `Planner.planAll` filtrerer nå bort
+display-only-regler før push-planlegging. Regresjonstest sikrer at en slik
+regel kan treffe i raden uten å opprette varsling.
 
 **AUTO-035 · ÅPEN** — Test migrering av steder uten lagret «Temp over»-grense
 slik at standardverdien brukes uten å endre eldre stedsdata.
 
 **AUTO-036 · ÅPEN** — Kontroller at varseltekst og rullerende visning bruker
 samme alvorlighetsprioritet ved samtidige hendelser.
+
+**AUTO-037 · ÅPEN** — Test at inaktive regler ikke påvirker værbånd eller
+varslingskø etter en lagret regelendring.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.

@@ -336,7 +336,8 @@ enum Planner {
     ) -> [PlannedAlert] {
         places.filter(\.areNotificationsEnabled).flatMap { p in
             let placeAlerts = p.rules.filter { rule in
-                rule.enabled && (!rule.onlyWhenNearby || nearbyPlaceIDs.contains(p.id))
+                rule.enabled && !rule.isDisplayOnly
+                    && (!rule.onlyWhenNearby || nearbyPlaceIDs.contains(p.id))
             }.flatMap { r in
                 plan(rule: r, forecast: forecasts[p.id] ?? [], placeName: p.nameWithPreposition, placeID: p.id, frostMargin: p.localFrostMargin).alerts
             }
