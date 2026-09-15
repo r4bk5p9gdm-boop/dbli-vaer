@@ -49,7 +49,7 @@ struct WatchContentView: View {
                                             }
                                             .frame(maxWidth: .infinity)
                                             .accessibilityElement(children: .ignore)
-                                            .accessibilityLabel(status.text)
+                                            .accessibilityLabel(snapshot.localized(status.text))
                                         }
                                     }
                                 }
@@ -59,7 +59,7 @@ struct WatchContentView: View {
                         Section("Nå") {
                             watchMetric("Nedbør", value: "\(current.precipitationRiskRate.formatted(.number.precision(.fractionLength(0...1)))) mm", icon: "drop.fill", color: .blue)
                             watchMetric(
-                                "Vind / kast",
+                                "Vindkast",
                                 value: current.compactWindAndGust,
                                 icon: "wind",
                                 color: .teal
@@ -72,16 +72,31 @@ struct WatchContentView: View {
                         }
                     }
                 } else {
-                    ContentUnavailableView(
-                        "Venter på iPhone",
-                        systemImage: "iphone.and.arrow.forward",
-                        description: Text("Åpne D bli Vær! på iPhone første gang.")
-                    )
+                    if #available(watchOS 10.0, *) {
+                        ContentUnavailableView(
+                            "Venter på iPhone",
+                            systemImage: "iphone.and.arrow.forward",
+                            description: Text("Åpne D bli Vær! på iPhone første gang.")
+                        )
+                    } else {
+                        VStack(spacing: 8) {
+                            Image(systemName: "iphone.and.arrow.forward")
+                                .font(.largeTitle)
+                                .foregroundStyle(.secondary)
+                            Text("Venter på iPhone")
+                                .font(.headline)
+                            Text("Åpne D bli Vær! på iPhone første gang.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
+                        }
+                        .padding()
+                    }
                 }
             }
-            .navigationTitle(AppCopy.name)
+            .navigationTitle(AppCopy.name(languageStyle: store.snapshot?.languageStyle ?? .bokmal))
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .primaryAction) {
                     Button { Task { await store.refresh() } } label: {
                         if store.isRefreshing { ProgressView() } else { Image(systemName: "arrow.clockwise") }
                     }

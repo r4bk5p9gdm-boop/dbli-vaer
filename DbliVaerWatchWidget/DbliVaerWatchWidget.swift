@@ -33,9 +33,23 @@ struct WatchWeatherProvider: TimelineProvider {
     }
 }
 
+private extension View {
+    @ViewBuilder
+    func widgetContainerBackground(tint: Color) -> some View {
+        if #available(watchOS 10.0, *) {
+            self.containerBackground(for: .widget) {
+                LinearGradient(colors: [tint.opacity(0.30), .black.opacity(0.18)], startPoint: .topLeading, endPoint: .bottomTrailing)
+            }
+        } else {
+            self
+        }
+    }
+}
+
 struct WatchWeatherWidgetView: View {
     @Environment(\.widgetFamily) private var family
     let entry: WatchWeatherEntry
+    private func localized(_ text: String) -> String { entry.snapshot?.localized(text) ?? text }
 
     private var current: ForecastHour? { entry.snapshot?.forecast.first }
     private var status: WeatherStatus? {
@@ -80,26 +94,24 @@ struct WatchWeatherWidgetView: View {
                 }
                 .widgetAccentable()
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel(status?.text ?? temperature)
+                .accessibilityLabel(localized(status?.text ?? temperature))
             case .accessoryCorner:
                 Image(systemName: icon)
                     .font(.title3)
                     .widgetAccentable()
-                    .widgetLabel { Text(status?.text ?? temperature) }
+                    .widgetLabel { Text(localized(status?.text ?? temperature)) }
             default:
                 rectangularView
             }
         }
-        .containerBackground(for: .widget) {
-            LinearGradient(colors: [tint.opacity(0.30), .black.opacity(0.18)], startPoint: .topLeading, endPoint: .bottomTrailing)
-        }
+        .widgetContainerBackground(tint: tint)
     }
 
     private var rectangularView: some View {
         VStack(alignment: .leading, spacing: 3) {
             HStack(spacing: 4) {
                 Image(systemName: icon).foregroundStyle(tint).widgetAccentable()
-                Text(entry.snapshot?.place.displayName ?? AppCopy.name)
+                Text(entry.snapshot?.place.displayName ?? AppCopy.name(languageStyle: entry.snapshot?.languageStyle ?? .bokmal))
                     .font(.caption.bold()).lineLimit(1).widgetAccentable()
                 Spacer(minLength: 0)
                 Text(temperature).font(.caption.bold())
@@ -109,7 +121,7 @@ struct WatchWeatherWidgetView: View {
                     .font(.caption2.weight(.semibold))
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
-                Text(status?.text ?? "Ingen aktuelle varsler")
+                Text(localized(status?.text ?? "Ingen aktuelle varsler"))
                     .font(.caption)
                     .lineLimit(2)
             } else {
@@ -126,8 +138,10 @@ struct WatchWeatherWidgetView: View {
     }
 
     private var inlineText: String {
-        if let status { return status.text }
-        guard let place = entry.snapshot?.place else { return AppCopy.name }
+        if let status { return localized(status.text) }
+        guard let place = entry.snapshot?.place else {
+            return AppCopy.name(languageStyle: entry.snapshot?.languageStyle ?? .bokmal)
+        }
         return "\(temperature) \(place.nameWithPreposition)"
     }
 }

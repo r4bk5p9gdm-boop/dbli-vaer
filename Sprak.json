@@ -1,14 +1,25 @@
 {
   "_les_meg": {
-    "status": "Første redigerbare utkast. Ikke koblet til appen ennå. Ikke en fullstendig eksport av alle tekster.",
+    "status": "Delvis tilkoblet: appnavn, pushoverskrifter og inntrønderske tidsuttrykk/ukedager. Ikke en fullstendig eksport av alle tekster.",
     "redigering": "Endre kun tekstverdier, behold nøkler og plassholdere. Gyldig JSON tillater ikke kommentarer eller komma etter siste felt.",
     "sprak": "en = engelsk, nb = bokmål, tr = inntrøndersk. Engelsk og nye dialektord er forslag til gjennomlesing.",
     "plassholdere": "{sted} inkluderer brukerens valgte preposisjon og stedsnavn. Ikke oversett disse eller brukerens huskelapp. {tid} er ferdig tidsuttrykk; {varighet} inkluderer enhet.",
     "tid": "Klokkeslett bruker to sifre, f.eks. 07 og 07.30. Før kl. 06 omtales som natt. Ikke gjenta ukedag ved i dag/i natt.",
     "stil": "Engelsk appnavn er It’s Weather. Bokmål og inntrøndersk beholder D bli Vær!. Engelske varsler bruker værtypespesifikke push.title.*-maler, ikke substantivet fra weather.*. Tidspunkt i varselteksten viser om hendelsen er kommende. Rene appvarsler bruker app.name. Huskelapp tilføyes separat og uendret.",
-    "bruk": "Tilkobling av tekstnøkler til app, push, Watch og widget gjenstår. Å endre denne filen alene endrer ikke appen, heller ikke ved bygg før tilkoblingen er implementert."
+    "bruk": "Filen bygges inn i iPhone, Watch og begge widgetmål. Tilkoblede nøkler leses ved oppstart; endringer krever nytt bygg/installasjon. Engelsk er valgbart for appnavn, vær- og varseltekst. Nav-, innstillings- og flere detaljnøkler gjenstår fortsatt før hele brukergrensesnittet er oversatt."
   },
   "tekster": {
+    "time.tomorrow_phrase": { "en": "tomorrow", "nb": "i morgen", "tr": "i mårrå" },
+    "time.day_after_phrase": { "en": "the day after tomorrow", "nb": "i overmorgen", "tr": "i overmårrå" },
+    "time.until": { "en": "until", "nb": "til", "tr": "te" },
+    "time.this_hour": { "en": "this hour", "nb": "denne timen", "tr": "herre tima" },
+    "weekday.monday": { "en": "Monday", "nb": "mandag", "tr": "manda'n" },
+    "weekday.tuesday": { "en": "Tuesday", "nb": "tirsdag", "tr": "tirsda'n" },
+    "weekday.wednesday": { "en": "Wednesday", "nb": "onsdag", "tr": "onsda'n" },
+    "weekday.thursday": { "en": "Thursday", "nb": "torsdag", "tr": "torsda'n" },
+    "weekday.friday": { "en": "Friday", "nb": "fredag", "tr": "freda'n" },
+    "weekday.saturday": { "en": "Saturday", "nb": "lørdag", "tr": "lørda'n" },
+    "weekday.sunday": { "en": "Sunday", "nb": "søndag", "tr": "sønda'n" },
     "app.name": {
       "en": "It’s Weather",
       "nb": "D bli Vær!",
@@ -21,8 +32,8 @@
     },
     "nav.queue": {
       "en": "Upcoming alerts",
-      "nb": "Varselkø",
-      "tr": "Varselkø"
+      "nb": "Varslingsregler",
+      "tr": "Varslingsregler"
     },
     "nav.places": {
       "en": "Places",
@@ -151,8 +162,8 @@
     },
     "push.title.wind": {
       "en": "It’s Windy! {sted}",
-      "nb": "D bli Vind! {sted}",
-      "tr": "D bli Vind! {sted}"
+      "nb": "D bli Vindkast! {sted}",
+      "tr": "D bli Vindkast! {sted}"
     },
     "push.title.frost": {
       "en": "It’s Frosty! {sted}",
@@ -192,7 +203,7 @@
     "time.now": {
       "en": "now",
       "nb": "nå",
-      "tr": "nå"
+      "tr": "no"
     },
     "time.quarter": {
       "en": "in fifteen minutes",

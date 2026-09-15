@@ -24,8 +24,16 @@ struct SharedPlaceSelection: Codable, Equatable {
 enum AppCopy {
     static let name = LanguageCatalog.value("app.name", language: "nb", fallback: "D bli Vær!")
 
+    static func name(languageStyle: AlertLanguageStyle) -> String {
+        LanguageCatalog.value("app.name", language: languageStyle.catalogCode, fallback: name)
+    }
+
     static func heading(placeName: String = "") -> String {
         [name, placeName].filter { !$0.isEmpty }.joined(separator: " ")
+    }
+
+    static func heading(placeName: String = "", languageStyle: AlertLanguageStyle) -> String {
+        [name(languageStyle: languageStyle), placeName].filter { !$0.isEmpty }.joined(separator: " ")
     }
 
     static func weatherHeadline(
@@ -40,14 +48,19 @@ enum AppCopy {
 enum AlertLanguageStyle: String, Codable, CaseIterable, Identifiable {
     case bokmal
     case inntrondersk
+    case english
     var id: String { rawValue }
-    var label: String { self == .bokmal ? "Bokmål" : "Inntrøndersk" }
+    var label: String {
+        switch self { case .bokmal: "Bokmål"; case .inntrondersk: "Inntrøndersk"; case .english: "English" }
+    }
+    var catalogCode: String { self == .bokmal ? "nb" : self == .inntrondersk ? "tr" : "en" }
 
     static func persisted(_ value: String) -> AlertLanguageStyle? {
         if let exact = AlertLanguageStyle(rawValue: value) { return exact }
         switch value.lowercased() {
         case "bokmål", "bokmaal": return .bokmal
         case "inntrøndersk", "inntrondersk": return .inntrondersk
+        case "en", "english", "engelsk": return .english
         default: return nil
         }
     }
@@ -113,6 +126,7 @@ enum WeatherLanguage {
         value.prefix(1).uppercased() + value.dropFirst()
     }
     static func text(_ text: String, style: AlertLanguageStyle, separator: WeatherTextSeparator = .current) -> String {
+        if style == .english { return englishText(text) }
         guard style == .inntrondersk else { return separator.format(text) }
         var result = text
             .replacingOccurrences(of: "\\b([0-9]+) timer\\b", with: "$1 tima", options: .regularExpression)
@@ -143,6 +157,52 @@ enum WeatherLanguage {
         }
         result = result.replacingOccurrences(of: "(Under [0-9,.-]+)° no", with: "$1 no", options: .regularExpression)
         return separator.format(result)
+    }
+
+    private static func englishText(_ text: String) -> String {
+        func catalogPhrase(_ key: String, fallback: String) -> String {
+            let template = LanguageCatalog.value(key, language: "en", fallback: fallback)
+            // The catalog also contains full timestamp templates. This
+            // method is used for replacing only the day/night fragment, so
+            // discard its timestamp placeholder and trailing preposition.
+            return template
+                .replacingOccurrences(of: " {klokkeslett}", with: "")
+                .replacingOccurrences(of: " at", with: "")
+                .trimmingCharacters(in: .whitespaces)
+        }
+        var result = text
+            .replacingOccurrences(of: "om et kvarter", with: LanguageCatalog.value("time.quarter", language: "en", fallback: "in fifteen minutes"))
+            .replacingOccurrences(of: "om en halvtime", with: LanguageCatalog.value("time.half_hour", language: "en", fallback: "in half an hour"))
+            .replacingOccurrences(of: "om tre kvarter", with: LanguageCatalog.value("time.three_quarters", language: "en", fallback: "in forty-five minutes"))
+            .replacingOccurrences(of: "om en time", with: LanguageCatalog.value("time.one_hour", language: "en", fallback: "in an hour"))
+            .replacingOccurrences(of: "i overmorgen", with: LanguageCatalog.value("time.day_after_phrase", language: "en", fallback: "the day after tomorrow"))
+            .replacingOccurrences(of: "i morgen", with: LanguageCatalog.value("time.tomorrow_phrase", language: "en", fallback: "tomorrow"))
+            .replacingOccurrences(of: "i dag", with: catalogPhrase("time.today", fallback: "today"))
+            .replacingOccurrences(of: "i natt", with: catalogPhrase("time.tonight", fallback: "tonight"))
+            .replacingOccurrences(of: "natt til ", with: LanguageCatalog.value("time.night_before", language: "en", fallback: "night before "))
+            .replacingOccurrences(of: " kl. ", with: " at ")
+            .replacingOccurrences(of: "Sol i ", with: "Sun for ")
+            .replacingOccurrences(of: "Fare for dugg", with: "Risk of dew")
+            .replacingOccurrences(of: "Duggfall", with: LanguageCatalog.value("weather.dew", language: "en", fallback: "Dew"))
+            .replacingOccurrences(of: "Regn", with: LanguageCatalog.value("weather.rain", language: "en", fallback: "Rain"))
+            .replacingOccurrences(of: "Snø", with: LanguageCatalog.value("weather.snow", language: "en", fallback: "Snow"))
+            .replacingOccurrences(of: "Frost", with: LanguageCatalog.value("weather.frost", language: "en", fallback: "Frost"))
+            .replacingOccurrences(of: "Vindkast", with: LanguageCatalog.value("weather.gust", language: "en", fallback: "Wind gusts"))
+            .replacingOccurrences(of: "Vind", with: LanguageCatalog.value("weather.wind", language: "en", fallback: "Wind"))
+            .replacingOccurrences(of: "Skydekke", with: "Cloud cover")
+            .replacingOccurrences(of: "Duggpunkt", with: "Dew point")
+            .replacingOccurrences(of: "forskjell fra lufttemperaturen", with: "difference from air temperature")
+            .replacingOccurrences(of: "Yr melder", with: "Yr reports")
+            .replacingOccurrences(of: "Lokalt anslag", with: "Local estimate")
+            .replacingOccurrences(of: "Mulig", with: "Possible")
+            .replacingOccurrences(of: "oppte", with: "up to")
+        let weekdays = ["mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag", "søndag"]
+        let english = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        for (norwegian, translated) in zip(weekdays, english) {
+            result = result.replacingOccurrences(of: norwegian, with: translated)
+                .replacingOccurrences(of: norwegian.capitalized, with: translated)
+        }
+        return result
     }
 }
 

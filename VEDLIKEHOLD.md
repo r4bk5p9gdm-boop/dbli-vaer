@@ -71,6 +71,14 @@ Enhetsverifisering gjenstår.
 PÅ VENT fordi siste kontroll krever fysisk iPhone/Watch som ikke er tilgjengelig
 i denne vedlikeholdskjøringen. Kode og bygg er ferdig verifisert.
 
+**BRUKER-005 · FULLFØRT 2026-09-15** — Engelsk språk er koblet til
+`Sprak.json` og kan velges som `English` under språkstil. Varseltitler,
+værtypenavn, klokkeslett, solvarighet, aktiveringsmelding og appnavnet
+`It’s Weather` hentes nå fra den engelske katalogen. Hjem-ordmerket og
+Watch/widget-fallback følger valgt språk, og språkvalget beholdes i eksport,
+Watch-synkronisering og planlagte varsler. Engelsk push- og tidsformat er
+dekket av regresjonstest; språkfilvalidering og iOS-bygg bestod.
+
 **AUTO-001 · FULLFØRT 2026-09-15** — Stabilitetsrunde for vedvarende lagring
 og migrering: Place-dekoding tåler manglende/blankt navn, ugyldige koordinater
 og ødelagte nested-regler uten å stoppe oppstart. PersistedStoreState tåler
@@ -106,10 +114,9 @@ eksplisitt tømming uten duplikat eller feil valgt sted.
 kansellert refresh, køens neste oppdatering, foreldet sted og widget-fallback
 ikke skriver feil eller dupliserer data.
 
-**AUTO-009 · PÅ VENT 2026-09-15** — Varseltekst-regresjon for bokmål,
-inntrøndersk og engelsk. Engelsk kan ikke testes ennå fordi
-AlertLanguageStyle-modellen foreløpig bare har bokmål og inntrøndersk. Må
-gjenopptas når engelsk språkvalg er koblet inn.
+**AUTO-009 · FULLFØRT 2026-09-15** — Varseltekst-regresjon for bokmål,
+inntrøndersk og engelsk. Engelsk språkvalg og katalogkobling ble ferdigstilt
+som BRUKER-005, med push- og tidsuttrykkstest.
 
 **AUTO-010 · ÅPEN** — Ressurslett byggkontroll: dokumenter en repeterbar
 verifisering av iOS-, widget- og Watch-mål uten simulatorstart.

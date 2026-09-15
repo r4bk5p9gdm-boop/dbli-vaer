@@ -252,7 +252,7 @@ private struct CurrentWeatherCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .center, spacing: 7) {
-                WeatherWordmark()
+                WeatherWordmark(languageStyle: languageStyle)
 
                 Text(place.resolvedPreposition.rawValue)
                     .font(.caption.weight(.bold).italic())
@@ -444,24 +444,33 @@ private struct PlaceTitle: View {
 }
 
 private struct WeatherWordmark: View {
+    var languageStyle: AlertLanguageStyle = .bokmal
+
     var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 0) {
-            Text("D")
-                .font(.system(size: 23, weight: .bold, design: .rounded))
-            Text(" bli ")
-                .font(.system(size: 17, weight: .semibold, design: .rounded))
-            Text("Vær")
-                .font(.system(size: 23, weight: .black, design: .rounded))
-            Text("!")
-                .font(.system(size: 23, weight: .black, design: .rounded))
-                .foregroundStyle(Color(red: 0.96, green: 0.63, blue: 0.08))
-                .offset(y: -1)
+        Group {
+            if languageStyle == .english {
+                Text(AppCopy.name(languageStyle: languageStyle))
+                    .font(.system(size: 23, weight: .black, design: .rounded))
+            } else {
+                HStack(alignment: .firstTextBaseline, spacing: 0) {
+                    Text("D")
+                        .font(.system(size: 23, weight: .bold, design: .rounded))
+                    Text(" bli ")
+                        .font(.system(size: 17, weight: .semibold, design: .rounded))
+                    Text("Vær")
+                        .font(.system(size: 23, weight: .black, design: .rounded))
+                    Text("!")
+                        .font(.system(size: 23, weight: .black, design: .rounded))
+                        .foregroundStyle(Color(red: 0.96, green: 0.63, blue: 0.08))
+                        .offset(y: -1)
+                }
+            }
         }
         .foregroundStyle(Color(red: 0.06, green: 0.12, blue: 0.22))
         .fixedSize()
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(AppCopy.name)
-    }
+        .accessibilityLabel(AppCopy.name(languageStyle: languageStyle))
+}
 }
 
 private struct LiveWeatherMetric: View {
@@ -616,7 +625,7 @@ struct RulesView: View {
                             }
                         } label: {
                             HStack(spacing: 7) {
-                                WeatherWordmark()
+                                WeatherWordmark(languageStyle: store.alertLanguageStyle)
                                 Text(p.resolvedPreposition.rawValue)
                                     .font(.caption.weight(.bold).italic())
                                     .foregroundStyle(.white)
@@ -1015,7 +1024,7 @@ struct PlacesView: View {
                                     .onTapGesture { onOpen(place) }
                                 } else {
                                     VStack(alignment: .leading, spacing: 5) {
-                                        HStack { WeatherWordmark(); Text(place.nameWithPreposition).font(.headline).foregroundStyle(.blue) }
+                                        HStack { WeatherWordmark(languageStyle: store.alertLanguageStyle); Text(place.nameWithPreposition).font(.headline).foregroundStyle(.blue) }
                                         Text(store.forecastErrors[place.id] ?? "Henter prognose …")
                                             .font(.footnote).foregroundStyle(.secondary)
                                     }

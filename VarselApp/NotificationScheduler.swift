@@ -20,22 +20,54 @@ enum NotificationRoute {
 
 enum NotificationCopy {
     static func title(for rule: Rule, possible: Bool = false, languageStyle: AlertLanguageStyle = .bokmal) -> String {
-        let weather = alertWeatherName(for: rule)
-        let possibility = possible && languageStyle == .bokmal ? "kan bli" : "bli"
-        return AppCopy.weatherHeadline(weatherName: weather, possibility: possibility)
+        let key = titleKey(for: rule, possible: possible, languageStyle: languageStyle)
+        let fallback = languageStyle == .english ? "It’s {vaertype}! {sted}" : (possible && languageStyle == .bokmal ? "D kan bli {vaertype}! {sted}" : "D bli {vaertype}! {sted}")
+        return LanguageCatalog.value(key, language: languageStyle.catalogCode, fallback: fallback, arguments: ["vaertype": localizedWeatherName(for: rule, languageStyle: languageStyle), "sted": "", "temperatur": rule.threshold.formatted(.number.precision(.fractionLength(0...1)))]).trimmingCharacters(in: .whitespaces)
     }
 
     static func title(for rule: Rule, placeName: String, possible: Bool = false, languageStyle: AlertLanguageStyle = .bokmal) -> String {
-        let weather = alertWeatherName(for: rule)
-        let possibility = possible && languageStyle == .bokmal ? "kan bli" : "bli"
-        let title = AppCopy.weatherHeadline(weatherName: weather, placeName: placeName, possibility: possibility)
-        return possible && languageStyle == .inntrondersk ? "\(title), sjer d ut som" : title
+        let key = titleKey(for: rule, possible: possible, languageStyle: languageStyle)
+        let fallback = languageStyle == .english ? "It’s {vaertype}! {sted}" : (possible && languageStyle == .inntrondersk ? "D bli {vaertype}! {sted}, sjer d ut som" : (possible ? "D kan bli {vaertype}! {sted}" : "D bli {vaertype}! {sted}"))
+        return LanguageCatalog.value(key, language: languageStyle.catalogCode, fallback: fallback, arguments: ["vaertype": localizedWeatherName(for: rule, languageStyle: languageStyle), "sted": placeName, "temperatur": rule.threshold.formatted(.number.precision(.fractionLength(0...1)))]).trimmingCharacters(in: .whitespaces)
+    }
+
+    private static func localizedWeatherName(for rule: Rule, languageStyle: AlertLanguageStyle) -> String {
+        guard languageStyle == .english else { return alertWeatherName(for: rule) }
+        switch rule.type {
+        case .regn: return LanguageCatalog.value("weather.rain", language: "en", fallback: "Rain")
+        case .sno: return LanguageCatalog.value("weather.snow", language: "en", fallback: "Snow")
+        case .dugg: return LanguageCatalog.value("weather.dew", language: "en", fallback: "Dew")
+        case .frost: return LanguageCatalog.value("weather.frost", language: "en", fallback: "Frost")
+        case .temperatur:
+            return LanguageCatalog.value(
+                "weather.temperature_below", language: "en", fallback: "Below {temperatur}°",
+                arguments: ["temperatur": rule.threshold.formatted(.number.precision(.fractionLength(0...1)))]
+            )
+        case .vind: return LanguageCatalog.value("weather.wind", language: "en", fallback: "Wind")
+        case .sol: return LanguageCatalog.value("weather.sun", language: "en", fallback: "Sun")
+        }
+    }
+
+    private static func titleKey(for rule: Rule, possible: Bool, languageStyle: AlertLanguageStyle) -> String {
+        guard languageStyle == .english, !possible else { return possible ? "push.title_possible" : "push.title" }
+        switch rule.type {
+        case .regn: return "push.title.rain"
+        case .sno: return "push.title.snow"
+        case .sol: return "push.title.sun"
+        case .vind: return "push.title.wind"
+        case .frost: return "push.title.frost"
+        case .dugg: return "push.title.dew"
+        case .temperatur: return "push.title.temperature_below"
+        }
     }
 
     static func message(for rule: Rule, eventAt: Date, referenceAt: Date, possible: Bool = false, eventDetail: String? = nil, languageStyle: AlertLanguageStyle = .bokmal) -> String {
         var timing = WeatherLanguage.text(eventTimePhrase(eventAt, relativeTo: referenceAt), style: languageStyle)
         if rule.type == .sol {
-            timing = "\(rule.durationHours) \(rule.durationHours == 1 ? "time" : "timer") \(timing)"
+            let unit = languageStyle == .english
+                ? (rule.durationHours == 1 ? "hour" : "hours")
+                : (rule.durationHours == 1 ? "time" : "timer")
+            timing = "\(rule.durationHours) \(unit) \(timing)"
         } else {
             timing = timing.prefix(1).uppercased() + timing.dropFirst()
         }
@@ -48,7 +80,12 @@ enum NotificationCopy {
         return timing
     }
 
-    static let activationRequiredBody = "Appen må startes for å aktivere varsler."
+    static func activationRequiredBody(languageStyle: AlertLanguageStyle = .bokmal) -> String {
+        LanguageCatalog.value(
+            "push.activation_required", language: languageStyle.catalogCode,
+            fallback: "Appen må startes for å aktivere varsler."
+        )
+    }
 }
 
 struct NotificationScheduleResult: Equatable {

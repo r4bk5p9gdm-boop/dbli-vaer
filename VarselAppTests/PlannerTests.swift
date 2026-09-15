@@ -94,6 +94,26 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(LanguageCatalog.value("push.title", language: "nb", fallback: "MISSING", arguments: ["sted": "på {vaertype}", "vaertype": "Regn"]), "D bli Regn! på {vaertype}")
     }
 
+    func testEnglishLanguageStyleUsesCatalogForPushAndTimeText() {
+        let rain = Rule(type: .regn)
+        XCTAssertEqual(AlertLanguageStyle.persisted("en"), .english)
+        XCTAssertEqual(AppCopy.name(languageStyle: .english), "It’s Weather")
+        XCTAssertEqual(
+            NotificationCopy.title(for: rain, placeName: "in Oslo", languageStyle: .english),
+            "It’s Raining! in Oslo"
+        )
+        XCTAssertEqual(
+            WeatherLanguage.text("Regn i morgen kl. 07", style: .english),
+            "Rain tomorrow at 07"
+        )
+        var temperature = Rule(type: .temperatur)
+        temperature.threshold = 10
+        XCTAssertEqual(
+            NotificationCopy.title(for: temperature, placeName: "in Oslo", languageStyle: .english),
+            "It’s Below 10°! in Oslo"
+        )
+    }
+
     func testSharedSnapshotPreservesDialectDuringWatchRefresh() throws {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 3, cloud: 0, dew: 0)
@@ -1704,6 +1724,7 @@ final class PlannerTests: XCTestCase {
         ])
     }
 
+    @MainActor
     func testLaunchPlacesSmokeDataIsUsableForPlanning() {
         let places = Store.launchPlaces
         XCTAssertEqual(places.count, 5)
