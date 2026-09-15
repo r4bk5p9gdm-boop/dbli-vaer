@@ -1791,6 +1791,12 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(Store.shouldFinalizeRefresh(successfulPlaceCount: 0, failedPlaceCount: 0))
     }
 
+    func testReplanDebounceRequiresSameStateAndShortInterval() {
+        XCTAssertTrue(Store.shouldDebounceReplan(lastSignature: 7, currentSignature: 7, lastAt: base, now: base.addingTimeInterval(4)))
+        XCTAssertFalse(Store.shouldDebounceReplan(lastSignature: 7, currentSignature: 8, lastAt: base, now: base.addingTimeInterval(1)))
+        XCTAssertFalse(Store.shouldDebounceReplan(lastSignature: 7, currentSignature: 7, lastAt: base, now: base.addingTimeInterval(5)))
+    }
+
     @MainActor
     func testForecastRecipientsExcludeRemovedAndRelocatedPlaces() {
         let removed = Place(name: "Slettet", lat: 64, lon: 11)

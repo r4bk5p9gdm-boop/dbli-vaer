@@ -2,6 +2,6 @@
   "continue": true,
   "lastScheduledStart": "2026-09-13T05:15:12.787Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-020 fullført: NotificationCenterClient kan injiseres for deterministisk test av add-feil og opprydding; gammel forespørsel beholdes ved feil. Regresjonstest oppdatert.",
+  "lastProgress": "AUTO-021 fullført: identiske replanlegginger innen fem sekunder debounceres med tilstandssignatur, slik at unødvendig planlegging og loggskriving reduseres. Regresjonstest oppdatert.",
   "stopReason": "AUTO-modus aktiv: blokkerte brukeroppgaver hoppes over, og arbeidet fortsetter på neste ublokkerte oppgave."
 }

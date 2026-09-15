@@ -206,6 +206,8 @@ final class Store: ObservableObject {
         }
     }
     @Published private(set) var nearbyPlaceIDs: Set<UUID> = []
+    private var lastReplanSignature: Int?
+    private var lastReplanAt: Date?
 
     private let key = "varsel.state"
     private let languageStyleKey = "varsel.alertLanguageStyle"
@@ -439,6 +441,14 @@ final class Store: ObservableObject {
         successfulPlaceCount > 0 || failedPlaceCount == 0
     }
 
+    static func shouldDebounceReplan(
+        lastSignature: Int?, currentSignature: Int, lastAt: Date?, now: Date,
+        interval: TimeInterval = 5
+    ) -> Bool {
+        guard interval > 0, lastSignature == currentSignature, let lastAt else { return false }
+        return now.timeIntervalSince(lastAt) < interval
+    }
+
     /// A successful HTTP response is not useful when decoding produced no
     /// hours. Treat it as a failed place so the previous forecast remains
     /// available instead of being replaced by an empty result.
@@ -528,6 +538,14 @@ final class Store: ObservableObject {
 
     func replan() async {
         guard !Task.isCancelled else { return }
+        let now = Date()
+        let signature = replanSignature()
+        guard !Self.shouldDebounceReplan(
+            lastSignature: lastReplanSignature, currentSignature: signature,
+            lastAt: lastReplanAt, now: now
+        ) else { return }
+        lastReplanSignature = signature
+        lastReplanAt = now
         let alerts = Planner.planAll(places: places, forecasts: forecasts, nearbyPlaceIDs: nearbyPlaceIDs)
         let scheduleResult = await NotificationScheduler.reschedule(
             alerts, languageStyle: alertLanguageStyle, places: places,
@@ -541,8 +559,20 @@ final class Store: ObservableObject {
         )
         updateWidget()
         let text = Self.notificationPlanLogText(scheduleResult)
-        log.insert(LogEntry(time: Date(), text: text), at: 0)
+        log.insert(LogEntry(time: now, text: text), at: 0)
         if log.count > 50 { log.removeLast(log.count - 50) }
+    }
+
+    private func replanSignature() -> Int {
+        var hasher = Hasher()
+        places.sorted { $0.id.uuidString < $1.id.uuidString }.forEach { hasher.combine($0) }
+        forecasts.keys.sorted { $0.uuidString < $1.uuidString }.forEach { id in
+            hasher.combine(id)
+            forecasts[id, default: []].sorted { $0.time < $1.time }.forEach { hasher.combine($0) }
+        }
+        nearbyPlaceIDs.sorted { $0.uuidString < $1.uuidString }.forEach { hasher.combine($0) }
+        hasher.combine(alertLanguageStyle.rawValue)
+        return hasher.finalize()
     }
 
     static func notificationPlanLogText(_ result: NotificationScheduleResult) -> String {

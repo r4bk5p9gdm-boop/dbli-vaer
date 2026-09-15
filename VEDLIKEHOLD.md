@@ -192,14 +192,22 @@ testes med en lokal fake uten fysisk enhet, og feilede erstatninger bekreftes
 å beholde gammel forespørsel. Språkfil og diff validerer. Testbygg forsøkt,
 men blokkert av eksisterende SwiftUI-makro-/`ContentView`-feil i arbeidsøkta.
 
-**AUTO-021 · ÅPEN** — Reduser unødvendige replanlegginger og loggskriving
-når flere bakgrunnsoppdateringer fullføres tett etter hverandre.
+**AUTO-021 · FULLFØRT 2026-09-15** — Identiske replanlegginger innen fem
+sekunder samles nå, basert på en signatur av steder, prognoser, språk og
+nærhetsstatus. Dette reduserer unødvendig planlegging, widget-/Watch-arbeid
+og loggskriving uten å skjule en reell endring. Regresjonstest dekker samme
+og endret tilstand.
+Språkfil og diff validerer; testbygg er fortsatt blokkert av eksisterende
+SwiftUI-makro-/`ContentView`-feil.
 
 **AUTO-022 · ÅPEN** — Legg inn regresjon for at foreldede prognoser ikke
 brukes i widget, Watch eller Live Activity etter en mislykket oppdatering.
 
 **AUTO-023 · ÅPEN** — Kontroller at varslingstekst og plan-kontekst fortsatt
 er språkkonsistente når en gammel forespørsel beholdes etter add-feil.
+
+**AUTO-024 · ÅPEN** — Mål minnebruk i prognose- og varselkøen og begrens
+unødvendige mellomkopier ved store flerstedsprognoser.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
