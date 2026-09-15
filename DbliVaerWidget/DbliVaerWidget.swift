@@ -47,8 +47,8 @@ struct WeatherWidgetProvider: TimelineProvider {
             placeName: snapshot.place.nameWithPreposition,
             statuses: Planner.statuses(for: snapshot.place, forecast: snapshot.forecast, now: date),
             updatedAt: snapshot.updatedAt,
-            sharedPlaces: SharedWidgetData.loadSharedPlaces(),
-            languageStyle: snapshot.languageStyle ?? .bokmal
+            languageStyle: snapshot.languageStyle ?? .bokmal,
+            sharedPlaces: SharedWidgetData.loadSharedPlaces()
         )
     }
 }
