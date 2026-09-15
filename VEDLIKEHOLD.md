@@ -163,9 +163,12 @@ bekrefter at valgt sted, preposisjon og engelsk språkstil overlever eksport,
 dekoding og ny prosess. Dette er samme persistensgrunnlag som brukes når
 bakgrunnsoppdateringen starter på nytt.
 
-**AUTO-017 · ÅPEN** — Ytelse: mål og begrens unødvendig prognosearbeid når
-flere steder deler samme koordinater, uten å endre valgt-sted- eller
-Watch-synkronisering.
+**AUTO-017 · FULLFØRT 2026-09-15** — Prognoseforespørsler bruker nå én
+unik, Yr-presis koordinat per oppdatering og en stabil sortert rekkefølge.
+Aliassteder får dermed fortsatt ett nettverkskall, og retry/logg blir
+deterministisk. Regresjonstest dekker både deduplisering og rekkefølge.
+Språkfil og diff validerer; generisk testbygg ble forsøkt, men er fortsatt
+blokkert av lokal Xcode-feil i `SwiftUIMacros.StateMacro`.
 
 **AUTO-018 · ÅPEN** — Feilhåndtering: verifiser at delvis mislykket
 stedshenting beholder siste gyldige prognose og varsler uten å tømme andre

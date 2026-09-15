@@ -1832,6 +1832,10 @@ final class PlannerTests: XCTestCase {
 
         XCTAssertEqual(groups.count, 2)
         XCTAssertEqual(groups[ForecastLocation(place: first)]?.count, 2)
+        XCTAssertEqual(
+            Store.forecastLocations(in: [first, alias, other]),
+            [ForecastLocation(place: other), ForecastLocation(place: first)]
+        )
     }
 
     @MainActor

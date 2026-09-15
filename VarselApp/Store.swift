@@ -404,6 +404,15 @@ final class Store: ObservableObject {
         Dictionary(grouping: places, by: ForecastLocation.init(place:))
     }
 
+    /// Returns one stable request location per API coordinate. Quantizing to
+    /// Yr's four-decimal precision keeps aliases on the same request, while
+    /// sorting makes refresh order deterministic for logs and retries.
+    static func forecastLocations(in places: [Place]) -> [ForecastLocation] {
+        groupedByForecastLocation(places).keys.sorted {
+            ($0.latitudeE4, $0.longitudeE4) < ($1.latitudeE4, $1.longitudeE4)
+        }
+    }
+
     static func invalidatedForecastIDs(previous: [Place], current: [Place]) -> Set<UUID> {
         Set(previous.filter { old in
             guard let new = current.first(where: { $0.id == old.id }) else { return true }
@@ -450,7 +459,7 @@ final class Store: ObservableObject {
         let locationGroups = Self.groupedByForecastLocation(requestedPlaces)
         var failedNames: [String] = []
         var successfulPlaceCount = 0
-        let locations = Array(locationGroups.keys)
+        let locations = Self.forecastLocations(in: requestedPlaces)
         for batchStart in stride(from: 0, to: locations.count, by: Self.forecastRequestConcurrencyLimit) {
             guard !Task.isCancelled else { return false }
             let batchEnd = min(batchStart + Self.forecastRequestConcurrencyLimit, locations.count)
