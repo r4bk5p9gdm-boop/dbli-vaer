@@ -1704,6 +1704,16 @@ final class PlannerTests: XCTestCase {
         ])
     }
 
+    func testLaunchPlacesSmokeDataIsUsableForPlanning() {
+        let places = Store.launchPlaces
+        XCTAssertEqual(places.count, 5)
+        XCTAssertEqual(Set(places.map { $0.name.lowercased() }).count, places.count)
+        let hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 2, cloud: 20, dew: 4, gust: 4)
+        for place in places {
+            XCTAssertNoThrow(_ = Planner.planAll(places: [place], forecasts: [place.id: [hour]]))
+        }
+    }
+
 
     private static let locationForecastFixture = Data("""
     {"properties":{"timeseries":[

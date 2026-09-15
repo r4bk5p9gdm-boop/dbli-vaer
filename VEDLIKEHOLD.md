@@ -99,9 +99,10 @@ som ikke skal slette gyldige varsler har regresjonstester.
 ikke-dupliserte AUTO-punkter og opprett nye med neste nummer når det er reell
 verdi i dem. Denne oppgaven skal ikke lage tomme eller spekulative punkter.
 
-**AUTO-005 · ÅPEN** — Lanseringssjekk for første åpning: kjør en lett,
-repeterbar smoke-test av seed-steder, valgt sted, prognosefeil og første
-varselsplan uten fysisk installasjon.
+**AUTO-005 · DELVIS IMPLEMENTERT 2026-09-15** — Lanseringssjekk for første
+åpning: seed-steder, unike navn og planlegging med et gyldig prognosepunkt er
+nå en lett, repeterbar smoke-test. Prognosefeil og første åpning uten nett
+gjenstår.
 
 **AUTO-006 · ÅPEN** — Tidsgrense-regresjon: utvid testene for tidssoner,
 midnatt, «i natt»/«i morgen» og varsel som krysser sommertid.
