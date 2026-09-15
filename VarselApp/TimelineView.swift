@@ -172,6 +172,7 @@ private struct TimeCardsForecast: View {
                         Text("\(Int(hour.temp.rounded()))°")
                             .font(.caption)
                             .foregroundStyle(hour.temp <= temperatureLowThreshold ? Color.secondary : hour.temp >= temperatureHighThreshold ? Color.orange : Color.primary)
+                            .accessibilityLabel("Temperatur \(Int(hour.temp.rounded())) grader")
                         ZStack(alignment: .bottom) {
                             RoundedRectangle(cornerRadius: 5).fill(Color.blue.opacity(0.08))
                             RoundedRectangle(cornerRadius: 5).fill(Color.blue.opacity(0.75))
