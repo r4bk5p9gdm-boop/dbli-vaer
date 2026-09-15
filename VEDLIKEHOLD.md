@@ -200,14 +200,21 @@ og endret tilstand.
 Språkfil og diff validerer; testbygg er fortsatt blokkert av eksisterende
 SwiftUI-makro-/`ContentView`-feil.
 
-**AUTO-022 · ÅPEN** — Legg inn regresjon for at foreldede prognoser ikke
-brukes i widget, Watch eller Live Activity etter en mislykket oppdatering.
+**AUTO-022 · FULLFØRT 2026-09-15** — Widget og Watch bruker ikke lenger en
+prognose som er eldre enn seks timer etter mislykket oppdatering. Live
+Activity får samme ferskhetskontroll og avsluttes når stedets prognose er
+foreldet. Regresjonstest dekker både fersk og foreldet snapshot.
+Språkfil og diff validerer; testbygg er fortsatt blokkert av eksisterende
+SwiftUI-makro-/`ContentView`-feil.
 
 **AUTO-023 · ÅPEN** — Kontroller at varslingstekst og plan-kontekst fortsatt
 er språkkonsistente når en gammel forespørsel beholdes etter add-feil.
 
 **AUTO-024 · ÅPEN** — Mål minnebruk i prognose- og varselkøen og begrens
 unødvendige mellomkopier ved store flerstedsprognoser.
+
+**AUTO-025 · ÅPEN** — Verifiser at ferskhetsgrensen følger lokal tidssone og
+ikke gir feilaktig foreldelse ved sommertidsskift.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.

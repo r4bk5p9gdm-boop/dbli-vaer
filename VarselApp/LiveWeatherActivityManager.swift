@@ -28,6 +28,7 @@ enum LiveWeatherActivityPolicy {
 
 @MainActor
 enum LiveWeatherActivityManager {
+    private static let forecastFreshness: TimeInterval = 6 * 3_600
     private struct Candidate {
         let place: Place
         let rule: Rule
@@ -40,6 +41,7 @@ enum LiveWeatherActivityManager {
         places: [Place],
         forecasts: [UUID: [ForecastHour]],
         nearbyPlaceIDs: Set<UUID>,
+        forecastUpdatedAt: [UUID: Date] = [:],
         now: Date = Date()
     ) async {
         guard LiveWeatherActivitySettings.isEnabled,
@@ -54,12 +56,14 @@ enum LiveWeatherActivityManager {
             places: places,
             forecasts: forecasts,
             nearbyPlaceIDs: nearbyPlaceIDs,
+            forecastUpdatedAt: forecastUpdatedAt,
             now: now
         )
         let candidate = continuation ?? bestStartCandidate(
             places: places,
             forecasts: forecasts,
             nearbyPlaceIDs: nearbyPlaceIDs,
+            forecastUpdatedAt: forecastUpdatedAt,
             now: now
         )
 
@@ -117,6 +121,7 @@ enum LiveWeatherActivityManager {
         places: [Place],
         forecasts: [UUID: [ForecastHour]],
         nearbyPlaceIDs: Set<UUID>,
+        forecastUpdatedAt: [UUID: Date],
         now: Date
     ) -> Candidate? {
         sortedCandidates(
@@ -128,6 +133,7 @@ enum LiveWeatherActivityManager {
                         place: place,
                         rule: rule,
                         forecast: forecasts[place.id],
+                        forecastFetchedAt: forecastUpdatedAt[place.id],
                         nearbyPlaceIDs: nearbyPlaceIDs,
                         now: now,
                         isEligible: LiveWeatherActivityPolicy.canStart
@@ -142,6 +148,7 @@ enum LiveWeatherActivityManager {
         places: [Place],
         forecasts: [UUID: [ForecastHour]],
         nearbyPlaceIDs: Set<UUID>,
+        forecastUpdatedAt: [UUID: Date],
         now: Date
     ) -> Candidate? {
         sortedCandidates(activities.compactMap { activity in
@@ -152,6 +159,7 @@ enum LiveWeatherActivityManager {
                 place: place,
                 rule: rule,
                 forecast: forecasts[place.id],
+                forecastFetchedAt: forecastUpdatedAt[place.id],
                 nearbyPlaceIDs: nearbyPlaceIDs,
                 now: now,
                 isEligible: LiveWeatherActivityPolicy.canContinue
@@ -163,6 +171,7 @@ enum LiveWeatherActivityManager {
         place: Place,
         rule: Rule,
         forecast: [ForecastHour]?,
+        forecastFetchedAt: Date?,
         nearbyPlaceIDs: Set<UUID>,
         now: Date,
         isEligible: (WeatherStatus, Date) -> Bool
@@ -171,6 +180,7 @@ enum LiveWeatherActivityManager {
               rule.type == .regn || rule.type == .sno,
               !rule.onlyWhenNearby || nearbyPlaceIDs.contains(place.id),
               let forecast,
+              (forecastFetchedAt == nil || now.timeIntervalSince(forecastFetchedAt!) <= forecastFreshness),
               let status = Planner.status(
                 for: rule,
                 forecast: forecast,

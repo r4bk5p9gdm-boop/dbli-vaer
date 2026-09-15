@@ -555,7 +555,8 @@ final class Store: ObservableObject {
         await LiveWeatherActivityManager.sync(
             places: places,
             forecasts: forecasts,
-            nearbyPlaceIDs: nearbyPlaceIDs
+            nearbyPlaceIDs: nearbyPlaceIDs,
+            forecastUpdatedAt: forecastUpdatedAt
         )
         updateWidget()
         let text = Self.notificationPlanLogText(scheduleResult)
@@ -639,15 +640,16 @@ final class Store: ObservableObject {
     }
 
     static func widgetSnapshot(
-        place: Place?, forecast: [ForecastHour], updatedAt: Date?, cached: WidgetWeatherSnapshot?
+        place: Place?, forecast: [ForecastHour], updatedAt: Date?, cached: WidgetWeatherSnapshot?, now: Date = Date()
     ) -> WidgetWeatherSnapshot? {
         guard let place else { return nil }
-        if !forecast.isEmpty, let updatedAt {
+        let cutoff = now.addingTimeInterval(-6 * 3_600)
+        if !forecast.isEmpty, let updatedAt, updatedAt >= cutoff {
             return WidgetWeatherSnapshot(place: place, forecast: forecast, updatedAt: updatedAt)
         }
         guard let cached, cached.place.id == place.id,
               ForecastLocation(place: cached.place) == ForecastLocation(place: place),
-              !cached.forecast.isEmpty else { return nil }
+              !cached.forecast.isEmpty, cached.updatedAt >= cutoff else { return nil }
         return WidgetWeatherSnapshot(place: place, forecast: cached.forecast.map { $0.locallyAdjusted(by: place.localTemperatureOffset) }, updatedAt: cached.updatedAt)
     }
 

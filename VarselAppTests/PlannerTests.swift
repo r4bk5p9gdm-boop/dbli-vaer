@@ -1657,6 +1657,8 @@ final class PlannerTests: XCTestCase {
         XCTAssertNil(Store.widgetSnapshot(place: moved, forecast: [], updatedAt: nil, cached: cached))
         XCTAssertNil(Store.widgetSnapshot(place: Place(name: "Namsos", lat: 64, lon: 11), forecast: [], updatedAt: nil, cached: cached))
         XCTAssertNil(Store.widgetSnapshot(place: nil, forecast: [], updatedAt: nil, cached: cached))
+        XCTAssertNil(Store.widgetSnapshot(place: place, forecast: [], updatedAt: nil, cached: cached, now: base.addingTimeInterval(7 * 3_600)))
+        XCTAssertNil(Store.widgetSnapshot(place: place, forecast: hours, updatedAt: base, cached: cached, now: base.addingTimeInterval(7 * 3_600)))
     }
 
     @MainActor
