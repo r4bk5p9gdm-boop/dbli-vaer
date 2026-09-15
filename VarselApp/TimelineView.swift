@@ -21,6 +21,8 @@ struct ForecastVariantsView: View {
     let frostMargin: Double
     let mode: ForecastDisplayMode
     let sunThreshold2: Double
+    let temperatureLowThreshold: Double
+    let temperatureHighThreshold: Double
 
     private var days: [ForecastDay] { ForecastDay.make(from: forecast) }
 
@@ -31,7 +33,7 @@ struct ForecastVariantsView: View {
                     ForecastDayHeader(day: day)
                     switch mode {
                     case .timeCards:
-                        TimeCardsForecast(day: day, allForecast: forecast)
+                        TimeCardsForecast(day: day, allForecast: forecast, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold)
                     case .weatherBands:
                         SwiftUI.TimelineView(.periodic(from: .now, by: 60)) { timeline in
                             WeatherBandsForecast(day: day, rules: rules, frostMargin: frostMargin, sunThreshold2: sunThreshold2, now: timeline.date)
@@ -146,6 +148,8 @@ private struct ForecastDayHeader: View {
 private struct TimeCardsForecast: View {
     let day: ForecastDay
     let allForecast: [ForecastHour]
+    let temperatureLowThreshold: Double
+    let temperatureHighThreshold: Double
 
     private var sampled: [ForecastHour] {
         day.hours.enumerated().compactMap { index, hour in index % 3 == 0 ? hour : nil }
@@ -167,6 +171,7 @@ private struct TimeCardsForecast: View {
                             .frame(height: 24)
                         Text("\(Int(hour.temp.rounded()))°")
                             .font(.caption)
+                            .foregroundStyle(hour.temp <= temperatureLowThreshold ? Color.secondary : hour.temp >= temperatureHighThreshold ? Color.orange : Color.primary)
                         ZStack(alignment: .bottom) {
                             RoundedRectangle(cornerRadius: 5).fill(Color.blue.opacity(0.08))
                             RoundedRectangle(cornerRadius: 5).fill(Color.blue.opacity(0.75))

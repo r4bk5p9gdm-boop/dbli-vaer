@@ -664,6 +664,7 @@ struct Place: Codable, Identifiable, Hashable {
     var frostMargin: Double? = nil
     var temperatureOffset: Double? = nil
     var displayTemperatureThreshold: Double? = nil
+    var displayTemperatureHighThreshold: Double? = nil
     var displayDewThreshold: Double? = nil
     var displaySunThreshold: Double? = nil
     var displaySunThreshold2: Double? = nil
@@ -684,6 +685,10 @@ struct Place: Codable, Identifiable, Hashable {
         guard let value = displayTemperatureThreshold, value.isFinite else { return AlertType.temperatur.defaultThreshold }
         return min(30, max(-20, value))
     }
+    var resolvedDisplayTemperatureHighThreshold: Double {
+        guard let value = displayTemperatureHighThreshold, value.isFinite else { return 20 }
+        return min(40, max(-10, value))
+    }
     var resolvedDisplaySunThreshold2: Double {
         guard let value = displaySunThreshold2, value.isFinite else {
             return min(50, displayThreshold(for: .sol) + 10)
@@ -697,7 +702,7 @@ struct Place: Codable, Identifiable, Hashable {
     var localFrostMargin: Double { max(0, frostMargin ?? 0) }
 
     private enum CodingKeys: String, CodingKey {
-        case id, name, customName, lat, lon, preposition, rules, notificationsEnabled, rulesOnlyDisplay, hiddenAlertTypes, frostMargin, temperatureOffset, displayTemperatureThreshold, displayDewThreshold, displaySunThreshold, displaySunThreshold2, displayGustThreshold
+        case id, name, customName, lat, lon, preposition, rules, notificationsEnabled, rulesOnlyDisplay, hiddenAlertTypes, frostMargin, temperatureOffset, displayTemperatureThreshold, displayTemperatureHighThreshold, displayDewThreshold, displaySunThreshold, displaySunThreshold2, displayGustThreshold
     }
 
     init(
@@ -746,6 +751,7 @@ struct Place: Codable, Identifiable, Hashable {
         frostMargin = try? values.decode(Double.self, forKey: .frostMargin)
         temperatureOffset = try? values.decode(Double.self, forKey: .temperatureOffset)
         displayTemperatureThreshold = try? values.decode(Double.self, forKey: .displayTemperatureThreshold)
+        displayTemperatureHighThreshold = try? values.decode(Double.self, forKey: .displayTemperatureHighThreshold)
         displayDewThreshold = try? values.decode(Double.self, forKey: .displayDewThreshold)
         displaySunThreshold = try? values.decode(Double.self, forKey: .displaySunThreshold)
         displaySunThreshold2 = try? values.decode(Double.self, forKey: .displaySunThreshold2)

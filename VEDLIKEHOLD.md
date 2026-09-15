@@ -54,6 +54,13 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-007 · FULLFØRT 2026-09-15** — Vis temperatur under valgt grense med grå tekst og
+temperatur over valgt grense med varm farge i tidskortene. Gi stedet en egen
+«Temp over»-grense, separat fra «Temp under», med standard 20 °C.
+Ny terskel lagres per sted og eldre steder får automatisk standardverdien.
+Testbygg er forsøkt, men stoppes av eksisterende SwiftUI-makrofeil i
+`RulePresetPickerView`.
+
 **BRUKER-002 · PÅ VENT 2026-09-15** — Forenkle tidslinjens klokkeslett til faste markører
 07/15/23 over raden uten gjentatt Dag/Kveld/Natt i hver blokk. Oppdater
 inntrøndersk («No e d doggfall», «No e d regn», «oppte»), kall regnraden

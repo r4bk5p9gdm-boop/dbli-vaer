@@ -192,7 +192,9 @@ struct HomeView: View {
                                     rules: p.rulesForDisplay,
                                     frostMargin: p.localFrostMargin,
                                     mode: .weatherBands,
-                                    sunThreshold2: p.resolvedDisplaySunThreshold2
+                                    sunThreshold2: p.resolvedDisplaySunThreshold2,
+                                    temperatureLowThreshold: p.resolvedDisplayTemperatureThreshold,
+                                    temperatureHighThreshold: p.resolvedDisplayTemperatureHighThreshold
                                 )
                             }
                         }.card()
@@ -697,6 +699,17 @@ struct RulesView: View {
                                             }
                                         }
                                         .labelsHidden().pickerStyle(.menu)
+                                        if type == .temperatur {
+                                            Picker("Temp over", selection: Binding(
+                                                get: { p.resolvedDisplayTemperatureHighThreshold },
+                                                set: { p.displayTemperatureHighThreshold = $0; store.update(p) }
+                                            )) {
+                                                ForEach(Array(stride(from: -10.0, through: 40.0, by: 1.0)), id: \.self) { value in
+                                                    Text("over \(value.formatted(.number.precision(.fractionLength(0...1))))°").tag(value)
+                                                }
+                                            }
+                                            .labelsHidden().pickerStyle(.menu)
+                                        }
                                         if type == .sol {
                                             Picker("Sol maks skyer 2", selection: Binding(
                                                 get: { p.resolvedDisplaySunThreshold2 },
