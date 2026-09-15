@@ -139,8 +139,9 @@ over sommertidsskiftet; testmål kompilert.
 beholdes, mens ukjent språk faller tilbake til bokmål og ukjent skilletegn til
 standard. Regresjonstest og testmål bestått.
 
-**AUTO-014 · ÅPEN** — Varslingskopi: test at bakgrunnsplanlegging beholder
-språk, mengde/varighet og huskelapp uten gjentatt tidspunkt i andrelinjen.
+**AUTO-014 · FULLFØRT 2026-09-15** — Varslingskopien har regresjonstest for
+separate linjer: først tidspunkt, deretter mengde/varighet, og til slutt
+aktivert huskelapp. Testen sikrer at andrelinjen ikke gjentar tidspunktet.
 
 **AUTO-015 · ÅPEN** — Prognosekilder: test at sammenslåing av Yr-tabell og
 Nå-prøver gir ett deterministisk nedbørshendelsesforløp uten doble varsler

@@ -788,6 +788,23 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testNotificationCopyKeepsDetailSeparateFromTimingAndMemo() {
+        var rule = Rule(type: .regn)
+        rule.customName = "Vann plantene"
+        let body = NotificationCopy.message(
+            for: rule,
+            eventAt: base.addingTimeInterval(2 * 3_600),
+            referenceAt: base,
+            eventDetail: "Opptil 0,9 mm over 1 time."
+        )
+
+        let lines = body.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
+        XCTAssertEqual(lines.count, 3)
+        XCTAssertEqual(lines[1], "Opptil 0,9 mm over 1 time.")
+        XCTAssertEqual(lines[2], "Vann plantene")
+        XCTAssertFalse(lines[1].contains("om to timer"))
+    }
+
     func testTemperatureRuleAlertsBelowChosenThreshold() {
         var rule = Rule(type: .temperatur)
         rule.threshold = 10
