@@ -132,6 +132,13 @@ preposisjon og huskelapp beholdes uendret. 74 språkoppføringer valideres.
 tidssone, overgang over midnatt og duplikatdemping når samme værhendelse
 kommer fra flere prognosekilder.
 
+**AUTO-013 · ÅPEN** — Snapshot-migrering: sørg for at eldre eller ukjente
+språkfelt i Watch/widget-data faller trygt tilbake til bokmål uten å skjule
+sted eller temperatur.
+
+**AUTO-014 · ÅPEN** — Varslingskopi: test at bakgrunnsplanlegging beholder
+språk, mengde/varighet og huskelapp uten gjentatt tidspunkt i andrelinjen.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
