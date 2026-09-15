@@ -25,6 +25,10 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(summary.label, "nerri Namsos")
     }
 
+    func testCurrentLocationNameComparisonIsDiacriticAndCaseInsensitive() {
+        XCTAssertEqual("Ålesund".compare("åLESUND", options: [.caseInsensitive, .diacriticInsensitive]), .orderedSame)
+    }
+
     func testTemperatureRuleSupportsBothDirectionsAndLegacyDefaultsBelow() throws {
         var high = Rule(type: .temperatur)
         high.threshold = 20

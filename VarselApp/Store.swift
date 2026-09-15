@@ -359,6 +359,12 @@ final class Store: ObservableObject {
             return
         }
         let name = await LocationManager.name(for: location)
+        if let existing = places.first(where: {
+            $0.name.compare(name, options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame
+        }) {
+            selectedID = existing.id
+            return
+        }
         let place = Place(name: name, lat: location.coordinate.latitude, lon: location.coordinate.longitude, preposition: .pa)
         places.append(place)
         selectedID = place.id
