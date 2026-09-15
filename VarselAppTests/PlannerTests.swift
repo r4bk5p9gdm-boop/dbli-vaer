@@ -10,6 +10,18 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(SharedPlaceSelection(ids: [a.id, a.id, b.id, c.id, UUID()]).resolved(available: [a,b,c]), [a.id,b.id,c.id])
     }
 
+    func testWeatherGlanceDropsStaleNowStatusAndKeepsOnePerType() {
+        let stale = WeatherStatus(ruleID: UUID(), type: .regn, text: "Regn nå.", eventAt: base.addingTimeInterval(-2 * 3_600), isNow: true)
+        let current = WeatherStatus(ruleID: UUID(), type: .regn, text: "Regn nå.", eventAt: base.addingTimeInterval(-10 * 60), isNow: true)
+        let snow = WeatherStatus(ruleID: UUID(), type: .sno, text: "Snø om en time.", eventAt: base.addingTimeInterval(3_600), isNow: false)
+        let tooFar = WeatherStatus(ruleID: UUID(), type: .dugg, text: "Dugg i morgen.", eventAt: base.addingTimeInterval(13 * 3_600), isNow: false)
+
+        let glance = WeatherGlance.upcoming([stale, snow, current, tooFar], now: base)
+
+        XCTAssertEqual(glance.map(\.type), [.regn, .sno])
+        XCTAssertEqual(glance.first?.eventAt, current.eventAt)
+    }
+
     func testWatchTransferCarriesLanguageAndSeparator() throws {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let hour = ForecastHour(time: base, temp: 8, precip: 0, wind: 2, cloud: 20, dew: 3)

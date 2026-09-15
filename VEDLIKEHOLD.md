@@ -140,9 +140,10 @@ også regresjonstestet. iOS-bygg bestått.
 for Europe/Oslo, midnatt, «i natt»/«i morgen», overmorgen, faste kveldsvarsler,
 nattvinduer og regler som krysser døgnskillet.
 
-**AUTO-007 · ÅPEN** — Widget-/Watch-stabilitet: test at gammel snapshot,
-tom prognose og raskt stedsskifte gir korrekt fallback uten duplikat eller
-feil valgt sted.
+**AUTO-007 · FULLFØRT 2026-09-15** — Widget-/Watch-glance avviser nå
+utløpte «nå»-hendelser fra gamle snapshots, holder seg innenfor 90-minutters
+Nå-horisont og beholder maks ett kommende varsel per værtype. Regresjonstest
+dekker utløpt status, gjeldende status, 12-timersgrense og typededuplisering.
 
 **BRUKER-001 · DELT OPP** — Hovedønsket er delt i tre spor slik at hver
 leveranse kan fullføres og dokumenteres separat.

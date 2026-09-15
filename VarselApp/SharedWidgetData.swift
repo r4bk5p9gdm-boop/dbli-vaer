@@ -2,10 +2,20 @@ import Foundation
 
 /// A glance shows the nearest event per weather type, not one tile per rule.
 enum WeatherGlance {
+    private static let nowStatusRetention: TimeInterval = 90 * 60
+    private static let nowStatusLookahead: TimeInterval = 15 * 60
+
     static func upcoming(_ statuses: [WeatherStatus], now: Date) -> [WeatherStatus] {
         let end = now.addingTimeInterval(12 * 3_600)
         let ordered = statuses.filter {
-            $0.isNow || ($0.eventAt > now && $0.eventAt <= end)
+            if $0.isNow {
+                // A stale Watch/widget snapshot can outlive the event that
+                // made it a "now" status. Keep the Now-glance bounded to the
+                // same 90-minute semantics as Yr's short-range nowcast.
+                return $0.eventAt >= now.addingTimeInterval(-nowStatusRetention)
+                    && $0.eventAt <= now.addingTimeInterval(nowStatusLookahead)
+            }
+            return $0.eventAt > now && $0.eventAt <= end
         }.sorted {
             if $0.isNow != $1.isNow { return $0.isNow }
             if $0.eventAt != $1.eventAt { return $0.eventAt < $1.eventAt }
