@@ -118,6 +118,10 @@ struct ForecastLocation: Hashable {
     var longitude: Double { Double(longitudeE4) / 10_000 }
 }
 
+enum ForecastRefreshError: Error {
+    case emptyForecast
+}
+
 /// Serialize full and background refreshes without falsely reporting success
 /// for a refresh that was skipped. Each operation reads live places on start.
 @MainActor
@@ -435,6 +439,13 @@ final class Store: ObservableObject {
         successfulPlaceCount > 0 || failedPlaceCount == 0
     }
 
+    /// A successful HTTP response is not useful when decoding produced no
+    /// hours. Treat it as a failed place so the previous forecast remains
+    /// available instead of being replaced by an empty result.
+    static func isUsableForecast(_ forecast: [ForecastHour]) -> Bool {
+        !forecast.isEmpty
+    }
+
     @discardableResult
     func refreshAll(backgroundOnly: Bool = false) async -> Bool {
         guard !Task.isCancelled else { return false }
@@ -468,7 +479,11 @@ final class Store: ObservableObject {
                 for location in batch {
                     group.addTask {
                         do {
-                            return (location, .success(try await YrService.fetch(lat: location.latitude, lon: location.longitude)))
+                            let forecast = try await YrService.fetch(lat: location.latitude, lon: location.longitude)
+                            guard Self.isUsableForecast(forecast) else {
+                                throw ForecastRefreshError.emptyForecast
+                            }
+                            return (location, .success(forecast))
                         } catch {
                             return (location, .failure(error))
                         }

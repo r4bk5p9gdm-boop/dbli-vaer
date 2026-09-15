@@ -170,9 +170,13 @@ deterministisk. Regresjonstest dekker både deduplisering og rekkefølge.
 Språkfil og diff validerer; generisk testbygg ble forsøkt, men er fortsatt
 blokkert av lokal Xcode-feil i `SwiftUIMacros.StateMacro`.
 
-**AUTO-018 · ÅPEN** — Feilhåndtering: verifiser at delvis mislykket
-stedshenting beholder siste gyldige prognose og varsler uten å tømme andre
-steders data.
+**AUTO-018 · FULLFØRT 2026-09-15** — En tom dekodet prognose behandles nå
+som en mislykket stedsoppdatering. Siste gyldige prognose blir stående,
+stedet får den vanlige feilmeldingen, og andre steder påvirkes ikke.
+Regresjonstest dekker at tom prognose avvises mens en gyldig time godtas.
+Språkfil og diff validerer; generisk testbygg er fortsatt blokkert av den
+lokale SwiftUI-makroserveren (`SwiftUIMacros.StateMacro`) og eksisterende
+ulagrede `$rule`-feil i `RuleEditorView.swift`.
 
 **AUTO-019 · ÅPEN** — Varslingsgrenser: test at iOS-grensen på 64 forespørsler
 og avviste/feilede varsler ikke sletter gyldige eksisterende varsler.

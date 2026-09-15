@@ -1836,6 +1836,8 @@ final class PlannerTests: XCTestCase {
             Store.forecastLocations(in: [first, alias, other]),
             [ForecastLocation(place: other), ForecastLocation(place: first)]
         )
+        XCTAssertFalse(Store.isUsableForecast([]))
+        XCTAssertTrue(Store.isUsableForecast([ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 0, dew: 5)]))
     }
 
     @MainActor
