@@ -19,10 +19,21 @@ enum WeatherGlance {
         }.sorted {
             if $0.isNow != $1.isNow { return $0.isNow }
             if $0.eventAt != $1.eventAt { return $0.eventAt < $1.eventAt }
+            let firstSeverity = glanceSeverity($0.type)
+            let secondSeverity = glanceSeverity($1.type)
+            if firstSeverity != secondSeverity { return firstSeverity > secondSeverity }
             return $0.ruleID.uuidString < $1.ruleID.uuidString
         }
         var seen = Set<AlertType>()
         return ordered.filter { seen.insert($0.type).inserted }
+    }
+
+    private static func glanceSeverity(_ type: AlertType) -> Int {
+        switch type {
+        case .frost, .sno: return 3
+        case .vind: return 2
+        default: return 1
+        }
     }
 }
 

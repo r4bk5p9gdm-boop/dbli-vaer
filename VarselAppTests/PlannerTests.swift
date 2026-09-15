@@ -378,6 +378,13 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(WeatherGlance.upcoming([], now: base).isEmpty)
     }
 
+    func testWeatherGlanceUsesSameSeverityOrderAsPushPlanning() {
+        let snow = WeatherStatus(ruleID: UUID(), type: .sno, text: "", eventAt: base.addingTimeInterval(3_600), isNow: false)
+        let rain = WeatherStatus(ruleID: UUID(), type: .regn, text: "", eventAt: snow.eventAt, isNow: false)
+        let result = WeatherGlance.upcoming([rain, snow], now: base)
+        XCTAssertEqual(result.map(\.type), [.sno, .regn])
+    }
+
     func testLocalAdjustmentPreservesYrAndDoesNotAccumulate() throws {
         let hour = ForecastHour(time: base, temp: 4, precip: 0, wind: 1, cloud: 0, dew: 1)
         let local = hour.locallyAdjusted(by: -2)

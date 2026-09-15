@@ -284,14 +284,18 @@ regel kan treffe i raden uten å opprette varsling.
 eldre steder får beregnet standard «Temp over» på 20 °C, mens feltet fortsatt
 forblir uendret og kan lagres senere.
 
-**AUTO-036 · ÅPEN** — Kontroller at varseltekst og rullerende visning bruker
-samme alvorlighetsprioritet ved samtidige hendelser.
+**AUTO-036 · FULLFØRT 2026-09-15** — Rullerende hjem-/widget-visning bruker
+nå samme alvorlighetsrekkefølge som push-planlegging ved likt tidspunkt.
+Regresjonstest dekker snø før regn uavhengig av innkommende rekkefølge.
 
 **AUTO-037 · ÅPEN** — Test at inaktive regler ikke påvirker værbånd eller
 varslingskø etter en lagret regelendring.
 
 **AUTO-038 · ÅPEN** — Kontroller at temperaturfargene bruker lokalt justert
 temperatur, ikke rå Yr-temperatur, i tidskortene.
+
+**AUTO-039 · ÅPEN** — Test at manglende vindkastdata ikke gir falsk
+vindkastvarsling eller blå vindstripe.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
