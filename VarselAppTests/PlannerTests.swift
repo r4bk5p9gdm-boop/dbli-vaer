@@ -29,6 +29,14 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual("Ålesund".compare("åLESUND", options: [.caseInsensitive, .diacriticInsensitive]), .orderedSame)
     }
 
+    func testPlacePersistsSecondSunDisplayThreshold() throws {
+        var place = Place(name: "Selbu", lat: 63, lon: 11)
+        place.displaySunThreshold = 10
+        place.displaySunThreshold2 = 20
+        let decoded = try JSONDecoder().decode(Place.self, from: JSONEncoder().encode(place))
+        XCTAssertEqual(decoded.displaySunThreshold2, 20)
+    }
+
     func testTemperatureRuleSupportsBothDirectionsAndLegacyDefaultsBelow() throws {
         var high = Rule(type: .temperatur)
         high.threshold = 20

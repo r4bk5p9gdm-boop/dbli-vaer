@@ -13,8 +13,16 @@ struct HomeFavorites: Codable, Equatable {
     }
 }
 
+struct SharedPlaceSelection: Codable, Equatable {
+    var ids: [UUID] = []
+    func resolved(available: [Place]) -> [UUID] {
+        let valid = Set(available.map(\.id))
+        return ids.filter { valid.contains($0) }.reduce(into: []) { if !$0.contains($1) && $0.count < 3 { $0.append($1) } }
+    }
+}
+
 enum AppCopy {
-    static let name = "D bli Vær!"
+    static let name = LanguageCatalog.value("app.name", language: "nb", fallback: "D bli Vær!")
 
     static func heading(placeName: String = "") -> String {
         [name, placeName].filter { !$0.isEmpty }.joined(separator: " ")
@@ -60,22 +68,81 @@ enum AlertLanguageStyle: String, Codable, CaseIterable, Identifiable {
 
 /// Only generated weather copy goes through this dictionary. Place names,
 /// prepositions and the user's reminder are deliberately kept verbatim.
+enum LanguageCatalog {
+    private struct Catalog: Decodable { let tekster: [String: [String: String]] }
+    static let entries: [String: [String: String]] = {
+        guard let url = Bundle.main.url(forResource: "Sprak", withExtension: "json"),
+              let data = try? Data(contentsOf: url),
+              let catalog = try? JSONDecoder().decode(Catalog.self, from: data) else { return [:] }
+        return catalog.tekster
+    }()
+
+    static func value(_ key: String, language: String, fallback: String, arguments: [String: String] = [:]) -> String {
+        let template = entries[key]?[language] ?? fallback
+        // One pass: user-provided values must never be interpreted as templates.
+        guard let regex = try? NSRegularExpression(pattern: "\\{([a-zA-Z_]+)\\}") else { return template }
+        var result = template
+        for match in regex.matches(in: template, range: NSRange(template.startIndex..., in: template)).reversed() {
+            guard let keyRange = Range(match.range(at: 1), in: template),
+                  let range = Range(match.range, in: result), let value = arguments[String(template[keyRange])] else { continue }
+            result.replaceSubrange(range, with: value)
+        }
+        return result
+    }
+}
+
+enum WeatherTextSeparator: String, CaseIterable, Codable, Identifiable {
+    case space, comma, bullet, dash
+    var id: String { rawValue }
+    static let key = "weather.text.separator"
+    static var defaults: UserDefaults { UserDefaults(suiteName: "group.no.mathias.dblivaer") ?? .standard }
+    static var current: Self { Self(rawValue: defaults.string(forKey: key) ?? "space") ?? .space }
+    var label: String {
+        switch self { case .space: "Mellomrom"; case .comma: "Komma ,"; case .bullet: "Punkt •"; case .dash: "Tankestrek —" }
+    }
+    var separator: String {
+        switch self { case .space: " "; case .comma: ", "; case .bullet: " • "; case .dash: " — " }
+    }
+    func format(_ text: String) -> String {
+        text.replacingOccurrences(of: " kl. ", with: separator + "kl. ")
+    }
+}
+
 enum WeatherLanguage {
-    static func text(_ text: String, style: AlertLanguageStyle) -> String {
-        guard style == .inntrondersk else { return text }
+    private static func sentenceStart(_ value: String) -> String {
+        value.prefix(1).uppercased() + value.dropFirst()
+    }
+    static func text(_ text: String, style: AlertLanguageStyle, separator: WeatherTextSeparator = .current) -> String {
+        guard style == .inntrondersk else { return separator.format(text) }
         var result = text
-            .replacingOccurrences(of: "i overmorgen", with: "i overmårrå")
-            .replacingOccurrences(of: "I overmorgen", with: "I overmårrå")
-            .replacingOccurrences(of: "i morgen", with: "i mårrå")
-            .replacingOccurrences(of: "I morgen", with: "I mårrå")
-            .replacingOccurrences(of: " til ", with: " te ")
+            .replacingOccurrences(of: "\\b([0-9]+) timer\\b", with: "$1 tima", options: .regularExpression)
+            .replacingOccurrences(of: "\\bnå\\b", with: LanguageCatalog.value("time.now", language: "tr", fallback: "no"), options: .regularExpression)
+            .replacingOccurrences(of: "Fare for dugg", with: "No e d doggfall")
+            .replacingOccurrences(of: "Duggfall", with: "No e d doggfall")
+            .replacingOccurrences(of: "Regn nå", with: "No e d regn")
+            .replacingOccurrences(of: "Mulig regn nå", with: "No e d regn")
+            .replacingOccurrences(of: "opptil", with: "oppte")
+            .replacingOccurrences(of: "denne timen", with: LanguageCatalog.value("time.this_hour", language: "tr", fallback: "herre tima"))
+            .replacingOccurrences(of: "i overmorgen", with: LanguageCatalog.value("time.day_after_phrase", language: "tr", fallback: "i overmårrå"))
+            .replacingOccurrences(of: "I overmorgen", with: sentenceStart(LanguageCatalog.value("time.day_after_phrase", language: "tr", fallback: "i overmårrå")))
+            .replacingOccurrences(of: "i morgen", with: LanguageCatalog.value("time.tomorrow_phrase", language: "tr", fallback: "i mårrå"))
+            .replacingOccurrences(of: "I morgen", with: sentenceStart(LanguageCatalog.value("time.tomorrow_phrase", language: "tr", fallback: "i mårrå")))
+            .replacingOccurrences(of: " til ", with: " " + LanguageCatalog.value("time.until", language: "tr", fallback: "te") + " ")
+        let dialectDays = ["manda'n", "tirsda'n", "onsda'n", "torsda'n", "freda'n", "lørda'n", "sønda'n"]
+        let keys = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+        for (index, day) in fullDayNames.enumerated() {
+            let dialect = LanguageCatalog.value("weekday." + keys[index], language: "tr", fallback: dialectDays[index])
+            result = result.replacingOccurrences(of: "\\b\(day)\\b", with: dialect, options: .regularExpression)
+            result = result.replacingOccurrences(of: "\\b\(day.capitalized)\\b", with: dialect.prefix(1).uppercased() + dialect.dropFirst(), options: .regularExpression)
+        }
         if result.hasPrefix("Mulig ") {
             result = String(result.dropFirst(6))
             result = result.prefix(1).uppercased() + result.dropFirst()
             if result.hasSuffix(".") { result.removeLast() }
-            result += ", sjer d ut som."
+            result = LanguageCatalog.value("status.possible", language: "tr", fallback: "{vaertype}{tid}, sjer d ut som.", arguments: ["vaertype": result, "tid": ""]).replacingOccurrences(of: " ,", with: ",")
         }
-        return result
+        result = result.replacingOccurrences(of: "(Under [0-9,.-]+)° no", with: "$1 no", options: .regularExpression)
+        return separator.format(result)
     }
 }
 
@@ -99,11 +166,15 @@ enum WindGustLevel: Int, CaseIterable, Identifiable {
 
     var notificationWeather: String {
         switch self {
-        case .looseObjects: "Vind"
+        case .looseObjects: "Vindkast"
         case .powerful: "Kraftige vindkast"
         case .veryPowerful: "Svært kraftige vindkast"
         case .extreme: "Ekstreme vindkast"
         }
+    }
+
+    var shortNotificationName: String {
+        switch self { case .looseObjects: "vindkast"; case .powerful: "kraftige vindkast"; case .veryPowerful: "svært kraftige vindkast"; case .extreme: "ekstreme vindkast" }
     }
 
     var guidance: String {
@@ -225,7 +296,7 @@ enum AlertType: String, Codable, CaseIterable, Identifiable {
         case .frost: h.temp <= threshold
         case .temperatur: h.temp < threshold
         case .sno: h.precipitationRiskRate >= threshold && h.temp <= 1
-        case .vind: h.effectiveWind >= threshold
+        case .vind: h.gust.map { $0.isFinite && $0 >= threshold } ?? false
         case .dugg: h.temp - h.dew <= threshold
         case .sol: h.cloud <= threshold
         }
@@ -283,12 +354,14 @@ enum CurrentWeatherCondition: Equatable {
 }
 
 struct Rule: Codable, Identifiable, Hashable {
+    enum TemperatureDirection: String, Codable, CaseIterable, Identifiable { case below, above; var id: String { rawValue }; var label: String { self == .below ? "Under" : "Over" } }
     var id = UUID()
     var templateTitle: String = ""
     var customName: String = ""
     var memoSuggestion: String = ""
     var type: AlertType
     var threshold: Double
+    var temperatureDirection: TemperatureDirection = .below
     var durationHours: Int = 4
     var leadMinutes: Int = 120
     var previousDayNotificationHour: Int? = nil
@@ -319,7 +392,7 @@ struct Rule: Codable, Identifiable, Hashable {
 
     private enum CodingKeys: String, CodingKey {
         case id, templateTitle, customName, memoSuggestion, type, threshold, durationHours, leadMinutes, previousDayNotificationHour, previousDayNotificationMinute, notificationWeekday, notificationDayOffset, count, intervalMinutes
-        case repeatsEnabled, quiet, quietFrom, quietTo, days, enabled, activeFromHour, activeToHour, onlyWhenNearby, isDisplayOnly
+        case repeatsEnabled, quiet, quietFrom, quietTo, days, enabled, activeFromHour, activeToHour, onlyWhenNearby, isDisplayOnly, temperatureDirection
     }
 
     init(from decoder: Decoder) throws {
@@ -331,6 +404,7 @@ struct Rule: Codable, Identifiable, Hashable {
         type = try values.decode(AlertType.self, forKey: .type)
         // Preserve the historical wind default for older saved rules.
         threshold = try values.decodeIfPresent(Double.self, forKey: .threshold) ?? (type == .vind ? 10 : type.defaultThreshold)
+        temperatureDirection = try values.decodeIfPresent(TemperatureDirection.self, forKey: .temperatureDirection) ?? .below
         durationHours = try values.decodeIfPresent(Int.self, forKey: .durationHours) ?? 4
         leadMinutes = try values.decodeIfPresent(Int.self, forKey: .leadMinutes) ?? 120
         previousDayNotificationHour = try values.decodeIfPresent(Int.self, forKey: .previousDayNotificationHour)
@@ -411,12 +485,14 @@ struct Rule: Codable, Identifiable, Hashable {
 
     func matches(_ hour: ForecastHour, frostMargin: Double = 0) -> Bool {
         let effectiveThreshold = type == .frost ? threshold + max(0, frostMargin) : threshold
+        if type == .temperatur { return temperatureDirection == .above ? hour.temp > threshold : hour.temp < threshold }
         return type.matches(hour, threshold: effectiveThreshold)
     }
 
     var summary: String {
         let t = threshold.formatted(.number.precision(.fractionLength(0...1)))
-        return "\(type.label) \(t) \(type.unit)" + (type.needsDuration ? ", \(durationHours) t" : "")
+        let prefix = type == .temperatur ? "\(temperatureDirection.label) " : ""
+        return "\(prefix)\(type.label) \(t) \(type.unit)" + (type.needsDuration ? ", \(durationHours) t" : "")
     }
 
     var activeHoursLabel: String {
@@ -469,9 +545,8 @@ struct ForecastHour: Codable, Identifiable, Hashable {
 
     var effectiveWind: Double { max(wind, gust ?? wind) }
     var compactWindAndGust: String {
-        let windText = wind.formatted(.number.precision(.fractionLength(0...1)))
         let gustText = gust.map { $0.formatted(.number.precision(.fractionLength(0...1))) } ?? "–"
-        return "\(windText) / \(gustText) m/s"
+        return "\(gustText) m/s"
     }
 
     func precipitationOnset(atOrAbove threshold: Double, after date: Date? = nil) -> Date? {
@@ -521,6 +596,27 @@ struct Place: Codable, Identifiable, Hashable {
     var hiddenAlertTypes: Set<AlertType>? = nil
     var frostMargin: Double? = nil
     var temperatureOffset: Double? = nil
+    var displayTemperatureThreshold: Double? = nil
+    var displayDewThreshold: Double? = nil
+    var displaySunThreshold: Double? = nil
+    var displaySunThreshold2: Double? = nil
+    var displayGustThreshold: Double? = nil
+    func displayThreshold(for type: AlertType) -> Double {
+        let value: Double?
+        switch type {
+        case .temperatur: value = displayTemperatureThreshold
+        case .dugg: value = displayDewThreshold
+        case .sol: value = displaySunThreshold
+        case .vind: value = displayGustThreshold
+        default: value = nil
+        }
+        guard let value, value.isFinite else { return type.defaultThreshold }
+        return min(type.range.upperBound, max(type.range.lowerBound, value))
+    }
+    var resolvedDisplayTemperatureThreshold: Double {
+        guard let value = displayTemperatureThreshold, value.isFinite else { return AlertType.temperatur.defaultThreshold }
+        return min(30, max(-20, value))
+    }
     var localTemperatureOffset: Double { min(10, max(-10, temperatureOffset ?? 0)) }
 
     var areNotificationsEnabled: Bool { notificationsEnabled ?? true }
@@ -528,7 +624,7 @@ struct Place: Codable, Identifiable, Hashable {
     var localFrostMargin: Double { max(0, frostMargin ?? 0) }
 
     private enum CodingKeys: String, CodingKey {
-        case id, name, customName, lat, lon, preposition, rules, notificationsEnabled, rulesOnlyDisplay, hiddenAlertTypes, frostMargin, temperatureOffset
+        case id, name, customName, lat, lon, preposition, rules, notificationsEnabled, rulesOnlyDisplay, hiddenAlertTypes, frostMargin, temperatureOffset, displayTemperatureThreshold, displayDewThreshold, displaySunThreshold, displaySunThreshold2, displayGustThreshold
     }
 
     init(
@@ -573,6 +669,11 @@ struct Place: Codable, Identifiable, Hashable {
             .map { Set($0.compactMap(\.value)) }
         frostMargin = try? values.decode(Double.self, forKey: .frostMargin)
         temperatureOffset = try? values.decode(Double.self, forKey: .temperatureOffset)
+        displayTemperatureThreshold = try? values.decode(Double.self, forKey: .displayTemperatureThreshold)
+        displayDewThreshold = try? values.decode(Double.self, forKey: .displayDewThreshold)
+        displaySunThreshold = try? values.decode(Double.self, forKey: .displaySunThreshold)
+        displaySunThreshold2 = try? values.decode(Double.self, forKey: .displaySunThreshold2)
+        displayGustThreshold = try? values.decode(Double.self, forKey: .displayGustThreshold)
     }
 
     var resolvedPreposition: PlacePreposition {
@@ -597,6 +698,7 @@ struct Place: Codable, Identifiable, Hashable {
         let defaults = AlertType.allCases.filter { !configuredTypes.contains($0) && !hidden.contains($0) }.map { type in
             var rule = Rule(type: type)
             rule.isDisplayOnly = true
+            rule.threshold = displayThreshold(for: type)
             return rule
         }
         return configured + defaults

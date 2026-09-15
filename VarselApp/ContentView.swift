@@ -94,8 +94,8 @@ struct ContentView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             HomeView().tabItem { Label("Hjem", systemImage: "cloud.sun") }.tag(Tab.home)
-            AlertQueueView().tabItem { Label("Varselkø", systemImage: "bell.and.waves.left.and.right") }.tag(Tab.queue)
-            PlacesView().tabItem { Label("Steder", systemImage: "mappin.and.ellipse") }.tag(Tab.places)
+            PlacesView(onOpen: { place in store.select(place); selectedTab = .home }).tabItem { Label("Steder", systemImage: "mappin.and.ellipse") }.tag(Tab.places)
+            AlertQueueView().tabItem { Label("Varslingsregler", systemImage: "bell.and.waves.left.and.right") }.tag(Tab.queue)
             GlobalSettingsView(showsDoneButton: false)
                 .tabItem { Label("Innstillinger", systemImage: "gearshape") }
                 .tag(Tab.settings)
@@ -130,6 +130,15 @@ struct HomeView: View {
     @EnvironmentObject var store: Store
     @State private var editing: Rule?
     @State private var showingSettings = false
+
+    private var swipePlaces: [Place] {
+        let favorites = store.resolvedHomeFavorites
+        let left = favorites.left.flatMap { id in store.places.first { $0.id == id } }
+        let right = favorites.right.flatMap { id in store.places.first { $0.id == id } }
+        return [left, store.selected, right].compactMap { $0 }.reduce(into: [Place]()) { result, place in
+            if !result.contains(where: { $0.id == place.id }) { result.append(place) }
+        }
+    }
 
     var body: some View {
         NavigationStack {
@@ -204,6 +213,15 @@ struct HomeView: View {
                 }
             }
             .refreshable { _ = await store.refreshAll() }
+            .contentShape(Rectangle())
+            .highPriorityGesture(DragGesture(minimumDistance: 45).onEnded { value in
+                guard abs(value.translation.width) > abs(value.translation.height), abs(value.translation.width) > 70, swipePlaces.count > 1,
+                      let current = store.selected,
+                      let index = swipePlaces.firstIndex(where: { $0.id == current.id }) else { return }
+                let next = value.translation.width < 0 ? index + 1 : index - 1
+                guard swipePlaces.indices.contains(next) else { return }
+                withAnimation(.easeInOut(duration: 0.25)) { store.select(swipePlaces[next]) }
+            })
             .sheet(item: $editing) { r in RuleEditorView(rule: r, isNew: false) }
             .sheet(isPresented: $showingSettings) { RulesView() }
         }
@@ -297,10 +315,10 @@ private struct CurrentWeatherCard: View {
                 )
                 LiveWeatherMetric(
                     icon: AlertType.vind.systemImage,
-                    label: "Vind / kast",
+                    label: "Vindkast",
                     value: current.compactWindAndGust,
                     color: AlertType.vind.color,
-                    isActive: current.effectiveWind >= WindGustLevel.looseObjects.threshold
+                    isActive: (current.gust ?? 0) >= WindGustLevel.looseObjects.threshold
                 )
                 LiveWeatherMetric(
                     icon: moistureMetric.icon,
@@ -567,7 +585,7 @@ private struct CurrentPrecipitationSummary {
     }
 
     private static func probabilitySuffix(_ probability: Double?) -> String {
-        probability.map { " · \(Int($0.rounded())) % sannsynlighet" } ?? ""
+        probability.map { " · \(Int($0.rounded())) % sannsynlig" } ?? ""
     }
 }
 
@@ -616,23 +634,17 @@ struct RulesView: View {
                         Text("Trykk på stedet for å bytte.")
                             .font(.caption2).foregroundStyle(.secondary)
                     }
-                    Section("Synlige værrader på Hjem") {
-                        ForEach(AlertType.allCases) { type in
-                            Toggle(isOn: Binding(
-                                get: { p.isAlertTypeVisible(type) },
-                                set: { visible in
-                                    var hidden = p.hiddenAlertTypes ?? []
-                                    if visible { hidden.remove(type) } else { hidden.insert(type) }
-                                    p.hiddenAlertTypes = hidden
-                                    store.update(p)
-                                }
-                            )) {
-                                Label(type.label, systemImage: type.systemImage)
-                                    .foregroundStyle(type.color)
+                    Section("Lokal temperatur") {
+                        if let hour = store.selectedForecast.last(where: { $0.time <= Date() && $0.time > Date().addingTimeInterval(-3600) }) {
+                            HStack {
+                                Text("Yr")
+                                Text("\((hour.yrTemperature ?? hour.temp).formatted(.number.precision(.fractionLength(1))))°")
+                                    .strikethrough(p.localTemperatureOffset != 0)
+                                    .foregroundStyle(.secondary)
+                                Image(systemName: "arrow.right")
+                                Text("\(hour.temp.formatted(.number.precision(.fractionLength(1))))° \(p.nameWithPreposition) nå").bold()
                             }
                         }
-                    }
-                    Section("Lokal temperatur") {
                         Stepper(value: Binding(
                             get: { p.localTemperatureOffset },
                             set: { p.temperatureOffset = $0; store.update(p); Task { await store.replan() } }
@@ -645,32 +657,77 @@ struct RulesView: View {
                             LocalCalibrationView(placeID: p.id)
                         }
                     }
-                    Section("Lokal frostmargin") {
-                        VStack(alignment: .leading, spacing: 8) {
+                    Section {
+                        ForEach([AlertType.regn, .dugg, .sno, .frost, .temperatur, .vind, .sol]) { type in
                             HStack {
-                                Text("Varsle tidligere")
-                                Spacer()
-                                Text(p.localFrostMargin == 0
-                                     ? "Ingen margin"
-                                     : "+\(p.localFrostMargin.formatted(.number.precision(.fractionLength(0...1)))) °C")
-                                    .fontWeight(.semibold)
-                            }
-                            Slider(
-                                value: Binding(
-                                    get: { p.localFrostMargin },
-                                    set: { value in
-                                        p.frostMargin = value
-                                        store.update(p)
-                                        Task { await store.replan() }
+                                Image(systemName: type.systemImage).foregroundStyle(type.color)
+                                if [.temperatur, .dugg, .sol, .vind].contains(type) {
+                                    HStack(spacing: 2) {
+                                        Text(type == .temperatur ? "Temp under / over" : type == .dugg ? "Fare for dugg" : type == .vind ? "Vindkast" : "Sol · maks skyer 1")
+                                            .font(.subheadline)
+                                        Picker("Grense for \(type.label)", selection: Binding(
+                                            get: { p.displayThreshold(for: type) },
+                                            set: { value in
+                                                switch type {
+                                                case .temperatur: p.displayTemperatureThreshold = value
+                                                case .dugg: p.displayDewThreshold = value
+                                                case .sol: p.displaySunThreshold = value
+                                                case .vind: p.displayGustThreshold = value
+                                                default: break
+                                                }
+                                                store.update(p)
+                                            }
+                                        )) {
+                                            ForEach(Array(stride(from: type.range.lowerBound, through: type.range.upperBound, by: type.step)), id: \.self) { value in
+                                                if type == .vind {
+                                                    Text("\(value.formatted(.number.precision(.fractionLength(0...1)))) m/s · \(windStrengthLabel(for: value))").tag(value)
+                                                } else {
+                                                    Text("\(value.formatted(.number.precision(.fractionLength(0...1))))\(type == .sol ? " %" : "°")").tag(value)
+                                        }
+                                        if type == .sol {
+                                            Picker("Sol maks skyer 2", selection: Binding(
+                                                get: { p.displaySunThreshold2 ?? min(50, p.displayThreshold(for: .sol) + 10) },
+                                                set: { p.displaySunThreshold2 = $0; store.update(p) }
+                                            )) {
+                                                ForEach(Array(stride(from: 0.0, through: 50.0, by: 5.0)), id: \.self) { value in
+                                                    Text("2: \(value.formatted(.number.precision(.fractionLength(0)))) %").tag(value)
+                                                }
+                                            }.labelsHidden().pickerStyle(.menu)
+                                        }
                                     }
-                                ),
-                                in: 0...5,
-                                step: 0.5
-                            )
+                                    .padding(.horizontal, 5)
+                                    .padding(.vertical, 3)
+                                    .background(type.color.opacity(0.10), in: RoundedRectangle(cornerRadius: 6))
+                                        }.labelsHidden().pickerStyle(.menu)
+                                    }
+                                } else if type == .frost {
+                                    Text("Frost")
+                                    Picker("Frostmargin", selection: Binding(
+                                        get: { p.localFrostMargin },
+                                        set: { p.frostMargin = $0; store.update(p); Task { await store.replan() } }
+                                    )) {
+                                        ForEach(Array(stride(from: 0.0, through: 5.0, by: 0.5)), id: \.self) { value in
+                                            Text("+\(value.formatted())°").tag(value)
+                                        }
+                                    }.labelsHidden().pickerStyle(.menu)
+                                } else {
+                                    Text(type.label)
+                                }
+                                Spacer()
+                                Toggle("Vis \(type.label)", isOn: Binding(
+                                    get: { p.isAlertTypeVisible(type) },
+                                    set: { visible in
+                                        var hidden = p.hiddenAlertTypes ?? []
+                                        if visible { hidden.remove(type) } else { hidden.insert(type) }
+                                        p.hiddenAlertTypes = hidden
+                                        store.update(p)
+                                    }
+                                )).labelsHidden()
+                            }
                         }
-                        Text("Brukes bare for frostvarsler, etter lokal temperaturjustering. Med +2,5 °C kan mulig frost varsles ved et lokalt anslag på +2,5 °C eller kaldere. Yr-originalen beholdes.")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                    } header: { Text("Synlige værrader på Hjem")
+                    } footer: {
+                        Text("Grensene gjelder visning uten aktive regler. Aktive varsler beholder egne grenser. Dugggrensen er avstand mellom lufttemperatur og duggpunkt; Yr-verdien endres ikke. Solgrensen er maksimalt skydekke for gult felt.")
                     }
                     Section {
                         ForEach(p.rules) { r in
@@ -835,7 +892,7 @@ struct AlertQueueView: View {
                     }
                 }
             }
-            .navigationTitle("Varselkø")
+            .navigationTitle("Varslingsregler")
             .refreshable { _ = await store.refreshAll() }
         }
     }
@@ -864,6 +921,7 @@ private struct WatchedRule: Identifiable {
 }
 
 struct PlacesView: View {
+    var onOpen: (Place) -> Void = { Store.shared.select($0) }
     @EnvironmentObject var store: Store
     @StateObject private var loc = LocationManager()
     @State private var busy = false
@@ -951,7 +1009,7 @@ struct PlacesView: View {
                                         showsPlaceMenu: false
                                     )
                                     .contentShape(RoundedRectangle(cornerRadius: 18))
-                                    .onTapGesture { store.select(place) }
+                                    .onTapGesture { onOpen(place) }
                                 } else {
                                     VStack(alignment: .leading, spacing: 5) {
                                         HStack { WeatherWordmark(); Text(place.nameWithPreposition).font(.headline).foregroundStyle(.blue) }
@@ -959,6 +1017,8 @@ struct PlacesView: View {
                                             .font(.footnote).foregroundStyle(.secondary)
                                     }
                                     .card()
+                                    .contentShape(Rectangle())
+                                    .onTapGesture { onOpen(place) }
                                 }
                             }
                         }
@@ -1007,16 +1067,57 @@ struct PlacesView: View {
 }
 
 private struct GlobalSettingsView: View {
+    @AppStorage(WeatherTextSeparator.key, store: WeatherTextSeparator.defaults) private var textSeparator = WeatherTextSeparator.space.rawValue
     @EnvironmentObject private var store: Store
     @Environment(\.dismiss) private var dismiss
     @State private var showingOnboarding = false
     @AppStorage(LiveWeatherActivitySettings.enabledKey) private var liveActivitiesEnabled = true
     var showsDoneButton = true
 
+    private func favoriteBinding(left: Bool) -> Binding<UUID?> {
+        Binding {
+            left ? store.resolvedHomeFavorites.left : store.resolvedHomeFavorites.right
+        } set: { id in
+            var favorites = store.resolvedHomeFavorites
+            if left {
+                favorites.left = id
+                if id != nil && favorites.right == id { favorites.right = nil }
+            } else {
+                favorites.right = id
+                if id != nil && favorites.left == id { favorites.left = nil }
+            }
+            store.homeFavorites = favorites
+        }
+    }
+
     var body: some View {
         NavigationStack {
             Form {
-                Section("Språk i alle pushvarsler") {
+                Section {
+                    Picker("Favoritt 1 · høyre", selection: favoriteBinding(left: false)) {
+                        Text("Ikke valgt").tag(nil as UUID?)
+                        ForEach(store.places) { place in
+                            Text(place.nameWithPreposition).tag(Optional(place.id))
+                        }
+                    }
+                    Picker("Favoritt 2 · venstre", selection: favoriteBinding(left: true)) {
+                        Text("Ikke valgt").tag(nil as UUID?)
+                        ForEach(store.places) { place in
+                            Text(place.nameWithPreposition).tag(Optional(place.id))
+                        }
+                    }
+                } header: {
+                    Text("Favorittsteder")
+                } footer: {
+                    Text("Sveip Hjem mot venstre eller høyre for å bytte mellom valgt sted og favoritter. Valgene endrer ikke varslene dine.")
+                }
+                Section("Språk og varseltekst") {
+                    Picker("Skilletegn før klokkeslett", selection: $textSeparator) {
+                        ForEach(WeatherTextSeparator.allCases) { Text($0.label).tag($0.rawValue) }
+                    }
+                    Text((WeatherTextSeparator(rawValue: textSeparator) ?? .space).format("Duggfall natt te onsda'n kl. 05"))
+                        .font(.caption).foregroundStyle(.secondary)
+                        .onChange(of: textSeparator) { _, _ in store.refreshDisplaySettings() }
                     Picker("Språkstil", selection: $store.alertLanguageStyle) {
                         ForEach(AlertLanguageStyle.allCases) { style in
                             Text(style.label).tag(style)
@@ -1040,6 +1141,23 @@ private struct GlobalSettingsView: View {
                 }
 
                 Section("CarPlay") {
+                    Text("Steder i CarPlay og Watch")
+                        .font(.subheadline.weight(.semibold))
+                    ForEach(0..<3, id: \.self) { index in
+                        Picker(index == 0 ? "Primært sted" : "Sted \(index + 1)", selection: Binding<UUID?>(
+                            get: { store.resolvedSharedPlaceIDs.indices.contains(index) ? store.resolvedSharedPlaceIDs[index] : nil },
+                            set: { id in
+                                var ids = store.resolvedSharedPlaceIDs
+                                if ids.count <= index { ids.append(contentsOf: Array(repeating: store.places.first?.id ?? UUID(), count: index + 1 - ids.count)) }
+                                if let id { ids[index] = id } else if ids.indices.contains(index) { ids.remove(at: index) }
+                                store.sharedPlaceSelection = SharedPlaceSelection(ids: ids)
+                            })) {
+                            Text("Ikke valgt").tag(nil as UUID?)
+                            ForEach(store.places) { place in Text(place.nameWithPreposition).tag(Optional(place.id)) }
+                        }
+                    }
+                    Text("CarPlay kan vise opptil tre valgte steder. Watch bruker fortsatt primærstedet som standard.")
+                        .font(.caption).foregroundStyle(.secondary)
                     Label("CarPlay-widgeten er klar", systemImage: "car.fill")
                     Text("Krever iOS 26 eller nyere. Legg til D bli Vær! fra widgetinnstillingene for bilen under Innstillinger › Generelt › CarPlay.")
                         .font(.caption)
