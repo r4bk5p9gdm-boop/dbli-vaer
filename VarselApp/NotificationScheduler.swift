@@ -160,6 +160,19 @@ enum NotificationScheduler {
         }.prefix(pendingNotificationLimit).map(\.id))
     }
 
+    /// Remove only requests that are definitely stale. A failed replacement
+    /// keeps an existing request with the same identifier as a safe fallback.
+    static func stalePendingRequestIDs(
+        pendingIDs: [String], preservedIDs: Set<String>,
+        successfulIDs: Set<String>, failedIDs: Set<String>
+    ) -> [String] {
+        pendingIDs.filter {
+            !preservedIDs.contains($0) &&
+            !successfulIDs.contains($0) &&
+            !failedIDs.contains($0)
+        }
+    }
+
     static func requestsToPreserve(
         _ requests: [UNNotificationRequest],
         places: [Place],
@@ -232,9 +245,10 @@ enum NotificationScheduler {
         preserved = preserved.filter { nearestIDs.contains($0.identifier) }
         requested = requested.filter { nearestIDs.contains($0.id) }
         let preservedIDs = Set(preserved.map(\.identifier))
-        center.removePendingNotificationRequests(withIdentifiers: pending.map(\.identifier).filter { !preservedIDs.contains($0) })
         var scheduledCount = preserved.count
         var failedCount = 0
+        var successfulIDs: Set<String> = []
+        var failedIDs: Set<String> = []
         var firstScheduledAt = preserved.compactMap { nextFireDate(for: $0) }.min()
         for a in requested {
             let c = UNMutableNotificationContent()
@@ -254,11 +268,18 @@ enum NotificationScheduler {
             do {
                 try await center.add(UNNotificationRequest(identifier: a.id, content: c, trigger: trigger))
                 scheduledCount += 1
+                successfulIDs.insert(a.id)
                 firstScheduledAt = min(firstScheduledAt ?? a.fireAt, a.fireAt)
             } catch {
                 failedCount += 1
+                failedIDs.insert(a.id)
             }
         }
+        let staleIDs = stalePendingRequestIDs(
+            pendingIDs: pending.map(\.identifier), preservedIDs: preservedIDs,
+            successfulIDs: successfulIDs, failedIDs: failedIDs
+        )
+        center.removePendingNotificationRequests(withIdentifiers: staleIDs)
         return NotificationScheduleResult(
             requestedCount: requested.count + preserved.count,
             scheduledCount: scheduledCount,

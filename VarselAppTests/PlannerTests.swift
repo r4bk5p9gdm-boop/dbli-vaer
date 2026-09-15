@@ -1669,6 +1669,14 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(ids.contains("request-64"))
     }
 
+    func testFailedNotificationReplacementKeepsExistingRequest() {
+        let stale = NotificationScheduler.stalePendingRequestIDs(
+            pendingIDs: ["old", "replace", "preserved"],
+            preservedIDs: ["preserved"], successfulIDs: ["new"], failedIDs: ["replace"]
+        )
+        XCTAssertEqual(stale, ["old"])
+    }
+
     @MainActor
     func testOfflineNotificationPreservationRequiresUnchangedActiveRule() throws {
         let rule = Rule(type: .regn)

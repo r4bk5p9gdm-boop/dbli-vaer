@@ -178,8 +178,23 @@ Språkfil og diff validerer; generisk testbygg er fortsatt blokkert av den
 lokale SwiftUI-makroserveren (`SwiftUIMacros.StateMacro`) og eksisterende
 ulagrede `$rule`-feil i `RuleEditorView.swift`.
 
-**AUTO-019 · ÅPEN** — Varslingsgrenser: test at iOS-grensen på 64 forespørsler
-og avviste/feilede varsler ikke sletter gyldige eksisterende varsler.
+**AUTO-019 · FULLFØRT 2026-09-15** — Varslingsplanen fjerner ikke lenger en
+eksisterende forespørsel når en ny forespørsel med samme ID feiler. Stale
+varsler ryddes først etter at nye forespørsler er forsøkt, mens bevarte og
+feilede ID-er beholdes som sikkerhetsnett. Regresjonstest dekker denne
+transaksjonelle oppryddingen sammen med 64-grensen.
+Språkfil og diff validerer; generisk testbygg er fortsatt blokkert av lokal
+SwiftUI-makroserver og eksisterende ulagrede `$rule`-feil i `RuleEditorView.swift`.
+
+**AUTO-020 · ÅPEN** — Gjør varselplanleggeren testbar med en liten injiserbar
+notifikasjonssentral, slik at add-feil og opprydding kan testes uten fysisk
+enhet.
+
+**AUTO-021 · ÅPEN** — Reduser unødvendige replanlegginger og loggskriving
+når flere bakgrunnsoppdateringer fullføres tett etter hverandre.
+
+**AUTO-022 · ÅPEN** — Legg inn regresjon for at foreldede prognoser ikke
+brukes i widget, Watch eller Live Activity etter en mislykket oppdatering.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
