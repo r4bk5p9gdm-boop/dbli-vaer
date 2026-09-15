@@ -234,6 +234,10 @@ fortsatt åpner riktig sted når stedsliste eller valgt sted endres.
 **AUTO-027 · ÅPEN** — Verifiser at replanlegging ikke holder store
 prognosekart lenger enn nødvendig etter widget-/Watch-synkronisering.
 
+**AUTO-028 · ÅPEN** — Gjennomgå bakgrunnsoppdateringens planlagte tidspunkt
+og sikre at neste refresh ikke beholdes unødvendig lenge etter en mislykket
+eller avbrutt jobb.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
