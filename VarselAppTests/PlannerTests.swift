@@ -232,6 +232,13 @@ final class PlannerTests: XCTestCase {
         XCTAssertNil(old.displayTemperatureHighThreshold)
     }
 
+    func testLocalTemperatureAdjustmentIsTheValueUsedForDisplayThresholds() {
+        let yrHour = ForecastHour(time: base, temp: 19, precip: 0, wind: 1, cloud: 20, dew: 8)
+        let localHour = yrHour.locallyAdjusted(by: 2)
+        XCTAssertLessThan(yrHour.temp, 20)
+        XCTAssertGreaterThanOrEqual(localHour.temp, 20)
+    }
+
     func testDisplayOnlyRuleNeverCreatesPushAlert() {
         var rule = Rule(type: .regn)
         rule.isDisplayOnly = true
