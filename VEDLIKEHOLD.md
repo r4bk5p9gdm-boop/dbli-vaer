@@ -556,6 +556,9 @@ idempotent.
 **AUTO-102 · ÅPEN** — Gjennomgå varsel-ID-generering for kollisjon mellom
 like regler på ulike steder og legg til en ren regresjonstest.
 
+**AUTO-103 · ÅPEN** — Kontroller at bakgrunnsoppdatering ikke planlegger
+samme sted mer enn én gang når favoritt og posisjonssted deler koordinater.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
