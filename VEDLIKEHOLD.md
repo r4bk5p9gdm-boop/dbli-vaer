@@ -534,6 +534,12 @@ sted. Ingen tung simulator ble startet i denne økten.
 **AUTO-097 · ÅPEN** — Gjennomgå tilgjengelighetstekst for posisjonsmerket i
 hjem og widget.
 
+**AUTO-098 · ÅPEN** — Verifiser at valgt hjemsted og posisjonssted bruker samme
+ferskhets- og fallbackregel i widget-snapshot etter bakgrunnsoppdatering.
+
+**AUTO-099 · ÅPEN** — Legg til regresjonstest for at en tom widget-snapshot
+ikke overskriver siste gyldige sted ved omstart.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
