@@ -45,6 +45,8 @@ final class WatchWeatherStore: ObservableObject {
 
     private func accept(_ snapshot: WidgetWeatherSnapshot) {
         guard !snapshot.forecast.isEmpty else { return }
+        // Snapshot carries the current Place with the stable UUID, so a
+        // position rename is reflected immediately on Watch.
         snapshotRevision = UUID()
         message = nil
         self.snapshot = snapshot

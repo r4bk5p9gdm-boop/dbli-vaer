@@ -710,8 +710,9 @@ delresultater kan derfor ikke publiseres som snapshot.
 gyldig snapshot eller den eksplisitte clear-stien når sted/prognose fjernes.
 Tom refresh lagres ikke og utløser ingen egen reload.
 
-**AUTO-142 · ÅPEN** — Verifiser at Watch-appen viser siste stednavn etter
-posisjonssynkronisering med samme UUID.
+**AUTO-142 · FULLFØRT 2026-09-16** — Watch tar imot gjeldende Place sammen
+med stabil UUID i snapshoten; siste posisjons-/brukernavn vises derfor etter
+synkronisering. Eksisterende navnetester dekker dette.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
