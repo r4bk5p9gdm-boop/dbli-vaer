@@ -646,7 +646,7 @@ struct RulesView: View {
         NavigationStack {
             List {
                 if var p = store.selected {
-                    let visibleRules = p.rules.filter { pushFilter == nil || $0.type == pushFilter }
+                    let visibleRules = Rule.filtered(p.rules, by: pushFilter)
                     Section {
                         Menu {
                             ForEach(store.places) { candidate in

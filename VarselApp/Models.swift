@@ -538,6 +538,10 @@ struct Rule: Codable, Identifiable, Hashable {
     }
 
     var alertCount: Int { repeatsEnabled ? max(2, count) : 1 }
+    static func filtered(_ rules: [Rule], by type: AlertType?) -> [Rule] {
+        guard let type else { return rules }
+        return rules.filter { $0.type == type }
+    }
     var windGustLevel: WindGustLevel { .forThreshold(threshold) }
 
     var notificationScheduleLabel: String {

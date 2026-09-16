@@ -57,7 +57,9 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 **AUTO-159 · FULLFØRT 2026-09-16** — Push-knappene på værtyperadene har nå
 egen VoiceOver-label med værtype og antall oppsatte pushvarsler.
 
-**AUTO-160 · ÅPEN** — Test filtrering og redigering av flere regler av samme type.
+**AUTO-160 · FULLFØRT 2026-09-16** — Pushregel-filteret bruker nå en felles
+`Rule.filtered`-funksjon. Alle regler av valgt type beholdes, og regresjonstest
+dekker to regnregler samt «alle».
 
 **AUTO-161 · ÅPEN** — Kontroller at visuell radbryter ikke endrer pushregler.
 
