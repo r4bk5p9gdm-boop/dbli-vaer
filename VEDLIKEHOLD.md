@@ -448,8 +448,9 @@ nedbørstype og vindkastfelt beholdes fra Yr; offset brukes bare på lufttempera
 at `dew` står uendret ved lokal temperaturjustering; bare temperaturavstanden
 mot duggpunktet påvirkes.
 
-**AUTO-077 · ÅPEN** — Verifiser at frostmargin fortsatt beregnes på lokalt
-justert temperatur.
+**AUTO-077 · FULLFØRT 2026-09-16** — Regresjonstesten for frostmargin dekker
+nå også live-statusbanen, ikke bare planlagte varsler. Den bekrefter at lokal
+margin brukes på terskelen og gir mulig frost-status uten å endre rå Yr-temp.
 
 **AUTO-078 · ÅPEN** — Kontroller at frostmargin ikke endrer rå Yr-temp i
  historikk eller eksport.

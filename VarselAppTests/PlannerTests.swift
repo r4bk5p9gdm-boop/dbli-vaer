@@ -945,6 +945,14 @@ final class PlannerTests: XCTestCase {
             withMargin.alerts.first?.eventDetail,
             "Yr melder ned mot 1,5°. Lokal frostmargin er +2,5°."
         )
+        let liveStatus = Planner.status(
+            for: rule,
+            forecast: hours,
+            frostMargin: 2.5,
+            now: base.addingTimeInterval(-2 * 3_600)
+        )
+        XCTAssertEqual(liveStatus?.type, .frost)
+        XCTAssertTrue(liveStatus?.possible == true)
         XCTAssertEqual(hours[0].temp, 2)
     }
 
