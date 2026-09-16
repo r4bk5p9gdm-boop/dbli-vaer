@@ -664,6 +664,15 @@ dekker både treff med margin og round-trip av råverdien.
 **AUTO-129 · FULLFØRT 2026-09-16** — Pushplanleggingen dokumenterer og tester
 at display-only-regler kan vises i rader, men aldri blir aktive pushvarsler.
 
+**AUTO-130 · ÅPEN** — Test at planlagte pushvarsler bruker lokal tidssone
+ved sommertidsskift i fast kveldsvarsel.
+
+**AUTO-131 · ÅPEN** — Verifiser at feil i widget-lagring ikke stopper
+replanlegging eller Watch-overføring.
+
+**AUTO-132 · ÅPEN** — Test at hjemsveip med manglende favoritt-ID faller
+tilbake uten duplikat- eller hoppeside.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
