@@ -601,8 +601,10 @@ og regresjonstest bekrefter at begge innstillinger gir ny konfigurasjon.
 tydelig dokumentert som ikke-destruktivt, og eksisterende regresjonstest
 bekrefter at Yr-tabellnedbør beholdes.
 
-**AUTO-114 · ÅPEN** — Verifiser at bakgrunnsoppdatering respekterer kansellering
-før den skriver delvis hentede prognoser.
+**AUTO-114 · FULLFØRT 2026-09-16** — Refresh-flyten dokumenterer nå at
+kansellering returnerer før finalisering, mens en kjøring uten suksess ikke
+replanlegger delvis data. Eksisterende kansellerings- og grensetester dekker
+begge tilfellene.
 
 **AUTO-115 · ÅPEN** — Test at feilet enkeltsted ikke hindrer andre steder i
 samme bakgrunnsoppdatering fra å få fersk prognose.

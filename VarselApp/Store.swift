@@ -453,7 +453,8 @@ final class Store: ObservableObject {
     }
 
     static func shouldFinalizeRefresh(successfulPlaceCount: Int, failedPlaceCount: Int) -> Bool {
-        // An empty place list is intentional; a complete network failure is not.
+        // Cancellation returns before this decision; a zero-success run with
+        // failures must never finalize and replan partial data.
         successfulPlaceCount > 0 || failedPlaceCount == 0
     }
 
