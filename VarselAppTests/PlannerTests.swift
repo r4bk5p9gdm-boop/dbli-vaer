@@ -1385,6 +1385,11 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(LanguageCatalog.value("missing.key", language: "en", fallback: "Weather").isEmpty)
     }
 
+    func testInntronderskKeepsTonightDistinctFromTomorrowAtMidnight() {
+        XCTAssertEqual(WeatherLanguage.text("Regn i natt kl. 02", style: .inntrondersk), "Regn i natt kl. 02")
+        XCTAssertEqual(WeatherLanguage.text("Regn i morgen kl. 06", style: .inntrondersk), "Regn i mårrå kl. 06")
+    }
+
     @MainActor
     func testNotificationPlanLogReportsActualSchedulingResult() {
         XCTAssertEqual(

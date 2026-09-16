@@ -581,8 +581,9 @@ for manglende push-/værtypeoppføring.
 etter regn fortsatt gjelder over midnatt, men slipper gjennom et nytt duggfall
 etter tre tørre timer.
 
-**AUTO-109 · ÅPEN** — Test at inntrøndersk tidsuttrykk velger «i natt» før
-«i morgen» ved midnattsskiftet.
+**AUTO-109 · FULLFØRT 2026-09-16** — Inntrøndersk regresjonstest låser
+«i natt» som eget uttrykk og «i mårrå» fra kl. 06, slik at midnattsskiftet
+ikke blander natt med neste morgen.
 
 **AUTO-110 · ÅPEN** — Verifiser at Live Activity avsluttes når prognosen blir
 foreldet uten å etterlate en aktiv status.
