@@ -360,14 +360,18 @@ prognose beholdes.
 **AUTO-055 · FULLFØRT 2026-09-16** — Prognosefeil følger nå valgt språkstil
 for engelsk og norsk tekst, inkludert nettverk, timeout og dekodingsfeil.
 
-**AUTO-056 · ÅPEN** — Kontroller at delvis vellykket refresh oppdaterer
-tidspunktet uten å nullstille feilstatus for stedet som feilet.
+**AUTO-056 · FULLFØRT 2026-09-16** — Refresh-logikken oppdaterer
+`lastUpdate` når minst ett sted lykkes, mens `forecastErrors` bare fjernes
+for stedene som faktisk fikk ny prognose. Feilstatus for andre steder beholdes.
 
 **AUTO-057 · ÅPEN** — Verifiser at siste oppdateringstidspunkt ikke endres
 ved total nettverksfeil.
 
 **AUTO-058 · ÅPEN** — Kontroller at lokaliserte feiltekster ikke mister
 stedsnavn eller instruksjon om ny oppdatering.
+
+**AUTO-059 · ÅPEN** — Test at feilstatus ryddes når samme sted senere får
+en gyldig prognose.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
