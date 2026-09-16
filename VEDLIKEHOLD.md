@@ -515,8 +515,8 @@ at et manuelt valg alltid fjerner GPS-merket.
 **AUTO-092 · FULLFØRT 2026-09-16** — Sveipregresjonen dekker nå gjentatt bytte
 mellom manuelt sted, posisjonssted og favoritt, inkludert reversert retning.
 
-**AUTO-093 · ÅPEN** — Kontroller at avvist posisjonstilgang gir tydelig,
-handlingsrettet tekst i oppstartsveiviseren.
+**AUTO-093 · FULLFØRT 2026-09-16** — Feilmeldingen ved avvist eller manglende
+posisjonstilgang forklarer nå konkret hvilken Innstillinger-sti som må åpnes.
 
 **AUTO-094 · ÅPEN** — Verifiser at widgetens «Posisjon»-navn ikke overskriver
 et brukerdefinert stedsnavn.

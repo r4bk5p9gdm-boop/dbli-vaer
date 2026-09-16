@@ -236,8 +236,9 @@ struct HomeView: View {
                         horizontalTranslation: value.translation.width,
                         verticalTranslation: value.translation.height
                       ),
-                      let nextID = uniqueIDs[next],
-                      let nextPlace = swipePlaces.first(where: { $0.id == nextID }) else { return }
+                      uniqueIDs.indices.contains(next) else { return }
+                let nextID = uniqueIDs[next]
+                guard let nextPlace = swipePlaces.first(where: { $0.id == nextID }) else { return }
                 transitionDirection = value.translation.width < 0 ? .trailing : .leading
                 withAnimation(.easeInOut(duration: 0.32)) { store.select(nextPlace) }
             })
@@ -1034,7 +1035,7 @@ struct PlacesView: View {
                                 let name = await LocationManager.name(for: l)
                                 await store.add(Place(name: name, lat: l.coordinate.latitude, lon: l.coordinate.longitude, preposition: .i))
                             } catch {
-                                locationError = "Fant ikke posisjonen din. Kontroller stedstilgang i Innstillinger."
+                                locationError = "Fant ikke posisjonen. Tillat stedstilgang for D bli Vær! i Innstillinger → Personvern og sikkerhet → Stedstjenester."
                             }
                             busy = false
                         }
@@ -1056,6 +1057,7 @@ struct PlacesView: View {
                                         places: store.places,
                                         forecast: forecast,
                                         languageStyle: store.alertLanguageStyle,
+                                        isCurrentLocation: false,
                                         onSelect: store.select,
                                         showsPlaceMenu: false
                                     )
