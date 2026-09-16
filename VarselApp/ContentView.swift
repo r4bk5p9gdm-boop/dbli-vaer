@@ -778,6 +778,8 @@ struct RulesView: View {
                                 }
                                 .font(.caption2.weight(.semibold))
                                 .buttonStyle(.bordered)
+                                .accessibilityLabel("Pushvarsler for \(type.label)")
+                                .accessibilityValue("\(p.rules.filter { $0.type == type }.count) oppsatt")
                                 Spacer()
                                 Toggle("Vis \(type.label)", isOn: Binding(
                                     get: { p.isAlertTypeVisible(type) },

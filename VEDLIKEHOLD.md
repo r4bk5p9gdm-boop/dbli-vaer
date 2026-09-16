@@ -54,6 +54,15 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-159 · FULLFØRT 2026-09-16** — Push-knappene på værtyperadene har nå
+egen VoiceOver-label med værtype og antall oppsatte pushvarsler.
+
+**AUTO-160 · ÅPEN** — Test filtrering og redigering av flere regler av samme type.
+
+**AUTO-161 · ÅPEN** — Kontroller at visuell radbryter ikke endrer pushregler.
+
+**AUTO-162 · ÅPEN** — Legg til regresjon for tom pushregel-liste i filtervisning.
+
 **BRUKER-014 · FULLFØRT 2026-09-16** — Innstillingene viser nå en Push-knapp
 på hver værtype-rad med antall regler. Trykk på typen for å filtrere
 varslingsreglene og redigere flere pushvarsler av samme type; «Vis alle push»
