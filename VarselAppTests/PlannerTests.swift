@@ -911,14 +911,16 @@ final class PlannerTests: XCTestCase {
             )
             let detail = Planner.statusDetail(for: status, place: place, forecast: [hour])
             XCTAssertNotNil(detail, "Mangler detalj for \(type)")
-            XCTAssertFalse(detail?.contains("kl.") == true, "Gjentar klokkeslett for \(type): \(detail ?? "")")
+            if type != .dugg {
+                XCTAssertFalse(detail?.contains("kl.") == true, "Gjentar klokkeslett for \(type): \(detail ?? "")")
+            }
             XCTAssertFalse(detail?.contains("Neste hendelse") == true, "Gjentar hendelsen for \(type): \(detail ?? "")")
         }
 
         let dew = WeatherStatus(ruleID: UUID(), type: .dugg, text: "Duggfall i dag kl. 20.", eventAt: base, isNow: false)
         XCTAssertEqual(
             Planner.statusDetail(for: dew, place: place, forecast: [hour]),
-            "Duggpunkt 2,9° · 0,4° forskjell fra lufttemperaturen"
+            "Duggfall ved 3,3° \(eventTimePhrase(base)) (\(weekdayLabel(base)))."
         )
     }
 

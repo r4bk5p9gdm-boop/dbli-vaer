@@ -261,8 +261,10 @@ enum Planner {
             let snow = estimatedFreshSnowMillimeters(waterEquivalent: water, temperature: hour.temp)
             return "Anslått \(status.possible == true ? "opptil " : "")\(number(snow)) mm snø\(probability)"
         case .dugg:
-            let gap = max(0, hour.temp - hour.dew)
-            return "Duggpunkt \(number(hour.dew))° · \(number(gap))° forskjell fra lufttemperaturen"
+            let weekday = weekdayLabel(status.eventAt)
+            let when = eventTimePhrase(status.eventAt)
+                .replacingOccurrences(of: ", \(weekday)", with: "")
+            return "Duggfall ved \(number(hour.temp))° \(when) (\(weekday))."
         case .frost:
             let margin = place.localFrostMargin > 0 ? " · lokal margin +\(number(place.localFrostMargin))°" : ""
             let label = hour.yrTemperature == nil ? "Yr melder" : "Lokalt anslag"

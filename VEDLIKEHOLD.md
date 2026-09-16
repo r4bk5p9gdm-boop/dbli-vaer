@@ -54,6 +54,11 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-013 · FULLFØRT 2026-09-16** — Duggdetaljen bruker nå én
+selvforklarende tekst: «Duggfall ved [lokal temperatur]° [tid] (ukedag).»
+Den gamle «forskjell fra lufttemperaturen»-setningen er fjernet. Dugggrensen
+styres fortsatt av varslingsregelen, mens radens visningsgrense er separat.
+
 **BRUKER-012 · FULLFØRT 2026-09-16** — Rettet to SwiftUI-kall som sendte
 `Store.select` direkte til en callback som forventer `(Place) -> Void`.
 Kallene bruker nå eksplisitt closure og bygger igjen mot riktig signatur.
