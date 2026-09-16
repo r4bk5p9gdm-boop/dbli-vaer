@@ -642,8 +642,8 @@ uendret for korrekt fuktberegning.
 mot samme Store-seleksjon som Varslingsregler bruker, inkludert at manuelt valg
 fjerner GPS-markeringen.
 
-**AUTO-124 · ÅPEN** — Test at inntrøndersk pushtekst beholder egen huskelapp
-som ettertekst ved alle værtyper.
+**AUTO-124 · FULLFØRT 2026-09-16** — Inntrøndersk push-regresjon dekker alle
+værtyper og sikrer at aktivert huskelapp alltid står som separat siste linje.
 
 **AUTO-125 · ÅPEN** — Verifiser at appens testvarsel bruker samme tekstkatalog
 som planlagte pushvarsler.

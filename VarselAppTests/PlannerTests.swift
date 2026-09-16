@@ -992,6 +992,15 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(lines[1].contains("om to timer"))
     }
 
+    func testInntronderskKeepsMemoAsSeparateFinalLineForWeatherTypes() {
+        for type in [AlertType.regn, .sno, .dugg, .frost, .vind, .temperatur, .sol] {
+            var rule = Rule(type: type)
+            rule.customName = "Ta med utstyr"
+            let body = NotificationCopy.message(for: rule, eventAt: base.addingTimeInterval(3_600), referenceAt: base, languageStyle: .inntrondersk)
+            XCTAssertEqual(body.split(separator: "\n").last, "Ta med utstyr", "\(type)")
+        }
+    }
+
     func testTemperatureRuleAlertsBelowChosenThreshold() {
         var rule = Rule(type: .temperatur)
         rule.threshold = 10
