@@ -863,7 +863,11 @@ struct RulesView: View {
 
     private func sortRules(by areInIncreasingOrder: (Rule, Rule) -> Bool) {
         guard var place = store.selected else { return }
-        place.rules.sort(by: areInIncreasingOrder)
+        place.rules.sort { lhs, rhs in
+            if areInIncreasingOrder(lhs, rhs) { return true }
+            if areInIncreasingOrder(rhs, lhs) { return false }
+            return lhs.id.uuidString < rhs.id.uuidString
+        }
         store.update(place)
     }
 }

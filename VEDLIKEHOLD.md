@@ -721,8 +721,9 @@ valgfrie tekster, og eksisterende katalog-/fallbacktester dekker dette.
 **AUTO-144 · FULLFØRT 2026-09-16** — Live Activity-kandidater filtrerer nå
 display-only-regler før start eller videreføring, i tråd med pushplanleggingen.
 
-**AUTO-145 · ÅPEN** — Test at Varslingsregler sorterer aktive regler stabilt
-etter type og opprettet rekkefølge.
+**AUTO-145 · FULLFØRT 2026-09-16** — Regel-sortering har nå UUID som
+deterministisk tie-breaker når type/navn er likt. Varslingsregler beholder
+dermed stabil rekkefølge ved gjentatt sortering.
 
 **AUTO-146 · ÅPEN** — Verifiser at Live Activity-oppdatering ikke skjer for
 foreldet eller slettet regel.
