@@ -58,7 +58,8 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 språkstil: «Dugg!» i bokmål, «Dogg!» i inntrøndersk og «Dew!» på engelsk.
 Test dekker språkvariantene.
 
-**AUTO-167 · ÅPEN** — Kontroller språkstil i Watch-widgetens inline-variant.
+**AUTO-167 · FULLFØRT 2026-09-16** — Inline-widgeten bruker nå samme korte,
+språktilpassede varseltype og relative tid som sirkelen.
 
 **AUTO-168 · ÅPEN** — Test Watch-komplikasjon med manglende forecast.
 

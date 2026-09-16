@@ -179,7 +179,10 @@ struct WatchWeatherWidgetView: View {
     }
 
     private var inlineText: String {
-        if let status { return localized(status.text) }
+        if let status {
+            let label = localized(WeatherGlance.compactEventLabel(for: status, languageStyle: entry.snapshot?.languageStyle ?? .bokmal))
+            return "\(label) \(compactEventTime(status.eventAt))"
+        }
         guard let place = entry.snapshot?.place else {
             return AppCopy.name(languageStyle: entry.snapshot?.languageStyle ?? .bokmal)
         }
