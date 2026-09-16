@@ -705,6 +705,12 @@ Eksisterende cancellation/marker-tester dekker dette.
 **AUTO-140 · ÅPEN** — Kontroller at bakgrunnsrefresh ikke oppdaterer widget
 med foreløpig, ufullstendig timeutvalg.
 
+**AUTO-141 · ÅPEN** — Test at WidgetCenter kun reloades etter gyldig snapshot
+eller eksplisitt tømming.
+
+**AUTO-142 · ÅPEN** — Verifiser at Watch-appen viser siste stednavn etter
+posisjonssynkronisering med samme UUID.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
