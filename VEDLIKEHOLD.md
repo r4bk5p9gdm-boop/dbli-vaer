@@ -544,8 +544,9 @@ samme sted-ID, tidspunkt og værdata også for posisjonssted.
 og lar siste gyldige snapshot stå. Regresjonstest dekker at sted og timeverdier
 ikke blir overskrevet av en mislykket/tom oppdatering.
 
-**AUTO-100 · ÅPEN** — Test at widget-tidslinjen bruker lokal tidssone ved
-midnatt og sommertid uten å flytte første værtime til feil dato.
+**AUTO-100 · FULLFØRT 2026-09-16** — Tidsformatet bruker en eksplisitt lokal
+kalenderkomponent, med regresjonstest for Europe/Oslo ved midnatt og
+vårskiftet til sommertid.
 
 **AUTO-101 · ÅPEN** — Verifiser at Watch-overføring med samme revisjon er
 idempotent og ikke lager doble oppdateringer ved rask bakgrunnsrefresh.

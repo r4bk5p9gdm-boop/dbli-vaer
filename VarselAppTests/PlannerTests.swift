@@ -1845,6 +1845,15 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(SharedWidgetData.load()?.forecast, [hour])
     }
 
+    func testWidgetHourLabelsUseLocalTimeAcrossOsloMidnightAndDST() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let midnight = try XCTUnwrap(calendar.date(from: DateComponents(year: 2026, month: 3, day: 29, hour: 0)))
+        XCTAssertEqual(localHourComponent(midnight, calendar: calendar), 0)
+        let beforeJump = try XCTUnwrap(calendar.date(from: DateComponents(year: 2026, month: 3, day: 29, hour: 1)))
+        XCTAssertEqual(localHourComponent(beforeJump.addingTimeInterval(3_600), calendar: calendar), 3)
+    }
+
     @MainActor
     func testWidgetFallbackRejectsOtherOrMovedPlaces() {
         let place = Place(name: "Klinga", lat: 64, lon: 11)

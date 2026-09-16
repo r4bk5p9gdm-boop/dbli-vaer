@@ -667,7 +667,13 @@ private func forecastEvents(for rule: Rule, hours: [ForecastHour], frostMargin: 
 }
 
 private func hourClock(_ date: Date) -> String {
-    String(format: "%02d", Calendar.current.component(.hour, from: date))
+    String(format: "%02d", localHourComponent(date))
+}
+
+/// Uses the user's current calendar/time zone, so forecast labels do not drift
+/// when a UTC timestamp crosses local midnight or a DST boundary.
+func localHourComponent(_ date: Date, calendar: Calendar = .autoupdatingCurrent) -> Int {
+    calendar.component(.hour, from: date)
 }
 
 func forecastSymbol(_ hour: ForecastHour) -> String {
