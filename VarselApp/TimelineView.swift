@@ -30,7 +30,9 @@ struct ForecastVariantsView: View {
         VStack(spacing: 7) {
             ForEach(days) { day in
                 VStack(alignment: .leading, spacing: 7) {
-                    ForecastDayHeader(day: day)
+                    if !Calendar.current.isDate(day.date, inSameDayAs: weatherDayDate(for: Date())) {
+                        ForecastDayHeader(day: day)
+                    }
                     switch mode {
                     case .timeCards:
                         TimeCardsForecast(day: day, allForecast: forecast, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold)

@@ -54,6 +54,15 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-018 · ÅPEN** — Fjern dobbel tittelrad for dagens tidslinje. Hjemmet
+skal ha én overskrift med «Resten av i dag, [dato]» og Yr-tid, mens neste
+dag(er) beholder egne dagshoder.
+
+**BRUKER-018 · FULLFØRT 2026-09-16** — Dagens interne dagshode skjules nå
+ når hjemmet allerede viser «Resten av i dag» med Yr-tid. I morgen og senere
+ dager beholder egne dagshoder, så tidslinjen får én og bare én tittelrad for
+ i dag.
+
 **BRUKER-016 · ÅPEN** — Når aktuell posisjon treffer et lagret sted, skal
 stedet brukes direkte (uten ekstra posisjonssted) og hjemkortet vise et
 tydelig posisjonsikon på det lagrede stedet.
