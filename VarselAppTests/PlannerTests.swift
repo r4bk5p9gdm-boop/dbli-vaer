@@ -762,6 +762,13 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(status.first?.isNow == true)
     }
 
+    func testSharedWidgetDataSkipsIdenticalEncodedSnapshot() {
+        let data = Data("snapshot".utf8)
+        XCTAssertFalse(SharedWidgetData.shouldWrite(existing: data, new: data))
+        XCTAssertTrue(SharedWidgetData.shouldWrite(existing: nil, new: data))
+        XCTAssertTrue(SharedWidgetData.shouldWrite(existing: Data("old".utf8), new: data))
+    }
+
     func testLiveActivityPolicyStartsNearEventAndContinuesCurrentEvent() {
         let rule = Rule(type: .regn)
         let near = WeatherStatus(

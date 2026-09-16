@@ -77,7 +77,14 @@ tom roterende hjemstatus når det fortsatt finnes en gyldig Nå-status.
  hjem, push og widget ved delvise prognoser.
 
 **AUTO-181 · ÅPEN** — Legg til regresjon for vindkastgrenser ved manglende
- vindkastverdi, slik at vind ikke feilaktig varsles som null.
+vindkastverdi, slik at vind ikke feilaktig varsles som null.
+
+**AUTO-182 · ÅPEN** — Kontroller at widget-refresh ikke oppdaterer tidslinjen
+ når snapshot og delte steder er identiske.
+
+**AUTO-179 · FULLFØRT 2026-09-16** — Delte widgetdata sammenlignes nå med
+ eksisterende bytes før lagring. Identiske snapshot og stedslister skriver
+ ikke UserDefaults på nytt. Test dekker lik, manglende og endret data.
 
 **AUTO-178 · FULLFØRT 2026-09-16** — Statusberegningen beholder en gyldig
  Nå-status også når Yr bare leverer én prognosetime. Ny test dekker kort og

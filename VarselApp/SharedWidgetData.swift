@@ -158,11 +158,16 @@ enum SharedWidgetData {
         UserDefaults(suiteName: appGroup) ?? .standard
     }
 
+    static func shouldWrite(existing: Data?, new: Data) -> Bool {
+        existing != new
+    }
+
     static func save(place: Place, forecast: [ForecastHour], updatedAt: Date = Date(), languageStyle: AlertLanguageStyle? = nil, textSeparator: WeatherTextSeparator? = .current) {
         // Never replace a usable widget snapshot with an empty refresh result.
         guard !forecast.isEmpty else { return }
         let snapshot = WidgetWeatherSnapshot(place: place, forecast: forecast, updatedAt: updatedAt, languageStyle: languageStyle, textSeparator: textSeparator)
         if let data = try? JSONEncoder().encode(snapshot) {
+            guard shouldWrite(existing: defaults.data(forKey: snapshotKey), new: data) else { return }
             defaults.set(data, forKey: snapshotKey)
         }
     }
@@ -182,7 +187,9 @@ enum SharedWidgetData {
             guard result.count < 3, !result.contains(where: { $0.id == place.id }) else { return }
             result.append(WidgetPlaceSummary(id: place.id, name: place.displayName, preposition: place.preposition))
         }
-        if let data = try? JSONEncoder().encode(summaries) { defaults.set(data, forKey: placesKey) }
+        if let data = try? JSONEncoder().encode(summaries), shouldWrite(existing: defaults.data(forKey: placesKey), new: data) {
+            defaults.set(data, forKey: placesKey)
+        }
     }
 
     static func loadSharedPlaces() -> [WidgetPlaceSummary] {
