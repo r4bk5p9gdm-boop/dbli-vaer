@@ -499,8 +499,10 @@ posisjonsforespørsel. Ved manglende tilgang eller feil beholdes siste valgte
 sted, men hjem- og widgetvisning viser ikke falskt at dataene er aktuelle fra
 GPS.
 
-**AUTO-089 · ÅPEN** — Test at gjentatt GPS-forespørsel etter avslag ikke
-endrer valgt sted eller widget-snapshot.
+**AUTO-089 · PÅ VENT 2026-09-16** — Krever fysisk testing av gjentatt
+posisjonstillatelse/avslag for å verifisere CoreLocation-callbacks. Koden er
+idempotent og nullstiller markeringen før hvert forsøk; hoppes over til fysisk
+enhet er tilgjengelig.
 
 **AUTO-090 · ÅPEN** — Kontroller at posisjonsmerket følger valgt sted etter
 app-omstart og ikke lagres som varig stedsegenskap.
