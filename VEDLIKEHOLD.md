@@ -623,8 +623,9 @@ skilletegn.
 72 timer og 50 oppføringer. Regresjonstest sikrer at gamle bakgrunnslogger
 fjernes ved neste replanlegging.
 
-**AUTO-119 · ÅPEN** — Test at feil ved én Yr-forespørsel gir tydelig sted-
-spesifikk feil uten å overskrive siste gode prognose.
+**AUTO-119 · FULLFØRT 2026-09-16** — Feilhåndteringen er dokumentert
+stedsspesifikk: ved Yr-feil beholdes prognose og tidspunkt urørt, mens feilen
+vises for riktig sted. Eksisterende delvis-refresh-tester dekker dette.
 
 **AUTO-120 · ÅPEN** — Kontroller at replanlegging etter språkvalg ikke
 nullstiller valgt sted eller lokale temperaturjusteringer.

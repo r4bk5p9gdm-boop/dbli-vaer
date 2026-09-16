@@ -538,6 +538,8 @@ final class Store: ObservableObject {
                             forecastErrors.removeValue(forKey: place.id)
                         }
                     case .failure(let error):
+                        // Do not touch forecasts or timestamps on failure;
+                        // surface a place-specific error while keeping good data.
                         for place in matchingPlaces {
                             failedNames.append(place.displayName)
                             forecastErrors[place.id] = forecastErrorMessage(for: place, error: error, style: alertLanguageStyle)
