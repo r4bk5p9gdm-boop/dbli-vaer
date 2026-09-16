@@ -130,6 +130,8 @@ struct WatchWeatherWidgetView: View {
                     .foregroundStyle(.secondary)
             }
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(localized(status?.text ?? temperature))
     }
 
     private var temperature: String {

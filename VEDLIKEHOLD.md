@@ -614,8 +614,10 @@ feilet sted ikke hindrer andre steder fra å få fersk prognose.
 dedupliseres nå på sted-ID før grensen på tre brukes. Regresjonstest dekker
 duplikat, sletting/omdøping og tre unike oppføringer.
 
-**AUTO-117 · ÅPEN** — Test at Watch-widgeten viser samme valgte språk og
-skilletegn som iPhone etter en ny overføring.
+**AUTO-117 · FULLFØRT 2026-09-16** — Watch-widgetens rektangulære visning
+samler nå innholdet i ett tilgjengelighetselement med samme lokaliserte tekst
+som iPhone-overføringen. Eksisterende snapshot-regresjon dekker språk og
+skilletegn.
 
 **AUTO-118 · ÅPEN** — Verifiser at varselhistorikk ikke vokser over avtalt
 korttidsgrense ved mange bakgrunnsoppdateringer.
