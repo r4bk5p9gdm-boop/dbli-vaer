@@ -735,6 +735,15 @@ varsel-ID-er og kan redigeres individuelt.
 **AUTO-148 · ÅPEN** — Kontroller at hjemmets valgt sted overlever appens
 bakgrunnsoppstart når posisjon ikke er tilgjengelig.
 
+**AUTO-149 · ÅPEN** — Test at Varslingsregler viser riktig «aktive varsler»-
+antall etter en regel deaktiveres.
+
+**AUTO-150 · ÅPEN** — Verifiser at appens posisjonsmerke ikke blir stående
+etter manuelt stedsskifte fra varselpush.
+
+**AUTO-151 · ÅPEN** — Test at prognosefeil ikke fjerner historikk eller
+kalibreringsdata for samme sted.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
