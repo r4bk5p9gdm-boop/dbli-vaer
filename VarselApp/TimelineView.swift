@@ -38,7 +38,7 @@ struct ForecastVariantsView: View {
                         TimeCardsForecast(day: day, allForecast: forecast, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold)
                     case .weatherBands:
                         SwiftUI.TimelineView(.periodic(from: .now, by: 60)) { timeline in
-                            WeatherBandsForecast(day: day, rules: rules, frostMargin: frostMargin, sunThreshold2: sunThreshold2, now: timeline.date)
+                            WeatherBandsForecast(day: day, rules: rules, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, now: timeline.date)
                         }
                     case .events:
                         WeatherEventsForecast(day: day, rules: rules, frostMargin: frostMargin)
@@ -193,6 +193,8 @@ private struct WeatherBandsForecast: View {
     let rules: [Rule]
     let frostMargin: Double
     let sunThreshold2: Double
+    let temperatureLowThreshold: Double
+    let temperatureHighThreshold: Double
     let now: Date
 
     private let labelWidth: CGFloat = 85
@@ -265,7 +267,7 @@ private struct WeatherBandsForecast: View {
                                 color: type.color,
                                 showsNotification: typeRules.contains(where: { !$0.isDisplayOnly })
                             )
-                            CombinedDayBandTrack(day: day, rules: typeRules, type: type, frostMargin: frostMargin, sunThreshold2: sunThreshold2)
+                            CombinedDayBandTrack(day: day, rules: typeRules, type: type, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold)
                         }
                     }
                 }
@@ -337,11 +339,13 @@ private struct CombinedDayBandTrack: View {
     let type: AlertType
     let frostMargin: Double
     let sunThreshold2: Double
+    let temperatureLowThreshold: Double
+    let temperatureHighThreshold: Double
 
     var body: some View {
         HStack(spacing: 3) {
             ForEach(WeatherBandPeriod.all) { period in
-                CombinedHourBandCell(hours: day.hours, rules: rules, type: type, period: period, frostMargin: frostMargin, sunThreshold2: sunThreshold2)
+                CombinedHourBandCell(hours: day.hours, rules: rules, type: type, period: period, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold)
             }
         }
         .frame(height: 18)
@@ -357,6 +361,8 @@ private struct CombinedHourBandCell: View {
     let period: WeatherBandPeriod
     let frostMargin: Double
     let sunThreshold2: Double
+    let temperatureLowThreshold: Double
+    let temperatureHighThreshold: Double
 
     var body: some View {
         GeometryReader { proxy in
@@ -367,11 +373,14 @@ private struct CombinedHourBandCell: View {
                     let hourNumber = Calendar.current.component(.hour, from: hour.time)
                     let offset = hourOffset(hourNumber, from: period.startHour)
                     let matchesSunPreview = type == .sol && hour.cloud <= sunThreshold2
-                    if offset < 8, matchesSunPreview || rules.contains(where: {
+                    let matchesTemperaturePreview = type == .temperatur && (hour.temp <= temperatureLowThreshold || hour.temp >= temperatureHighThreshold)
+                    if offset < 8, matchesSunPreview || matchesTemperaturePreview || rules.contains(where: {
                         $0.isActive(at: hour.time) && $0.matches(hour, frostMargin: frostMargin)
                     }) {
                         Rectangle()
-                            .fill(type.color.opacity(type == .sol && hour.cloud > sunThreshold2 ? 0.35 : 0.78))
+                            .fill(type == .temperatur && hour.temp >= temperatureHighThreshold
+                                  ? Color.orange.opacity(0.78)
+                                  : type.color.opacity(type == .sol && hour.cloud > sunThreshold2 ? 0.35 : 0.78))
                             .frame(width: proxy.size.width / 8 + 0.5)
                             .offset(x: proxy.size.width * CGFloat(offset) / 8)
                     }

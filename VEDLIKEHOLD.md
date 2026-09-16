@@ -54,6 +54,13 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-032 · ÅPEN** — Temperatur-raden skal markeres når valgt «Temp over»
+grense treffes, ikke bare når «Temp under» treffes.
+
+**BRUKER-032 · FULLFØRT 2026-09-16** — Koblede visningsgrensen for høy
+temperatur inn i værbåndet. Perioder over grensen får nå oransje markering,
+mens lavgrensen og aktive temperaturregler beholder eksisterende markering.
+
 **BRUKER-031 · ÅPEN** — Solens prosentvelgere skal vise at verdien er
 skydekke, for eksempel «20 % skydekke».
 
