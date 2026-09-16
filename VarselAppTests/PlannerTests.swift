@@ -377,6 +377,8 @@ final class PlannerTests: XCTestCase {
         let refreshed = try XCTUnwrap(snapshot.refreshed(with: [hour], at: base.addingTimeInterval(60), requestRevision: revision, currentRevision: revision))
         XCTAssertEqual(refreshed.forecast.first?.temp, 2)
         XCTAssertEqual(refreshed.forecast.first?.yrTemperature, 4)
+        XCTAssertEqual(refreshed.forecast.first?.wind, hour.wind)
+        XCTAssertEqual(refreshed.forecast.first?.precip, hour.precip)
         XCTAssertEqual(refreshed.place.id, place.id)
         XCTAssertEqual(refreshed.updatedAt, base.addingTimeInterval(60))
         let twice = refreshed.refreshed(with: refreshed.forecast, at: base, requestRevision: revision, currentRevision: revision)
