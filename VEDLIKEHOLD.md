@@ -518,8 +518,17 @@ mellom manuelt sted, posisjonssted og favoritt, inkludert reversert retning.
 **AUTO-093 · FULLFØRT 2026-09-16** — Feilmeldingen ved avvist eller manglende
 posisjonstilgang forklarer nå konkret hvilken Innstillinger-sti som må åpnes.
 
-**AUTO-094 · ÅPEN** — Verifiser at widgetens «Posisjon»-navn ikke overskriver
-et brukerdefinert stedsnavn.
+**AUTO-094 · FULLFØRT 2026-09-16** — Snapshot-regresjon bekrefter at
+brukerdefinert stedsnavn beholdes i widget/Watch også for posisjonssted.
+
+**AUTO-095 · ÅPEN** — Kontroller at posisjonsmerket og brukerdefinert navn
+vises konsistent i alle widget-størrelser.
+
+**AUTO-096 · ÅPEN** — Test at nytt posisjonssted ikke fortrenger valgte
+favoritter i hjem-sveiplisten.
+
+**AUTO-097 · ÅPEN** — Gjennomgå tilgjengelighetstekst for posisjonsmerket i
+hjem og widget.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
