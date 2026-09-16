@@ -565,8 +565,9 @@ med samme Yr-presisjon gir én nettverksforespørsel og to mottakere.
 regresjonstesten bekrefter at utløpte forespørsler fjernes, mens fremtidige
 og eksplisitt bevarte varsler blir stående etter replanlegging.
 
-**AUTO-105 · ÅPEN** — Kontroller at språkbytte ikke endrer regel-ID-er eller
-fører til doble varsler ved neste planlegging.
+**AUTO-105 · FULLFØRT 2026-09-16** — Språkbytte-regresjon bekrefter at regel-
+og varsel-ID-er er stabile, mens bokmål og engelsk får ulike titler fra samme
+regel. Dette hindrer doble varsler ved neste planlegging.
 
 **AUTO-106 · ÅPEN** — Test at varselkøens sortering er stabil når to varsler
 har samme tidspunkt, men ulik værtype og alvorlighetsgrad.

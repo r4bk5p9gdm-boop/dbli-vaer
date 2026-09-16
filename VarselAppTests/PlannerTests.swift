@@ -1339,6 +1339,21 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(Set(NotificationScheduler.alertsToSchedule([first, second], now: base).map(\.id)).count, 2)
     }
 
+    func testLanguageChangeDoesNotChangeRuleOrNotificationIdentity() {
+        let rule = Rule(type: .regn)
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let fireAt = base.addingTimeInterval(3_600)
+        let alert = PlannedAlert(rule: rule, placeID: place.id, placeName: place.displayName,
+                                 eventAt: fireAt, fireAt: fireAt, index: 1, total: 1,
+                                 quiet: false, possible: false, eventDetail: nil)
+        XCTAssertEqual(NotificationScheduler.alertsToSchedule([alert], now: base).first?.id, alert.id)
+        XCTAssertEqual(rule.id, alert.rule.id)
+        XCTAssertNotEqual(
+            NotificationCopy.title(for: rule, placeName: "på Klinga", languageStyle: .bokmal),
+            NotificationCopy.title(for: rule, placeName: "på Klinga", languageStyle: .english)
+        )
+    }
+
     @MainActor
     func testNotificationPlanLogReportsActualSchedulingResult() {
         XCTAssertEqual(
