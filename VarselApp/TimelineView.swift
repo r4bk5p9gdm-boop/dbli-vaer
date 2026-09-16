@@ -435,6 +435,7 @@ private struct MoistureHourBandCell: View {
     }
 
     private func fill(for rule: Rule, at hour: ForecastHour) -> Color {
+        // Use the shared AlertType color so row bands match every icon surface.
         let canBePossible = rule.type == .regn || rule.type == .sno
         let opacity = canBePossible && hour.isPossiblePrecipitation(atOrAbove: rule.threshold) ? 0.34 : 0.82
         return rule.type.color.opacity(opacity)

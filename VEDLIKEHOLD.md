@@ -695,8 +695,8 @@ klassifisering i hovedikon og varseltype ved 1,0 °C-sluddgrensen.
 i `nearbyPlaceIDs`; eksisterende regresjonstest viser ingen push når brukeren
 er borte, og én push når stedet er innenfor radius.
 
-**AUTO-138 · ÅPEN** — Verifiser at nedbørsradens farger følger samme
-regn/snø-farge som varselikonene.
+**AUTO-138 · FULLFØRT 2026-09-16** — Nedbørsradens bånd bruker eksplisitt
+AlertType-fargen for regn og snø, med delt fargekilde mot ikonene.
 
 **AUTO-139 · ÅPEN** — Test at posisjonstillatelse som avslås ikke blokkerer
 manuelt sted eller varsler.
