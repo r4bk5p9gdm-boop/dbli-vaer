@@ -345,14 +345,17 @@ får gjennomført arbeid.
 kansellering før hver installasjon, slik at en avbrutt kjøring ikke fortsetter
 å legge inn delvise forespørsler.
 
-**AUTO-052 · ÅPEN** — Kontroller at nettverksfeil logger riktig sted uten å
-endre valgt sted eller varseltekst.
+**AUTO-052 · FULLFØRT 2026-09-16** — Feilhåndteringen bygger meldingen fra
+det aktuelle stedobjektet og lar prognose, valgt sted og eksisterende varsler
+stå urørt. Ved gammel prognose vises dette eksplisitt i meldingen.
 
 **AUTO-053 · ÅPEN** — Verifiser at feil på ett sted ikke hindrer oppdatering
 av øvrige steder i samme refresh.
 
 **AUTO-054 · ÅPEN** — Kontroller at en mislykket stedsforespørsel gir
 feilmelding uten å skjule gyldige varsler fra andre steder.
+
+**AUTO-055 · ÅPEN** — Test at feiltekst følger valgt språkstil ved nettverksfeil.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
