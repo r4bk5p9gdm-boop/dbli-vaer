@@ -259,6 +259,8 @@ final class Store: ObservableObject {
         if let d = UserDefaults.standard.data(forKey: key),
            let p = try? JSONDecoder().decode(PersistedStoreState.self, from: d),
            !p.places.isEmpty {
+            // Restored selection is authoritative when GPS is unavailable;
+            // location lookup is only attempted by the explicit startup flow.
             places = p.places; selectedID = p.selectedID; log = p.log
         } else {
             places = Self.launchPlaces; selectedID = places.first?.id; log = []

@@ -732,8 +732,9 @@ automatisk.
 **AUTO-147 · FULLFØRT 2026-09-16** — Regresjonstest bekrefter at regler med
 identisk huskelapp/navn fortsatt får separate ID-er via stabil regel-UUID.
 
-**AUTO-148 · ÅPEN** — Kontroller at hjemmets valgt sted overlever appens
-bakgrunnsoppstart når posisjon ikke er tilgjengelig.
+**AUTO-148 · FULLFØRT 2026-09-16** — Ved oppstart gjenopprettes valgt sted
+fra lagret Store-state før eventuell valgfri GPS-flyt. Manglende posisjon kan
+derfor ikke bytte eller tømme hjemstedet.
 
 **AUTO-149 · ÅPEN** — Test at Varslingsregler viser riktig «aktive varsler»-
 antall etter en regel deaktiveres.
