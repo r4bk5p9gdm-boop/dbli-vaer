@@ -387,14 +387,18 @@ nettverksfeil blir derfor ikke stående etter manuelt nytt forsøk.
 UUID-/koordinatbaserte, ikke navnebaserte. Regresjonstest dekker to steder
 med identisk visningsnavn og ulike koordinater.
 
-**AUTO-063 · ÅPEN** — Verifiser at sted-ID brukes som nøkkel i feilstatus,
-ikke visningsnavn alene.
+**AUTO-063 · FULLFØRT 2026-09-16** — `forecastErrors` og `forecastUpdatedAt`
+er UUID-nøklene for hvert sted. Samme navn kan derfor ikke overskrive eller
+arve feilstatus fra et annet sted.
 
 **AUTO-064 · ÅPEN** — Test at to steder med samme visningsnavn beholder
 uavhengig prognose og feilstatus.
 
 **AUTO-065 · ÅPEN** — Kontroller at egendefinert stedsnavn ikke endrer
 prognose-ID eller varselrute.
+
+**AUTO-066 · ÅPEN** — Test at egendefinert navn beholdes i widget- og
+varseltekst etter prognoseoppdatering.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
