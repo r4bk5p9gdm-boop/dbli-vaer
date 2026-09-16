@@ -691,8 +691,9 @@ kan derfor ikke lenger få avvikende symbol eller farge.
 **AUTO-136 · FULLFØRT 2026-09-16** — Regresjonstest låser samme regn/snø-
 klassifisering i hovedikon og varseltype ved 1,0 °C-sluddgrensen.
 
-**AUTO-137 · ÅPEN** — Test at varsler med «bare i nærheten» ignoreres når
-stedet ikke er innenfor nærhetsradius.
+**AUTO-137 · FULLFØRT 2026-09-16** — Nærhetsstyrte regler krever stedets ID
+i `nearbyPlaceIDs`; eksisterende regresjonstest viser ingen push når brukeren
+er borte, og én push når stedet er innenfor radius.
 
 **AUTO-138 · ÅPEN** — Verifiser at nedbørsradens farger følger samme
 regn/snø-farge som varselikonene.
