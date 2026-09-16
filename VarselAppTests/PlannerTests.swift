@@ -1410,6 +1410,19 @@ final class PlannerTests: XCTestCase {
         XCTAssertNotEqual(Store.configurationSignature(languageStyle: .bokmal, separator: .dash), Store.configurationSignature(languageStyle: .english, separator: .dash))
     }
 
+    func testSharedWidgetPlacesAreCappedAtThreeUniqueIDs() {
+        let first = Place(name: "Klinga", lat: 64, lon: 11)
+        let second = Place(name: "Namsos", lat: 64.5, lon: 11.5)
+        let third = Place(name: "Selbu", lat: 63.2, lon: 11)
+        let fourth = Place(name: "Bangdalen", lat: 64.2, lon: 12)
+        SharedWidgetData.clear()
+        defer { SharedWidgetData.clear() }
+        SharedWidgetData.saveSharedPlaces([first, first, second, third, fourth])
+        let summaries = SharedWidgetData.loadSharedPlaces()
+        XCTAssertEqual(summaries.count, 3)
+        XCTAssertEqual(Set(summaries.map(\.id)).count, 3)
+    }
+
     @MainActor
     func testNotificationPlanLogReportsActualSchedulingResult() {
         XCTAssertEqual(

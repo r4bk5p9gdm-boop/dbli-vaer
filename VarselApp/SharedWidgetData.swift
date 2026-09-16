@@ -152,7 +152,10 @@ enum SharedWidgetData {
     }
 
     static func saveSharedPlaces(_ places: [Place]) {
-        let summaries = places.prefix(3).map { WidgetPlaceSummary(id: $0.id, name: $0.displayName, preposition: $0.preposition) }
+        let summaries = places.reduce(into: [WidgetPlaceSummary]()) { result, place in
+            guard result.count < 3, !result.contains(where: { $0.id == place.id }) else { return }
+            result.append(WidgetPlaceSummary(id: place.id, name: place.displayName, preposition: place.preposition))
+        }
         if let data = try? JSONEncoder().encode(summaries) { defaults.set(data, forKey: placesKey) }
     }
 

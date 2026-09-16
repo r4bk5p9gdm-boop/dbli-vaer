@@ -610,8 +610,9 @@ begge tilfellene.
 koordinatgruppe uavhengig; eksisterende delvis-suksess-test bekrefter at ett
 feilet sted ikke hindrer andre steder fra å få fersk prognose.
 
-**AUTO-116 · ÅPEN** — Kontroller at widgetens delte stedsrekkefølge begrenses
-til tre unike steder også etter sletting og omdøping.
+**AUTO-116 · FULLFØRT 2026-09-16** — Widgetens delte stedsrekkefølge
+dedupliseres nå på sted-ID før grensen på tre brukes. Regresjonstest dekker
+duplikat, sletting/omdøping og tre unike oppføringer.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
