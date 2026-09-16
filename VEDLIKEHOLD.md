@@ -668,8 +668,9 @@ at display-only-regler kan vises i rader, men aldri blir aktive pushvarsler.
 kalenderdato og veggklokke, ikke elapsed timer. Eksisterende Europe/Oslo-
 tester dekker sommertidsskift og kveldsvarsling.
 
-**AUTO-131 · ÅPEN** — Verifiser at feil i widget-lagring ikke stopper
-replanlegging eller Watch-overføring.
+**AUTO-131 · FULLFØRT 2026-09-16** — Widget-skriving er en separat
+best-effort-del av `replan`; planlegging og Watch-overføring ligger etter
+snapshot-vakten og påvirkes ikke av tom/ugyldig widgetdata.
 
 **AUTO-132 · ÅPEN** — Test at hjemsveip med manglende favoritt-ID faller
 tilbake uten duplikat- eller hoppeside.

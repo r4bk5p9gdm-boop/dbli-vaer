@@ -720,6 +720,8 @@ final class Store: ObservableObject {
             WidgetCenter.shared.reloadAllTimelines()
             return
         }
+        // Widget persistence is best-effort; the caller continues with
+        // Watch sync and notification planning regardless of storage outcome.
         SharedWidgetData.save(
             place: snapshot.place, forecast: snapshot.forecast, updatedAt: snapshot.updatedAt,
             languageStyle: alertLanguageStyle, textSeparator: WeatherTextSeparator.current
