@@ -127,17 +127,17 @@ private struct ForecastDayHeader: View {
         let calendar = Calendar.current
         let dayNumber = calendar.component(.day, from: date)
         let monthNames = ["", "jan", "feb", "mars", "apr", "mai", "juni", "juli", "aug", "sept", "okt", "nov", "des"]
-        let dateText = "(dayNumber). (monthNames[calendar.component(.month, from: date)])"
+        let dateText = "\(dayNumber). \(monthNames[calendar.component(.month, from: date)])"
         if calendar.isDate(date, inSameDayAs: today) {
             let value = weekdayLabel(date)
             let weekday = value.prefix(1).uppercased() + value.dropFirst()
-            return "Resten av i dag, (weekday) (dateText)"
+            return "Resten av i dag, \(weekday) \(dateText)"
         }
         if let tomorrow = calendar.date(byAdding: .day, value: 1, to: today),
-           calendar.isDate(date, inSameDayAs: tomorrow) { return "I morgen, (dateText)" }
+           calendar.isDate(date, inSameDayAs: tomorrow) { return "I morgen, \(dateText)" }
         let value = weekdayLabel(date)
         let weekday = value.prefix(1).uppercased() + value.dropFirst()
-        return "(weekday) (dateText)"
+        return "\(weekday) \(dateText)"
     }
 }
 

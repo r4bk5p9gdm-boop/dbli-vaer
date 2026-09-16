@@ -54,6 +54,13 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-028 · ÅPEN** — Rett literal placeholdertekst i dagshodene slik at
+«I morgen» ikke viser «(Datetext)» eller andre kodeuttrykk.
+
+**BRUKER-028 · FULLFØRT 2026-09-16** — Rettet manglende Swift-
+interpolering i dag/dato-tekstene. Dag, dato og ukedag vises nå som faktiske
+verdier i stedet for «(dayNumber)», «(weekday)» eller «(dateText)».
+
 **BRUKER-027 · ÅPEN** — Posisjonsmarkøren skal høre til stedsnavnet og stå
 rett foran det. GPS-stedet skal bruke samme lilla/indigo tekstfarge.
 
