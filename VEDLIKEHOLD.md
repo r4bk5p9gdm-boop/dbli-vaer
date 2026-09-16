@@ -714,6 +714,15 @@ Tom refresh lagres ikke og utløser ingen egen reload.
 med stabil UUID i snapshoten; siste posisjons-/brukernavn vises derfor etter
 synkronisering. Eksisterende navnetester dekker dette.
 
+**AUTO-143 · ÅPEN** — Test at språkfilen valideres ved oppstart uten å blokkere
+seed-steder hvis en valgfri tekst mangler.
+
+**AUTO-144 · ÅPEN** — Verifiser at Live Activity ikke starter for en display-
+only-regel.
+
+**AUTO-145 · ÅPEN** — Test at Varslingsregler sorterer aktive regler stabilt
+etter type og opprettet rekkefølge.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
