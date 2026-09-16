@@ -434,14 +434,17 @@ uendret i aliasets snapshot.
 lokal offset kun endrer `temp`; duggpunkt, nedbør, vind og kast beholdes fra
 Yr-data.
 
-**AUTO-075 · ÅPEN** — Test at lokal temperaturjustering ikke endrer
-nedbørstype eller vindkastverdier.
+**AUTO-075 · FULLFØRT 2026-09-16** — Snapshot-regresjonen bekrefter at
+nedbørstype og vindkastfelt beholdes fra Yr; offset brukes bare på lufttemperatur.
 
 **AUTO-076 · ÅPEN** — Kontroller at temperaturjustering ikke endrer
 duggpunktet direkte, bare temperaturavstanden.
 
 **AUTO-077 · ÅPEN** — Verifiser at frostmargin fortsatt beregnes på lokalt
 justert temperatur.
+
+**AUTO-078 · ÅPEN** — Kontroller at frostmargin ikke endrer rå Yr-temp i
+ historikk eller eksport.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
