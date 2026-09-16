@@ -569,8 +569,9 @@ og eksplisitt bevarte varsler blir stående etter replanlegging.
 og varsel-ID-er er stabile, mens bokmål og engelsk får ulike titler fra samme
 regel. Dette hindrer doble varsler ved neste planlegging.
 
-**AUTO-106 · ÅPEN** — Test at varselkøens sortering er stabil når to varsler
-har samme tidspunkt, men ulik værtype og alvorlighetsgrad.
+**AUTO-106 · FULLFØRT 2026-09-16** — Regresjonstest låser varselkøens
+tie-breaker: ved likt tidspunkt prioriteres frost/snø foran vind og regn,
+slik at 64-grensen gir samme resultat hver gang.
 
 **AUTO-107 · ÅPEN** — Kontroller at språkfilens fallback ved manglende tekst
 ikke produserer tom push-tittel eller tom værtype.

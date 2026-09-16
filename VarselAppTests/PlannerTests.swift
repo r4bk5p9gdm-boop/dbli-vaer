@@ -1354,6 +1354,17 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testNotificationQueueSortsEqualTimesByWeatherSeverity() {
+        let fireAt = base.addingTimeInterval(3_600)
+        let rain = PlannedAlert(rule: Rule(type: .regn), placeID: UUID(), placeName: "Klinga",
+                                eventAt: fireAt, fireAt: fireAt, index: 1, total: 1,
+                                quiet: false, possible: false, eventDetail: nil)
+        let frost = PlannedAlert(rule: Rule(type: .frost), placeID: UUID(), placeName: "Namsos",
+                                 eventAt: fireAt, fireAt: fireAt, index: 1, total: 1,
+                                 quiet: false, possible: false, eventDetail: nil)
+        XCTAssertEqual(NotificationScheduler.alertsToSchedule([rain, frost], now: base, limit: 1).first?.rule.type, .frost)
+    }
+
     @MainActor
     func testNotificationPlanLogReportsActualSchedulingResult() {
         XCTAssertEqual(
