@@ -437,14 +437,18 @@ Yr-data.
 **AUTO-075 · FULLFØRT 2026-09-16** — Snapshot-regresjonen bekrefter at
 nedbørstype og vindkastfelt beholdes fra Yr; offset brukes bare på lufttemperatur.
 
-**AUTO-076 · ÅPEN** — Kontroller at temperaturjustering ikke endrer
-duggpunktet direkte, bare temperaturavstanden.
+**AUTO-076 · FULLFØRT 2026-09-16** — Watch-synkroniseringstesten bekrefter
+at `dew` står uendret ved lokal temperaturjustering; bare temperaturavstanden
+mot duggpunktet påvirkes.
 
 **AUTO-077 · ÅPEN** — Verifiser at frostmargin fortsatt beregnes på lokalt
 justert temperatur.
 
 **AUTO-078 · ÅPEN** — Kontroller at frostmargin ikke endrer rå Yr-temp i
  historikk eller eksport.
+
+**AUTO-079 · ÅPEN** — Verifiser at duggpunktjustering ikke muterer rå
+prognoseverdier i lagret snapshot.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
