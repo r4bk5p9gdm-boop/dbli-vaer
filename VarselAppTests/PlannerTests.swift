@@ -1819,6 +1819,22 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testWidgetFreshAndFallbackUseSamePlaceIdentityForPositionSelection() throws {
+        let position = Place(name: "Min posisjon", lat: 64.4, lon: 11.5)
+        let hours = forecast(values: [(11, 0, 1, 20, 6)])
+        let fresh = try XCTUnwrap(Store.widgetSnapshot(
+            place: position, forecast: hours, updatedAt: base, cached: nil
+        ))
+        let cached = WidgetWeatherSnapshot(place: position, forecast: hours, updatedAt: base)
+        let fallback = try XCTUnwrap(Store.widgetSnapshot(
+            place: position, forecast: [], updatedAt: nil, cached: cached
+        ))
+        XCTAssertEqual(fresh.place.id, fallback.place.id)
+        XCTAssertEqual(fresh.updatedAt, fallback.updatedAt)
+        XCTAssertEqual(fresh.forecast, fallback.forecast)
+    }
+
+    @MainActor
     func testWidgetFallbackRejectsOtherOrMovedPlaces() {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let cached = WidgetWeatherSnapshot(place: place, forecast: forecast(values: [(10, 0, 1, 10, 5)]), updatedAt: base)

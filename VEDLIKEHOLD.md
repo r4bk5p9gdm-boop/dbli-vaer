@@ -536,8 +536,9 @@ tilgjengelighetshjelp som forklarer at stedet følger telefonens aktuelle
 posisjon. Widget/Watch har fortsatt ikke et eget posisjonsfelt i snapshot,
 så synlig GPS-merking der er beholdt som godkjenningspunkt AUTO-095.
 
-**AUTO-098 · ÅPEN** — Verifiser at valgt hjemsted og posisjonssted bruker samme
-ferskhets- og fallbackregel i widget-snapshot etter bakgrunnsoppdatering.
+**AUTO-098 · FULLFØRT 2026-09-16** — Widget-snapshot har nå en regresjonstest
+som bekrefter at fersk prognose og fallback etter bakgrunnsoppdatering bruker
+samme sted-ID, tidspunkt og værdata også for posisjonssted.
 
 **AUTO-099 · ÅPEN** — Legg til regresjonstest for at en tom widget-snapshot
 ikke overskriver siste gyldige sted ved omstart.
