@@ -684,8 +684,9 @@ nytt posisjonssted og alias med samme koordinater.
 kjøring og kansellering av foreldede ventere. Eksisterende tre-kjørings- og
 reentrancy-tester sikrer at nyeste resultat blir stående.
 
-**AUTO-135 · ÅPEN** — Test at værikon og varseltype fortsatt bruker samme
-felles fargemodell for solgløtt og skyer.
+**AUTO-135 · FULLFØRT 2026-09-16** — Hjemmets sky-/solrad bruker nå samme
+CurrentWeatherCondition-ikon og farge som hovedikonet. Solgløtt og overskyet
+kan derfor ikke lenger få avvikende symbol eller farge.
 
 **AUTO-136 · ÅPEN** — Verifiser at appens hovedikon og live-status bruker
 samme nedbørstype ved sluddgrensen.
