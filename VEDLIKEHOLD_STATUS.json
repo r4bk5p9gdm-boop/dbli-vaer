@@ -2,6 +2,6 @@
   "continue": true,
   "lastScheduledStart": "2026-09-13T05:15:12.787Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-091 fullført: manuelle varslingslenker nullstiller GPS-merke via eksplisitt valgsti, med regresjonstest. AUTO-092–094 gjenstår; AUTO-089 står PÅ VENT.",
+  "lastProgress": "AUTO-092 fullført: sveip mellom manuelt sted, GPS-sted og favoritt kan reverseres stabilt, med regresjonstest. AUTO-093–094 gjenstår; AUTO-089 står PÅ VENT.",
   "stopReason": "AUTO-modus aktiv: blokkerte brukeroppgaver hoppes over, og arbeidet fortsetter på neste ublokkerte oppgave."
 }

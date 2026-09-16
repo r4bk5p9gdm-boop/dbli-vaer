@@ -512,8 +512,8 @@ store-serialiseringen. Etter omstart må GPS-oppslag derfor lykkes på nytt.
 samme eksplisitte manuelle valgsti som resten av appen. Regresjonstest viser
 at et manuelt valg alltid fjerner GPS-merket.
 
-**AUTO-092 · ÅPEN** — Test at valgt manuelt sted og GPS-sted kan byttes flere
-ganger uten å miste riktig overgangsretning i hjemvisningen.
+**AUTO-092 · FULLFØRT 2026-09-16** — Sveipregresjonen dekker nå gjentatt bytte
+mellom manuelt sted, posisjonssted og favoritt, inkludert reversert retning.
 
 **AUTO-093 · ÅPEN** — Kontroller at avvist posisjonstilgang gir tydelig,
 handlingsrettet tekst i oppstartsveiviseren.

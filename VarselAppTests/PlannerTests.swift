@@ -52,6 +52,25 @@ final class PlannerTests: XCTestCase {
         ), 0)
     }
 
+    func testHomeSwipeCanReverseBetweenManualAndPositionPlaces() {
+        let manual = UUID(), position = UUID(), favorite = UUID()
+        let pages = [manual, position, favorite]
+
+        let toFavorite = HomeSwipeSelection.nextIndex(
+            currentID: position,
+            placeIDs: pages,
+            horizontalTranslation: -120,
+            verticalTranslation: 0
+        )
+        XCTAssertEqual(toFavorite, 2)
+        XCTAssertEqual(HomeSwipeSelection.nextIndex(
+            currentID: pages[toFavorite!],
+            placeIDs: pages,
+            horizontalTranslation: 120,
+            verticalTranslation: 0
+        ), 1)
+    }
+
     func testWeatherGlanceDropsStaleNowStatusAndKeepsOnePerType() {
         let stale = WeatherStatus(ruleID: UUID(), type: .regn, text: "Regn nå.", eventAt: base.addingTimeInterval(-2 * 3_600), isNow: true)
         let current = WeatherStatus(ruleID: UUID(), type: .regn, text: "Regn nå.", eventAt: base.addingTimeInterval(-10 * 60), isNow: true)
