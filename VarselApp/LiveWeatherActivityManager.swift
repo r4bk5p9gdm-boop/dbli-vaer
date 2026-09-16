@@ -181,7 +181,7 @@ enum LiveWeatherActivityManager {
         now: Date,
         isEligible: (WeatherStatus, Date) -> Bool
     ) -> Candidate? {
-        guard rule.enabled,
+        guard rule.enabled, !rule.isDisplayOnly,
               rule.type == .regn || rule.type == .sno,
               !rule.onlyWhenNearby || nearbyPlaceIDs.contains(place.id),
               let forecast,

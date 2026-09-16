@@ -718,8 +718,8 @@ synkronisering. Eksisterende navnetester dekker dette.
 fallback ved manglende/ugyldig Sprak.json. Seed-steder lastes uavhengig av
 valgfrie tekster, og eksisterende katalog-/fallbacktester dekker dette.
 
-**AUTO-144 · ÅPEN** — Verifiser at Live Activity ikke starter for en display-
-only-regel.
+**AUTO-144 · FULLFØRT 2026-09-16** — Live Activity-kandidater filtrerer nå
+display-only-regler før start eller videreføring, i tråd med pushplanleggingen.
 
 **AUTO-145 · ÅPEN** — Test at Varslingsregler sorterer aktive regler stabilt
 etter type og opprettet rekkefølge.
