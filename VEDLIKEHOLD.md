@@ -364,14 +364,18 @@ for engelsk og norsk tekst, inkludert nettverk, timeout og dekodingsfeil.
 `lastUpdate` når minst ett sted lykkes, mens `forecastErrors` bare fjernes
 for stedene som faktisk fikk ny prognose. Feilstatus for andre steder beholdes.
 
-**AUTO-057 · ÅPEN** — Verifiser at siste oppdateringstidspunkt ikke endres
-ved total nettverksfeil.
+**AUTO-057 · FULLFØRT 2026-09-16** — `shouldFinalizeRefresh`-regresjonen
+bekrefter at total feil ikke går videre til `lastUpdate` eller replanlegging;
+siste vellykkede tidspunkt blir stående.
 
 **AUTO-058 · ÅPEN** — Kontroller at lokaliserte feiltekster ikke mister
 stedsnavn eller instruksjon om ny oppdatering.
 
 **AUTO-059 · ÅPEN** — Test at feilstatus ryddes når samme sted senere får
 en gyldig prognose.
+
+**AUTO-060 · ÅPEN** — Kontroller at siste oppdateringstidspunkt bruker
+samme klokkegrunnlag ved manuell og bakgrunnsrefresh.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
