@@ -54,6 +54,13 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-030 · ÅPEN** — Fjern literal «(title)» fra hjemmets dagshode og
+tilgjengelighetstekst.
+
+**BRUKER-030 · FULLFØRT 2026-09-16** — Rettet to manglende Swift-
+interpoleringer: dagshodet viser faktisk dato, og bjellens VoiceOver-tekst
+viser faktisk værtype.
+
 **BRUKER-029 · ÅPEN** — GPS-sted utenfor favorittene skal ligge til venstre.
 Treffer GPS et lagret favorittsted, skal favorittnavnet brukes med
 posisjonsfarge. Stram også inn luft mellom dagshode og klokkeslett.

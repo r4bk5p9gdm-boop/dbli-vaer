@@ -322,7 +322,7 @@ private struct WeatherBandLabel: View {
                     .foregroundStyle(.white)
                     .frame(width: 14, height: 14)
                     .background(Circle().fill(Color.orange))
-                    .accessibilityLabel("Pushvarsel aktivert for (title)")
+                    .accessibilityLabel("Pushvarsel aktivert for \(title)")
             }
         }
         .font(.caption)

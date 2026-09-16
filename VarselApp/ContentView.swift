@@ -139,7 +139,7 @@ struct HomeView: View {
         formatter.locale = Locale(identifier: "nb_NO")
         formatter.dateFormat = "EEEE d. MMM"
         let title = formatter.string(from: Date())
-        return "Resten av i dag, (title)"
+        return "Resten av i dag, \(title)"
     }
 
     private var swipePlaces: [Place] {
