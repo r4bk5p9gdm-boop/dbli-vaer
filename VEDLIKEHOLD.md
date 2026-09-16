@@ -531,8 +531,10 @@ nytt GPS-sted blir dermed midtpunkt uten å fortrenge de valgte favorittene.
 Regresjonstest dekker både tre ulike steder og overlappende favoritt/aktuelt
 sted. Ingen tung simulator ble startet i denne økten.
 
-**AUTO-097 · ÅPEN** — Gjennomgå tilgjengelighetstekst for posisjonsmerket i
-hjem og widget.
+**AUTO-097 · FULLFØRT 2026-09-16** — Posisjonsmerket på hjem har nå en
+tilgjengelighetshjelp som forklarer at stedet følger telefonens aktuelle
+posisjon. Widget/Watch har fortsatt ikke et eget posisjonsfelt i snapshot,
+så synlig GPS-merking der er beholdt som godkjenningspunkt AUTO-095.
 
 **AUTO-098 · ÅPEN** — Verifiser at valgt hjemsted og posisjonssted bruker samme
 ferskhets- og fallbackregel i widget-snapshot etter bakgrunnsoppdatering.

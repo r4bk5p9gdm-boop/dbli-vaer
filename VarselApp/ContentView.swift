@@ -320,6 +320,7 @@ private struct CurrentWeatherCard: View {
                         .labelStyle(.titleAndIcon)
                         .fixedSize()
                         .accessibilityLabel("Posisjonsbasert værvarsel")
+                        .accessibilityHint("Dette stedet følger telefonens aktuelle posisjon.")
                 }
 
                 HStack(spacing: 4) {

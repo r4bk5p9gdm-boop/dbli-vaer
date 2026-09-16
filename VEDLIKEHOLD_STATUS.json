@@ -2,6 +2,6 @@
   "continue": true,
   "lastScheduledStart": "2026-09-13T05:15:12.787Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-096 fullført: hjem-sveiplisten bruker sentral deduplisert venstre–aktuelt–høyre-rekkefølge, slik at GPS-sted ikke fortrenger favoritter. Regresjonstest lagt til.",
+  "lastProgress": "AUTO-097 fullført: posisjonsmerket på hjem har tilgjengelighetshjelp som forklarer GPS-opphav; widget/Watch-formatet er uendret og synlig formatendring står på vent.",
   "stopReason": "AUTO-modus aktiv: blokkerte brukeroppgaver hoppes over, og arbeidet fortsetter på neste ublokkerte oppgave."
 }
