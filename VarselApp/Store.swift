@@ -377,22 +377,19 @@ final class Store: ObservableObject {
         }
         if let nearest,
            CLLocation(latitude: nearest.lat, longitude: nearest.lon).distance(from: location) <= 15_000 {
-            selectedID = nearest.id
-            selectionIsCurrentLocation = true
+            select(nearest, fromCurrentLocation: true)
             return
         }
         let name = await LocationManager.name(for: location)
         if let existing = places.first(where: {
             $0.name.compare(name, options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame
         }) {
-            selectedID = existing.id
-            selectionIsCurrentLocation = true
+            select(existing, fromCurrentLocation: true)
             return
         }
         let place = Place(name: name, lat: location.coordinate.latitude, lon: location.coordinate.longitude, preposition: .pa)
         places.append(place)
-        selectedID = place.id
-        selectionIsCurrentLocation = true
+        select(place, fromCurrentLocation: true)
     }
 
     func update(_ place: Place) {
@@ -615,9 +612,9 @@ final class Store: ObservableObject {
         return "Varslingsplan oppdatert – \(result.scheduledCount) varsler planlagt\(first)."
     }
 
-    func select(_ place: Place) {
+    func select(_ place: Place, fromCurrentLocation: Bool = false) {
         selectedID = place.id
-        selectionIsCurrentLocation = false
+        selectionIsCurrentLocation = fromCurrentLocation
         updateWidget()
     }
 

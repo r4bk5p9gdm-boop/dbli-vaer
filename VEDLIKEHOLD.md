@@ -508,8 +508,9 @@ enhet er tilgjengelig.
 posisjonsmerket er runtime-tilstand og ikke finnes i den vedvarende
 store-serialiseringen. Etter omstart må GPS-oppslag derfor lykkes på nytt.
 
-**AUTO-091 · ÅPEN** — Verifiser at varslingslenke til manuelt sted ikke
-aktiverer GPS-merket etter appstart.
+**AUTO-091 · FULLFØRT 2026-09-16** — Stedsvalg fra varslingslenke bruker nå
+samme eksplisitte manuelle valgsti som resten av appen. Regresjonstest viser
+at et manuelt valg alltid fjerner GPS-merket.
 
 **AUTO-092 · ÅPEN** — Test at valgt manuelt sted og GPS-sted kan byttes flere
 ganger uten å miste riktig overgangsretning i hjemvisningen.

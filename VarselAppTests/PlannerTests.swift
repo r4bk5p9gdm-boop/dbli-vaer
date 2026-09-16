@@ -114,6 +114,20 @@ final class PlannerTests: XCTestCase {
         XCTAssertNil(object["selectionIsCurrentLocation"])
     }
 
+    @MainActor
+    func testManualNotificationSelectionClearsCurrentLocationBadge() {
+        let store = Store.shared
+        guard let first = store.places.first else { return }
+        let second = store.places.dropFirst().first ?? first
+        let original = store.selectedID
+        defer { store.selectedID = original }
+
+        store.select(first, fromCurrentLocation: true)
+        XCTAssertTrue(store.selectionIsCurrentLocation)
+        store.select(second)
+        XCTAssertFalse(store.selectionIsCurrentLocation)
+    }
+
     func testPlacePersistsSecondSunDisplayThreshold() throws {
         var place = Place(name: "Selbu", lat: 63, lon: 11)
         place.displaySunThreshold = 10
