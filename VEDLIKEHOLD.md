@@ -473,8 +473,9 @@ sidebytte. Regresjonstest dekker begge retninger og yttergrensene.
 generiske iOS-/watchOS-mål kan fortsatt kompileres uten simulator, mens
 runtime-/UI-test utsettes til en konkret simulator er tilgjengelig.
 
-**AUTO-083 · ÅPEN** — Kontroller at generisk iOS-bygg velger samme
-deployment-target som Xcode-prosjektet uten simulator-runtime.
+**AUTO-083 · FULLFØRT 2026-09-16** — `verify_targets.sh` leser nå det
+effektive iOS-deployment-targetet fra samme scheme før generisk bygg. Dermed
+oppdages manglende eller feil target tidlig, uten å starte CoreSimulator.
 
 **AUTO-084 · ÅPEN** — Legg regresjonstest for tom prognose etter stedssveip,
 slik at forrige stedsdata ikke vises på ny side.

@@ -20,6 +20,17 @@ fi
 developer_dir="${DEVELOPER_DIR:-/Applications/Xcode-27.app/Contents/Developer}"
 derived_data="${DERIVED_DATA_PATH:-.build/VerifyTargets}"
 
+# Keep the generic fallback honest: a simulator-free build is only useful when
+# the app target still resolves to the project's supported iOS deployment.
+ios_target="$(DEVELOPER_DIR="$developer_dir" xcodebuild -project VarselApp.xcodeproj \
+  -scheme VarselApp -showBuildSettings 2>/dev/null \
+  | awk -F ' = ' '/^[[:space:]]*IPHONEOS_DEPLOYMENT_TARGET = / { print $2; exit }')"
+if [[ -z "$ios_target" ]]; then
+  echo "Fant ikke iOS deployment target; avbryter byggkontrollen." >&2
+  exit 3
+fi
+echo "iOS deployment target: $ios_target"
+
 for scheme in VarselApp DbliVaerWidget; do
   DEVELOPER_DIR="$developer_dir" xcodebuild \
     -project VarselApp.xcodeproj -scheme "$scheme" \
