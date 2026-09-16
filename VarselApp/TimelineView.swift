@@ -224,18 +224,23 @@ private struct WeatherBandsForecast: View {
     var body: some View {
         ZStack(alignment: .topLeading) {
             VStack(spacing: 6) {
-                HStack {
-                    Color.clear.frame(width: 78, height: 1)
-                    HStack(spacing: 3) {
-                        ForEach(WeatherBandPeriod.all) { period in
+                GeometryReader { proxy in
+                    let labelWidth: CGFloat = 78
+                    let trackWidth = max(0, proxy.size.width - labelWidth)
+                    ZStack(alignment: .topLeading) {
+                        ForEach(Array(WeatherBandPeriod.all.enumerated()), id: \.element.id) { index, period in
                             Text(String(format: "%02d", period.startHour))
-                            .frame(maxWidth: .infinity)
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                                .frame(width: 24)
+                                .position(
+                                    x: labelWidth + trackWidth * CGFloat(index) / 3,
+                                    y: 6
+                                )
                         }
                     }
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
                 }
-                Color.clear.frame(height: 7)
+                .frame(height: 14)
 
                 if rules.isEmpty {
                     Text("Ingen varsler er aktivert.")
