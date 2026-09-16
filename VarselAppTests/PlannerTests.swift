@@ -2505,6 +2505,16 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(Rule.filtered([rain], by: nil).count, 1)
     }
 
+    func testWatchNextEventsOrderIsStableForEqualTimes() {
+        let firstID = UUID(uuidString: "00000000-0000-0000-0000-000000000001")!
+        let secondID = UUID(uuidString: "00000000-0000-0000-0000-000000000002")!
+        let rain = WeatherStatus(ruleID: firstID, type: .regn, text: "Regn", eventAt: base.addingTimeInterval(3600), isNow: false)
+        let wind = WeatherStatus(ruleID: secondID, type: .vind, text: "Vind", eventAt: base.addingTimeInterval(3600), isNow: false)
+        let expected = [wind, rain].map(\.ruleID)
+        XCTAssertEqual(WeatherGlance.nextEvents([rain, wind], now: base).map(\.ruleID), expected)
+        XCTAssertEqual(WeatherGlance.nextEvents([wind, rain], now: base).map(\.ruleID), expected)
+    }
+
     func testBackgroundRefreshSchedulesNextAttemptAfterThirtyMinutes() {
         XCTAssertEqual(
             BackgroundRefresh.earliestBeginDate(now: base),

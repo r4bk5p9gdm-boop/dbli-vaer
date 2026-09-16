@@ -62,7 +62,8 @@ større navigasjonsendring og implementeres først etter godkjenning.
 **AUTO-163 · FULLFØRT 2026-09-16** — Watch-widgeten lager nå én fallback-
 oppføring når snapshot mangler, i stedet for ni identiske tomme tidslinjeposter.
 
-**AUTO-164 · ÅPEN** — Legg inn test for stabil rekkefølge i Watch-eventer.
+**AUTO-164 · FULLFØRT 2026-09-16** — Watch-hendelser har regresjonstest for
+stabil UUID-basert rekkefølge når tidene er like, uavhengig av inputrekkefølge.
 
 **AUTO-165 · ÅPEN** — Kontroller at pushfilteret nullstilles ved stedsskifte.
 
