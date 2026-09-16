@@ -2502,6 +2502,15 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(place.enabledRuleCount, 1)
     }
 
+    func testHomeSwipeOrderRemovesDuplicateCurrentFavorite() {
+        let current = UUID(uuidString: "00000000-0000-0000-0000-000000000001")!
+        let favorite = UUID(uuidString: "00000000-0000-0000-0000-000000000002")!
+        XCTAssertEqual(
+            HomeSwipeSelection.orderedIDs(leftID: current, currentID: current, rightID: favorite),
+            [current, favorite]
+        )
+    }
+
     func testRuleFilterReturnsEmptyForTypeWithoutRules() {
         let rain = Rule(type: .regn)
         XCTAssertTrue(Rule.filtered([rain], by: .sno).isEmpty)

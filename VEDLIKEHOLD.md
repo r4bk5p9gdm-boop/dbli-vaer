@@ -54,6 +54,16 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-169 · FULLFØRT 2026-09-16** — Hjemmets swipe-policy har nå eksplisitt
+regresjonstest for at nåværende posisjon som også er favoritt bare vises én
+gang i rekkefølgen.
+
+**AUTO-170 · ÅPEN** — Kontroller posisjonsstil ved manglende GPS-data.
+
+**AUTO-171 · ÅPEN** — Test favorittrekkefølge etter sletting av sted.
+
+**AUTO-172 · ÅPEN** — Kontroller at swipe-hjelp ikke vises med ett sted.
+
 **AUTO-166 · FULLFØRT 2026-09-16** — Korte Watch-varseltekster følger nå
 språkstil: «Dugg!» i bokmål, «Dogg!» i inntrøndersk og «Dew!» på engelsk.
 Test dekker språkvariantene.
