@@ -748,14 +748,18 @@ final class Store: ObservableObject {
         }
         // Widget persistence is best-effort; the caller continues with
         // Watch sync and notification planning regardless of storage outcome.
-        SharedWidgetData.save(
+        let snapshotChanged = SharedWidgetData.save(
             place: snapshot.place, forecast: snapshot.forecast, updatedAt: snapshot.updatedAt,
             languageStyle: alertLanguageStyle, textSeparator: WeatherTextSeparator.current
         )
         let sharedPlaces = resolvedSharedPlaceIDs.compactMap { id in places.first { $0.id == id } }
-        SharedWidgetData.saveSharedPlaces(sharedPlaces)
-        WatchSyncManager.shared.send(place: snapshot.place, forecast: snapshot.forecast, updatedAt: snapshot.updatedAt, languageStyle: alertLanguageStyle, textSeparator: WeatherTextSeparator.current)
-        WidgetCenter.shared.reloadAllTimelines()
+        let sharedPlacesChanged = SharedWidgetData.saveSharedPlaces(sharedPlaces)
+        if snapshotChanged {
+            WatchSyncManager.shared.send(place: snapshot.place, forecast: snapshot.forecast, updatedAt: snapshot.updatedAt, languageStyle: alertLanguageStyle, textSeparator: WeatherTextSeparator.current)
+        }
+        if snapshotChanged || sharedPlacesChanged {
+            WidgetCenter.shared.reloadAllTimelines()
+        }
     }
 
     private func forecastErrorMessage(for place: Place, error: Error, style: AlertLanguageStyle) -> String {

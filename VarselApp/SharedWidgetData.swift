@@ -162,14 +162,17 @@ enum SharedWidgetData {
         existing != new
     }
 
-    static func save(place: Place, forecast: [ForecastHour], updatedAt: Date = Date(), languageStyle: AlertLanguageStyle? = nil, textSeparator: WeatherTextSeparator? = .current) {
+    @discardableResult
+    static func save(place: Place, forecast: [ForecastHour], updatedAt: Date = Date(), languageStyle: AlertLanguageStyle? = nil, textSeparator: WeatherTextSeparator? = .current) -> Bool {
         // Never replace a usable widget snapshot with an empty refresh result.
-        guard !forecast.isEmpty else { return }
+        guard !forecast.isEmpty else { return false }
         let snapshot = WidgetWeatherSnapshot(place: place, forecast: forecast, updatedAt: updatedAt, languageStyle: languageStyle, textSeparator: textSeparator)
         if let data = try? JSONEncoder().encode(snapshot) {
-            guard shouldWrite(existing: defaults.data(forKey: snapshotKey), new: data) else { return }
+            guard shouldWrite(existing: defaults.data(forKey: snapshotKey), new: data) else { return false }
             defaults.set(data, forKey: snapshotKey)
+            return true
         }
+        return false
     }
 
     static func load() -> WidgetWeatherSnapshot? {
@@ -182,14 +185,17 @@ enum SharedWidgetData {
         defaults.removeObject(forKey: placesKey)
     }
 
-    static func saveSharedPlaces(_ places: [Place]) {
+    @discardableResult
+    static func saveSharedPlaces(_ places: [Place]) -> Bool {
         let summaries = places.reduce(into: [WidgetPlaceSummary]()) { result, place in
             guard result.count < 3, !result.contains(where: { $0.id == place.id }) else { return }
             result.append(WidgetPlaceSummary(id: place.id, name: place.displayName, preposition: place.preposition))
         }
         if let data = try? JSONEncoder().encode(summaries), shouldWrite(existing: defaults.data(forKey: placesKey), new: data) {
             defaults.set(data, forKey: placesKey)
+            return true
         }
+        return false
     }
 
     static func loadSharedPlaces() -> [WidgetPlaceSummary] {
