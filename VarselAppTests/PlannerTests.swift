@@ -2124,6 +2124,18 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(Set(result.map(\.id)), [selected.id, alerting.id])
     }
 
+    @MainActor
+    func testBackgroundRefreshKeepsCurrentPositionPlaceEvenWithoutRules() {
+        let position = Place(name: "Min posisjon", lat: 64.4, lon: 11.5)
+        let other = Place(name: "Annet sted", lat: 63, lon: 11)
+
+        let result = Store.placesNeededForBackgroundRefresh(
+            [position, other], selectedID: position.id
+        )
+
+        XCTAssertEqual(result.map(\.id), [position.id])
+    }
+
     func testBackgroundRefreshSchedulesNextAttemptAfterThirtyMinutes() {
         XCTAssertEqual(
             BackgroundRefresh.earliestBeginDate(now: base),
