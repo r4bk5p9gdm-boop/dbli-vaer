@@ -490,8 +490,9 @@ stemme.
 regresjonstest for GPS-sted uten varsler. Valgt posisjonssted hentes fortsatt
 og blir ikke erstattet av andre steder.
 
-**AUTO-087 · ÅPEN** — Test at widgetens posisjonsnavn oppdateres ved
-koordinatendring og ikke beholder gammelt stedsnavn.
+**AUTO-087 · FULLFØRT 2026-09-16** — Regresjonstest sikrer at fersk widget/
+Watch-snapshot bruker det oppdaterte posisjonsnavnet, samtidig som samme
+steds-ID beholdes.
 
 **AUTO-088 · ÅPEN** — Gå gjennom fallback-teksten når posisjon ikke kan
 hentes, slik at siste valgte sted fortsatt vises uten falsk GPS-merke.

@@ -1805,6 +1805,22 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testFreshPositionSnapshotUsesUpdatedPlaceName() throws {
+        let position = Place(name: "Min posisjon", lat: 64.4, lon: 11.5)
+        let renamed = Place(id: position.id, name: "Klinga", lat: 64.4, lon: 11.5)
+        let hours = forecast(values: [(12, 0, 1, 20, 6)])
+        let snapshot = try XCTUnwrap(Store.widgetSnapshot(
+            place: renamed,
+            forecast: hours,
+            updatedAt: base.addingTimeInterval(60),
+            cached: nil
+        ))
+
+        XCTAssertEqual(snapshot.place.displayName, "Klinga")
+        XCTAssertEqual(snapshot.place.id, position.id)
+    }
+
+    @MainActor
     func testWidgetFreshnessUsesElapsedTimeAcrossOsloDSTChange() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(identifier: "Europe/Oslo")!
