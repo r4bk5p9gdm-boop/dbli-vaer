@@ -694,6 +694,15 @@ samme nedbørstype ved sluddgrensen.
 **AUTO-137 · ÅPEN** — Test at varsler med «bare i nærheten» ignoreres når
 stedet ikke er innenfor nærhetsradius.
 
+**AUTO-138 · ÅPEN** — Verifiser at nedbørsradens farger følger samme
+regn/snø-farge som varselikonene.
+
+**AUTO-139 · ÅPEN** — Test at posisjonstillatelse som avslås ikke blokkerer
+manuelt sted eller varsler.
+
+**AUTO-140 · ÅPEN** — Kontroller at bakgrunnsrefresh ikke oppdaterer widget
+med foreløpig, ufullstendig timeutvalg.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
