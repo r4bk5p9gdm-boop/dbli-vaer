@@ -286,11 +286,12 @@ private struct CurrentWeatherCard: View {
         CurrentPrecipitationSummary.make(from: forecast)
     }
     private var rotatingStatuses: [WeatherStatus] {
-        Array(
+        WeatherStatus.uniqueByType(
             Planner.statuses(for: place, forecast: forecast)
                 .filter { $0.type != .regn && $0.type != .sno }
-                .prefix(4)
         )
+            .prefix(4)
+            .map { $0 }
     }
 
     var body: some View {

@@ -67,6 +67,14 @@ bytte av sted i hjem-swipe og ved widget-snapshot.
 **AUTO-177 · ÅPEN** — Kontroller at bakgrunnsoppdatering ikke skriver over
 nyere manuelle stedvalg når flere refresh-kall avsluttes i ulik rekkefølge.
 
+**AUTO-178 · ÅPEN** — Kontroller at tom eller delvis prognose ikke gir en
+tom roterende hjemstatus når det fortsatt finnes en gyldig Nå-status.
+
+**AUTO-175 · FULLFØRT 2026-09-16** — Rullerende hjemstatus dedupliserer nå
+værtyper etter type. Flere regler av samme type kan fortsatt varsle separat,
+men sammendraget viser hver type maks én gang. Ny regresjonstest dekker to
+regnregler og vind.
+
 **AUTO-174 · FULLFØRT 2026-09-16** — Sen GPS-respons overstyrer ikke lenger
 et manuelt stedvalg som ble gjort mens posisjonsoppslaget pågikk. Beskyttelsen
 er sentralisert i `Store.shouldApplyCurrentLocation`, med regresjonstest for

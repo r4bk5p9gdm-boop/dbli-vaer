@@ -904,6 +904,15 @@ struct WeatherStatus: Codable, Identifiable, Hashable {
     var id: UUID { ruleID }
 }
 
+extension WeatherStatus {
+    static func uniqueByType(_ statuses: [WeatherStatus]) -> [WeatherStatus] {
+        statuses.reduce(into: [WeatherStatus]()) { unique, status in
+            guard !unique.contains(where: { $0.type == status.type }) else { return }
+            unique.append(status)
+        }
+    }
+}
+
 let leadOptions = [15, 30, 60, 120, 180, 360, 720, 1440]
 let intervalOptions = [10, 15, 30, 60, 120]
 let dayNames = ["Ma", "Ti", "On", "To", "Fr", "Lø", "Sø"]

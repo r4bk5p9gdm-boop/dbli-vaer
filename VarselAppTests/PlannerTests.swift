@@ -96,6 +96,13 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(Store.shouldApplyCurrentLocation(selectionAtRequestStart: nil, currentSelection: initial))
     }
 
+    func testRotatingStatusSummaryKeepsOneEntryPerWeatherType() {
+        let rainA = WeatherStatus(ruleID: UUID(), type: .regn, text: "Regn", eventAt: base, isNow: false)
+        let rainB = WeatherStatus(ruleID: UUID(), type: .regn, text: "Regn senere", eventAt: base.addingTimeInterval(3_600), isNow: false)
+        let wind = WeatherStatus(ruleID: UUID(), type: .vind, text: "Vind", eventAt: base, isNow: false)
+        XCTAssertEqual(WeatherStatus.uniqueByType([rainA, rainB, wind]), [rainA, wind])
+    }
+
     func testHomeSwipeOrderKeepsCurrentPlaceBetweenDistinctFavorites() {
         let left = UUID(), current = UUID(), right = UUID()
         XCTAssertEqual(
