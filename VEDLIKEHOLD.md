@@ -661,8 +661,8 @@ dekker lett bris, storm og orkan.
 beslutningsjustering; rå Yr-temperatur lagres uendret. Eksisterende regresjon
 dekker både treff med margin og round-trip av råverdien.
 
-**AUTO-129 · ÅPEN** — Kontroller at Varslingsregler ikke viser display-only-
-regler som aktive pushvarsler.
+**AUTO-129 · FULLFØRT 2026-09-16** — Pushplanleggingen dokumenterer og tester
+at display-only-regler kan vises i rader, men aldri blir aktive pushvarsler.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.

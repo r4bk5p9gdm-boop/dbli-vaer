@@ -336,6 +336,7 @@ enum Planner {
     ) -> [PlannedAlert] {
         places.filter(\.areNotificationsEnabled).flatMap { p in
             let placeAlerts = p.rules.filter { rule in
+                // Display-only rows are intentionally excluded from push planning.
                 rule.enabled && !rule.isDisplayOnly
                     && (!rule.onlyWhenNearby || nearbyPlaceIDs.contains(p.id))
             }.flatMap { r in
