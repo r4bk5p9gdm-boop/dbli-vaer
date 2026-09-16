@@ -638,8 +638,9 @@ sti. Dermed beholdes siste riktige sted i stedet for en tom feiloverføring.
 temperaturjustering flytter lufttemperaturen, men beholder rått duggpunkt
 uendret for korrekt fuktberegning.
 
-**AUTO-123 · ÅPEN** — Verifiser at Varslingsregler viser valgt sted etter
-stedsbytte fra hjemsiden.
+**AUTO-123 · FULLFØRT 2026-09-16** — Stedsvalg fra hjemsiden er regresjonstestet
+mot samme Store-seleksjon som Varslingsregler bruker, inkludert at manuelt valg
+fjerner GPS-markeringen.
 
 **AUTO-124 · ÅPEN** — Test at inntrøndersk pushtekst beholder egen huskelapp
 som ettertekst ved alle værtyper.

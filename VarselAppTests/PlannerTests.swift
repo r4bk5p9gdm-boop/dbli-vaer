@@ -1417,6 +1417,17 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(Store.retainedLog([recent, old], now: base).map(\.text), ["ny"])
     }
 
+    @MainActor
+    func testSelectingPlaceFromHomeUsesSameSelectionForRules() {
+        let store = Store.shared
+        let original = store.selectedID
+        defer { store.selectedID = original }
+        let target = store.places.dropFirst().first ?? store.places[0]
+        store.select(target)
+        XCTAssertEqual(store.selected?.id, target.id)
+        XCTAssertFalse(store.selectionIsCurrentLocation)
+    }
+
     func testSharedWidgetPlacesAreCappedAtThreeUniqueIDs() {
         let first = Place(name: "Klinga", lat: 64, lon: 11)
         let second = Place(name: "Namsos", lat: 64.5, lon: 11.5)
