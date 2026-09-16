@@ -144,23 +144,16 @@ struct HomeView: View {
 
     private var swipePlaces: [Place] {
         let favorites = store.resolvedHomeFavorites
-        let left = favorites.left.flatMap { id in store.places.first { $0.id == id } }
-        let right = favorites.right.flatMap { id in store.places.first { $0.id == id } }
-        if store.selectionIsCurrentLocation, let current = store.selected {
-            // GPS is always the leftmost page. If it resolves to a favorite,
-            // that saved name remains leftmost and receives the position tint.
-            return [current, left, right]
-                .compactMap { $0 }
-                .reduce(into: [Place]()) { result, place in
-                    if !result.contains(where: { $0.id == place.id }) { result.append(place) }
-                }
-        }
-        let orderedIDs = HomeSwipeSelection.orderedIDs(
-            leftID: left?.id,
-            currentID: store.selected?.id,
-            rightID: right?.id
-        )
-        return orderedIDs.compactMap { id in store.places.first { $0.id == id } }
+        let position = store.currentLocationPlaceID.flatMap { id in store.places.first { $0.id == id } }
+        let favorite1 = favorites.right.flatMap { id in store.places.first { $0.id == id } }
+        let favorite2 = favorites.left.flatMap { id in store.places.first { $0.id == id } }
+        // Stable order keeps the three dots and both swipe directions in sync:
+        // current position, star 1, star 2.
+        return [position, favorite1, favorite2]
+            .compactMap { $0 }
+            .reduce(into: [Place]()) { result, place in
+                if !result.contains(where: { $0.id == place.id }) { result.append(place) }
+            }
     }
 
     var body: some View {
@@ -265,7 +258,9 @@ struct HomeView: View {
                 let nextID = uniqueIDs[next]
                 guard let nextPlace = swipePlaces.first(where: { $0.id == nextID }) else { return }
                 transitionDirection = value.translation.width < 0 ? .trailing : .leading
-                withAnimation(.easeInOut(duration: 0.32)) { store.select(nextPlace) }
+                withAnimation(.easeInOut(duration: 0.32)) {
+                    store.select(nextPlace, fromCurrentLocation: nextID == store.currentLocationPlaceID)
+                }
             })
             .sheet(item: $editing) { r in RuleEditorView(rule: r, isNew: false) }
             .sheet(isPresented: $showingSettings) { RulesView() }
@@ -1206,43 +1201,9 @@ private struct GlobalSettingsView: View {
     @AppStorage(LiveWeatherActivitySettings.enabledKey) private var liveActivitiesEnabled = true
     var showsDoneButton = true
 
-    private func favoriteBinding(left: Bool) -> Binding<UUID?> {
-        Binding {
-            left ? store.resolvedHomeFavorites.left : store.resolvedHomeFavorites.right
-        } set: { id in
-            var favorites = store.resolvedHomeFavorites
-            if left {
-                favorites.left = id
-                if id != nil && favorites.right == id { favorites.right = nil }
-            } else {
-                favorites.right = id
-                if id != nil && favorites.left == id { favorites.left = nil }
-            }
-            store.homeFavorites = favorites
-        }
-    }
-
     var body: some View {
         NavigationStack {
             Form {
-                Section {
-                    Picker("Favoritt 1 · høyre", selection: favoriteBinding(left: false)) {
-                        Text("Ikke valgt").tag(nil as UUID?)
-                        ForEach(store.places) { place in
-                            Text(place.nameWithPreposition).tag(Optional(place.id))
-                        }
-                    }
-                    Picker("Favoritt 2 · venstre", selection: favoriteBinding(left: true)) {
-                        Text("Ikke valgt").tag(nil as UUID?)
-                        ForEach(store.places) { place in
-                            Text(place.nameWithPreposition).tag(Optional(place.id))
-                        }
-                    }
-                } header: {
-                    Text("Favorittsteder")
-                } footer: {
-                    Text("Sveip Hjem mot venstre eller høyre for å bytte mellom valgt sted og favoritter. Valgene endrer ikke varslene dine.")
-                }
                 Section("Språk og varseltekst") {
                     Picker("Skilletegn før klokkeslett", selection: $textSeparator) {
                         ForEach(WeatherTextSeparator.allCases) { Text($0.label).tag($0.rawValue) }
@@ -1392,10 +1353,22 @@ private struct PlaceRow: View {
                 } label: {
                     Label(place.showsOnlyRuleAlerts ? "Bare regler" : "Alle værtyper", systemImage: "eye")
                 }
-                Button("Gi eget navn", systemImage: "pencil") {
-                    nameDraft = place.customName ?? ""
-                    showingNameEditor = true
-                }
+                    Button("Gi eget navn", systemImage: "pencil") {
+                        nameDraft = place.customName ?? ""
+                        showingNameEditor = true
+                    }
+                    Button {
+                        toggleFavorite(slot: 1)
+                    } label: {
+                        Label("Stjerne 1", systemImage: isFavorite1 ? "star.fill" : "star")
+                    }
+                    .tint(isFavorite1 ? .orange : nil)
+                    Button {
+                        toggleFavorite(slot: 2)
+                    } label: {
+                        Label("Stjerne 2", systemImage: isFavorite2 ? "star.fill" : "star")
+                    }
+                    .tint(isFavorite2 ? .orange : nil)
             }
             .font(.caption.weight(.medium))
             .buttonStyle(.bordered)
@@ -1429,6 +1402,24 @@ private struct PlaceRow: View {
     private var nearbyText: String {
         guard nearbyRuleCount > 0 else { return "" }
         return " · \(nearbyRuleCount) bare i nærheten"
+    }
+
+    private var isFavorite1: Bool { store.resolvedHomeFavorites.right == place.id }
+    private var isFavorite2: Bool { store.resolvedHomeFavorites.left == place.id }
+
+    private func toggleFavorite(slot: Int) {
+        var favorites = store.resolvedHomeFavorites
+        let isSelected = slot == 1 ? isFavorite1 : isFavorite2
+        let otherID = slot == 1 ? favorites.left : favorites.right
+        let nextID: UUID? = isSelected ? nil : place.id
+        if slot == 1 {
+            favorites.right = nextID
+            if nextID != nil { favorites.left = otherID == nextID ? nil : otherID }
+        } else {
+            favorites.left = nextID
+            if nextID != nil { favorites.right = otherID == nextID ? nil : otherID }
+        }
+        store.homeFavorites = favorites
     }
 
     private func updatePreposition(_ preposition: PlacePreposition) { update { $0.preposition = preposition } }

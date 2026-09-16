@@ -54,6 +54,11 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-034 · FULLFØRT 2026-09-16** — Flyttet valg av hjemmesveipefavoritter
+til Steder-siden som Stjerne 1 og Stjerne 2. Sveipefølgen er nå stabil:
+posisjon → stjerne 1 → stjerne 2, og prikkindikatoren følger samme indeks
+begge veier.
+
 **BRUKER-033 · FULLFØRT 2026-09-16** — Flyttet hjemskjermens redigering til
 værkortets temperatur-/ikonlinje for å spare høyde. La til tre
 posisjonsprikker under kortet som viser aktiv sveipeside.

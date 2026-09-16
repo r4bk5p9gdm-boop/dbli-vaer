@@ -190,6 +190,9 @@ final class Store: ObservableObject {
     /// Manual place selection clears this marker so the UI never implies GPS data
     /// for a place the user chose explicitly.
     @Published private(set) var selectionIsCurrentLocation = false
+    /// Last page representing the phone's current position. Retained while
+    /// swiping to favorites so the position page remains reachable.
+    @Published private(set) var currentLocationPlaceID: UUID?
     @Published var homeFavorites: HomeFavorites = {
         guard let data = UserDefaults.standard.data(forKey: "varsel.homeFavorites"),
               let value = try? JSONDecoder().decode(HomeFavorites.self, from: data) else { return HomeFavorites() }
@@ -658,6 +661,7 @@ final class Store: ObservableObject {
     func select(_ place: Place, fromCurrentLocation: Bool = false) {
         selectedID = place.id
         selectionIsCurrentLocation = fromCurrentLocation
+        if fromCurrentLocation { currentLocationPlaceID = place.id }
         updateWidget()
     }
 
