@@ -8,10 +8,13 @@ struct WatchWeatherEntry: TimelineEntry {
 
     var relevance: TimelineEntryRelevance? {
         guard let snapshot,
-              let first = Planner.statuses(for: snapshot.place, forecast: snapshot.forecast, now: date).first else { return nil }
+              let first = WeatherGlance.nextEvents(
+                Planner.statuses(for: snapshot.place, forecast: snapshot.forecast, now: date),
+                now: date
+              ).first else { return nil }
         let interval = first.eventAt.timeIntervalSince(date)
-        guard first.isNow || (interval > 0 && interval <= 3 * 3_600) else { return nil }
-        return TimelineEntryRelevance(score: first.isNow ? 100 : 80, duration: max(900, interval))
+        guard interval > 0 && interval <= 3 * 3_600 else { return nil }
+        return TimelineEntryRelevance(score: 80, duration: max(900, interval))
     }
 }
 
@@ -29,7 +32,15 @@ struct WatchWeatherProvider: TimelineProvider {
         let entries = stride(from: 0, through: 120, by: 15).compactMap { minutes in
             Calendar.current.date(byAdding: .minute, value: minutes, to: now)
         }.map { WatchWeatherEntry(date: $0, snapshot: SharedWidgetData.load()) }
-        completion(Timeline(entries: entries, policy: .after(now.addingTimeInterval(30 * 60))))
+        let nextEvent = entries.compactMap { entry -> Date? in
+            guard let snapshot = entry.snapshot else { return nil }
+            return WeatherGlance.nextEvents(
+                Planner.statuses(for: snapshot.place, forecast: snapshot.forecast, now: entry.date),
+                now: entry.date
+            ).first?.eventAt
+        }.min()
+        let refreshAt = min(now.addingTimeInterval(30 * 60), nextEvent ?? now.addingTimeInterval(30 * 60))
+        completion(Timeline(entries: entries, policy: .after(refreshAt)))
     }
 }
 

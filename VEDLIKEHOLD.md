@@ -58,6 +58,10 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 testbar `WeatherGlance.nextEvents` som alltid filtrerer bort NÅ-status. Test
 dekker at neste snøhendelse velges når regn pågår akkurat nå.
 
+**AUTO-153 · FULLFØRT 2026-09-16** — Watch-widgetens relevance og tidslinje
+bruker nå samme neste-hendelse-filter. Tidslinjen oppdateres senest etter 30
+minutter, men kan våkne tidligere når en konkret hendelse nærmer seg.
+
 **AUTO-153 · ÅPEN** — Kontroller Watch-widgetens tidslinje og oppdateringsintervall
 mot neste hendelse uten å øke ressursbruken.
 
