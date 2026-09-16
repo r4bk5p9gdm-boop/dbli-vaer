@@ -83,14 +83,10 @@ hjemmets dagshode og tilgjengelighetstekst. Rettet to manglende Swift-
 interpoleringer: dagshodet viser faktisk dato, og bjellens VoiceOver-tekst
 viser faktisk værtype.
 
-**BRUKER-029 · ÅPEN** — GPS-sted utenfor favorittene skal ligge til venstre.
-Treffer GPS et lagret favorittsted, skal favorittnavnet brukes med
-posisjonsfarge. Stram også inn luft mellom dagshode og klokkeslett.
-
-**BRUKER-029 · FULLFØRT 2026-09-16** — GPS-siden er fortsatt venstresiden
- når stedet ikke er en favoritt. Når GPS treffer favoritt 1 eller 2, brukes
- favorittnavnet på venstresiden med posisjonsfarge, uten duplikatside.
- Avstanden mellom dagshode og klokkeslett er redusert.
+**BRUKER-029 · FULLFØRT 2026-09-16** — GPS-sted utenfor favorittene ligger
+til venstre. Når GPS treffer favoritt 1 eller 2, brukes favorittnavnet med
+posisjonsfarge, uten duplikatside. Avstanden mellom dagshode og klokkeslett
+er redusert.
 
 **BRUKER-028 · ÅPEN** — Rett literal placeholdertekst i dagshodene slik at
 «I morgen» ikke viser «(Datetext)» eller andre kodeuttrykk.
