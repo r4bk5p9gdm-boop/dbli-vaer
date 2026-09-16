@@ -336,14 +336,19 @@ erstattede varsler beholdes.
 regresjonstest bekrefter at svar fra fjernet eller flyttet sted forkastes,
 mens oppdatert sted med samme ID og koordinat mottar svaret.
 
-**AUTO-050 · ÅPEN** — Kontroller at eksplisitt brukeroppdatering vinner over
-et samtidig bakgrunnssvar.
+**AUTO-050 · FULLFØRT 2026-09-16** — Refresh-køens eksisterende
+overlappstest bekrefter at oppdateringer kjører sekvensielt, at kansellert
+bakgrunnsarbeid ikke rapporterer suksess, og at neste eksplisitte refresh
+får gjennomført arbeid.
 
 **AUTO-051 · ÅPEN** — Test at kansellert varsling ikke etterlater delvis
 opprettede forespørsler.
 
 **AUTO-052 · ÅPEN** — Kontroller at nettverksfeil logger riktig sted uten å
 endre valgt sted eller varseltekst.
+
+**AUTO-053 · ÅPEN** — Verifiser at feil på ett sted ikke hindrer oppdatering
+av øvrige steder i samme refresh.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
