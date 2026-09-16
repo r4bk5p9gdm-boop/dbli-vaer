@@ -54,6 +54,13 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-010 · FULLFØRT 2026-09-16** — Watch-widgetens sirkulære variant
+viser neste kommende hendelse med kort relativ tid (`23m`, `2t`), tydelig
+værtype («Regn!», «Snø!», «Vind!», «Dogg!», «Sol!» eller temperaturgrense)
+og farget sirkelbue etter varseltype. Watch-widgeten filtrerer nå bort NÅ-
+statuser fra alle familier, slik at stor widget viser neste hendelse og ikke
+en aktuell/stale status.
+
 **AUTO-149 · FULLFØRT 2026-09-16** — Plasser har nå én sentral
 `enabledRuleCount`-beregning som brukes av stedslisten. Den teller bare
 aktiverte regler også etter inline-deaktivering, og regresjonstest dekker

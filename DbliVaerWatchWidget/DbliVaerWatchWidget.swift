@@ -58,12 +58,13 @@ struct WatchWeatherWidgetView: View {
             Planner.statuses(for: snapshot.place, forecast: snapshot.forecast, now: entry.date),
             now: entry.date
         )
-        guard !statuses.isEmpty else { return nil }
+        let upcoming = statuses.filter { !$0.isNow }
+        guard !upcoming.isEmpty else { return nil }
         // The small complications always retain the nearest event. Only the
         // rectangular widget rotates, using the existing 15-minute timeline.
-        guard family == .accessoryRectangular else { return statuses.first }
+        guard family == .accessoryRectangular else { return upcoming.first }
         let slot = Int(entry.date.timeIntervalSince1970 / (15 * 60))
-        return statuses[((slot % statuses.count) + statuses.count) % statuses.count]
+        return upcoming[((slot % upcoming.count) + upcoming.count) % upcoming.count]
     }
     private var icon: String {
         if let status { return status.type.systemImage }
@@ -84,12 +85,18 @@ struct WatchWeatherWidgetView: View {
             case .accessoryCircular:
                 ZStack {
                     AccessoryWidgetBackground()
+                    Circle()
+                        .trim(from: 0, to: status.map(progress(for:)) ?? 0.2)
+                        .stroke(tint, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                        .rotationEffect(.degrees(-90))
+                        .padding(2)
                     VStack(spacing: 1) {
-                        Image(systemName: icon).font(.headline)
-                        Text(status.map { $0.isNow ? "Nå" : shortClockLabel($0.eventAt) } ?? temperature)
-                            .font(.caption2.bold().monospacedDigit())
+                        Text(status.map(shortTypeName) ?? temperature)
+                            .font(.caption2.bold())
                             .lineLimit(1)
                             .minimumScaleFactor(0.8)
+                        Text(status.map { compactEventTime($0.eventAt) } ?? "")
+                            .font(.system(size: 10, weight: .semibold, design: .rounded).monospacedDigit())
                     }
                 }
                 .widgetAccentable()
@@ -137,6 +144,29 @@ struct WatchWeatherWidgetView: View {
     private var temperature: String {
         guard let current else { return "--°" }
         return "\(current.temp.formatted(.number.precision(.fractionLength(0))))°"
+    }
+
+    private func shortTypeName(_ status: WeatherStatus) -> String {
+        switch status.type {
+        case .regn: "Regn!"
+        case .sno: "Snø!"
+        case .vind: "Vind!"
+        case .dugg: "Dogg!"
+        case .sol: "Sol!"
+        case .frost: "Frost!"
+        case .temperatur: status.text.contains("Under") ? "<5°" : ">20°"
+        }
+    }
+
+    private func compactEventTime(_ date: Date) -> String {
+        let minutes = max(0, Int(date.timeIntervalSince(entry.date) / 60))
+        if minutes < 60 { return "\(max(1, minutes))m" }
+        return "\(minutes / 60)t"
+    }
+
+    private func progress(for status: WeatherStatus) -> CGFloat {
+        let minutes = max(1, status.eventAt.timeIntervalSince(entry.date) / 60)
+        return min(1, max(0.08, CGFloat(1 - minutes / (12 * 60))))
     }
 
     private var inlineText: String {
