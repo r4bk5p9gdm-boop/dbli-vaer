@@ -572,6 +572,12 @@ regel. Dette hindrer doble varsler ved neste planlegging.
 **AUTO-106 · ÅPEN** — Test at varselkøens sortering er stabil når to varsler
 har samme tidspunkt, men ulik værtype og alvorlighetsgrad.
 
+**AUTO-107 · ÅPEN** — Kontroller at språkfilens fallback ved manglende tekst
+ikke produserer tom push-tittel eller tom værtype.
+
+**AUTO-108 · ÅPEN** — Test at duggdemping etter regn gjelder på tvers av
+midnatt uten å skjule et nytt, reelt duggfall.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
