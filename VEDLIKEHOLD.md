@@ -349,13 +349,17 @@ kansellering før hver installasjon, slik at en avbrutt kjøring ikke fortsetter
 det aktuelle stedobjektet og lar prognose, valgt sted og eksisterende varsler
 stå urørt. Ved gammel prognose vises dette eksplisitt i meldingen.
 
-**AUTO-053 · ÅPEN** — Verifiser at feil på ett sted ikke hindrer oppdatering
-av øvrige steder i samme refresh.
+**AUTO-053 · FULLFØRT 2026-09-16** — TaskGroup- og refresh-regresjonene
+bekrefter at vellykkede steder fortsatt lagres og planlegges når et annet
+sted feiler. Delvis feil fullfører dermed ikke som total feil.
 
 **AUTO-054 · ÅPEN** — Kontroller at en mislykket stedsforespørsel gir
 feilmelding uten å skjule gyldige varsler fra andre steder.
 
 **AUTO-055 · ÅPEN** — Test at feiltekst følger valgt språkstil ved nettverksfeil.
+
+**AUTO-056 · ÅPEN** — Kontroller at delvis vellykket refresh oppdaterer
+tidspunktet uten å nullstille feilstatus for stedet som feilet.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
