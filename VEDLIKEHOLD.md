@@ -604,6 +604,12 @@ bekrefter at Yr-tabellnedbør beholdes.
 **AUTO-114 · ÅPEN** — Verifiser at bakgrunnsoppdatering respekterer kansellering
 før den skriver delvis hentede prognoser.
 
+**AUTO-115 · ÅPEN** — Test at feilet enkeltsted ikke hindrer andre steder i
+samme bakgrunnsoppdatering fra å få fersk prognose.
+
+**AUTO-116 · ÅPEN** — Kontroller at widgetens delte stedsrekkefølge begrenses
+til tre unike steder også etter sletting og omdøping.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
