@@ -1971,6 +1971,15 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testSameDisplayNamesRemainSeparateForecastLocations() {
+        let first = Place(name: "Hytte", lat: 64, lon: 11)
+        let second = Place(name: "Hytte", lat: 63, lon: 11)
+        let groups = Store.groupedByForecastLocation([first, second])
+        XCTAssertEqual(groups.count, 2)
+        XCTAssertEqual(groups.values.map(\.count).reduce(0, +), 2)
+    }
+
+    @MainActor
     func testCancelledRefreshDoesNotUpdateTimestampOrLog() async {
         let store = Store.shared
         let lastUpdate = store.lastUpdate

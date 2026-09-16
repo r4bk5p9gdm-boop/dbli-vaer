@@ -383,14 +383,18 @@ samme `performRefresh`-flyt og bruker `Date()` for både hentetidspunkt og
 `refresh(place:)` fjerner feilstatus idet ny prognose lagres. En tidligere
 nettverksfeil blir derfor ikke stående etter manuelt nytt forsøk.
 
-**AUTO-062 · ÅPEN** — Kontroller at feilstatus fra ett sted ikke arves av
-et nytt sted med samme visningsnavn.
+**AUTO-062 · FULLFØRT 2026-09-16** — Prognosegrupper og lagringsnøkler er
+UUID-/koordinatbaserte, ikke navnebaserte. Regresjonstest dekker to steder
+med identisk visningsnavn og ulike koordinater.
 
 **AUTO-063 · ÅPEN** — Verifiser at sted-ID brukes som nøkkel i feilstatus,
 ikke visningsnavn alene.
 
 **AUTO-064 · ÅPEN** — Test at to steder med samme visningsnavn beholder
 uavhengig prognose og feilstatus.
+
+**AUTO-065 · ÅPEN** — Kontroller at egendefinert stedsnavn ikke endrer
+prognose-ID eller varselrute.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
