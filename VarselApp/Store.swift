@@ -712,6 +712,8 @@ final class Store: ObservableObject {
     }
 
     private func updateWidget() {
+        // `forecasts` is populated per location only after a complete Yr
+        // response, so this snapshot cannot contain an in-flight partial list.
         let sharedPrimary = resolvedSharedPlaceIDs.first.flatMap { id in places.first { $0.id == id } }
         let widgetPlace = sharedPrimary ?? selected
         let snapshot = Self.widgetSnapshot(

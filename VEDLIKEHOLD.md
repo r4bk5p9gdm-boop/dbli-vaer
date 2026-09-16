@@ -702,8 +702,9 @@ AlertType-fargen for regn og snø, med delt fargekilde mot ikonene.
 returneres flyten uten å endre valgt manuelt sted eller eksisterende varsler.
 Eksisterende cancellation/marker-tester dekker dette.
 
-**AUTO-140 · ÅPEN** — Kontroller at bakgrunnsrefresh ikke oppdaterer widget
-med foreløpig, ufullstendig timeutvalg.
+**AUTO-140 · FULLFØRT 2026-09-16** — Widgetoppdatering leser bare forecast-
+verdier som er skrevet etter komplett Yr-respons per koordinat. In-flight
+delresultater kan derfor ikke publiseres som snapshot.
 
 **AUTO-141 · ÅPEN** — Test at WidgetCenter kun reloades etter gyldig snapshot
 eller eksplisitt tømming.
