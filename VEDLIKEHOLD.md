@@ -110,12 +110,9 @@ prognosen viser sju timer. Regresjonstest dekker lengre faktisk varighet.
 værfeltene til mørkegrå, slik at lilla ikke kan forveksles med varslingsfarge.
 Varslingsfargene er uendret og står tydeligere frem.
 
-**BRUKER-023 · ÅPEN** — Flytt pushbjellen til høyre side av raden. Værikon
-og radtittel (for eksempel «Nedbør») skal starte helt til venstre.
-
-**BRUKER-023 · FULLFØRT 2026-09-16** — Bjellen ligger nå i en egen smal
- kolonne til høyre. Ikon og tittel starter helt til venstre uten innrykk, og
- den fylte oransje sirkelen er beholdt med egen VoiceOver-tekst.
+**BRUKER-023 · FULLFØRT 2026-09-16** — Pushbjellen ligger i en egen smal
+kolonne til høyre. Ikon og tittel starter helt til venstre uten innrykk, og
+den fylte oransje sirkelen er beholdt med egen VoiceOver-tekst.
 
 **BRUKER-022 · ÅPEN** — Flytt teksten «nå» fra over nålinjen til under
 linjen, under værfeltene/radchipsene.
