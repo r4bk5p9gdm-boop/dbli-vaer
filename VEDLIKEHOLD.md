@@ -85,6 +85,19 @@ vindkastverdi, slik at vind ikke feilaktig varsles som null.
 **AUTO-183 · ÅPEN** — Verifiser at prognosealder vises korrekt etter
 fallback fra cache på både iPhone og Watch.
 
+**AUTO-184 · ÅPEN** — Kontroller at NÅ-status og neste-hendelse bruker samme
+ tidsone etter enhetens tidssonebytte.
+
+**AUTO-185 · ÅPEN** — Gjennomgå feiltekster ved delvis Yr-svar for å unngå
+ at en gammel stedstekst blir vist på nytt sted.
+
+**AUTO-186 · ÅPEN** — Legg til lettvekts test av Watch-snapshot når stedets
+ egen visningstittel endres uten koordinatendring.
+
+**AUTO-183 · FULLFØRT 2026-09-16** — Cache-fallback beholder nå også
+ prognosealder, språkstil og skilletegn. Regresjonstest dekker at Watch/widget
+ får samme metadata som fersk og cached prognose.
+
 **AUTO-182 · FULLFØRT 2026-09-16** — Widget- og Watch-synkronisering
  rapporterer nå om snapshot/stedsliste faktisk endret seg. Identiske data
  sender ikke ny Watch-overføring eller widget-tidslinjereload.

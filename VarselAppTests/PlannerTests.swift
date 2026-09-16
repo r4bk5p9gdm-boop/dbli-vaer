@@ -2089,13 +2089,15 @@ final class PlannerTests: XCTestCase {
     func testWidgetFallbackKeepsActualForecastAgeAndCurrentName() throws {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let hours = forecast(values: [(10, 0, 1, 10, 5)])
-        let cached = WidgetWeatherSnapshot(place: place, forecast: hours, updatedAt: base)
+        let cached = WidgetWeatherSnapshot(place: place, forecast: hours, updatedAt: base, languageStyle: .inntrondersk, textSeparator: .dash)
         var renamed = place
         renamed.customName = "Hjemme"
         let snapshot = try XCTUnwrap(Store.widgetSnapshot(place: renamed, forecast: [], updatedAt: nil, cached: cached))
         XCTAssertEqual(snapshot.updatedAt, base)
         XCTAssertEqual(snapshot.forecast, hours)
         XCTAssertEqual(snapshot.place.customName, "Hjemme")
+        XCTAssertEqual(snapshot.languageStyle, .inntrondersk)
+        XCTAssertEqual(snapshot.textSeparator, .dash)
         let fresh = Store.widgetSnapshot(place: renamed, forecast: hours, updatedAt: base.addingTimeInterval(60), cached: cached)
         XCTAssertEqual(fresh?.updatedAt, base.addingTimeInterval(60))
     }

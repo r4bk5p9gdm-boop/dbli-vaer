@@ -719,7 +719,13 @@ final class Store: ObservableObject {
         // Cached snapshots already contain the local temperature adjustment
         // applied when they were written; applying it again would drift the
         // displayed value after a refresh failure.
-        return WidgetWeatherSnapshot(place: place, forecast: cached.forecast, updatedAt: cached.updatedAt)
+        return WidgetWeatherSnapshot(
+            place: place,
+            forecast: cached.forecast,
+            updatedAt: cached.updatedAt,
+            languageStyle: cached.languageStyle,
+            textSeparator: cached.textSeparator
+        )
     }
 
     func refreshDisplaySettings() {
