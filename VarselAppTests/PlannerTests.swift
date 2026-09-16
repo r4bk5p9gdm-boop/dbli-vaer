@@ -262,6 +262,19 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(old.localized("mandag"), "mandag")
     }
 
+    func testSharedSnapshotUnknownLanguageFallsBackToBokmal() throws {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 3, cloud: 0, dew: 0)
+        let snapshot = WidgetWeatherSnapshot(place: place, forecast: [hour], updatedAt: base)
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(snapshot)) as? [String: Any])
+        object["languageStyle"] = "trondelag-humor"
+        let data = try JSONSerialization.data(withJSONObject: object)
+        let decoded = try JSONDecoder().decode(WidgetWeatherSnapshot.self, from: data)
+        XCTAssertEqual(decoded.languageStyle, .bokmal)
+        XCTAssertEqual(decoded.localized("Regn nå."), "Regn nå.")
+        XCTAssertEqual(decoded.forecast.first?.temp, 10)
+    }
+
     func testGustThresholdNeverFallsBackToMeanWind() {
         var hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 20, cloud: 0, dew: 0)
         XCTAssertFalse(AlertType.vind.matches(hour, threshold: 9))

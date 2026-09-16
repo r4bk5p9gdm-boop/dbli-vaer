@@ -70,14 +70,15 @@ minutter, men kan våkne tidligere når en konkret hendelse nærmer seg.
 sentralisert og temperaturvarsler viser faktisk retning og terskel, som
 «<10°» eller «>20°». Regresjonstest dekker begge retninger.
 
-**AUTO-153 · ÅPEN** — Kontroller Watch-widgetens tidslinje og oppdateringsintervall
-mot neste hendelse uten å øke ressursbruken.
+**AUTO-155 · FULLFØRT 2026-09-16** — Snapshot-dekoding med manglende eller
+ukjent språk faller trygt tilbake til bokmål uten å miste sted eller prognose.
+Ny regresjonstest dekker ukjent språk-ID.
 
-**AUTO-154 · ÅPEN** — Legg til regresjon for temperaturgrense-etiketter i
-Watch-komplikasjonen.
+**AUTO-156 · ÅPEN** — Kontroller språkbytte i Watch/widget etter ny snapshot.
 
-**AUTO-155 · ÅPEN** — Kontroller at Widget/Watch-snapshot med manglende språkfelt
-faller tilbake konsistent til bokmål.
+**AUTO-157 · ÅPEN** — Legg inn test for tom Watch-prognose og beholdt cache.
+
+**AUTO-158 · ÅPEN** — Kontroller tilgjengelighetslabel for sirkulær widget.
 
 **BRUKER-010 · FULLFØRT 2026-09-16** — Watch-widgetens sirkulære variant
 viser neste kommende hendelse med kort relativ tid (`23m`, `2t`), tydelig
