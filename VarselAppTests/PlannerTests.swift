@@ -1834,6 +1834,17 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(fresh.forecast, fallback.forecast)
     }
 
+    func testSharedWidgetDataDoesNotOverwriteValidSnapshotWithEmptyForecast() {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 20, dew: 5)
+        SharedWidgetData.clear()
+        defer { SharedWidgetData.clear() }
+        SharedWidgetData.save(place: place, forecast: [hour], updatedAt: base)
+        SharedWidgetData.save(place: Place(name: "Namsos", lat: 64.5, lon: 11.5), forecast: [], updatedAt: base.addingTimeInterval(60))
+        XCTAssertEqual(SharedWidgetData.load()?.place.id, place.id)
+        XCTAssertEqual(SharedWidgetData.load()?.forecast, [hour])
+    }
+
     @MainActor
     func testWidgetFallbackRejectsOtherOrMovedPlaces() {
         let place = Place(name: "Klinga", lat: 64, lon: 11)

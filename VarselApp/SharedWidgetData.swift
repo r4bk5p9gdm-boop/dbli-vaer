@@ -129,6 +129,8 @@ enum SharedWidgetData {
     }
 
     static func save(place: Place, forecast: [ForecastHour], updatedAt: Date = Date(), languageStyle: AlertLanguageStyle? = nil, textSeparator: WeatherTextSeparator? = .current) {
+        // Never replace a usable widget snapshot with an empty refresh result.
+        guard !forecast.isEmpty else { return }
         let snapshot = WidgetWeatherSnapshot(place: place, forecast: forecast, updatedAt: updatedAt, languageStyle: languageStyle, textSeparator: textSeparator)
         if let data = try? JSONEncoder().encode(snapshot) {
             defaults.set(data, forKey: snapshotKey)
