@@ -657,8 +657,9 @@ dekker at omdøpt sted vises korrekt etter åpning fra køen.
 én delt funksjon for iPhone, widget og Watch. Eksisterende grenseverditester
 dekker lett bris, storm og orkan.
 
-**AUTO-128 · ÅPEN** — Test at frostmargin brukes i varsling, men ikke endrer
-rå Yr-temperatur i prognoselagringen.
+**AUTO-128 · FULLFØRT 2026-09-16** — Frostmargin er dokumentert som en ren
+beslutningsjustering; rå Yr-temperatur lagres uendret. Eksisterende regresjon
+dekker både treff med margin og round-trip av råverdien.
 
 **AUTO-129 · ÅPEN** — Kontroller at Varslingsregler ikke viser display-only-
 regler som aktive pushvarsler.

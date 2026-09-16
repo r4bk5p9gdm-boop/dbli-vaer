@@ -586,6 +586,8 @@ struct Rule: Codable, Identifiable, Hashable {
     }
 
     func matches(_ hour: ForecastHour, frostMargin: Double = 0) -> Bool {
+        // Frost margin shifts only the decision threshold; raw Yr values stay
+        // untouched for display, storage and later calibration.
         let effectiveThreshold = type == .frost ? threshold + max(0, frostMargin) : threshold
         if type == .temperatur { return temperatureDirection == .above ? hour.temp > threshold : hour.temp < threshold }
         return type.matches(hour, threshold: effectiveThreshold)
