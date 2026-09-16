@@ -357,13 +357,17 @@ sted feiler. Delvis feil fullfører dermed ikke som total feil.
 feilstatus lagres per sted, mens planlegging og varsler fra steder med gyldig
 prognose beholdes.
 
-**AUTO-055 · ÅPEN** — Test at feiltekst følger valgt språkstil ved nettverksfeil.
+**AUTO-055 · FULLFØRT 2026-09-16** — Prognosefeil følger nå valgt språkstil
+for engelsk og norsk tekst, inkludert nettverk, timeout og dekodingsfeil.
 
 **AUTO-056 · ÅPEN** — Kontroller at delvis vellykket refresh oppdaterer
 tidspunktet uten å nullstille feilstatus for stedet som feilet.
 
 **AUTO-057 · ÅPEN** — Verifiser at siste oppdateringstidspunkt ikke endres
 ved total nettverksfeil.
+
+**AUTO-058 · ÅPEN** — Kontroller at lokaliserte feiltekster ikke mister
+stedsnavn eller instruksjon om ny oppdatering.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.

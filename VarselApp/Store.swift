@@ -521,7 +521,7 @@ final class Store: ObservableObject {
                     case .failure(let error):
                         for place in matchingPlaces {
                             failedNames.append(place.displayName)
-                            forecastErrors[place.id] = forecastErrorMessage(for: place, error: error)
+                            forecastErrors[place.id] = forecastErrorMessage(for: place, error: error, style: alertLanguageStyle)
                         }
                     }
                 }
@@ -617,7 +617,7 @@ final class Store: ObservableObject {
         } catch {
             guard !Task.isCancelled,
                   let currentPlace = Self.currentRecipients(for: [place], in: places).first else { return }
-            forecastErrors[place.id] = forecastErrorMessage(for: currentPlace, error: error)
+            forecastErrors[place.id] = forecastErrorMessage(for: currentPlace, error: error, style: alertLanguageStyle)
         }
         await replan()
     }
@@ -690,23 +690,25 @@ final class Store: ObservableObject {
         WidgetCenter.shared.reloadAllTimelines()
     }
 
-    private func forecastErrorMessage(for place: Place, error: Error) -> String {
+    private func forecastErrorMessage(for place: Place, error: Error, style: AlertLanguageStyle) -> String {
         let hasOldForecast = !(forecasts[place.id] ?? []).isEmpty
-        let prefix = hasOldForecast ? "Viser sist hentede prognose for \(place.displayName). " : ""
+        let prefix = hasOldForecast
+            ? (style == .english ? "Showing the last forecast for \(place.displayName). " : "Viser sist hentede prognose for \(place.displayName). ")
+            : ""
         if let urlError = error as? URLError {
             switch urlError.code {
             case .notConnectedToInternet, .networkConnectionLost:
-                return prefix + "Ingen nettforbindelse. Dra ned for å prøve igjen."
+                return prefix + (style == .english ? "No internet connection. Pull to try again." : "Ingen nettforbindelse. Dra ned for å prøve igjen.")
             case .timedOut:
-                return prefix + "MET brukte for lang tid. Dra ned for å prøve igjen."
+                return prefix + (style == .english ? "MET took too long. Pull to try again." : "MET brukte for lang tid. Dra ned for å prøve igjen.")
             case .badServerResponse:
-                return prefix + "MET kunne ikke levere prognosen akkurat nå."
+                return prefix + (style == .english ? "MET could not provide the forecast right now." : "MET kunne ikke levere prognosen akkurat nå.")
             default: break
             }
         }
         if error is DecodingError {
-            return prefix + "Prognosen fra MET kunne ikke leses."
+            return prefix + (style == .english ? "The forecast from MET could not be read." : "Prognosen fra MET kunne ikke leses.")
         }
-        return prefix + "Kunne ikke oppdatere prognosen. Dra ned for å prøve igjen."
+        return prefix + (style == .english ? "Could not update the forecast. Pull to try again." : "Kunne ikke oppdatere prognosen. Dra ned for å prøve igjen.")
     }
 }
