@@ -2508,6 +2508,10 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(Rule.filtered([rain], by: nil).count, 1)
     }
 
+    func testWatchNextEventsWithMissingForecastRemainEmpty() {
+        XCTAssertTrue(WeatherGlance.nextEvents([], now: base).isEmpty)
+    }
+
     func testWatchNextEventsOrderIsStableForEqualTimes() {
         let firstID = UUID(uuidString: "00000000-0000-0000-0000-000000000001")!
         let secondID = UUID(uuidString: "00000000-0000-0000-0000-000000000002")!

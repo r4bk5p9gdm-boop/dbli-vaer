@@ -61,7 +61,10 @@ Test dekker språkvariantene.
 **AUTO-167 · FULLFØRT 2026-09-16** — Inline-widgeten bruker nå samme korte,
 språktilpassede varseltype og relative tid som sirkelen.
 
-**AUTO-168 · ÅPEN** — Test Watch-komplikasjon med manglende forecast.
+**AUTO-168 · FULLFØRT 2026-09-16** — Manglende prognose gir tom neste-
+hendelse-liste i Watch-logikken, slik at widgeten bruker fallbackvisning uten
+å finne på et varsel. Regresjonstest dekker tom prognose.
+
 
 **BRUKER-015 · PÅ VENT 2026-09-16 · KREVER GODKJENNING** — Foreslått
 helsideoppsett med nåværende posisjon til venstre og to favoritter i midten/
