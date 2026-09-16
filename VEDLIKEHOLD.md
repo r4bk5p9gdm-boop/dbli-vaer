@@ -414,14 +414,18 @@ bakgrunnsoppdatering. Uendrede koordinater gir derfor ingen ekstra Yr-kall.
 bekrefter ett nettverksmål for aliassteder, mens begge sted-ID-ene fortsatt
 kan motta egne lokalt justerte prognoser.
 
-**AUTO-070 · ÅPEN** — Verifiser at deduplisering fortsatt leverer prognosen
-til alle aliassteder med egne navn.
+**AUTO-070 · FULLFØRT 2026-09-16** — Koordinatgrupper leverer samme rå
+prognose til alle mottakere, mens `forecasts` beregner lokal offset per
+sted-ID. Aliassteder får derfor egne temperaturer uten ekstra nettverkskall.
 
 **AUTO-071 · ÅPEN** — Kontroller at aliassteder deler ett nettverkskall,
 men får egne lokale temperaturjusteringer.
 
 **AUTO-072 · ÅPEN** — Verifiser at koordinatavrunding ikke flytter et sted
 over i feil Yr-rute.
+
+**AUTO-073 · ÅPEN** — Test at aliassteder med ulike lokale temperaturoffsets
+ikke deler justert prognose ved widget- eller Watch-synkronisering.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
