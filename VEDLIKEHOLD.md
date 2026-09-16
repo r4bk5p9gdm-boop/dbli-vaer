@@ -725,8 +725,9 @@ display-only-regler før start eller videreføring, i tråd med pushplanlegginge
 deterministisk tie-breaker når type/navn er likt. Varslingsregler beholder
 dermed stabil rekkefølge ved gjentatt sortering.
 
-**AUTO-146 · ÅPEN** — Verifiser at Live Activity-oppdatering ikke skjer for
-foreldet eller slettet regel.
+**AUTO-146 · FULLFØRT 2026-09-16** — Live Activity-kandidater avviser
+foreldede/slettede regler; `sync()` avslutter dermed foreldreløse aktiviteter
+automatisk.
 
 **AUTO-147 · ÅPEN** — Test at regler med identisk navn fortsatt får separate
 varsel-ID-er og kan redigeres individuelt.

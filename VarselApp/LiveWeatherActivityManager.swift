@@ -157,6 +157,8 @@ enum LiveWeatherActivityManager {
         now: Date
     ) -> Candidate? {
         sortedCandidates(activities.compactMap { activity in
+            // Missing/deleted rules intentionally produce no candidate; sync()
+            // then ends the orphaned activity.
             guard let place = places.first(where: { $0.id == activity.attributes.placeID }),
                   place.areNotificationsEnabled,
                   let rule = place.rules.first(where: { $0.id == activity.attributes.ruleID }) else { return nil }
