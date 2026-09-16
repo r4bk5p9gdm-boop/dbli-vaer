@@ -3,5 +3,5 @@
   "lastScheduledStart": "2026-09-13T05:15:12.787Z",
   "noProgressCount": 0,
   "lastProgress": "BRUKER-016 fullført: aktuell posisjon gjenbruker nærmeste lagrede sted og viser posisjonsikon.",
-  "stopReason": "AUTO-modus aktiv: blokkerte brukeroppgaver hoppes over, og arbeidet fortsetter på neste ublokkerte oppgave."
+  "stopReason": "AUTO-modus aktiv med 15 minutters intervall: BRUKER-016 er fullført, og neste AUTO-oppgave tas ved neste kjøring."
 }
