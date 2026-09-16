@@ -723,6 +723,7 @@ final class Store: ObservableObject {
         guard let snapshot else {
             // Removing the selected place (or moving it) must clear both the
             // forecast snapshot and the shared-place list in one transaction.
+            // This is the only intentional reload without a weather snapshot.
             SharedWidgetData.clear()
             WatchSyncManager.shared.clear()
             WidgetCenter.shared.reloadAllTimelines()

@@ -706,8 +706,9 @@ Eksisterende cancellation/marker-tester dekker dette.
 verdier som er skrevet etter komplett Yr-respons per koordinat. In-flight
 delresultater kan derfor ikke publiseres som snapshot.
 
-**AUTO-141 · ÅPEN** — Test at WidgetCenter kun reloades etter gyldig snapshot
-eller eksplisitt tømming.
+**AUTO-141 · FULLFØRT 2026-09-16** — WidgetCenter-reload skjer bare etter
+gyldig snapshot eller den eksplisitte clear-stien når sted/prognose fjernes.
+Tom refresh lagres ikke og utløser ingen egen reload.
 
 **AUTO-142 · ÅPEN** — Verifiser at Watch-appen viser siste stednavn etter
 posisjonssynkronisering med samme UUID.
