@@ -2499,6 +2499,12 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(place.enabledRuleCount, 1)
     }
 
+    func testRuleFilterReturnsEmptyForTypeWithoutRules() {
+        let rain = Rule(type: .regn)
+        XCTAssertTrue(Rule.filtered([rain], by: .sno).isEmpty)
+        XCTAssertEqual(Rule.filtered([rain], by: nil).count, 1)
+    }
+
     func testBackgroundRefreshSchedulesNextAttemptAfterThirtyMinutes() {
         XCTAssertEqual(
             BackgroundRefresh.earliestBeginDate(now: base),

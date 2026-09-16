@@ -64,7 +64,10 @@ dekker to regnregler samt «alle».
 **AUTO-161 · FULLFØRT 2026-09-16** — Regresjonstest bekrefter at skjuling av
 en visuell værtype-rad ikke endrer aktive pushregler eller deres antall.
 
-**AUTO-162 · ÅPEN** — Legg til regresjon for tom pushregel-liste i filtervisning.
+**AUTO-162 · FULLFØRT 2026-09-16** — Pushfilteret returnerer en tom liste
+for værtyper uten regler, mens «alle push» fortsatt viser alle. Regresjonstest
+dekker begge tilfeller.
+
 
 **BRUKER-014 · FULLFØRT 2026-09-16** — Innstillingene viser nå en Push-knapp
 på hver værtype-rad med antall regler. Trykk på typen for å filtrere
