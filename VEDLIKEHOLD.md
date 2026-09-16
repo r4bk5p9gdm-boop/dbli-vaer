@@ -634,6 +634,15 @@ språkvalg/eksport beholder både valgt sted og lokal temperaturjustering.
 som innkommende værdata; eksplisitt tømming går fortsatt gjennom egen clear-
 sti. Dermed beholdes siste riktige sted i stedet for en tom feiloverføring.
 
+**AUTO-122 · ÅPEN** — Test at widgetsnapshot med lokal temperaturjustering
+ikke endrer rå duggpunktverdi.
+
+**AUTO-123 · ÅPEN** — Verifiser at Varslingsregler viser valgt sted etter
+stedsbytte fra hjemsiden.
+
+**AUTO-124 · ÅPEN** — Test at inntrøndersk pushtekst beholder egen huskelapp
+som ettertekst ved alle værtyper.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
