@@ -372,14 +372,17 @@ siste vellykkede tidspunkt blir stående.
 stedsnavn i «sist hentede prognose»-prefikset og har eksplisitt instruksjon
 om nytt forsøk («Pull to try again»/«Dra ned …»).
 
-**AUTO-059 · ÅPEN** — Test at feilstatus ryddes når samme sted senere får
-en gyldig prognose.
+**AUTO-059 · FULLFØRT 2026-09-16** — Refresh-koden fjerner `forecastErrors`
+for stedet i samme gren som lagrer ny prognose og nytt hentetidspunkt.
 
 **AUTO-060 · ÅPEN** — Kontroller at siste oppdateringstidspunkt bruker
 samme klokkegrunnlag ved manuell og bakgrunnsrefresh.
 
 **AUTO-061 · ÅPEN** — Verifiser at feilstatus ikke vises etter vellykket
 manuell oppdatering.
+
+**AUTO-062 · ÅPEN** — Kontroller at feilstatus fra ett sted ikke arves av
+et nytt sted med samme visningsnavn.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
