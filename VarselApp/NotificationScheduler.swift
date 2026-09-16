@@ -358,6 +358,8 @@ enum NotificationScheduler {
         let now = Date()
         let eventAt = now.addingTimeInterval(60 * 60)
         let content = UNMutableNotificationContent()
+        // Keep the manual test notification on the exact same copy path as
+        // scheduled alerts, including selected language and dialect rules.
         content.title = NotificationCopy.title(for: rule, placeName: place.nameWithPreposition, possible: possible, languageStyle: languageStyle)
         content.body = NotificationCopy.message(for: rule, eventAt: eventAt, referenceAt: now, possible: possible, languageStyle: languageStyle)
         content.sound = .default

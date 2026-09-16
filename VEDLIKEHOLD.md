@@ -645,8 +645,9 @@ fjerner GPS-markeringen.
 **AUTO-124 · FULLFØRT 2026-09-16** — Inntrøndersk push-regresjon dekker alle
 værtyper og sikrer at aktivert huskelapp alltid står som separat siste linje.
 
-**AUTO-125 · ÅPEN** — Verifiser at appens testvarsel bruker samme tekstkatalog
-som planlagte pushvarsler.
+**AUTO-125 · FULLFØRT 2026-09-16** — Testvarselet er dokumentert til å bruke
+samme NotificationCopy-tekststi som planlagte pushvarsler, med valgt språk og
+inntrøndersk stil.
 
 **AUTO-126 · ÅPEN** — Test at varselkøen viser korrekt sted etter omdøping av
 et sted med aktive regler.
