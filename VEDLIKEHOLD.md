@@ -418,14 +418,18 @@ kan motta egne lokalt justerte prognoser.
 prognose til alle mottakere, mens `forecasts` beregner lokal offset per
 sted-ID. Aliassteder får derfor egne temperaturer uten ekstra nettverkskall.
 
-**AUTO-071 · ÅPEN** — Kontroller at aliassteder deler ett nettverkskall,
-men får egne lokale temperaturjusteringer.
+**AUTO-071 · FULLFØRT 2026-09-16** — `forecasts`-beregningen mapper rådata
+per sted-ID og anvender hvert steds lokale offset før snapshot sendes til
+widget og Watch. Ingen justert prognose deles mellom aliassteder.
 
 **AUTO-072 · ÅPEN** — Verifiser at koordinatavrunding ikke flytter et sted
 over i feil Yr-rute.
 
 **AUTO-073 · ÅPEN** — Test at aliassteder med ulike lokale temperaturoffsets
 ikke deler justert prognose ved widget- eller Watch-synkronisering.
+
+**AUTO-074 · ÅPEN** — Kontroller at fukt- og vindverdier ikke påvirkes av
+lokal temperaturjustering.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
