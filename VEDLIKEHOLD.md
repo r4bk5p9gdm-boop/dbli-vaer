@@ -626,6 +626,12 @@ fjernes ved neste replanlegging.
 **AUTO-119 · ÅPEN** — Test at feil ved én Yr-forespørsel gir tydelig sted-
 spesifikk feil uten å overskrive siste gode prognose.
 
+**AUTO-120 · ÅPEN** — Kontroller at replanlegging etter språkvalg ikke
+nullstiller valgt sted eller lokale temperaturjusteringer.
+
+**AUTO-121 · ÅPEN** — Test at Watch-snapshot med tom prognose viser
+«Venter på iPhone» og ikke gamle, feil steddata.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
