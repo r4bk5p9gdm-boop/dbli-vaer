@@ -511,6 +511,13 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(WeatherGlance.nextEvents([current, next], now: now).map(\.type), [.sno])
     }
 
+    func testCompactEventLabelUsesConfiguredTemperatureDirection() {
+        let under = WeatherStatus(ruleID: UUID(), type: .temperatur, text: "Under 10° i morgen.", eventAt: base, isNow: false)
+        let over = WeatherStatus(ruleID: UUID(), type: .temperatur, text: "Over 20° i morgen.", eventAt: base, isNow: false)
+        XCTAssertEqual(WeatherGlance.compactEventLabel(for: under), "<10°")
+        XCTAssertEqual(WeatherGlance.compactEventLabel(for: over), ">20°")
+    }
+
     func testLocalAdjustmentPreservesYrAndDoesNotAccumulate() throws {
         let hour = ForecastHour(time: base, temp: 4, precip: 0, wind: 1, cloud: 0, dew: 1)
         let local = hour.locallyAdjusted(by: -2)

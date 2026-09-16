@@ -62,6 +62,10 @@ dekker at neste snøhendelse velges når regn pågår akkurat nå.
 bruker nå samme neste-hendelse-filter. Tidslinjen oppdateres senest etter 30
 minutter, men kan våkne tidligere når en konkret hendelse nærmer seg.
 
+**AUTO-154 · FULLFØRT 2026-09-16** — Kortetiketten i Watch-sirkelen er
+sentralisert og temperaturvarsler viser faktisk retning og terskel, som
+«<10°» eller «>20°». Regresjonstest dekker begge retninger.
+
 **AUTO-153 · ÅPEN** — Kontroller Watch-widgetens tidslinje og oppdateringsintervall
 mot neste hendelse uten å øke ressursbruken.
 

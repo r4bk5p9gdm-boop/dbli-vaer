@@ -101,7 +101,7 @@ struct WatchWeatherWidgetView: View {
                         .rotationEffect(.degrees(-90))
                         .padding(2)
                     VStack(spacing: 1) {
-                        Text(status.map(shortTypeName) ?? temperature)
+                        Text(status.map(WeatherGlance.compactEventLabel) ?? temperature)
                             .font(.caption2.bold())
                             .lineLimit(1)
                             .minimumScaleFactor(0.8)
@@ -154,18 +154,6 @@ struct WatchWeatherWidgetView: View {
     private var temperature: String {
         guard let current else { return "--°" }
         return "\(current.temp.formatted(.number.precision(.fractionLength(0))))°"
-    }
-
-    private func shortTypeName(_ status: WeatherStatus) -> String {
-        switch status.type {
-        case .regn: "Regn!"
-        case .sno: "Snø!"
-        case .vind: "Vind!"
-        case .dugg: "Dogg!"
-        case .sol: "Sol!"
-        case .frost: "Frost!"
-        case .temperatur: status.text.contains("Under") ? "<5°" : ">20°"
-        }
     }
 
     private func compactEventTime(_ date: Date) -> String {

@@ -35,6 +35,25 @@ enum WeatherGlance {
         upcoming(statuses, now: now).filter { !$0.isNow }
     }
 
+    static func compactEventLabel(for status: WeatherStatus) -> String {
+        switch status.type {
+        case .regn: "Regn!"
+        case .sno: "Snø!"
+        case .vind: "Vind!"
+        case .dugg: "Dogg!"
+        case .sol: "Sol!"
+        case .frost: "Frost!"
+        case .temperatur:
+            let isHigh = status.text.localizedCaseInsensitiveContains("over")
+            let marker = isHigh ? ">" : "<"
+            let number = status.text
+                .split(whereSeparator: { $0 == " " || $0 == "°" })
+                .first(where: { Double(String($0).replacingOccurrences(of: ",", with: ".")) != nil })
+                .map(String.init) ?? ""
+            return number.isEmpty ? "Temp!" : "(marker)(number)°"
+        }
+    }
+
     private static func glanceSeverity(_ type: AlertType) -> Int {
         switch type {
         case .frost, .sno: return 3
