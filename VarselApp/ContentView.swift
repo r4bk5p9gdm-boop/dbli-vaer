@@ -173,7 +173,7 @@ struct HomeView: View {
                                 forecast: visibleForecast,
                                 languageStyle: store.alertLanguageStyle,
                                 isCurrentLocation: store.selectionIsCurrentLocation,
-                                onSelect: store.select
+                                onSelect: { place in store.select(place) }
                             )
                         }
                         VStack(alignment: .leading, spacing: 10) {
@@ -1068,7 +1068,7 @@ struct PlacesView: View {
                                         forecast: forecast,
                                         languageStyle: store.alertLanguageStyle,
                                         isCurrentLocation: false,
-                                        onSelect: store.select,
+                                        onSelect: { place in store.select(place) },
                                         showsPlaceMenu: false
                                     )
                                     .contentShape(RoundedRectangle(cornerRadius: 18))

@@ -54,6 +54,10 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-012 · FULLFØRT 2026-09-16** — Rettet to SwiftUI-kall som sendte
+`Store.select` direkte til en callback som forventer `(Place) -> Void`.
+Kallene bruker nå eksplisitt closure og bygger igjen mot riktig signatur.
+
 **BRUKER-011 · FULLFØRT 2026-09-16** — Rettet Swift-kompilasjonsfeil i
 Watch/widget-felleskoden: `compactEventLabel` returnerer nå eksplisitt fra
 alle `switch`-grener og setter sammen temperaturtegnet korrekt.
