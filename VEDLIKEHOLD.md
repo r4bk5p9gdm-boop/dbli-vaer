@@ -402,14 +402,18 @@ visningstekst; UUID og koordinatbasert rute forblir uendret.
 bekrefter at `customName` og preposisjon følger snapshot og push-tekst etter
 ny prognose, uten å endre stedets UUID.
 
-**AUTO-067 · ÅPEN** — Kontroller at preposisjon og egendefinert navn ikke
-endres av prognoseoppdatering.
+**AUTO-067 · FULLFØRT 2026-09-16** — `currentRecipients` bruker alltid
+gjeldende stedobjekt ved svar, slik at preposisjon og `customName` beholdes
+selv når prognosen kommer fra en eldre forespørsel.
 
 **AUTO-068 · ÅPEN** — Test at navnendring ikke utløser unødvendig
 nettverksforespørsel når koordinatene er uendret.
 
 **AUTO-069 · ÅPEN** — Kontroller at prognoseforespørsler dedupliseres når
 to steder deler identiske koordinater.
+
+**AUTO-070 · ÅPEN** — Verifiser at deduplisering fortsatt leverer prognosen
+til alle aliassteder med egne navn.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
