@@ -160,7 +160,15 @@ final class Store: ObservableObject {
             save()
         }
     }
-    @Published var selectedID: UUID? { didSet { save() } }
+    @Published var selectedID: UUID? {
+        didSet {
+            // Direct selection changes (notification routes, restored state or
+            // imports) are manual unless the GPS startup flow explicitly marks
+            // them as current-location selections immediately afterward.
+            selectionIsCurrentLocation = false
+            save()
+        }
+    }
     /// True when the current home page was selected from the phone's live position.
     /// Manual place selection clears this marker so the UI never implies GPS data
     /// for a place the user chose explicitly.

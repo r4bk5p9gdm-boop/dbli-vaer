@@ -460,8 +460,9 @@ Lokalt terskelavvik og Yr-verdi holdes separate etter dekoding.
 beregnes med rått duggpunkt etter lokal temperaturjustering, uten å mutere
 duggpunkt eller Yr-temperaturen i prognosen.
 
-**AUTO-080 · ÅPEN** — Legg regresjonstest for at manuell stedsvelging alltid
-fjerner posisjonsmarkeringen på hjemkortet.
+**AUTO-080 · FULLFØRT 2026-09-16** — Direkte endringer av valgt sted (varsling,
+import eller gjenoppretting) nullstiller nå GPS-markeringen automatisk. Bare
+oppstartsforløpet for aktuell posisjon kan sette den tilbake.
 
 **AUTO-081 · ÅPEN** — Kontroller at helside-sveip ikke endrer valgt sted ved
 vertikal scrolling eller når favorittlisten inneholder duplikate steder.
