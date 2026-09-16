@@ -78,10 +78,8 @@ verdien er skydekke, for eksempel «20 % skydekke». Solvelgerne på
 hjeminnstillinger og varselredigering viser nå «% skydekke» i stedet for en
 uklar prosentverdi.
 
-**BRUKER-030 · ÅPEN** — Fjern literal «(title)» fra hjemmets dagshode og
-tilgjengelighetstekst.
-
-**BRUKER-030 · FULLFØRT 2026-09-16** — Rettet to manglende Swift-
+**BRUKER-030 · FULLFØRT 2026-09-16** — Fjernet literal «(title)» fra
+hjemmets dagshode og tilgjengelighetstekst. Rettet to manglende Swift-
 interpoleringer: dagshodet viser faktisk dato, og bjellens VoiceOver-tekst
 viser faktisk værtype.
 
