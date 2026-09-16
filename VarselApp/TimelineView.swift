@@ -283,12 +283,12 @@ private struct WeatherBandsForecast: View {
 
                     VStack(spacing: 1) {
                         Color.clear.frame(height: 15)
-                        Text("nå")
-                            .font(.system(size: 8, weight: .bold, design: .rounded))
-                            .foregroundStyle(Color.orange)
                         Capsule()
                             .fill(Color.orange)
                             .frame(width: 2)
+                        Text("nå")
+                            .font(.system(size: 8, weight: .bold, design: .rounded))
+                            .foregroundStyle(Color.orange)
                     }
                     .frame(height: proxy.size.height)
                     .position(x: markerX, y: proxy.size.height / 2)
