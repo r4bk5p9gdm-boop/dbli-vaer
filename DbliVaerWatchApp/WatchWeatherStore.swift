@@ -47,12 +47,12 @@ final class WatchWeatherStore: ObservableObject {
         snapshotRevision = UUID()
         message = nil
         self.snapshot = snapshot
-        SharedWidgetData.save(place: snapshot.place, forecast: snapshot.forecast, updatedAt: snapshot.updatedAt)
+        SharedWidgetData.save(place: snapshot.place, forecast: snapshot.forecast, updatedAt: snapshot.updatedAt, languageStyle: snapshot.languageStyle, textSeparator: snapshot.textSeparator)
         WidgetCenter.shared.reloadAllTimelines()
     }
 
     private func accept(_ transfer: WatchWeatherTransfer) {
-        guard transfer.sentAt >= lastTransferAt else { return }
+        guard WatchTransferPolicy.accepts(transfer.sentAt, after: lastTransferAt) else { return }
         lastTransferAt = transfer.sentAt
         UserDefaults.standard.set(transfer.sentAt, forKey: lastTransferKey)
         guard let snapshot = transfer.snapshot else {

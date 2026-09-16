@@ -1845,6 +1845,12 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(SharedWidgetData.load()?.forecast, [hour])
     }
 
+    func testWatchTransferPolicyRejectsDuplicateTimestamp() {
+        XCTAssertTrue(WatchTransferPolicy.accepts(base.addingTimeInterval(1), after: base))
+        XCTAssertFalse(WatchTransferPolicy.accepts(base, after: base))
+        XCTAssertFalse(WatchTransferPolicy.accepts(base.addingTimeInterval(-1), after: base))
+    }
+
     func testWidgetHourLabelsUseLocalTimeAcrossOsloMidnightAndDST() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))

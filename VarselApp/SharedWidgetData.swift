@@ -119,6 +119,10 @@ struct WatchWeatherTransfer: Codable {
     let sentAt: Date
 }
 
+enum WatchTransferPolicy {
+    static func accepts(_ incoming: Date, after last: Date) -> Bool { incoming > last }
+}
+
 enum SharedWidgetData {
     static let appGroup = "group.no.mathias.dblivaer"
     private static let snapshotKey = "widget.weather.snapshot"

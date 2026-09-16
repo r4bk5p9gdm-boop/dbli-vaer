@@ -548,8 +548,10 @@ ikke blir overskrevet av en mislykket/tom oppdatering.
 kalenderkomponent, med regresjonstest for Europe/Oslo ved midnatt og
 vårskiftet til sommertid.
 
-**AUTO-101 · ÅPEN** — Verifiser at Watch-overføring med samme revisjon er
-idempotent og ikke lager doble oppdateringer ved rask bakgrunnsrefresh.
+**AUTO-101 · FULLFØRT 2026-09-16** — Watch-overføring avvises nå også når
+`sentAt` er identisk med sist mottatte overføring, ikke bare når den er eldre.
+En liten policyfunksjon og regresjonstest gjør rask, gjentatt bakgrunnsrefresh
+idempotent.
 
 **AUTO-102 · ÅPEN** — Gjennomgå varsel-ID-generering for kollisjon mellom
 like regler på ulike steder og legg til en ren regresjonstest.
