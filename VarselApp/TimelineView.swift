@@ -29,7 +29,7 @@ struct ForecastVariantsView: View {
     var body: some View {
         VStack(spacing: 7) {
             ForEach(days) { day in
-                VStack(alignment: .leading, spacing: 7) {
+                VStack(alignment: .leading, spacing: 4) {
                     if !Calendar.current.isDate(day.date, inSameDayAs: weatherDayDate(for: Date())) {
                         ForecastDayHeader(day: day)
                     }
@@ -235,7 +235,7 @@ private struct WeatherBandsForecast: View {
                         }
                     }
                 }
-                .frame(height: 14)
+                .frame(height: 12)
 
                 if rules.isEmpty {
                     Text("Ingen varsler er aktivert.")

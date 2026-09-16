@@ -147,6 +147,8 @@ struct HomeView: View {
         let left = favorites.left.flatMap { id in store.places.first { $0.id == id } }
         let right = favorites.right.flatMap { id in store.places.first { $0.id == id } }
         if store.selectionIsCurrentLocation, let current = store.selected {
+            // GPS is always the leftmost page. If it resolves to a favorite,
+            // that saved name remains leftmost and receives the position tint.
             return [current, left, right]
                 .compactMap { $0 }
                 .reduce(into: [Place]()) { result, place in
