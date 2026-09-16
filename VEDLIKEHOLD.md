@@ -54,6 +54,12 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-031 · ÅPEN** — Solens prosentvelgere skal vise at verdien er
+skydekke, for eksempel «20 % skydekke».
+
+**BRUKER-031 · FULLFØRT 2026-09-16** — Solvelgerne på hjeminnstillinger og
+varselredigering viser nå «% skydekke» i stedet for en uklar prosentverdi.
+
 **BRUKER-030 · ÅPEN** — Fjern literal «(title)» fra hjemmets dagshode og
 tilgjengelighetstekst.
 

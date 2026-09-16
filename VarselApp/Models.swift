@@ -368,7 +368,7 @@ enum AlertType: String, Codable, CaseIterable, Identifiable {
     var unit: String {
         switch self {
         case .regn: "mm/t"; case .sno: "mm vann/t"; case .frost, .temperatur: "°C"; case .vind: "m/s"
-        case .dugg: "°C fra dugg"; case .sol: "% sky"
+        case .dugg: "°C fra dugg"; case .sol: "% skydekke"
         }
     }
     var defaultThreshold: Double {

@@ -749,7 +749,7 @@ struct RulesView: View {
                                                 if type == .vind {
                                                     Text("\(value.formatted(.number.precision(.fractionLength(0...1)))) m/s · \(windStrengthLabel(for: value))").tag(value)
                                                 } else {
-                                                    Text("\(value.formatted(.number.precision(.fractionLength(0...1))))\(type == .sol ? " %" : "°")").tag(value)
+                                                    Text("\(value.formatted(.number.precision(.fractionLength(0...1))))\(type == .sol ? " % skydekke" : "°")").tag(value)
                                                 }
                                             }
                                         }
@@ -771,7 +771,7 @@ struct RulesView: View {
                                                 set: { p.displaySunThreshold2 = $0; store.update(p) }
                                             )) {
                                                 ForEach(Array(stride(from: 0.0, through: 50.0, by: 5.0)), id: \.self) { value in
-                                                    Text("2: \(value.formatted(.number.precision(.fractionLength(0)))) %").tag(value)
+                                                    Text("2: \(value.formatted(.number.precision(.fractionLength(0)))) % skydekke").tag(value)
                                                 }
                                             }
                                             .labelsHidden().pickerStyle(.menu)
