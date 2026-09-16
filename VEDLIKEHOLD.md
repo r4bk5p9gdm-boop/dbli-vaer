@@ -568,6 +568,9 @@ og eksplisitt bevarte varsler blir stående etter replanlegging.
 **AUTO-105 · ÅPEN** — Kontroller at språkbytte ikke endrer regel-ID-er eller
 fører til doble varsler ved neste planlegging.
 
+**AUTO-106 · ÅPEN** — Test at varselkøens sortering er stabil når to varsler
+har samme tidspunkt, men ulik værtype og alvorlighetsgrad.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
