@@ -592,6 +592,15 @@ seks timer. Regresjonstest sikrer at foreldet data ikke holder aktiv status.
 **AUTO-111 · ÅPEN** — Test at posisjonsstedets lokale temperaturjustering
 brukes likt i hjem, widget og Watch-snapshot.
 
+**AUTO-112 · ÅPEN** — Kontroller at varslingsplanleggeren ikke lager ny
+push når samme hendelse bare endrer språk eller skilletegn.
+
+**AUTO-113 · ÅPEN** — Test at tom Nå-radar ikke fjerner et gyldig Yr-
+tabellvarsel fra nedbørsraden.
+
+**AUTO-114 · ÅPEN** — Verifiser at bakgrunnsoppdatering respekterer kansellering
+før den skriver delvis hentede prognoser.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
