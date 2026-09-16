@@ -300,6 +300,7 @@ enum WindGustLevel: Int, CaseIterable, Identifiable {
 }
 
 func windStrengthLabel(for metersPerSecond: Double) -> String {
+    // Shared by iPhone, widget and Watch so boundary labels stay identical.
     switch metersPerSecond {
     case ..<0.3: "stille"
     case ..<1.6: "flau vind"

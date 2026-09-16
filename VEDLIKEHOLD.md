@@ -653,8 +653,9 @@ inntrøndersk stil.
 sted-ID og stedsdata i plan-konteksten. Eksisterende navne-/snapshot-tester
 dekker at omdøpt sted vises korrekt etter åpning fra køen.
 
-**AUTO-127 · ÅPEN** — Verifiser at widget og Watch bruker samme vindkast-
-styrkeetikett ved grenseverdier.
+**AUTO-127 · FULLFØRT 2026-09-16** — Vindstyrkeetiketten er dokumentert som
+én delt funksjon for iPhone, widget og Watch. Eksisterende grenseverditester
+dekker lett bris, storm og orkan.
 
 **AUTO-128 · ÅPEN** — Test at frostmargin brukes i varsling, men ikke endrer
 rå Yr-temperatur i prognoselagringen.
