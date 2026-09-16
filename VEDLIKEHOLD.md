@@ -54,6 +54,12 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-024 · ÅPEN** — Bytt lilla natur-/nattbakgrunn i værfeltene til
+mørkegrå, slik at lilla ikke kan forveksles med varslingsfarge.
+
+**BRUKER-024 · FULLFØRT 2026-09-16** — Nattfeltene i alle værbånd bruker nå
+ mørkegrå bakgrunn. Varslingsfargene er uendret og står tydeligere frem.
+
 **BRUKER-023 · ÅPEN** — Flytt pushbjellen til høyre side av raden. Værikon
 og radtittel (for eksempel «Nedbør») skal starte helt til venstre.
 

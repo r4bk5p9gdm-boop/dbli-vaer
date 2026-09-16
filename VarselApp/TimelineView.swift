@@ -362,7 +362,7 @@ private struct CombinedHourBandCell: View {
         GeometryReader { proxy in
             ZStack(alignment: .leading) {
                 RoundedRectangle(cornerRadius: 5)
-                    .fill(period.isNight ? Color.indigo.opacity(0.17) : Color.secondary.opacity(0.11))
+                    .fill(period.isNight ? Color.gray.opacity(0.18) : Color.secondary.opacity(0.11))
                 ForEach(hours) { hour in
                     let hourNumber = Calendar.current.component(.hour, from: hour.time)
                     let offset = hourOffset(hourNumber, from: period.startHour)
@@ -432,7 +432,7 @@ private struct MoistureHourBandCell: View {
         GeometryReader { proxy in
             ZStack(alignment: .leading) {
                 RoundedRectangle(cornerRadius: 5)
-                    .fill(period.isNight ? Color.indigo.opacity(0.17) : Color.secondary.opacity(0.11))
+                    .fill(period.isNight ? Color.gray.opacity(0.18) : Color.secondary.opacity(0.11))
                 ForEach(hours) { hour in
                     let hourNumber = Calendar.current.component(.hour, from: hour.time)
                     let offset = hourOffset(hourNumber, from: period.startHour)
@@ -509,7 +509,7 @@ private struct HourBandCell: View {
         GeometryReader { proxy in
             ZStack(alignment: .leading) {
                 RoundedRectangle(cornerRadius: 5)
-                    .fill(period.isNight ? Color.indigo.opacity(0.17) : Color.secondary.opacity(0.11))
+                    .fill(period.isNight ? Color.gray.opacity(0.18) : Color.secondary.opacity(0.11))
                 ForEach(matchingHours) { hour in
                     let hourNumber = Calendar.current.component(.hour, from: hour.time)
                     let offset = hourOffset(hourNumber, from: period.startHour)
