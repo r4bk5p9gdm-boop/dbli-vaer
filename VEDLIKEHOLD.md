@@ -332,14 +332,18 @@ misvisende eller uleselige tall.
 oppryddingen fjerner foreldede forespørsler, mens fremtidige eller nylig
 erstattede varsler beholdes.
 
-**AUTO-049 · ÅPEN** — Verifiser at bakgrunnsrefresh ikke overskriver
-aktivt sted med et senere svar fra en eldre forespørsel.
+**AUTO-049 · FULLFØRT 2026-09-16** — Eksisterende `currentRecipients`-
+regresjonstest bekrefter at svar fra fjernet eller flyttet sted forkastes,
+mens oppdatert sted med samme ID og koordinat mottar svaret.
 
 **AUTO-050 · ÅPEN** — Kontroller at eksplisitt brukeroppdatering vinner over
 et samtidig bakgrunnssvar.
 
 **AUTO-051 · ÅPEN** — Test at kansellert varsling ikke etterlater delvis
 opprettede forespørsler.
+
+**AUTO-052 · ÅPEN** — Kontroller at nettverksfeil logger riktig sted uten å
+endre valgt sted eller varseltekst.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
