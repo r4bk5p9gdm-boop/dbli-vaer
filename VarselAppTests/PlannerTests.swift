@@ -135,6 +135,10 @@ final class PlannerTests: XCTestCase {
         let decoded = try JSONDecoder().decode(WatchWeatherTransfer.self, from: JSONEncoder().encode(transfer))
         XCTAssertEqual(decoded.snapshot?.languageStyle, .inntrondersk)
         XCTAssertEqual(decoded.snapshot?.textSeparator, .dash)
+        XCTAssertEqual(
+            decoded.snapshot?.localized("Duggfall natt til onsdag kl. 05"),
+            "Doggfall natt te onsda'n — kl. 05"
+        )
     }
 
     func testWidgetSnapshotUnknownLanguageKeepsWeatherDataAndUsesSafeFallback() throws {
