@@ -1834,7 +1834,8 @@ final class PlannerTests: XCTestCase {
     }
 
     func testConfigurationExportPreservesLanguageAndSelectedPlaceAcrossRestart() throws {
-        let place = Place(name: "Namsos", lat: 64.5, lon: 11.5, preposition: .nerri)
+        var place = Place(name: "Namsos", lat: 64.5, lon: 11.5, preposition: .nerri)
+        place.localTemperatureOffset = -1.5
         let export = WeatherConfigurationExport(
             places: [place], selectedPlaceID: place.id, alertLanguageStyle: .english
         )
@@ -1848,6 +1849,7 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(restored.alertLanguageStyle, .english)
         XCTAssertEqual(restored.selectedPlaceID, place.id)
         XCTAssertEqual(restored.places.first?.nameWithPreposition, "nerri Namsos")
+        XCTAssertEqual(restored.places.first?.localTemperatureOffset, -1.5)
     }
 
     @MainActor

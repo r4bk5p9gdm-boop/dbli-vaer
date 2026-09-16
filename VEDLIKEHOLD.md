@@ -627,8 +627,8 @@ fjernes ved neste replanlegging.
 stedsspesifikk: ved Yr-feil beholdes prognose og tidspunkt urørt, mens feilen
 vises for riktig sted. Eksisterende delvis-refresh-tester dekker dette.
 
-**AUTO-120 · ÅPEN** — Kontroller at replanlegging etter språkvalg ikke
-nullstiller valgt sted eller lokale temperaturjusteringer.
+**AUTO-120 · FULLFØRT 2026-09-16** — Konfigurasjonstesten dekker nå at
+språkvalg/eksport beholder både valgt sted og lokal temperaturjustering.
 
 **AUTO-121 · ÅPEN** — Test at Watch-snapshot med tom prognose viser
 «Venter på iPhone» og ikke gamle, feil steddata.
