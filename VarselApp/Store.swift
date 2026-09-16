@@ -151,6 +151,18 @@ final class Store: ObservableObject {
     static func shouldApplyCurrentLocation(selectionAtRequestStart: UUID?, currentSelection: UUID?) -> Bool {
         selectionAtRequestStart == currentSelection
     }
+
+    static func nearestSavedPlace(
+        in places: [Place], to location: CLLocation, maxDistance: CLLocationDistance = 15_000
+    ) -> Place? {
+        guard let nearest = places.min(by: {
+            CLLocation(latitude: $0.lat, longitude: $0.lon).distance(from: location)
+                < CLLocation(latitude: $1.lat, longitude: $1.lon).distance(from: location)
+        }) else { return nil }
+        return CLLocation(latitude: nearest.lat, longitude: nearest.lon).distance(from: location) <= maxDistance
+            ? nearest
+            : nil
+    }
     // Foreground and background work must share live rules and forecasts.
     // A separate instance can overwrite newer settings when its log is saved.
     static let shared = Store()
@@ -389,12 +401,7 @@ final class Store: ObservableObject {
             selectionAtRequestStart: selectionAtRequestStart,
             currentSelection: selectedID
         ) else { return }
-        let nearest = places.min { a, b in
-            CLLocation(latitude: a.lat, longitude: a.lon).distance(from: location)
-                < CLLocation(latitude: b.lat, longitude: b.lon).distance(from: location)
-        }
-        if let nearest,
-           CLLocation(latitude: nearest.lat, longitude: nearest.lon).distance(from: location) <= 15_000 {
+        if let nearest = Self.nearestSavedPlace(in: places, to: location) {
             select(nearest, fromCurrentLocation: true)
             return
         }

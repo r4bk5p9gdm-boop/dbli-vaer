@@ -1,5 +1,6 @@
 import XCTest
 import UserNotifications
+import CoreLocation
 @testable import VarselApp
 
 private final class FakeNotificationCenter: NotificationCenterClient {
@@ -94,6 +95,14 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(Store.shouldApplyCurrentLocation(selectionAtRequestStart: initial, currentSelection: initial))
         XCTAssertFalse(Store.shouldApplyCurrentLocation(selectionAtRequestStart: initial, currentSelection: UUID()))
         XCTAssertFalse(Store.shouldApplyCurrentLocation(selectionAtRequestStart: nil, currentSelection: initial))
+    }
+
+    func testCurrentLocationReusesNearbySavedPlaceInsteadOfCreatingDuplicate() {
+        let klinga = Place(name: "Klinga", lat: 64.4094, lon: 11.4779)
+        let far = Place(name: "Oslo", lat: 59.9139, lon: 10.7522)
+        let location = CLLocation(latitude: 64.4095, longitude: 11.4780)
+        XCTAssertEqual(Store.nearestSavedPlace(in: [klinga, far], to: location)?.id, klinga.id)
+        XCTAssertNil(Store.nearestSavedPlace(in: [klinga], to: CLLocation(latitude: 60, longitude: 10)))
     }
 
     func testRotatingStatusSummaryKeepsOneEntryPerWeatherType() {

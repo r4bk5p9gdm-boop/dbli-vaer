@@ -54,6 +54,15 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-016 · ÅPEN** — Når aktuell posisjon treffer et lagret sted, skal
+stedet brukes direkte (uten ekstra posisjonssted) og hjemkortet vise et
+tydelig posisjonsikon på det lagrede stedet.
+
+**BRUKER-016 · FULLFØRT 2026-09-16** — GPS-oppslaget gjenbruker nå nærmeste
+ lagrede sted innen 15 km, slik at Klinga/Hornburu ikke får et ekstra,
+ duplisert posisjonssted. Hjemkortets eksisterende posisjonslabel og ikon
+ vises samtidig. Ny regresjonstest dekker både treff og avstand uten treff.
+
 **AUTO-174 · ÅPEN** — Kontroller at GPS-valg ved appstart ikke overskriver
 manuelt valgt sted når posisjonsdata kommer sent. Legg til test før eventuell
 endring.
