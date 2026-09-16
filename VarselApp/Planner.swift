@@ -330,7 +330,13 @@ enum Planner {
         let eventAt = nextRadar?.date ?? forecast[start].time
         guard eventAt > now else { return nil }
         let possible = nextRadar == nil && isPossible(rule: rule, hour: forecast[start], frostMargin: frostMargin)
-        let text = weatherAlertText(for: rule, eventAt: eventAt, referenceAt: now, possible: possible)
+        let text = weatherAlertText(
+            for: rule,
+            eventAt: eventAt,
+            referenceAt: now,
+            possible: possible,
+            durationHours: nextRun.count
+        )
         return WeatherStatus(ruleID: rule.id, type: rule.type, text: rule.statusText(text), eventAt: eventAt, isNow: false, possible: possible)
     }
 

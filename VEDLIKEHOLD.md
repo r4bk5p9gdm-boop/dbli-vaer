@@ -54,6 +54,15 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-025 · ÅPEN** — Solvarsel med minimum 4 timer skal oppgi faktisk
+varighet når prognosen gir lengre sammenhengende sol, for eksempel «Sol i 7
+timer».
+
+**BRUKER-025 · FULLFØRT 2026-09-16** — Soltekst bruker nå lengden på faktisk
+treffende værperiode, og aldri mindre enn minimumsinnstillingen. Et 4-timers
+varsel blir derfor «Sol i 7 timer» når prognosen viser sju timer. Regresjonstest
+dekker lengre faktisk varighet.
+
 **BRUKER-024 · ÅPEN** — Bytt lilla natur-/nattbakgrunn i værfeltene til
 mørkegrå, slik at lilla ikke kan forveksles med varslingsfarge.
 

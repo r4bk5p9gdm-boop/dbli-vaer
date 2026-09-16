@@ -984,7 +984,7 @@ func alertWeatherName(for rule: Rule) -> String {
     }
 }
 
-func weatherAlertText(for rule: Rule, eventAt: Date, referenceAt: Date = Date(), possible: Bool = false) -> String {
+func weatherAlertText(for rule: Rule, eventAt: Date, referenceAt: Date = Date(), possible: Bool = false, durationHours: Int? = nil) -> String {
     let when = eventTimePhrase(eventAt, relativeTo: referenceAt)
     let weather = alertWeatherName(for: rule)
     switch rule.type {
@@ -994,7 +994,8 @@ func weatherAlertText(for rule: Rule, eventAt: Date, referenceAt: Date = Date(),
     case .vind: return "Vindkast \(when)."
     case .temperatur, .dugg: return "\(weather) \(when)."
     case .sol:
-        let duration = "\(rule.durationHours) \(rule.durationHours == 1 ? "time" : "timer")"
+        let hours = max(rule.durationHours, durationHours ?? rule.durationHours)
+        let duration = "\(hours) \(hours == 1 ? "time" : "timer")"
         return "\(weather) i \(duration) \(when)."
     }
 }

@@ -773,6 +773,18 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(status.first?.isNow == true)
     }
 
+    func testSunAlertTextUsesLongerMatchedDurationThanMinimum() {
+        var rule = Rule(type: .sol)
+        rule.durationHours = 4
+        let text = weatherAlertText(
+            for: rule,
+            eventAt: base.addingTimeInterval(3_600),
+            referenceAt: base,
+            durationHours: 7
+        )
+        XCTAssertTrue(text.contains("Sol i 7 timer"))
+    }
+
     func testEventTimePhraseUsesProvidedTimezoneForDayBoundary() {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(secondsFromGMT: 0)!
