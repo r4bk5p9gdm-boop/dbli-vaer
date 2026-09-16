@@ -478,6 +478,7 @@ final class PlannerTests: XCTestCase {
 
     func testDialectCurrentWeatherUsesShortSpokenMessages() {
         XCTAssertEqual(WeatherLanguage.text("Regn nå.", style: .inntrondersk), "D regne no.")
+        XCTAssertEqual(WeatherLanguage.text("Mulig regn nå.", style: .inntrondersk), "D kan bli regn no.")
         XCTAssertEqual(WeatherLanguage.text("Litt regn nå.", style: .inntrondersk), "D regne litt no.")
         XCTAssertEqual(WeatherLanguage.text("Snø nå.", style: .inntrondersk), "D snør no.")
         XCTAssertEqual(WeatherLanguage.text("Vindkast nå.", style: .inntrondersk), "D blæs no.")

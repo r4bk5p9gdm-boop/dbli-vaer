@@ -210,6 +210,11 @@
       "nb": "Regn nå",
       "tr": "D regne no"
     },
+    "now.rain_possible": {
+      "en": "Rain may start now",
+      "nb": "Mulig regn nå",
+      "tr": "D kan bli regn no"
+    },
     "now.rain_light": {
       "en": "A little rain now",
       "nb": "Litt regn nå",
