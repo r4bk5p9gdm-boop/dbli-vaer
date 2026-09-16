@@ -1213,6 +1213,21 @@ final class PlannerTests: XCTestCase {
         XCTAssertNil(result.eventAt)
     }
 
+    func testDewAlertResumesAfterRainAcrossMidnight() {
+        var rule = Rule(type: .dugg)
+        rule.threshold = 1
+        let rainAt = base.addingTimeInterval(-2 * 3_600)
+        let dewAt = base.addingTimeInterval(2 * 3_600)
+        let hours = [
+            ForecastHour(time: rainAt, temp: 5, precip: 1, wind: 2, cloud: 100, dew: 4.5),
+            ForecastHour(time: base, temp: 5, precip: 0, wind: 2, cloud: 100, dew: 4.5),
+            ForecastHour(time: base.addingTimeInterval(3_600), temp: 5, precip: 0, wind: 2, cloud: 100, dew: 4.5),
+            ForecastHour(time: dewAt, temp: 5, precip: 0, wind: 2, cloud: 100, dew: 4.5)
+        ]
+        let result = Planner.plan(rule: rule, forecast: hours, placeName: "Klinga", now: base.addingTimeInterval(-60))
+        XCTAssertEqual(result.eventAt, dewAt)
+    }
+
     func testNearbyRainRulesDoNotCreateDuplicateNotifications() {
         var first = Rule(type: .regn)
         first.leadMinutes = 60

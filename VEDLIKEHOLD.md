@@ -577,8 +577,9 @@ slik at 64-grensen gir samme resultat hver gang.
 oversettelser og bruker fallback-teksten. Regresjonstest sikrer ikke-tom tekst
 for manglende push-/værtypeoppføring.
 
-**AUTO-108 · ÅPEN** — Test at duggdemping etter regn gjelder på tvers av
-midnatt uten å skjule et nytt, reelt duggfall.
+**AUTO-108 · FULLFØRT 2026-09-16** — Regresjonstest dekker at duggdemping
+etter regn fortsatt gjelder over midnatt, men slipper gjennom et nytt duggfall
+etter tre tørre timer.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
