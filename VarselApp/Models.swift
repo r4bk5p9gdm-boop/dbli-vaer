@@ -124,7 +124,8 @@ enum LanguageCatalog {
     }()
 
     static func value(_ key: String, language: String, fallback: String, arguments: [String: String] = [:]) -> String {
-        let template = entries[key]?[language] ?? fallback
+        let candidate = entries[key]?[language]
+        let template = (candidate?.isEmpty == false ? candidate : nil) ?? fallback
         // One pass: user-provided values must never be interpreted as templates.
         guard let regex = try? NSRegularExpression(pattern: "\\{([a-zA-Z_]+)\\}") else { return template }
         var result = template

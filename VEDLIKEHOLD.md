@@ -573,8 +573,9 @@ regel. Dette hindrer doble varsler ved neste planlegging.
 tie-breaker: ved likt tidspunkt prioriteres frost/snø foran vind og regn,
 slik at 64-grensen gir samme resultat hver gang.
 
-**AUTO-107 · ÅPEN** — Kontroller at språkfilens fallback ved manglende tekst
-ikke produserer tom push-tittel eller tom værtype.
+**AUTO-107 · FULLFØRT 2026-09-16** — Språkkatalogen ignorerer nå tomme
+oversettelser og bruker fallback-teksten. Regresjonstest sikrer ikke-tom tekst
+for manglende push-/værtypeoppføring.
 
 **AUTO-108 · ÅPEN** — Test at duggdemping etter regn gjelder på tvers av
 midnatt uten å skjule et nytt, reelt duggfall.

@@ -1365,6 +1365,11 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(NotificationScheduler.alertsToSchedule([rain, frost], now: base, limit: 1).first?.rule.type, .frost)
     }
 
+    func testLanguageCatalogRejectsEmptyTranslation() {
+        XCTAssertEqual(LanguageCatalog.value("missing.key", language: "en", fallback: "Weather"), "Weather")
+        XCTAssertFalse(LanguageCatalog.value("missing.key", language: "en", fallback: "Weather").isEmpty)
+    }
+
     @MainActor
     func testNotificationPlanLogReportsActualSchedulingResult() {
         XCTAssertEqual(
