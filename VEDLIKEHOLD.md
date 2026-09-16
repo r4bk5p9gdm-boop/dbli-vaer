@@ -651,6 +651,15 @@ som planlagte pushvarsler.
 **AUTO-126 · ÅPEN** — Test at varselkøen viser korrekt sted etter omdøping av
 et sted med aktive regler.
 
+**AUTO-127 · ÅPEN** — Verifiser at widget og Watch bruker samme vindkast-
+styrkeetikett ved grenseverdier.
+
+**AUTO-128 · ÅPEN** — Test at frostmargin brukes i varsling, men ikke endrer
+rå Yr-temperatur i prognoselagringen.
+
+**AUTO-129 · ÅPEN** — Kontroller at Varslingsregler ikke viser display-only-
+regler som aktive pushvarsler.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
