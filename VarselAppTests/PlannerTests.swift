@@ -2301,6 +2301,14 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testBackgroundRefreshUsesOneRequestForFavoriteAndPositionAlias() {
+        let favorite = Place(name: "Klinga", lat: 64.409401, lon: 11.477861)
+        let position = Place(name: "Min posisjon", lat: 64.409402, lon: 11.477862)
+        XCTAssertEqual(Store.forecastLocations(in: [favorite, position]).count, 1)
+        XCTAssertEqual(Store.groupedByForecastLocation([favorite, position]).values.first?.count, 2)
+    }
+
+    @MainActor
     func testLaunchPlacesUseRequestedNamesAndPrepositions() {
         XCTAssertEqual(Store.launchPlaces.map(\.nameWithPreposition), [
             "på Klinga", "nerri Namsos", "oppå Hornburu", "oppi Selbu", "inni Bangdalen"

@@ -557,8 +557,9 @@ idempotent.
 regel og tidspunkt får ulike identifikatorer for ulike steder, og at begge
 kan planlegges samtidig uten kollisjon.
 
-**AUTO-103 · ÅPEN** — Kontroller at bakgrunnsoppdatering ikke planlegger
-samme sted mer enn én gang når favoritt og posisjonssted deler koordinater.
+**AUTO-103 · FULLFØRT 2026-09-16** — Bakgrunnsoppdateringens koordinatgrupper
+har nå en eksplisitt regresjonstest for favoritt og posisjonsalias. To navn
+med samme Yr-presisjon gir én nettverksforespørsel og to mottakere.
 
 **AUTO-104 · ÅPEN** — Test at utløpte varsel ikke blir liggende i
 Varslingsregler etter en vellykket replanlegging.
