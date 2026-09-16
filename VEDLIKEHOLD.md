@@ -66,10 +66,11 @@ hendelse-liste i Watch-logikken, slik at widgeten bruker fallbackvisning uten
 å finne på et varsel. Regresjonstest dekker tom prognose.
 
 
-**BRUKER-015 · PÅ VENT 2026-09-16 · KREVER GODKJENNING** — Foreslått
-helsideoppsett med nåværende posisjon til venstre og to favoritter i midten/
-høyre, samt egen bakgrunn og hjelpetekst for posisjonsbasert vær. Dette er en
-større navigasjonsendring og implementeres først etter godkjenning.
+**BRUKER-015 · FULLFØRT 2026-09-16** — Helsideoppsettet viser nå nåværende
+posisjon til venstre når GPS faktisk brukes, etterfulgt av favoritt 1 og 2.
+Duplikater fjernes når GPS-stedet allerede er en favoritt. Posisjonssiden har
+egen indigo/cyan-stil, teksten «Nåværende posisjon» og en diskret swipe-hjelp
+som viser hvilke favoritter som ligger til høyre.
 
 **AUTO-163 · FULLFØRT 2026-09-16** — Watch-widgeten lager nå én fallback-
 oppføring når snapshot mangler, i stedet for ni identiske tomme tidslinjeposter.

@@ -138,12 +138,28 @@ struct HomeView: View {
         let favorites = store.resolvedHomeFavorites
         let left = favorites.left.flatMap { id in store.places.first { $0.id == id } }
         let right = favorites.right.flatMap { id in store.places.first { $0.id == id } }
+        if store.selectionIsCurrentLocation, let current = store.selected {
+            return [current, left, right]
+                .compactMap { $0 }
+                .reduce(into: [Place]()) { result, place in
+                    if !result.contains(where: { $0.id == place.id }) { result.append(place) }
+                }
+        }
         let orderedIDs = HomeSwipeSelection.orderedIDs(
             leftID: left?.id,
             currentID: store.selected?.id,
             rightID: right?.id
         )
         return orderedIDs.compactMap { id in store.places.first { $0.id == id } }
+    }
+
+    private var swipeHint: String? {
+        guard swipePlaces.count > 1 else { return nil }
+        let names = swipePlaces.map(\.displayName)
+        if store.selectionIsCurrentLocation {
+            return "Nåværende posisjon  " + names.dropFirst().map { "→ \($0)" }.joined(separator: "   ")
+        }
+        return names.joined(separator: "   ‹   ")
     }
 
     var body: some View {
@@ -166,6 +182,13 @@ struct HomeView: View {
                     if let p = store.selected {
                         let fc = store.selectedForecast
                         let visibleForecast = Array(fc.prefix(48))
+                        if let swipeHint {
+                            Text(swipeHint)
+                                .font(.caption2.weight(.medium))
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .accessibilityLabel("Sveip mellom steder: \(swipeHint)")
+                        }
                         if !visibleForecast.isEmpty {
                             CurrentWeatherCard(
                                 place: p,
@@ -314,9 +337,9 @@ private struct CurrentWeatherCard: View {
                 }
 
                 if isCurrentLocation {
-                    Label("Posisjon", systemImage: "location.fill")
+                    Label("Nåværende posisjon", systemImage: "location.fill")
                         .font(.caption2.weight(.semibold))
-                        .foregroundStyle(.green)
+                        .foregroundStyle(.indigo)
                         .labelStyle(.titleAndIcon)
                         .fixedSize()
                         .accessibilityLabel("Posisjonsbasert værvarsel")
@@ -394,13 +417,15 @@ private struct CurrentWeatherCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             LinearGradient(
-                colors: [Color.white, Color(red: 0.96, green: 0.98, blue: 1.0)],
+                colors: isCurrentLocation
+                    ? [Color.indigo.opacity(0.12), Color.cyan.opacity(0.08)]
+                    : [Color.white, Color(red: 0.96, green: 0.98, blue: 1.0)],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             ),
             in: RoundedRectangle(cornerRadius: 18)
         )
-        .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.blue.opacity(0.12)))
+        .overlay(RoundedRectangle(cornerRadius: 18).stroke(isCurrentLocation ? Color.indigo.opacity(0.28) : Color.blue.opacity(0.12)))
     }
 
     private var precipitationMetricValue: String {
