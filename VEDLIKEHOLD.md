@@ -82,7 +82,9 @@ Ny regresjonstest dekker ukjent språk-ID.
 språkstil og skilletegn gjennom ny prognose; regresjonstest dekker
 inntrøndersk med tankestrek.
 
-**AUTO-157 · ÅPEN** — Legg inn test for tom Watch-prognose og beholdt cache.
+**AUTO-157 · FULLFØRT 2026-09-16** — Tom Watch-prognose avvises før snapshot
+erstattes. Regresjonstest bekrefter at eksisterende cache og tidspunkt
+beholdes ved tom refresh.
 
 **AUTO-158 · ÅPEN** — Kontroller tilgjengelighetslabel for sirkulær widget.
 

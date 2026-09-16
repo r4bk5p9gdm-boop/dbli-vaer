@@ -287,6 +287,16 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(refreshed.localized("Duggfall i morgen kl. 07."), "Doggfall i mårrå — kl. 07.")
     }
 
+    func testSharedSnapshotRejectsEmptyRefreshAndKeepsCachedForecast() throws {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let hour = ForecastHour(time: base, temp: 7, precip: 0, wind: 2, cloud: 40, dew: 3)
+        let snapshot = WidgetWeatherSnapshot(place: place, forecast: [hour], updatedAt: base)
+        let revision = UUID()
+        XCTAssertNil(snapshot.refreshed(with: [], at: base.addingTimeInterval(60), requestRevision: revision, currentRevision: revision))
+        XCTAssertEqual(snapshot.forecast, [hour])
+        XCTAssertEqual(snapshot.updatedAt, base)
+    }
+
     func testGustThresholdNeverFallsBackToMeanWind() {
         var hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 20, cloud: 0, dew: 0)
         XCTAssertFalse(AlertType.vind.matches(hour, threshold: 9))
