@@ -73,6 +73,16 @@ tom roterende hjemstatus når det fortsatt finnes en gyldig Nå-status.
 **AUTO-179 · ÅPEN** — Sjekk at widget-cache ikke blir skrevet oftere enn
  nødvendig ved identisk prognose, slik at batteri og bakgrunnsarbeid spares.
 
+**AUTO-180 · ÅPEN** — Kontroller at lokal temperaturjustering brukes likt i
+ hjem, push og widget ved delvise prognoser.
+
+**AUTO-181 · ÅPEN** — Legg til regresjon for vindkastgrenser ved manglende
+ vindkastverdi, slik at vind ikke feilaktig varsles som null.
+
+**AUTO-178 · FULLFØRT 2026-09-16** — Statusberegningen beholder en gyldig
+ Nå-status også når Yr bare leverer én prognosetime. Ny test dekker kort og
+ delvis prognose med duggfall.
+
 **AUTO-177 · FULLFØRT 2026-09-16** — Refresh-køen er verifisert med test som
 viser at en avbrutt, ventende oppdatering ikke starter og ikke kan overskrive
 en nyere oppdatering. Køen fortsetter deretter med neste gyldige arbeid.

@@ -751,6 +751,17 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(notificationPlan.eventAt, hours[3].time)
     }
 
+    func testStatusRemainsAvailableWithShortPartialForecast() {
+        var place = Place(name: "Klinga", lat: 64, lon: 11)
+        var rule = Rule(type: .dugg)
+        rule.threshold = 9
+        place.rules = [rule]
+        let hours = forecast(values: [(8, 0, 1, 90, 8)])
+        let status = Planner.statuses(for: place, forecast: hours, now: base)
+        XCTAssertEqual(status.first?.type, .dugg)
+        XCTAssertTrue(status.first?.isNow == true)
+    }
+
     func testLiveActivityPolicyStartsNearEventAndContinuesCurrentEvent() {
         let rule = Rule(type: .regn)
         let near = WeatherStatus(
