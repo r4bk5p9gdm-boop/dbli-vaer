@@ -680,8 +680,9 @@ duplikat- eller hoppesider og ingen oppdiktede erstatningssteder.
 sted-ID og Yr-koordinat. Eksisterende regresjonstester dekker flyttet sted,
 nytt posisjonssted og alias med samme koordinater.
 
-**AUTO-134 · ÅPEN** — Verifiser at planleggingskøen beholder nyeste resultat
-ved tre raske replanlegginger.
+**AUTO-134 · FULLFØRT 2026-09-16** — Refresh-køen dokumenterer seriell
+kjøring og kansellering av foreldede ventere. Eksisterende tre-kjørings- og
+reentrancy-tester sikrer at nyeste resultat blir stående.
 
 **AUTO-135 · ÅPEN** — Test at værikon og varseltype fortsatt bruker samme
 felles fargemodell for solgløtt og skyer.

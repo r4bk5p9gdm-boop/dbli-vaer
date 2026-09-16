@@ -130,6 +130,8 @@ final class ForecastRefreshQueue {
     private var generation = 0
 
     func enqueue(_ operation: @escaping @MainActor () async -> Bool) -> Task<Bool, Never> {
+        // Chained tasks serialize rapid refreshes; cancelling an obsolete
+        // waiter lets the newest queued operation run next.
         let previous = tail
         generation += 1
         let currentGeneration = generation
