@@ -88,12 +88,10 @@ til venstre. Når GPS treffer favoritt 1 eller 2, brukes favorittnavnet med
 posisjonsfarge, uten duplikatside. Avstanden mellom dagshode og klokkeslett
 er redusert.
 
-**BRUKER-028 · ÅPEN** — Rett literal placeholdertekst i dagshodene slik at
-«I morgen» ikke viser «(Datetext)» eller andre kodeuttrykk.
-
-**BRUKER-028 · FULLFØRT 2026-09-16** — Rettet manglende Swift-
-interpolering i dag/dato-tekstene. Dag, dato og ukedag vises nå som faktiske
-verdier i stedet for «(dayNumber)», «(weekday)» eller «(dateText)».
+**BRUKER-028 · FULLFØRT 2026-09-16** — Rettet literal placeholdertekst i
+dagshodene. Manglende Swift-interpolering er korrigert, slik at dag, dato og
+ukedag vises som faktiske verdier i stedet for «(dayNumber)», «(weekday)»
+eller «(dateText)».
 
 **BRUKER-027 · ÅPEN** — Posisjonsmarkøren skal høre til stedsnavnet og stå
 rett foran det. GPS-stedet skal bruke samme lilla/indigo tekstfarge.
