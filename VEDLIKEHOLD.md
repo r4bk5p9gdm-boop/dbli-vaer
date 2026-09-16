@@ -54,6 +54,10 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-033 · FULLFØRT 2026-09-16** — Flyttet hjemskjermens redigering til
+værkortets temperatur-/ikonlinje for å spare høyde. La til tre
+posisjonsprikker under kortet som viser aktiv sveipeside.
+
 **BRUKER-032 · FULLFØRT 2026-09-16** — Temperatur-raden skal markeres når
 valgt «Temp over»-grense treffes, ikke bare når «Temp under» treffes. Koblede
 visningsgrensen for høy

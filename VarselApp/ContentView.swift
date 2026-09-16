@@ -190,8 +190,20 @@ struct HomeView: View {
                                 forecast: visibleForecast,
                                 languageStyle: store.alertLanguageStyle,
                                 isCurrentLocation: store.selectionIsCurrentLocation,
-                                onSelect: { place in store.select(place) }
+                                onSelect: { place in store.select(place) },
+                                onEdit: { showingSettings = true }
                             )
+                            HStack(spacing: 6) {
+                                let activeIndex = max(0, min(2, swipePlaces.firstIndex(where: { $0.id == p.id }) ?? 0))
+                                ForEach(0..<3, id: \.self) { index in
+                                    Circle()
+                                        .fill(index == activeIndex ? Color.indigo : Color.secondary.opacity(0.25))
+                                        .frame(width: index == activeIndex ? 7 : 5, height: index == activeIndex ? 7 : 5)
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                            .accessibilityElement(children: .ignore)
+                            .accessibilityLabel("Stedside \(activeIndexForSelectedPlace + 1) av 3")
                         }
                         VStack(alignment: .leading, spacing: 10) {
                             HStack {
@@ -238,11 +250,6 @@ struct HomeView: View {
             }
             .background(Color(red: 0.93, green: 0.95, blue: 0.97))
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Tilpass", systemImage: "slider.horizontal.3") { showingSettings = true }
-                }
-            }
             .refreshable { _ = await store.refreshAll() }
             .contentShape(Rectangle())
             .highPriorityGesture(DragGesture(minimumDistance: 45).onEnded { value in
@@ -264,6 +271,10 @@ struct HomeView: View {
             .sheet(isPresented: $showingSettings) { RulesView() }
         }
     }
+
+    private var activeIndexForSelectedPlace: Int {
+        max(0, min(2, swipePlaces.firstIndex(where: { $0.id == store.selected?.id }) ?? 0))
+    }
 }
 
 private struct CurrentWeatherCard: View {
@@ -273,6 +284,7 @@ private struct CurrentWeatherCard: View {
     let languageStyle: AlertLanguageStyle
     let isCurrentLocation: Bool
     let onSelect: (Place) -> Void
+    var onEdit: (() -> Void)? = nil
     var showsPlaceMenu = true
 
     private var current: ForecastHour { forecast[0] }
@@ -352,6 +364,17 @@ private struct CurrentWeatherCard: View {
                 }
                 .fixedSize()
                 .layoutPriority(3)
+
+                if let onEdit {
+                    Button(action: onEdit) {
+                        Image(systemName: "pencil")
+                            .font(.caption.weight(.semibold))
+                            .frame(width: 28, height: 28)
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+                    .accessibilityLabel("Rediger varsler for \(place.displayName)")
+                }
             }
 
             HStack(spacing: 5) {
