@@ -716,7 +716,10 @@ final class Store: ObservableObject {
         guard let cached, cached.place.id == place.id,
               ForecastLocation(place: cached.place) == ForecastLocation(place: place),
               !cached.forecast.isEmpty, cached.updatedAt >= cutoff else { return nil }
-        return WidgetWeatherSnapshot(place: place, forecast: cached.forecast.map { $0.locallyAdjusted(by: place.localTemperatureOffset) }, updatedAt: cached.updatedAt)
+        // Cached snapshots already contain the local temperature adjustment
+        // applied when they were written; applying it again would drift the
+        // displayed value after a refresh failure.
+        return WidgetWeatherSnapshot(place: place, forecast: cached.forecast, updatedAt: cached.updatedAt)
     }
 
     func refreshDisplaySettings() {

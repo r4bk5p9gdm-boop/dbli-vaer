@@ -82,6 +82,13 @@ vindkastverdi, slik at vind ikke feilaktig varsles som null.
 **AUTO-182 · ÅPEN** — Kontroller at widget-refresh ikke oppdaterer tidslinjen
  når snapshot og delte steder er identiske.
 
+**AUTO-183 · ÅPEN** — Verifiser at prognosealder vises korrekt etter
+ fallback fra cache på både iPhone og Watch.
+
+**AUTO-180 · FULLFØRT 2026-09-16** — Lokal temperaturjustering brukes nå
+ konsekvent i fersk og cached widgetprognose. Cached data justeres ikke på
+ nytt ved feilrefresh, og regresjonstest dekker begge veier.
+
 **AUTO-179 · FULLFØRT 2026-09-16** — Delte widgetdata sammenlignes nå med
  eksisterende bytes før lagring. Identiske snapshot og stedslister skriver
  ikke UserDefaults på nytt. Test dekker lik, manglende og endret data.
