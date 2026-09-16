@@ -35,13 +35,13 @@ enum WeatherGlance {
         upcoming(statuses, now: now).filter { !$0.isNow }
     }
 
-    static func compactEventLabel(for status: WeatherStatus) -> String {
+    static func compactEventLabel(for status: WeatherStatus, languageStyle: AlertLanguageStyle = .bokmal) -> String {
         switch status.type {
-        case .regn: return "Regn!"
-        case .sno: return "Snø!"
-        case .vind: return "Vind!"
-        case .dugg: return "Dogg!"
-        case .sol: return "Sol!"
+        case .regn: return languageStyle == .english ? "Rain!" : "Regn!"
+        case .sno: return languageStyle == .english ? "Snow!" : "Snø!"
+        case .vind: return languageStyle == .english ? "Wind!" : "Vind!"
+        case .dugg: return languageStyle == .inntrondersk ? "Dogg!" : languageStyle == .english ? "Dew!" : "Dugg!"
+        case .sol: return languageStyle == .english ? "Sun!" : "Sol!"
         case .frost: return "Frost!"
         case .temperatur:
             let isHigh = status.text.localizedCaseInsensitiveContains("over")

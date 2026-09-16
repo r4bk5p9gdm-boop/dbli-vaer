@@ -551,6 +551,9 @@ final class PlannerTests: XCTestCase {
         let over = WeatherStatus(ruleID: UUID(), type: .temperatur, text: "Over 20° i morgen.", eventAt: base, isNow: false)
         XCTAssertEqual(WeatherGlance.compactEventLabel(for: under), "<10°")
         XCTAssertEqual(WeatherGlance.compactEventLabel(for: over), ">20°")
+        let dew = WeatherStatus(ruleID: UUID(), type: .dugg, text: "Duggfall", eventAt: base, isNow: false)
+        XCTAssertEqual(WeatherGlance.compactEventLabel(for: dew, languageStyle: .bokmal), "Dugg!")
+        XCTAssertEqual(WeatherGlance.compactEventLabel(for: dew, languageStyle: .inntrondersk), "Dogg!")
     }
 
     func testLocalAdjustmentPreservesYrAndDoesNotAccumulate() throws {

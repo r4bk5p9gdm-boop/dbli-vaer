@@ -54,6 +54,14 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-166 · FULLFØRT 2026-09-16** — Korte Watch-varseltekster følger nå
+språkstil: «Dugg!» i bokmål, «Dogg!» i inntrøndersk og «Dew!» på engelsk.
+Test dekker språkvariantene.
+
+**AUTO-167 · ÅPEN** — Kontroller språkstil i Watch-widgetens inline-variant.
+
+**AUTO-168 · ÅPEN** — Test Watch-komplikasjon med manglende forecast.
+
 **BRUKER-015 · PÅ VENT 2026-09-16 · KREVER GODKJENNING** — Foreslått
 helsideoppsett med nåværende posisjon til venstre og to favoritter i midten/
 høyre, samt egen bakgrunn og hjelpetekst for posisjonsbasert vær. Dette er en

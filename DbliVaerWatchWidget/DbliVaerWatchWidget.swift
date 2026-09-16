@@ -107,7 +107,7 @@ struct WatchWeatherWidgetView: View {
                         .rotationEffect(.degrees(-90))
                         .padding(2)
                     VStack(spacing: 1) {
-                        Text(status.map(WeatherGlance.compactEventLabel) ?? temperature)
+                        Text(status.map { WeatherGlance.compactEventLabel(for: $0, languageStyle: entry.snapshot?.languageStyle ?? .bokmal) } ?? temperature)
                             .font(.caption2.bold())
                             .lineLimit(1)
                             .minimumScaleFactor(0.8)
@@ -164,7 +164,7 @@ struct WatchWeatherWidgetView: View {
 
     private var circularAccessibilityLabel: String {
         guard let status else { return temperature }
-        return "\(localized(WeatherGlance.compactEventLabel(for: status))), \(compactEventTime(status.eventAt))"
+        return "\(localized(WeatherGlance.compactEventLabel(for: status, languageStyle: entry.snapshot?.languageStyle ?? .bokmal))), \(compactEventTime(status.eventAt))"
     }
 
     private func compactEventTime(_ date: Date) -> String {
