@@ -54,6 +54,14 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-009 · FULLFØRT 2026-09-16** — NÅ-status har nå korte,
+konsekvente inntrønderske uttrykk for regn, lett regn, snø og vind: «D regne
+no», «D regne litt no», «D snør no» og «D blæs no». Dugg beholder den
+gjenkjennelige «No e d doggfall.»-formen. Uttrykkene ligger i `Sprak.json` og
+brukes av samme språktransformasjon som hjem, rullerende status og push. Den
+mer humoristiske varianten («D striregne no», «D blæs fra alle kanta no»)
+er bevisst ikke standard og kan låses opp som en egen stil senere.
+
 **BRUKER-008 · FULLFØRT 2026-09-16** — Hjem viser nå tydelig «Posisjon» når
 stedet ble valgt fra telefonens aktuelle posisjon. Den ekstra linjen med lokalt
 anslag/Yr er fjernet fra hjemvisningen slik at øverste bolk ikke forskyves.

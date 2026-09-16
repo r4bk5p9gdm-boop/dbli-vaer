@@ -205,6 +205,31 @@
       "nb": "nå",
       "tr": "no"
     },
+    "now.rain": {
+      "en": "It’s raining now",
+      "nb": "Regn nå",
+      "tr": "D regne no"
+    },
+    "now.rain_light": {
+      "en": "A little rain now",
+      "nb": "Litt regn nå",
+      "tr": "D regne litt no"
+    },
+    "now.snow": {
+      "en": "It’s snowing now",
+      "nb": "Snø nå",
+      "tr": "D snør no"
+    },
+    "now.wind": {
+      "en": "It’s windy now",
+      "nb": "Vind nå",
+      "tr": "D blæs no"
+    },
+    "now.dew": {
+      "en": "Dew now",
+      "nb": "Fare for dugg nå",
+      "tr": "No e d doggfall"
+    },
     "time.quarter": {
       "en": "in fifteen minutes",
       "nb": "om et kvarter",

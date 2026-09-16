@@ -476,6 +476,13 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(WeatherLanguage.text("Duggfall i morgen kl. 07.", style: .inntrondersk), "Doggfall i mårrå kl. 07.")
     }
 
+    func testDialectCurrentWeatherUsesShortSpokenMessages() {
+        XCTAssertEqual(WeatherLanguage.text("Regn nå.", style: .inntrondersk), "D regne no.")
+        XCTAssertEqual(WeatherLanguage.text("Litt regn nå.", style: .inntrondersk), "D regne litt no.")
+        XCTAssertEqual(WeatherLanguage.text("Snø nå.", style: .inntrondersk), "D snør no.")
+        XCTAssertEqual(WeatherLanguage.text("Vindkast nå.", style: .inntrondersk), "D blæs no.")
+    }
+
     func testWeatherGlanceUsesTwelveHoursAndOneEventPerType() {
         func event(_ type: AlertType, _ hours: Double, isNow: Bool = false) -> WeatherStatus {
             WeatherStatus(ruleID: UUID(), type: type, text: "Test", eventAt: base.addingTimeInterval(hours * 3600), isNow: isNow)
