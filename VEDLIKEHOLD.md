@@ -544,6 +544,15 @@ samme sted-ID, tidspunkt og værdata også for posisjonssted.
 og lar siste gyldige snapshot stå. Regresjonstest dekker at sted og timeverdier
 ikke blir overskrevet av en mislykket/tom oppdatering.
 
+**AUTO-100 · ÅPEN** — Test at widget-tidslinjen bruker lokal tidssone ved
+midnatt og sommertid uten å flytte første værtime til feil dato.
+
+**AUTO-101 · ÅPEN** — Verifiser at Watch-overføring med samme revisjon er
+idempotent og ikke lager doble oppdateringer ved rask bakgrunnsrefresh.
+
+**AUTO-102 · ÅPEN** — Gjennomgå varsel-ID-generering for kollisjon mellom
+like regler på ulike steder og legg til en ren regresjonstest.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
