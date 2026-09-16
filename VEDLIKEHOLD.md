@@ -70,7 +70,10 @@ tydelig posisjonsikon på det lagrede stedet.
  yttertall og Dag/Kveld/Natt-etiketter er fjernet. Overskriften er «Resten av
  i dag, [ukedag dato]» til venstre med Yr-tid til høyre, «Neste 48 timer» er
  borte, bjellen står i egen fylt sirkel uten delestrek, og radene er gjort
- lavere for å få plass til tre døgn på iPhone.
+lavere for å få plass til tre døgn på iPhone.
+Bygg mot fysisk iOS-destinasjon ble forsøkt; det stoppet i den eksisterende
+SwiftUIMacros/swift-plugin-server-feilen i miljøet, ikke med en ny Swift-feil
+i disse endringene.
 
 **AUTO-174 · ÅPEN** — Kontroller at GPS-valg ved appstart ikke overskriver
 manuelt valgt sted når posisjonsdata kommer sent. Legg til test før eventuell
