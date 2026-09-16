@@ -97,12 +97,9 @@ eller «(dateText)».
 stedsnavnet, og GPS-stedsnavnet får indigo tekstfarge. Vanlige steder beholder
 blå valgfarge.
 
-**BRUKER-026 · ÅPEN** — Fjern navigeringsbanen/sveipehjelpen øverst på
-hjemskjermen og trekk værkortet opp for å spare høyde.
-
-**BRUKER-026 · FULLFØRT 2026-09-16** — Den øvre teksten med stedspil er
-fjernet fra hjemskjermen. Værkortet starter nå øverst, slik at mer av
-tidslinjen får plass på iPhone uten å endre selve sveipefunksjonen.
+**BRUKER-026 · FULLFØRT 2026-09-16** — Fjernet navigeringsbanen og
+sveipehjelpen øverst på hjemskjermen. Værkortet starter nå øverst, slik at
+mer av tidslinjen får plass uten å endre selve sveipefunksjonen.
 
 **BRUKER-025 · ÅPEN** — Solvarsel med minimum 4 timer skal oppgi faktisk
 varighet når prognosen gir lengre sammenhengende sol, for eksempel «Sol i 7
