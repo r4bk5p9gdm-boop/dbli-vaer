@@ -645,6 +645,12 @@ fjerner GPS-markeringen.
 **AUTO-124 · ÅPEN** — Test at inntrøndersk pushtekst beholder egen huskelapp
 som ettertekst ved alle værtyper.
 
+**AUTO-125 · ÅPEN** — Verifiser at appens testvarsel bruker samme tekstkatalog
+som planlagte pushvarsler.
+
+**AUTO-126 · ÅPEN** — Test at varselkøen viser korrekt sted etter omdøping av
+et sted med aktive regler.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
