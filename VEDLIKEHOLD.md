@@ -724,6 +724,9 @@ display-only-regler før start eller videreføring, i tråd med pushplanlegginge
 **AUTO-145 · ÅPEN** — Test at Varslingsregler sorterer aktive regler stabilt
 etter type og opprettet rekkefølge.
 
+**AUTO-146 · ÅPEN** — Verifiser at Live Activity-oppdatering ikke skjer for
+foreldet eller slettet regel.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
