@@ -161,6 +161,10 @@ final class Store: ObservableObject {
         }
     }
     @Published var selectedID: UUID? { didSet { save() } }
+    /// True when the current home page was selected from the phone's live position.
+    /// Manual place selection clears this marker so the UI never implies GPS data
+    /// for a place the user chose explicitly.
+    @Published private(set) var selectionIsCurrentLocation = false
     @Published var homeFavorites: HomeFavorites = {
         guard let data = UserDefaults.standard.data(forKey: "varsel.homeFavorites"),
               let value = try? JSONDecoder().decode(HomeFavorites.self, from: data) else { return HomeFavorites() }
@@ -362,6 +366,7 @@ final class Store: ObservableObject {
         if let nearest,
            CLLocation(latitude: nearest.lat, longitude: nearest.lon).distance(from: location) <= 15_000 {
             selectedID = nearest.id
+            selectionIsCurrentLocation = true
             return
         }
         let name = await LocationManager.name(for: location)
@@ -369,11 +374,13 @@ final class Store: ObservableObject {
             $0.name.compare(name, options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame
         }) {
             selectedID = existing.id
+            selectionIsCurrentLocation = true
             return
         }
         let place = Place(name: name, lat: location.coordinate.latitude, lon: location.coordinate.longitude, preposition: .pa)
         places.append(place)
         selectedID = place.id
+        selectionIsCurrentLocation = true
     }
 
     func update(_ place: Place) {
@@ -598,12 +605,14 @@ final class Store: ObservableObject {
 
     func select(_ place: Place) {
         selectedID = place.id
+        selectionIsCurrentLocation = false
         updateWidget()
     }
 
     func add(_ place: Place) async {
         places.append(place)
         selectedID = place.id
+        selectionIsCurrentLocation = false
         proximityMonitor.configure(for: places)
         do {
             let forecast = try await YrService.fetch(lat: place.lat, lon: place.lon)

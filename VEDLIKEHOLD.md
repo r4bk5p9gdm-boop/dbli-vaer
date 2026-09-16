@@ -54,6 +54,13 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-008 · FULLFØRT 2026-09-16** — Hjem viser nå tydelig «Posisjon» når
+stedet ble valgt fra telefonens aktuelle posisjon. Den ekstra linjen med lokalt
+anslag/Yr er fjernet fra hjemvisningen slik at øverste bolk ikke forskyves.
+Sveip mellom hjemsteder bruker retningsstyrt helside-overgang, der innholdet
+flyttes ut og neste sted glir inn fra motsatt side. Manuelt valgt sted og
+varslingslenker fjerner posisjonsmarkeringen.
+
 **BRUKER-007 · FULLFØRT 2026-09-15** — Vis temperatur under valgt grense med grå tekst og
 temperatur over valgt grense med varm farge i tidskortene. Gi stedet en egen
 «Temp over»-grense, separat fra «Temp under», med standard 20 °C.

@@ -121,7 +121,9 @@ struct ContentView: View {
         guard let placeIDString,
               let placeID = UUID(uuidString: placeIDString),
               store.places.contains(where: { $0.id == placeID }) else { return }
-        store.selectedID = placeID
+        if let place = store.places.first(where: { $0.id == placeID }) {
+            store.select(place)
+        }
         selectedTab = .home
     }
 }
@@ -130,6 +132,7 @@ struct HomeView: View {
     @EnvironmentObject var store: Store
     @State private var editing: Rule?
     @State private var showingSettings = false
+    @State private var transitionDirection: Edge = .trailing
 
     private var swipePlaces: [Place] {
         let favorites = store.resolvedHomeFavorites
@@ -143,6 +146,7 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
+                ZStack {
                 VStack(alignment: .leading, spacing: 14) {
                     if store.notificationsAuthorized == false {
                         Label("Varslinger er avslått. Slå dem på i Innstillinger for å motta værvarsler.", systemImage: "bell.slash.fill")
@@ -158,10 +162,6 @@ struct HomeView: View {
                     }
                     if let p = store.selected {
                         let fc = store.selectedForecast
-                        if p.localTemperatureOffset != 0, let hour = fc.first {
-                            Text("Lokalt anslag \(hour.temp.formatted(.number.precision(.fractionLength(1))))° · Yr \((hour.yrTemperature ?? hour.temp).formatted(.number.precision(.fractionLength(1))))°")
-                                .font(.caption).foregroundStyle(.secondary)
-                        }
                         let visibleForecast = Array(fc.prefix(48))
                         if !visibleForecast.isEmpty {
                             CurrentWeatherCard(
@@ -169,6 +169,7 @@ struct HomeView: View {
                                 places: store.places,
                                 forecast: visibleForecast,
                                 languageStyle: store.alertLanguageStyle,
+                                isCurrentLocation: store.selectionIsCurrentLocation,
                                 onSelect: store.select
                             )
                         }
@@ -207,6 +208,13 @@ struct HomeView: View {
                         )
                     }
                 }.padding()
+                    .id(store.selectedID)
+                    .transition(.asymmetric(
+                        insertion: .move(edge: transitionDirection),
+                        removal: .move(edge: transitionDirection == .trailing ? .leading : .trailing)
+                    ))
+                }
+                .animation(.easeInOut(duration: 0.32), value: store.selectedID)
             }
             .background(Color(red: 0.93, green: 0.95, blue: 0.97))
             .navigationBarTitleDisplayMode(.inline)
@@ -223,7 +231,8 @@ struct HomeView: View {
                       let index = swipePlaces.firstIndex(where: { $0.id == current.id }) else { return }
                 let next = value.translation.width < 0 ? index + 1 : index - 1
                 guard swipePlaces.indices.contains(next) else { return }
-                withAnimation(.easeInOut(duration: 0.25)) { store.select(swipePlaces[next]) }
+                transitionDirection = value.translation.width < 0 ? .trailing : .leading
+                withAnimation(.easeInOut(duration: 0.32)) { store.select(swipePlaces[next]) }
             })
             .sheet(item: $editing) { r in RuleEditorView(rule: r, isNew: false) }
             .sheet(isPresented: $showingSettings) { RulesView() }
@@ -236,6 +245,7 @@ private struct CurrentWeatherCard: View {
     let places: [Place]
     let forecast: [ForecastHour]
     let languageStyle: AlertLanguageStyle
+    let isCurrentLocation: Bool
     let onSelect: (Place) -> Void
     var showsPlaceMenu = true
 
@@ -292,6 +302,15 @@ private struct CurrentWeatherCard: View {
                 } else {
                     PlaceTitle(place: place, showsChevron: false)
                         .layoutPriority(1)
+                }
+
+                if isCurrentLocation {
+                    Label("Posisjon", systemImage: "location.fill")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(.green)
+                        .labelStyle(.titleAndIcon)
+                        .fixedSize()
+                        .accessibilityLabel("Posisjonsbasert værvarsel")
                 }
 
                 HStack(spacing: 4) {
