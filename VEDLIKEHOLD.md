@@ -560,6 +560,12 @@ kan planlegges samtidig uten kollisjon.
 **AUTO-103 · ÅPEN** — Kontroller at bakgrunnsoppdatering ikke planlegger
 samme sted mer enn én gang når favoritt og posisjonssted deler koordinater.
 
+**AUTO-104 · ÅPEN** — Test at utløpte varsel ikke blir liggende i
+Varslingsregler etter en vellykket replanlegging.
+
+**AUTO-105 · ÅPEN** — Kontroller at språkbytte ikke endrer regel-ID-er eller
+fører til doble varsler ved neste planlegging.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
