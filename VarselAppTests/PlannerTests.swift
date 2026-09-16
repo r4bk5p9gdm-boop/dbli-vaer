@@ -1001,6 +1001,15 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testMainIconAndAlertTypeAgreeAtSleetBoundary() {
+        let sleet = ForecastHour(time: base, temp: 1, precip: 0.2, wind: 2, cloud: 90, dew: 0)
+        let rain = ForecastHour(time: base, temp: 1.1, precip: 0.2, wind: 2, cloud: 90, dew: 0)
+        XCTAssertEqual(CurrentWeatherCondition.resolve(sleet).label, "Snø")
+        XCTAssertTrue(AlertType.sno.matches(sleet, threshold: 0.1))
+        XCTAssertEqual(CurrentWeatherCondition.resolve(rain).label, "Regn")
+        XCTAssertTrue(AlertType.regn.matches(rain, threshold: 0.1))
+    }
+
     func testTemperatureRuleAlertsBelowChosenThreshold() {
         var rule = Rule(type: .temperatur)
         rule.threshold = 10

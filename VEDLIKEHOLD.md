@@ -688,8 +688,8 @@ reentrancy-tester sikrer at nyeste resultat blir stående.
 CurrentWeatherCondition-ikon og farge som hovedikonet. Solgløtt og overskyet
 kan derfor ikke lenger få avvikende symbol eller farge.
 
-**AUTO-136 · ÅPEN** — Verifiser at appens hovedikon og live-status bruker
-samme nedbørstype ved sluddgrensen.
+**AUTO-136 · FULLFØRT 2026-09-16** — Regresjonstest låser samme regn/snø-
+klassifisering i hovedikon og varseltype ved 1,0 °C-sluddgrensen.
 
 **AUTO-137 · ÅPEN** — Test at varsler med «bare i nærheten» ignoreres når
 stedet ikke er innenfor nærhetsradius.
