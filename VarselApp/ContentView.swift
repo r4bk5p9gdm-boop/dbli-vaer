@@ -870,6 +870,10 @@ struct RulesView: View {
                     Button("Ferdig") { dismiss() }
                 }
             }
+            .onChange(of: store.selectedID) { _, _ in
+                pushFilter = nil
+                editing = nil
+            }
             .sheet(item: $editing) { r in RuleEditorView(rule: r, isNew: false) }
             .sheet(isPresented: $creating) { RulePresetPickerView() }
             .alert("Testvarsel", isPresented: Binding(

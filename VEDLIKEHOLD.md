@@ -65,7 +65,10 @@ oppføring når snapshot mangler, i stedet for ni identiske tomme tidslinjeposte
 **AUTO-164 · FULLFØRT 2026-09-16** — Watch-hendelser har regresjonstest for
 stabil UUID-basert rekkefølge når tidene er like, uavhengig av inputrekkefølge.
 
-**AUTO-165 · ÅPEN** — Kontroller at pushfilteret nullstilles ved stedsskifte.
+**AUTO-165 · FULLFØRT 2026-09-16** — Valgt pushfilter og pågående regelredigering
+nullstilles ved stedsskifte, slik at regler fra forrige sted ikke skjules eller
+redigeres ved et uhell.
+
 
 **AUTO-159 · FULLFØRT 2026-09-16** — Push-knappene på værtyperadene har nå
 egen VoiceOver-label med værtype og antall oppsatte pushvarsler.
