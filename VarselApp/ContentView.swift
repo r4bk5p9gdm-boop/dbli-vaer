@@ -138,9 +138,12 @@ struct HomeView: View {
         let favorites = store.resolvedHomeFavorites
         let left = favorites.left.flatMap { id in store.places.first { $0.id == id } }
         let right = favorites.right.flatMap { id in store.places.first { $0.id == id } }
-        return [left, store.selected, right].compactMap { $0 }.reduce(into: [Place]()) { result, place in
-            if !result.contains(where: { $0.id == place.id }) { result.append(place) }
-        }
+        let orderedIDs = HomeSwipeSelection.orderedIDs(
+            leftID: left?.id,
+            currentID: store.selected?.id,
+            rightID: right?.id
+        )
+        return orderedIDs.compactMap { id in store.places.first { $0.id == id } }
     }
 
     var body: some View {
@@ -226,9 +229,7 @@ struct HomeView: View {
             .refreshable { _ = await store.refreshAll() }
             .contentShape(Rectangle())
             .highPriorityGesture(DragGesture(minimumDistance: 45).onEnded { value in
-                let uniqueIDs = swipePlaces.map(\.id).reduce(into: [UUID]()) { ids, id in
-                    if !ids.contains(id) { ids.append(id) }
-                }
+                let uniqueIDs = swipePlaces.map(\.id)
                 guard let current = store.selected,
                       let next = HomeSwipeSelection.nextIndex(
                         currentID: current.id,

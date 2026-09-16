@@ -521,11 +521,15 @@ posisjonstilgang forklarer nå konkret hvilken Innstillinger-sti som må åpnes.
 **AUTO-094 · FULLFØRT 2026-09-16** — Snapshot-regresjon bekrefter at
 brukerdefinert stedsnavn beholdes i widget/Watch også for posisjonssted.
 
-**AUTO-095 · ÅPEN** — Kontroller at posisjonsmerket og brukerdefinert navn
-vises konsistent i alle widget-størrelser.
+**AUTO-095 · PÅ VENT 2026-09-16** — Widget/Watch-snapshot har ikke et
+avtalt GPS-merketøy i dagens format. Å legge det inn på tvers av alle
+størrelser er en synlig formatendring og krever UI-godkjenning før kode.
 
-**AUTO-096 · ÅPEN** — Test at nytt posisjonssted ikke fortrenger valgte
-favoritter i hjem-sveiplisten.
+**AUTO-096 · FULLFØRT 2026-09-16** — Hjem-sveiplisten bygger nå en eksplisitt,
+deduplisert rekkefølge av venstrefavoritt, valgt sted og høyrefavoritt. Et
+nytt GPS-sted blir dermed midtpunkt uten å fortrenge de valgte favorittene.
+Regresjonstest dekker både tre ulike steder og overlappende favoritt/aktuelt
+sted. Ingen tung simulator ble startet i denne økten.
 
 **AUTO-097 · ÅPEN** — Gjennomgå tilgjengelighetstekst for posisjonsmerket i
 hjem og widget.

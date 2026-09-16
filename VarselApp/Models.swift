@@ -22,6 +22,12 @@ struct HomeFavorites: Codable, Equatable {
 /// scrolling is never interpreted as a place change, and duplicate favorite
 /// IDs cannot create a phantom intermediate page.
 enum HomeSwipeSelection {
+    static func orderedIDs(leftID: UUID?, currentID: UUID?, rightID: UUID?) -> [UUID] {
+        [leftID, currentID, rightID].compactMap { $0 }.reduce(into: [UUID]()) { result, id in
+            if !result.contains(id) { result.append(id) }
+        }
+    }
+
     static func nextIndex(
         currentID: UUID,
         placeIDs: [UUID],

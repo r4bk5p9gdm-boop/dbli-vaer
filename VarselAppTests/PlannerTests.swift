@@ -71,6 +71,18 @@ final class PlannerTests: XCTestCase {
         ), 1)
     }
 
+    func testHomeSwipeOrderKeepsCurrentPlaceBetweenDistinctFavorites() {
+        let left = UUID(), current = UUID(), right = UUID()
+        XCTAssertEqual(
+            HomeSwipeSelection.orderedIDs(leftID: left, currentID: current, rightID: right),
+            [left, current, right]
+        )
+        XCTAssertEqual(
+            HomeSwipeSelection.orderedIDs(leftID: left, currentID: left, rightID: right),
+            [left, right]
+        )
+    }
+
     func testWeatherGlanceDropsStaleNowStatusAndKeepsOnePerType() {
         let stale = WeatherStatus(ruleID: UUID(), type: .regn, text: "Regn nå.", eventAt: base.addingTimeInterval(-2 * 3_600), isNow: true)
         let current = WeatherStatus(ruleID: UUID(), type: .regn, text: "Regn nå.", eventAt: base.addingTimeInterval(-10 * 60), isNow: true)
