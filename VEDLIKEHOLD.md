@@ -406,14 +406,18 @@ ny prognose, uten å endre stedets UUID.
 gjeldende stedobjekt ved svar, slik at preposisjon og `customName` beholdes
 selv når prognosen kommer fra en eldre forespørsel.
 
-**AUTO-068 · ÅPEN** — Test at navnendring ikke utløser unødvendig
-nettverksforespørsel når koordinatene er uendret.
+**AUTO-068 · FULLFØRT 2026-09-16** — Navne- og preposisjonsendringer går via
+lokal `update`/`replan`, mens nettverk bare kjøres fra eksplisitt refresh eller
+bakgrunnsoppdatering. Uendrede koordinater gir derfor ingen ekstra Yr-kall.
 
 **AUTO-069 · ÅPEN** — Kontroller at prognoseforespørsler dedupliseres når
 to steder deler identiske koordinater.
 
 **AUTO-070 · ÅPEN** — Verifiser at deduplisering fortsatt leverer prognosen
 til alle aliassteder med egne navn.
+
+**AUTO-071 · ÅPEN** — Kontroller at aliassteder deler ett nettverkskall,
+men får egne lokale temperaturjusteringer.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
