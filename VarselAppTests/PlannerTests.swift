@@ -275,6 +275,18 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(decoded.forecast.first?.temp, 10)
     }
 
+    func testSharedSnapshotRefreshKeepsLanguageAndSeparator() throws {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 3, cloud: 0, dew: 0)
+        let snapshot = WidgetWeatherSnapshot(place: place, forecast: [hour], updatedAt: base,
+                                              languageStyle: .inntrondersk, textSeparator: .dash)
+        let revision = UUID()
+        let refreshed = try XCTUnwrap(snapshot.refreshed(with: [hour], at: base.addingTimeInterval(60), requestRevision: revision, currentRevision: revision))
+        XCTAssertEqual(refreshed.languageStyle, .inntrondersk)
+        XCTAssertEqual(refreshed.textSeparator, .dash)
+        XCTAssertEqual(refreshed.localized("Duggfall i morgen kl. 07."), "Doggfall i mårrå — kl. 07.")
+    }
+
     func testGustThresholdNeverFallsBackToMeanWind() {
         var hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 20, cloud: 0, dew: 0)
         XCTAssertFalse(AlertType.vind.matches(hour, threshold: 9))

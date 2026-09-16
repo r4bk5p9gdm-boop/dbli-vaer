@@ -78,7 +78,9 @@ sentralisert og temperaturvarsler viser faktisk retning og terskel, som
 ukjent språk faller trygt tilbake til bokmål uten å miste sted eller prognose.
 Ny regresjonstest dekker ukjent språk-ID.
 
-**AUTO-156 · ÅPEN** — Kontroller språkbytte i Watch/widget etter ny snapshot.
+**AUTO-156 · FULLFØRT 2026-09-16** — Snapshot-oppdatering beholder valgt
+språkstil og skilletegn gjennom ny prognose; regresjonstest dekker
+inntrøndersk med tankestrek.
 
 **AUTO-157 · ÅPEN** — Legg inn test for tom Watch-prognose og beholdt cache.
 
