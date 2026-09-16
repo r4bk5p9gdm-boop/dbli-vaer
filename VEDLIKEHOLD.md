@@ -477,8 +477,9 @@ runtime-/UI-test utsettes til en konkret simulator er tilgjengelig.
 effektive iOS-deployment-targetet fra samme scheme før generisk bygg. Dermed
 oppdages manglende eller feil target tidlig, uten å starte CoreSimulator.
 
-**AUTO-084 · ÅPEN** — Legg regresjonstest for tom prognose etter stedssveip,
-slik at forrige stedsdata ikke vises på ny side.
+**AUTO-084 · FULLFØRT 2026-09-16** — La til regresjonstest som bekrefter at
+tom prognose etter stedssveip ikke kan hente inn forrige steds snapshot.
+Ny side viser dermed ikke gammel værdata mens ny henting pågår.
 
 **AUTO-085 · ÅPEN** — Gå gjennom widget-/Watch-snapshotens ferskhetsgrense
 etter posisjonsbasert stedsskifte.

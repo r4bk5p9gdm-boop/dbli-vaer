@@ -1779,6 +1779,19 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testPlaceSwitchWithEmptyForecastCannotReusePreviousPlaceSnapshot() {
+        let previous = Place(name: "Klinga", lat: 64, lon: 11)
+        let next = Place(name: "Namsos", lat: 64.5, lon: 11.5)
+        let cached = WidgetWeatherSnapshot(
+            place: previous,
+            forecast: forecast(values: [(12, 0, 1, 20, 6)]),
+            updatedAt: base
+        )
+
+        XCTAssertNil(Store.widgetSnapshot(place: next, forecast: [], updatedAt: nil, cached: cached))
+    }
+
+    @MainActor
     func testWidgetFreshnessUsesElapsedTimeAcrossOsloDSTChange() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(identifier: "Europe/Oslo")!
