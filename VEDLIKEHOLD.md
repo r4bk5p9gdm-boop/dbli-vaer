@@ -676,6 +676,15 @@ snapshot-vakten og påvirkes ikke av tom/ugyldig widgetdata.
 blir nil før sveiplisten bygges; eksisterende regresjonstest dekker ingen
 duplikat- eller hoppesider og ingen oppdiktede erstatningssteder.
 
+**AUTO-133 · ÅPEN** — Test at widget- og Watch-snapshot avviser koordinater
+som ikke lenger matcher valgt sted.
+
+**AUTO-134 · ÅPEN** — Verifiser at planleggingskøen beholder nyeste resultat
+ved tre raske replanlegginger.
+
+**AUTO-135 · ÅPEN** — Test at værikon og varseltype fortsatt bruker samme
+felles fargemodell for solgløtt og skyer.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
