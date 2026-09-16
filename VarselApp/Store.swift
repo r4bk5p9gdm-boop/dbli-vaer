@@ -526,6 +526,8 @@ final class Store: ObservableObject {
                     let matchingPlaces = Self.currentRecipients(
                         for: locationGroups[location] ?? [], in: places
                     )
+                    // Handle each coordinate independently: a failed location
+                    // must not prevent successful siblings from being stored.
                     switch result {
                     case .success(let forecast):
                         successfulPlaceCount += matchingPlaces.count

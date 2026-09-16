@@ -606,8 +606,9 @@ kansellering returnerer før finalisering, mens en kjøring uten suksess ikke
 replanlegger delvis data. Eksisterende kansellerings- og grensetester dekker
 begge tilfellene.
 
-**AUTO-115 · ÅPEN** — Test at feilet enkeltsted ikke hindrer andre steder i
-samme bakgrunnsoppdatering fra å få fersk prognose.
+**AUTO-115 · FULLFØRT 2026-09-16** — Refresh-flyten behandler hver
+koordinatgruppe uavhengig; eksisterende delvis-suksess-test bekrefter at ett
+feilet sted ikke hindrer andre steder fra å få fersk prognose.
 
 **AUTO-116 · ÅPEN** — Kontroller at widgetens delte stedsrekkefølge begrenses
 til tre unike steder også etter sletting og omdøping.
