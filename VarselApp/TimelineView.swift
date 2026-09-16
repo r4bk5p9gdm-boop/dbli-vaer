@@ -117,33 +117,27 @@ private struct ForecastDayHeader: View {
     let day: ForecastDay
 
     var body: some View {
-        HStack(alignment: .firstTextBaseline) {
-            Text(dayTitle(day.date)).font(.subheadline.weight(.semibold))
-            Spacer()
-            Text(dateLabel(day.date))
-                .font(.caption)
-                .foregroundStyle(.secondary)
-        }
+        Text(dayTitle(day.date))
+            .font(.subheadline.weight(.semibold))
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private func dayTitle(_ date: Date) -> String {
         let today = weatherDayDate(for: Date())
-        if Calendar.current.isDate(date, inSameDayAs: today) { return "Resten av i dag" }
-        if let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today),
-           Calendar.current.isDate(date, inSameDayAs: tomorrow) { return "I morgen" }
+        let calendar = Calendar.current
+        let dayNumber = calendar.component(.day, from: date)
+        let monthNames = ["", "jan", "feb", "mars", "apr", "mai", "juni", "juli", "aug", "sept", "okt", "nov", "des"]
+        let dateText = "(dayNumber). (monthNames[calendar.component(.month, from: date)])"
+        if calendar.isDate(date, inSameDayAs: today) {
+            let value = weekdayLabel(date)
+            let weekday = value.prefix(1).uppercased() + value.dropFirst()
+            return "Resten av i dag, (weekday) (dateText)"
+        }
+        if let tomorrow = calendar.date(byAdding: .day, value: 1, to: today),
+           calendar.isDate(date, inSameDayAs: tomorrow) { return "I morgen, (dateText)" }
         let value = weekdayLabel(date)
-        return value.prefix(1).uppercased() + value.dropFirst()
-    }
-
-    private func dateLabel(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "nb_NO")
-        formatter.setLocalizedDateFormatFromTemplate(
-            Calendar.current.isDateInToday(date) || Calendar.current.isDateInTomorrow(date)
-                ? "EEEE d MMM"
-                : "d MMM"
-        )
-        return formatter.string(from: date)
+        let weekday = value.prefix(1).uppercased() + value.dropFirst()
+        return "(weekday) (dateText)"
     }
 }
 
