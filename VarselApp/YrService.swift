@@ -118,6 +118,8 @@ enum YrService {
     }
 
     static func applying(nowcast: NowcastPayload, to forecast: [ForecastHour]) -> [ForecastHour] {
+        // A dry/empty radar sample is never evidence that table precipitation
+        // should be removed; only covered samples may refine the table.
         guard nowcast.hasRadarCoverage else { return forecast }
         var updated = merging(radarSamples: ninetyMinuteNowcast(from: nowcast.samples), into: forecast)
 

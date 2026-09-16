@@ -597,8 +597,9 @@ hjem, widget og Watch får justert temperatur fra samme rå Yr-verdi.
 skilletegn sammen med språk. Innholdet kan oppdateres uten nye varsel-ID-er,
 og regresjonstest bekrefter at begge innstillinger gir ny konfigurasjon.
 
-**AUTO-113 · ÅPEN** — Test at tom Nå-radar ikke fjerner et gyldig Yr-
-tabellvarsel fra nedbørsraden.
+**AUTO-113 · FULLFØRT 2026-09-16** — Nå-radarens tørre/tomme resultat er
+tydelig dokumentert som ikke-destruktivt, og eksisterende regresjonstest
+bekrefter at Yr-tabellnedbør beholdes.
 
 **AUTO-114 · ÅPEN** — Verifiser at bakgrunnsoppdatering respekterer kansellering
 før den skriver delvis hentede prognoser.
