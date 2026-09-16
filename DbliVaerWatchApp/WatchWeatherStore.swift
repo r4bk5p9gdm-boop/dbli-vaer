@@ -44,6 +44,7 @@ final class WatchWeatherStore: ObservableObject {
     }
 
     private func accept(_ snapshot: WidgetWeatherSnapshot) {
+        guard !snapshot.forecast.isEmpty else { return }
         snapshotRevision = UUID()
         message = nil
         self.snapshot = snapshot

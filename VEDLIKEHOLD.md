@@ -630,8 +630,9 @@ vises for riktig sted. Eksisterende delvis-refresh-tester dekker dette.
 **AUTO-120 · FULLFØRT 2026-09-16** — Konfigurasjonstesten dekker nå at
 språkvalg/eksport beholder både valgt sted og lokal temperaturjustering.
 
-**AUTO-121 · ÅPEN** — Test at Watch-snapshot med tom prognose viser
-«Venter på iPhone» og ikke gamle, feil steddata.
+**AUTO-121 · FULLFØRT 2026-09-16** — Watch-appen avviser nå tom snapshot
+som innkommende værdata; eksplisitt tømming går fortsatt gjennom egen clear-
+sti. Dermed beholdes siste riktige sted i stedet for en tom feiloverføring.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
