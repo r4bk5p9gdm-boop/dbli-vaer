@@ -585,7 +585,7 @@ final class Store: ObservableObject {
         updateWidget()
         let text = Self.notificationPlanLogText(scheduleResult)
         log.insert(LogEntry(time: now, text: text), at: 0)
-        if log.count > 50 { log.removeLast(log.count - 50) }
+        log = Self.retainedLog(log, now: now)
     }
 
     private func replanSignature() -> Int {
@@ -606,6 +606,12 @@ final class Store: ObservableObject {
         hasher.combine(languageStyle.rawValue)
         hasher.combine(separator.rawValue)
         return hasher.finalize()
+    }
+
+    static func retainedLog(_ entries: [LogEntry], now: Date, maxAge: TimeInterval = 72 * 3_600, maxCount: Int = 50) -> [LogEntry] {
+        guard maxCount > 0 else { return [] }
+        let cutoff = now.addingTimeInterval(-maxAge)
+        return Array(entries.filter { $0.time >= cutoff }.prefix(maxCount))
     }
 
     static func notificationPlanLogText(_ result: NotificationScheduleResult) -> String {

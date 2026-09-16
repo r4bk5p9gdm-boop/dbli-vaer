@@ -619,8 +619,9 @@ samler nå innholdet i ett tilgjengelighetselement med samme lokaliserte tekst
 som iPhone-overføringen. Eksisterende snapshot-regresjon dekker språk og
 skilletegn.
 
-**AUTO-118 · ÅPEN** — Verifiser at varselhistorikk ikke vokser over avtalt
-korttidsgrense ved mange bakgrunnsoppdateringer.
+**AUTO-118 · FULLFØRT 2026-09-16** — Varselhistorikken beholdes nå i maks
+72 timer og 50 oppføringer. Regresjonstest sikrer at gamle bakgrunnslogger
+fjernes ved neste replanlegging.
 
 **AUTO-119 · ÅPEN** — Test at feil ved én Yr-forespørsel gir tydelig sted-
 spesifikk feil uten å overskrive siste gode prognose.

@@ -1410,6 +1410,12 @@ final class PlannerTests: XCTestCase {
         XCTAssertNotEqual(Store.configurationSignature(languageStyle: .bokmal, separator: .dash), Store.configurationSignature(languageStyle: .english, separator: .dash))
     }
 
+    func testNotificationLogRetainsOnlyRecentEntries() {
+        let old = LogEntry(time: base.addingTimeInterval(-73 * 3_600), text: "gammel")
+        let recent = LogEntry(time: base.addingTimeInterval(-1 * 3_600), text: "ny")
+        XCTAssertEqual(Store.retainedLog([recent, old], now: base).map(\.text), ["ny"])
+    }
+
     func testSharedWidgetPlacesAreCappedAtThreeUniqueIDs() {
         let first = Place(name: "Klinga", lat: 64, lon: 11)
         let second = Place(name: "Namsos", lat: 64.5, lon: 11.5)
