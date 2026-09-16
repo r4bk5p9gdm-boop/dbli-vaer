@@ -73,6 +73,10 @@ tom roterende hjemstatus når det fortsatt finnes en gyldig Nå-status.
 **AUTO-179 · ÅPEN** — Sjekk at widget-cache ikke blir skrevet oftere enn
  nødvendig ved identisk prognose, slik at batteri og bakgrunnsarbeid spares.
 
+**AUTO-177 · FULLFØRT 2026-09-16** — Refresh-køen er verifisert med test som
+viser at en avbrutt, ventende oppdatering ikke starter og ikke kan overskrive
+en nyere oppdatering. Køen fortsetter deretter med neste gyldige arbeid.
+
 **AUTO-176 · FULLFØRT 2026-09-16** — Widget-/Watch-snapshot beholder
 inntrøndersk språk og valgt skilletegn ved dekoding og lokalisering. Testen
 verifiserer «Doggfall natt te onsda'n — kl. 05» etter overføring.

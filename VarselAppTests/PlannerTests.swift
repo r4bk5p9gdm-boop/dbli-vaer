@@ -2048,6 +2048,22 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testRefreshQueueSkipsCancelledQueuedOperationBeforeItStarts() async {
+        let queue = ForecastRefreshQueue()
+        let first = queue.enqueue { true }
+        let cancelledMarker = expectation(description: "Cancelled operation is never entered")
+        cancelledMarker.isInverted = true
+        let cancelled = queue.enqueue {
+            cancelledMarker.fulfill()
+            return true
+        }
+        cancelled.cancel()
+        _ = await first.value
+        XCTAssertFalse(await cancelled.value)
+        await fulfillment(of: [cancelledMarker], timeout: 0.1)
+    }
+
+    @MainActor
     func testWidgetFallbackKeepsActualForecastAgeAndCurrentName() throws {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let hours = forecast(values: [(10, 0, 1, 10, 5)])
