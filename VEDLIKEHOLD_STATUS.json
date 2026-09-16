@@ -2,6 +2,6 @@
   "continue": true,
   "lastScheduledStart": "2026-09-13T05:15:12.787Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-060 fullført: manuell og bakgrunnsrefresh bruker samme performRefresh- og Date()-grunnlag.",
+  "lastProgress": "AUTO-061 fullført: vellykket manuell refresh fjerner feilstatus idet ny prognose lagres.",
   "stopReason": "AUTO-modus aktiv: blokkerte brukeroppgaver hoppes over, og arbeidet fortsetter på neste ublokkerte oppgave."
 }
