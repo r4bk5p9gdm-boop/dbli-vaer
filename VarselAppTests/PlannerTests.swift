@@ -504,6 +504,13 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(result.map(\.type), [.sno, .regn])
     }
 
+    func testWeatherGlanceNextEventsExcludesCurrentStatus() {
+        let now = base
+        let current = WeatherStatus(ruleID: UUID(), type: .regn, text: "Regn nå.", eventAt: now, isNow: true)
+        let next = WeatherStatus(ruleID: UUID(), type: .sno, text: "Snø om en time.", eventAt: now.addingTimeInterval(3_600), isNow: false)
+        XCTAssertEqual(WeatherGlance.nextEvents([current, next], now: now).map(\.type), [.sno])
+    }
+
     func testLocalAdjustmentPreservesYrAndDoesNotAccumulate() throws {
         let hour = ForecastHour(time: base, temp: 4, precip: 0, wind: 1, cloud: 0, dew: 1)
         let local = hour.locallyAdjusted(by: -2)

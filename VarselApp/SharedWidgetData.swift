@@ -28,6 +28,13 @@ enum WeatherGlance {
         return ordered.filter { seen.insert($0.type).inserted }
     }
 
+    /// Forward-looking events used by Watch complications and widgets.
+    /// The phone's glance may include a current NÅ-status, but a widget slot
+    /// should always reserve its space for the next event.
+    static func nextEvents(_ statuses: [WeatherStatus], now: Date) -> [WeatherStatus] {
+        upcoming(statuses, now: now).filter { !$0.isNow }
+    }
+
     private static func glanceSeverity(_ type: AlertType) -> Int {
         switch type {
         case .frost, .sno: return 3

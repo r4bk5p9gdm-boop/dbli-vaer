@@ -54,11 +54,10 @@ struct WatchWeatherWidgetView: View {
     private var current: ForecastHour? { entry.snapshot?.forecast.first }
     private var status: WeatherStatus? {
         guard let snapshot = entry.snapshot else { return nil }
-        let statuses = WeatherGlance.upcoming(
+        let upcoming = WeatherGlance.nextEvents(
             Planner.statuses(for: snapshot.place, forecast: snapshot.forecast, now: entry.date),
             now: entry.date
         )
-        let upcoming = statuses.filter { !$0.isNow }
         guard !upcoming.isEmpty else { return nil }
         // The small complications always retain the nearest event. Only the
         // rectangular widget rotates, using the existing 15-minute timeline.

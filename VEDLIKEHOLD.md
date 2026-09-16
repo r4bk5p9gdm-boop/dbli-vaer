@@ -54,6 +54,19 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-152 · FULLFØRT 2026-09-16** — Watch/widget-logikken har nå en felles,
+testbar `WeatherGlance.nextEvents` som alltid filtrerer bort NÅ-status. Test
+dekker at neste snøhendelse velges når regn pågår akkurat nå.
+
+**AUTO-153 · ÅPEN** — Kontroller Watch-widgetens tidslinje og oppdateringsintervall
+mot neste hendelse uten å øke ressursbruken.
+
+**AUTO-154 · ÅPEN** — Legg til regresjon for temperaturgrense-etiketter i
+Watch-komplikasjonen.
+
+**AUTO-155 · ÅPEN** — Kontroller at Widget/Watch-snapshot med manglende språkfelt
+faller tilbake konsistent til bokmål.
+
 **BRUKER-010 · FULLFØRT 2026-09-16** — Watch-widgetens sirkulære variant
 viser neste kommende hendelse med kort relativ tid (`23m`, `2t`), tydelig
 værtype («Regn!», «Snø!», «Vind!», «Dogg!», «Sol!» eller temperaturgrense)
