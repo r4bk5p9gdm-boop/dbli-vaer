@@ -460,6 +460,15 @@ Lokalt terskelavvik og Yr-verdi holdes separate etter dekoding.
 beregnes med rått duggpunkt etter lokal temperaturjustering, uten å mutere
 duggpunkt eller Yr-temperaturen i prognosen.
 
+**AUTO-080 · ÅPEN** — Legg regresjonstest for at manuell stedsvelging alltid
+fjerner posisjonsmarkeringen på hjemkortet.
+
+**AUTO-081 · ÅPEN** — Kontroller at helside-sveip ikke endrer valgt sted ved
+vertikal scrolling eller når favorittlisten inneholder duplikate steder.
+
+**AUTO-082 · ÅPEN** — Dokumenter en lett byggkontroll som kan kjøres uten
+CoreSimulator når simulator-tjenesten er utilgjengelig.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
