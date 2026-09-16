@@ -481,8 +481,19 @@ oppdages manglende eller feil target tidlig, uten å starte CoreSimulator.
 tom prognose etter stedssveip ikke kan hente inn forrige steds snapshot.
 Ny side viser dermed ikke gammel værdata mens ny henting pågår.
 
-**AUTO-085 · ÅPEN** — Gå gjennom widget-/Watch-snapshotens ferskhetsgrense
-etter posisjonsbasert stedsskifte.
+**AUTO-085 · FULLFØRT 2026-09-16** — Regresjonstest bekrefter at widget/
+Watch-snapshot ikke gjenbrukes ved posisjonsstedsskifte, selv når det nye
+stedet har samme koordinater. Sted-ID og seks-timers ferskhetsgrense må begge
+stemme.
+
+**AUTO-086 · ÅPEN** — Kontroller at valgt posisjon beholdes gjennom
+bakgrunnsoppdatering uten å overstyre manuelt valgt sted.
+
+**AUTO-087 · ÅPEN** — Test at widgetens posisjonsnavn oppdateres ved
+koordinatendring og ikke beholder gammelt stedsnavn.
+
+**AUTO-088 · ÅPEN** — Gå gjennom fallback-teksten når posisjon ikke kan
+hentes, slik at siste valgte sted fortsatt vises uten falsk GPS-merke.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.

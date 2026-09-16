@@ -1792,6 +1792,19 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testPositionPlaceSwitchWithSameCoordinatesStillRequiresMatchingPlaceID() {
+        let saved = Place(name: "Klinga", lat: 64.4, lon: 11.5)
+        let currentPosition = Place(name: "Min posisjon", lat: 64.4, lon: 11.5)
+        let cached = WidgetWeatherSnapshot(
+            place: saved,
+            forecast: forecast(values: [(12, 0, 1, 20, 6)]),
+            updatedAt: base
+        )
+
+        XCTAssertNil(Store.widgetSnapshot(place: currentPosition, forecast: [], updatedAt: nil, cached: cached))
+    }
+
+    @MainActor
     func testWidgetFreshnessUsesElapsedTimeAcrossOsloDSTChange() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(identifier: "Europe/Oslo")!
