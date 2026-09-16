@@ -353,13 +353,17 @@ stå urørt. Ved gammel prognose vises dette eksplisitt i meldingen.
 bekrefter at vellykkede steder fortsatt lagres og planlegges når et annet
 sted feiler. Delvis feil fullfører dermed ikke som total feil.
 
-**AUTO-054 · ÅPEN** — Kontroller at en mislykket stedsforespørsel gir
-feilmelding uten å skjule gyldige varsler fra andre steder.
+**AUTO-054 · FULLFØRT 2026-09-16** — Delvis-refresh-regresjonen bekrefter at
+feilstatus lagres per sted, mens planlegging og varsler fra steder med gyldig
+prognose beholdes.
 
 **AUTO-055 · ÅPEN** — Test at feiltekst følger valgt språkstil ved nettverksfeil.
 
 **AUTO-056 · ÅPEN** — Kontroller at delvis vellykket refresh oppdaterer
 tidspunktet uten å nullstille feilstatus for stedet som feilet.
+
+**AUTO-057 · ÅPEN** — Verifiser at siste oppdateringstidspunkt ikke endres
+ved total nettverksfeil.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
