@@ -1403,6 +1403,7 @@ final class PlannerTests: XCTestCase {
         let raw = ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 20, dew: 5)
         let snapshot = try XCTUnwrap(Store.widgetSnapshot(place: place, forecast: [raw], updatedAt: base, cached: nil))
         XCTAssertEqual(snapshot.forecast.first?.temp, 12)
+        XCTAssertEqual(snapshot.forecast.first?.dew, 5)
     }
 
     func testSeparatorChangeChangesReplanConfigurationSignature() {

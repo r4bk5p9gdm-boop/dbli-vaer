@@ -634,8 +634,9 @@ språkvalg/eksport beholder både valgt sted og lokal temperaturjustering.
 som innkommende værdata; eksplisitt tømming går fortsatt gjennom egen clear-
 sti. Dermed beholdes siste riktige sted i stedet for en tom feiloverføring.
 
-**AUTO-122 · ÅPEN** — Test at widgetsnapshot med lokal temperaturjustering
-ikke endrer rå duggpunktverdi.
+**AUTO-122 · FULLFØRT 2026-09-16** — Widget-regresjonen bekrefter at lokal
+temperaturjustering flytter lufttemperaturen, men beholder rått duggpunkt
+uendret for korrekt fuktberegning.
 
 **AUTO-123 · ÅPEN** — Verifiser at Varslingsregler viser valgt sted etter
 stedsbytte fra hjemsiden.
