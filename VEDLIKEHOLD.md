@@ -54,6 +54,18 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-015 · PÅ VENT 2026-09-16 · KREVER GODKJENNING** — Foreslått
+helsideoppsett med nåværende posisjon til venstre og to favoritter i midten/
+høyre, samt egen bakgrunn og hjelpetekst for posisjonsbasert vær. Dette er en
+større navigasjonsendring og implementeres først etter godkjenning.
+
+**AUTO-163 · ÅPEN** — Kontroller at widgettidslinjer ikke oppretter tomme
+oppføringer ved manglende snapshot.
+
+**AUTO-164 · ÅPEN** — Legg inn test for stabil rekkefølge i Watch-eventer.
+
+**AUTO-165 · ÅPEN** — Kontroller at pushfilteret nullstilles ved stedsskifte.
+
 **AUTO-159 · FULLFØRT 2026-09-16** — Push-knappene på værtyperadene har nå
 egen VoiceOver-label med værtype og antall oppsatte pushvarsler.
 
