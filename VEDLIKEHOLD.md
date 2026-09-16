@@ -59,6 +59,12 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 aktiverte regler også etter inline-deaktivering, og regresjonstest dekker
 2 → 1 → 0 aktive varsler.
 
+**AUTO-150 · FULLFØRT 2026-09-16** — Kontrollert og dokumentert
+posisjonsmerket på Hjem: `Store.select(_:fromCurrentLocation:)` markerer bare
+GPS-flyt, mens vanlig stedvalg og push-ruting nullstiller merket. Den
+eksisterende regresjonstesten `testManualNotificationSelectionClearsCurrentLocationBadge`
+dekker skiftet fra posisjonsvalg til manuelt valg.
+
 **BRUKER-009 · FULLFØRT 2026-09-16** — NÅ-status har nå korte,
 konsekvente inntrønderske uttrykk for regn, lett regn, snø og vind: «D regne
 no», «D regne litt no», «D snør no» og «D blæs no». Dugg beholder den
