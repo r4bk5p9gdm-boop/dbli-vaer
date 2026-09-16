@@ -714,8 +714,9 @@ Tom refresh lagres ikke og utløser ingen egen reload.
 med stabil UUID i snapshoten; siste posisjons-/brukernavn vises derfor etter
 synkronisering. Eksisterende navnetester dekker dette.
 
-**AUTO-143 · ÅPEN** — Test at språkfilen valideres ved oppstart uten å blokkere
-seed-steder hvis en valgfri tekst mangler.
+**AUTO-143 · FULLFØRT 2026-09-16** — Språkkatalogen har eksplisitt innebygd
+fallback ved manglende/ugyldig Sprak.json. Seed-steder lastes uavhengig av
+valgfrie tekster, og eksisterende katalog-/fallbacktester dekker dette.
 
 **AUTO-144 · ÅPEN** — Verifiser at Live Activity ikke starter for en display-
 only-regel.

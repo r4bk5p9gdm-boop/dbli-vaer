@@ -119,6 +119,8 @@ enum AlertLanguageStyle: String, Codable, CaseIterable, Identifiable {
 enum LanguageCatalog {
     private struct Catalog: Decodable { let tekster: [String: [String: String]] }
     static let entries: [String: [String: String]] = {
+        // A missing/invalid optional catalog must degrade to built-in copy;
+        // it must never prevent Store from loading seed places.
         guard let url = Bundle.main.url(forResource: "Sprak", withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let catalog = try? JSONDecoder().decode(Catalog.self, from: data) else { return [:] }
