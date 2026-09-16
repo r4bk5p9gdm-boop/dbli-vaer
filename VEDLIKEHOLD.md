@@ -494,8 +494,19 @@ og blir ikke erstattet av andre steder.
 Watch-snapshot bruker det oppdaterte posisjonsnavnet, samtidig som samme
 steds-ID beholdes.
 
-**AUTO-088 · ÅPEN** — Gå gjennom fallback-teksten når posisjon ikke kan
-hentes, slik at siste valgte sted fortsatt vises uten falsk GPS-merke.
+**AUTO-088 · FULLFØRT 2026-09-16** — GPS-markeringen nullstilles før hver
+posisjonsforespørsel. Ved manglende tilgang eller feil beholdes siste valgte
+sted, men hjem- og widgetvisning viser ikke falskt at dataene er aktuelle fra
+GPS.
+
+**AUTO-089 · ÅPEN** — Test at gjentatt GPS-forespørsel etter avslag ikke
+endrer valgt sted eller widget-snapshot.
+
+**AUTO-090 · ÅPEN** — Kontroller at posisjonsmerket følger valgt sted etter
+app-omstart og ikke lagres som varig stedsegenskap.
+
+**AUTO-091 · ÅPEN** — Verifiser at varslingslenke til manuelt sted ikke
+aktiverer GPS-merket etter appstart.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.

@@ -365,6 +365,10 @@ final class Store: ObservableObject {
     /// Select the saved place nearest the phone at launch, or add a lightweight
     /// current-location place when no saved place is nearby.
     func selectCurrentLocationIfPossible() async {
+        // Clear a previous GPS badge before attempting a new lookup. If
+        // permission is denied or the request fails, the existing place remains
+        // visible but is never presented as freshly position-based.
+        selectionIsCurrentLocation = false
         let locationManager = LocationManager()
         guard let location = try? await locationManager.current() else { return }
         let nearest = places.min { a, b in
