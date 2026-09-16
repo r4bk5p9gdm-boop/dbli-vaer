@@ -12,6 +12,8 @@ struct HomeFavorites: Codable, Equatable {
     var right: UUID?
 
     func resolved(availableIDs: Set<UUID>) -> HomeFavorites {
+        // Missing/deleted favorites resolve to nil; swipe pages never invent
+        // a replacement or duplicate the current place.
         let validLeft = left.flatMap { availableIDs.contains($0) ? $0 : nil }
         let validRight = right.flatMap { availableIDs.contains($0) && $0 != validLeft ? $0 : nil }
         return HomeFavorites(left: validLeft, right: validRight)

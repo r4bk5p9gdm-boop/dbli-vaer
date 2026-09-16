@@ -672,8 +672,9 @@ tester dekker sommertidsskift og kveldsvarsling.
 best-effort-del av `replan`; planlegging og Watch-overføring ligger etter
 snapshot-vakten og påvirkes ikke av tom/ugyldig widgetdata.
 
-**AUTO-132 · ÅPEN** — Test at hjemsveip med manglende favoritt-ID faller
-tilbake uten duplikat- eller hoppeside.
+**AUTO-132 · FULLFØRT 2026-09-16** — Manglende/slettede favoritt-ID-er
+blir nil før sveiplisten bygges; eksisterende regresjonstest dekker ingen
+duplikat- eller hoppesider og ingen oppdiktede erstatningssteder.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
