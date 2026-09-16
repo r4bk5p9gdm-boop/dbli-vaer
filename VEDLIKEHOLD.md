@@ -698,8 +698,9 @@ er borte, og én push når stedet er innenfor radius.
 **AUTO-138 · FULLFØRT 2026-09-16** — Nedbørsradens bånd bruker eksplisitt
 AlertType-fargen for regn og snø, med delt fargekilde mot ikonene.
 
-**AUTO-139 · ÅPEN** — Test at posisjonstillatelse som avslås ikke blokkerer
-manuelt sted eller varsler.
+**AUTO-139 · FULLFØRT 2026-09-16** — Posisjonsoppslag er valgfritt; ved avslag
+returneres flyten uten å endre valgt manuelt sted eller eksisterende varsler.
+Eksisterende cancellation/marker-tester dekker dette.
 
 **AUTO-140 · ÅPEN** — Kontroller at bakgrunnsrefresh ikke oppdaterer widget
 med foreløpig, ufullstendig timeutvalg.

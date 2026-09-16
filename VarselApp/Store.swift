@@ -371,6 +371,8 @@ final class Store: ObservableObject {
         // permission is denied or the request fails, the existing place remains
         // visible but is never presented as freshly position-based.
         selectionIsCurrentLocation = false
+        // Location is an optional enhancement; manual selection and its
+        // existing notifications remain fully usable when access is denied.
         let locationManager = LocationManager()
         guard let location = try? await locationManager.current() else { return }
         let nearest = places.min { a, b in
