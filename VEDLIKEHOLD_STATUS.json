@@ -2,6 +2,6 @@
   "continue": true,
   "lastScheduledStart": "2026-09-13T05:15:12.787Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-079 fullført: duggmatching bevarer rått duggpunkt etter lokal temperaturjustering, med regresjonstest. AUTO-080–082 lagt til med konkrete neste forbedringer.",
+  "lastProgress": "AUTO-080 fullført: direkte stedsvalg nullstiller stale GPS-markering. AUTO-081–082 gjenstår.",
   "stopReason": "AUTO-modus aktiv: blokkerte brukeroppgaver hoppes over, og arbeidet fortsetter på neste ublokkerte oppgave."
 }
