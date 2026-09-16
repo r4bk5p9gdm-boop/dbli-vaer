@@ -728,6 +728,12 @@ dermed stabil rekkefølge ved gjentatt sortering.
 **AUTO-146 · ÅPEN** — Verifiser at Live Activity-oppdatering ikke skjer for
 foreldet eller slettet regel.
 
+**AUTO-147 · ÅPEN** — Test at regler med identisk navn fortsatt får separate
+varsel-ID-er og kan redigeres individuelt.
+
+**AUTO-148 · ÅPEN** — Kontroller at hjemmets valgt sted overlever appens
+bakgrunnsoppstart når posisjon ikke er tilgjengelig.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
