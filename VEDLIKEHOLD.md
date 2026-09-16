@@ -59,8 +59,8 @@ helsideoppsett med nåværende posisjon til venstre og to favoritter i midten/
 høyre, samt egen bakgrunn og hjelpetekst for posisjonsbasert vær. Dette er en
 større navigasjonsendring og implementeres først etter godkjenning.
 
-**AUTO-163 · ÅPEN** — Kontroller at widgettidslinjer ikke oppretter tomme
-oppføringer ved manglende snapshot.
+**AUTO-163 · FULLFØRT 2026-09-16** — Watch-widgeten lager nå én fallback-
+oppføring når snapshot mangler, i stedet for ni identiske tomme tidslinjeposter.
 
 **AUTO-164 · ÅPEN** — Legg inn test for stabil rekkefølge i Watch-eventer.
 

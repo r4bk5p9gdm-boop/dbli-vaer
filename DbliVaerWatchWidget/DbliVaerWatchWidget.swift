@@ -29,9 +29,15 @@ struct WatchWeatherProvider: TimelineProvider {
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<WatchWeatherEntry>) -> Void) {
         let now = Date()
+        let snapshot = SharedWidgetData.load()
+        guard snapshot != nil else {
+            let empty = WatchWeatherEntry(date: now, snapshot: nil)
+            completion(Timeline(entries: [empty], policy: .after(now.addingTimeInterval(30 * 60))))
+            return
+        }
         let entries = stride(from: 0, through: 120, by: 15).compactMap { minutes in
             Calendar.current.date(byAdding: .minute, value: minutes, to: now)
-        }.map { WatchWeatherEntry(date: $0, snapshot: SharedWidgetData.load()) }
+        }.map { WatchWeatherEntry(date: $0, snapshot: snapshot) }
         let nextEvent = entries.compactMap { entry -> Date? in
             guard let snapshot = entry.snapshot else { return nil }
             return WeatherGlance.nextEvents(
