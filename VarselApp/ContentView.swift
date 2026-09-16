@@ -307,6 +307,15 @@ private struct CurrentWeatherCard: View {
                     )
                     .rotationEffect(.degrees(-4))
 
+                if isCurrentLocation {
+                    Image(systemName: "location.fill")
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(.indigo)
+                        .fixedSize()
+                        .accessibilityLabel("Posisjonsbasert værvarsel")
+                        .accessibilityHint("Dette stedet følger telefonens aktuelle posisjon.")
+                }
+
                 if showsPlaceMenu {
                     Menu {
                         ForEach(places) { candidate in
@@ -321,21 +330,12 @@ private struct CurrentWeatherCard: View {
                             }
                         }
                     } label: {
-                        PlaceTitle(place: place, showsChevron: true)
+                        PlaceTitle(place: place, showsChevron: true, isCurrentLocation: isCurrentLocation)
                     }
                     .layoutPriority(1)
                 } else {
-                    PlaceTitle(place: place, showsChevron: false)
+                    PlaceTitle(place: place, showsChevron: false, isCurrentLocation: isCurrentLocation)
                         .layoutPriority(1)
-                }
-
-                if isCurrentLocation {
-                    Image(systemName: "location.fill")
-                        .font(.caption2.weight(.bold))
-                        .foregroundStyle(.indigo)
-                        .fixedSize()
-                        .accessibilityLabel("Posisjonsbasert værvarsel")
-                        .accessibilityHint("Dette stedet følger telefonens aktuelle posisjon.")
                 }
 
                 HStack(spacing: 4) {
@@ -478,6 +478,7 @@ private struct CurrentWeatherCard: View {
 private struct PlaceTitle: View {
     let place: Place
     let showsChevron: Bool
+    let isCurrentLocation: Bool
 
     var body: some View {
         HStack(spacing: 3) {
@@ -490,7 +491,7 @@ private struct PlaceTitle: View {
                     .font(.system(size: 9, weight: .semibold))
             }
         }
-        .foregroundStyle(.blue)
+        .foregroundStyle(isCurrentLocation ? .indigo : .blue)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

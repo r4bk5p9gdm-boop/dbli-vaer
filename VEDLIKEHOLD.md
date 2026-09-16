@@ -54,6 +54,13 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-027 · ÅPEN** — Posisjonsmarkøren skal høre til stedsnavnet og stå
+rett foran det. GPS-stedet skal bruke samme lilla/indigo tekstfarge.
+
+**BRUKER-027 · FULLFØRT 2026-09-16** — Posisjonspilen står nå rett foran
+stedsnavnet, og GPS-stedsnavnet får indigo tekstfarge. Vanlige steder beholder
+blå valgfarge.
+
 **BRUKER-026 · ÅPEN** — Fjern navigeringsbanen/sveipehjelpen øverst på
 hjemskjermen og trekk værkortet opp for å spare høyde.
 
