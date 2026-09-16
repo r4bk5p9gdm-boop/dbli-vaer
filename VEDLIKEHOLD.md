@@ -54,6 +54,12 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-020 · ÅPEN** — Vis også 07 på høyre kant etter tredje felt, slik at
+07–15–23–07 markerer hele værdøgnet.
+
+**BRUKER-020 · FULLFØRT 2026-09-16** — Øvre kantlinje viser nå 07 ved start,
+15 og 23 ved mellomgrensene, samt en avsluttende 07 etter nattfeltet.
+
 **BRUKER-019 · ÅPEN** — Plasser tidsmarkørene på øvre kantlinje mellom
 radetiketten og værfeltene: 07 ved start, 15 mellom første og andre felt, og
 23 mellom andre og tredje felt.

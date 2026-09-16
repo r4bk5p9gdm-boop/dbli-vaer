@@ -228,8 +228,9 @@ private struct WeatherBandsForecast: View {
                     let labelWidth: CGFloat = 78
                     let trackWidth = max(0, proxy.size.width - labelWidth)
                     ZStack(alignment: .topLeading) {
-                        ForEach(Array(WeatherBandPeriod.all.enumerated()), id: \.element.id) { index, period in
-                            Text(String(format: "%02d", period.startHour))
+                        let markers = [7, 15, 23, 7]
+                        ForEach(Array(markers.enumerated()), id: \.offset) { index, hour in
+                            Text(String(format: "%02d", hour))
                                 .font(.caption2)
                                 .foregroundStyle(.secondary)
                                 .frame(width: 24)
