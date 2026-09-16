@@ -66,7 +66,9 @@ posisjonsmarkeringen selv når samme sted var valgt fra GPS rett før.
 tom plass uten at et annet sted flyttes inn. Regresjonstest dekker venstre/
 høyre-favoritt etter sletting.
 
-**AUTO-172 · ÅPEN** — Kontroller at swipe-hjelp ikke vises med ett sted.
+**AUTO-172 · FULLFØRT 2026-09-16** — Swipe-hjelpen vises bare når minst to
+steder kan velges. Regresjonstest dekker null, ett og to steder.
+
 
 **AUTO-166 · FULLFØRT 2026-09-16** — Korte Watch-varseltekster følger nå
 språkstil: «Dugg!» i bokmål, «Dogg!» i inntrøndersk og «Dew!» på engelsk.

@@ -2528,6 +2528,12 @@ final class PlannerTests: XCTestCase {
         XCTAssertNil(resolved.right)
     }
 
+    func testHomeSwipeHintHiddenForSinglePlace() {
+        XCTAssertFalse(HomeSwipeSelection.shouldShowHint(placeCount: 0))
+        XCTAssertFalse(HomeSwipeSelection.shouldShowHint(placeCount: 1))
+        XCTAssertTrue(HomeSwipeSelection.shouldShowHint(placeCount: 2))
+    }
+
     func testRuleFilterReturnsEmptyForTypeWithoutRules() {
         let rain = Rule(type: .regn)
         XCTAssertTrue(Rule.filtered([rain], by: .sno).isEmpty)

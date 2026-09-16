@@ -154,7 +154,7 @@ struct HomeView: View {
     }
 
     private var swipeHint: String? {
-        guard swipePlaces.count > 1 else { return nil }
+        guard HomeSwipeSelection.shouldShowHint(placeCount: swipePlaces.count) else { return nil }
         let names = swipePlaces.map(\.displayName)
         if store.selectionIsCurrentLocation {
             return "Nåværende posisjon  " + names.dropFirst().map { "→ \($0)" }.joined(separator: "   ")
