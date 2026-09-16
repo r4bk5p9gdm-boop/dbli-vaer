@@ -92,6 +92,9 @@ enum Planner {
     }
 
     private static func previousDayFireDate(for eventAt: Date, rule: Rule, calendar: Calendar = .current) -> Date? {
+        // Calendar date construction (rather than elapsed hours) keeps a
+        // fixed evening notification at the correct local wall-clock time
+        // across DST transitions.
         guard let hour = rule.previousDayNotificationHour else { return nil }
         let eventDay = calendar.startOfDay(for: eventAt)
         if let notificationWeekday = rule.notificationWeekday {

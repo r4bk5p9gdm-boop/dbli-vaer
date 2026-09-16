@@ -2,6 +2,6 @@
   "continue": true,
   "lastScheduledStart": "2026-09-13T05:15:12.787Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-129 fullført: display-only-regler holdes utenfor pushplanlegging, med eksisterende regresjonstest.",
+  "lastProgress": "AUTO-130 fullført: faste kveldsvarsler bruker lokal kalenderdato/veggklokke over sommertid, med Europe/Oslo-regresjon.",
   "stopReason": "AUTO-modus aktiv: blokkerte brukeroppgaver hoppes over, og arbeidet fortsetter på neste ublokkerte oppgave."
 }

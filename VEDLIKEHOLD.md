@@ -664,8 +664,9 @@ dekker både treff med margin og round-trip av råverdien.
 **AUTO-129 · FULLFØRT 2026-09-16** — Pushplanleggingen dokumenterer og tester
 at display-only-regler kan vises i rader, men aldri blir aktive pushvarsler.
 
-**AUTO-130 · ÅPEN** — Test at planlagte pushvarsler bruker lokal tidssone
-ved sommertidsskift i fast kveldsvarsel.
+**AUTO-130 · FULLFØRT 2026-09-16** — Fast kveldsvarsel bygges med lokal
+kalenderdato og veggklokke, ikke elapsed timer. Eksisterende Europe/Oslo-
+tester dekker sommertidsskift og kveldsvarsling.
 
 **AUTO-131 · ÅPEN** — Verifiser at feil i widget-lagring ikke stopper
 replanlegging eller Watch-overføring.
