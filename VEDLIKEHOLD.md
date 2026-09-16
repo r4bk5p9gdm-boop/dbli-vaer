@@ -581,6 +581,15 @@ for manglende push-/værtypeoppføring.
 etter regn fortsatt gjelder over midnatt, men slipper gjennom et nytt duggfall
 etter tre tørre timer.
 
+**AUTO-109 · ÅPEN** — Test at inntrøndersk tidsuttrykk velger «i natt» før
+«i morgen» ved midnattsskiftet.
+
+**AUTO-110 · ÅPEN** — Verifiser at Live Activity avsluttes når prognosen blir
+foreldet uten å etterlate en aktiv status.
+
+**AUTO-111 · ÅPEN** — Test at posisjonsstedets lokale temperaturjustering
+brukes likt i hjem, widget og Watch-snapshot.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
