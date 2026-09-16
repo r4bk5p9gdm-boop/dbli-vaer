@@ -687,6 +687,12 @@ reentrancy-tester sikrer at nyeste resultat blir stående.
 **AUTO-135 · ÅPEN** — Test at værikon og varseltype fortsatt bruker samme
 felles fargemodell for solgløtt og skyer.
 
+**AUTO-136 · ÅPEN** — Verifiser at appens hovedikon og live-status bruker
+samme nedbørstype ved sluddgrensen.
+
+**AUTO-137 · ÅPEN** — Test at varsler med «bare i nærheten» ignoreres når
+stedet ikke er innenfor nærhetsradius.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
