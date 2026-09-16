@@ -394,14 +394,18 @@ arve feilstatus fra et annet sted.
 **AUTO-064 · FULLFØRT 2026-09-16** — Regresjonstest dekker to «Hytte»-steder
 med ulike koordinater og bekrefter separate prognosegrupper og feilkontekst.
 
-**AUTO-065 · ÅPEN** — Kontroller at egendefinert stedsnavn ikke endrer
-prognose-ID eller varselrute.
+**AUTO-065 · FULLFØRT 2026-09-16** — Eksisterende persistens- og
+varselrute-regresjoner bekrefter at `customName` og preposisjon bare endrer
+visningstekst; UUID og koordinatbasert rute forblir uendret.
 
 **AUTO-066 · ÅPEN** — Test at egendefinert navn beholdes i widget- og
 varseltekst etter prognoseoppdatering.
 
 **AUTO-067 · ÅPEN** — Kontroller at preposisjon og egendefinert navn ikke
 endres av prognoseoppdatering.
+
+**AUTO-068 · ÅPEN** — Test at navnendring ikke utløser unødvendig
+nettverksforespørsel når koordinatene er uendret.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
