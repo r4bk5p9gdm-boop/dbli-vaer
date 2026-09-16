@@ -553,8 +553,9 @@ vårskiftet til sommertid.
 En liten policyfunksjon og regresjonstest gjør rask, gjentatt bakgrunnsrefresh
 idempotent.
 
-**AUTO-102 · ÅPEN** — Gjennomgå varsel-ID-generering for kollisjon mellom
-like regler på ulike steder og legg til en ren regresjonstest.
+**AUTO-102 · FULLFØRT 2026-09-16** — Varsel-ID-regresjon bekrefter at samme
+regel og tidspunkt får ulike identifikatorer for ulike steder, og at begge
+kan planlegges samtidig uten kollisjon.
 
 **AUTO-103 · ÅPEN** — Kontroller at bakgrunnsoppdatering ikke planlegger
 samme sted mer enn én gang når favoritt og posisjonssted deler koordinater.

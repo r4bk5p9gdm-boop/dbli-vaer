@@ -1326,6 +1326,19 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(NotificationScheduler.alertsToSchedule([early], now: base, limit: 0).isEmpty)
     }
 
+    func testNotificationIDsSeparateSameRuleAndTimeAcrossPlaces() {
+        let rule = Rule(type: .regn)
+        let fireAt = base.addingTimeInterval(3_600)
+        let first = PlannedAlert(rule: rule, placeID: UUID(), placeName: "Klinga",
+                                 eventAt: fireAt, fireAt: fireAt, index: 1, total: 1,
+                                 quiet: false, possible: false, eventDetail: nil)
+        let second = PlannedAlert(rule: rule, placeID: UUID(), placeName: "Namsos",
+                                  eventAt: fireAt, fireAt: fireAt, index: 1, total: 1,
+                                  quiet: false, possible: false, eventDetail: nil)
+        XCTAssertNotEqual(first.id, second.id)
+        XCTAssertEqual(Set(NotificationScheduler.alertsToSchedule([first, second], now: base).map(\.id)).count, 2)
+    }
+
     @MainActor
     func testNotificationPlanLogReportsActualSchedulingResult() {
         XCTAssertEqual(
