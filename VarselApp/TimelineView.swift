@@ -27,9 +27,9 @@ struct ForecastVariantsView: View {
     private var days: [ForecastDay] { ForecastDay.make(from: forecast) }
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 7) {
             ForEach(days) { day in
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: 7) {
                     ForecastDayHeader(day: day)
                     switch mode {
                     case .timeCards:
@@ -42,7 +42,7 @@ struct ForecastVariantsView: View {
                         WeatherEventsForecast(day: day, rules: rules, frostMargin: frostMargin)
                     }
                 }
-                .padding(12)
+                .padding(9)
                 .background(.background, in: RoundedRectangle(cornerRadius: 14))
             }
 
@@ -312,7 +312,8 @@ private struct WeatherBandLabel: View {
             Group {
                 if showsNotification {
                     Image(systemName: "bell.fill")
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(.white)
+                        .background(Circle().fill(Color.orange).frame(width: 14, height: 14))
                 } else {
                     Color.clear
                 }
@@ -320,11 +321,6 @@ private struct WeatherBandLabel: View {
             .font(.system(size: 7))
             .frame(width: notificationColumnWidth)
             .accessibilityHidden(true)
-
-            Rectangle()
-                .fill(Color.secondary.opacity(0.22))
-                .frame(width: 1, height: 12)
-                .accessibilityHidden(true)
 
             HStack(spacing: 3) {
                 Image(systemName: systemImage)
@@ -395,27 +391,13 @@ private struct MoistureBandTrack: View {
     let rules: [Rule]
 
     var body: some View {
-        VStack(spacing: 2) {
-            HStack(spacing: 3) {
-                ForEach(WeatherBandPeriod.all) { period in
-                    VStack(spacing: 1) {
-                        HStack {
-                            Text(String(format: "%02d", period.startHour)).font(.system(size: 8, weight: .semibold, design: .monospaced))
-                            Spacer()
-                            Text(String(format: "%02d", (period.startHour + 8) % 24)).font(.system(size: 8, weight: .semibold, design: .monospaced))
-                        }.foregroundStyle(.secondary)
-                        MoistureHourBandCell(hours: day.hours, rules: rules, period: period)
-                    }
+        HStack(spacing: 3) {
+            ForEach(WeatherBandPeriod.all) { period in
+                MoistureHourBandCell(hours: day.hours, rules: rules, period: period)
                     .frame(maxWidth: .infinity)
-                }
             }
-            HStack(spacing: 3) {
-                ForEach(WeatherBandPeriod.all) { period in
-                    Text(period.label).font(.system(size: 8, weight: .medium)).frame(maxWidth: .infinity)
-                }
-            }.foregroundStyle(.secondary)
         }
-        .frame(height: 32)
+        .frame(height: 18)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Regnrad: regn, snø og fare for dugg vises med egne farger")
     }

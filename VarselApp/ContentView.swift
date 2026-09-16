@@ -134,6 +134,14 @@ struct HomeView: View {
     @State private var showingSettings = false
     @State private var transitionDirection: Edge = .trailing
 
+    private var forecastHeaderTitle: String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "nb_NO")
+        formatter.dateFormat = "EEEE d. MMM"
+        let title = formatter.string(from: Date())
+        return "Resten av i dag, (title)"
+    }
+
     private var swipePlaces: [Place] {
         let favorites = store.resolvedHomeFavorites
         let left = favorites.left.flatMap { id in store.places.first { $0.id == id } }
@@ -201,7 +209,7 @@ struct HomeView: View {
                         }
                         VStack(alignment: .leading, spacing: 10) {
                             HStack {
-                                Text("Neste 48 timer").font(.subheadline.bold())
+                                Text(forecastHeaderTitle).font(.subheadline.bold())
                                 Spacer()
                                 if store.isRefreshing {
                                     ProgressView().controlSize(.small)
@@ -338,10 +346,9 @@ private struct CurrentWeatherCard: View {
                 }
 
                 if isCurrentLocation {
-                    Label("Nåværende posisjon", systemImage: "location.fill")
-                        .font(.caption2.weight(.semibold))
+                    Image(systemName: "location.fill")
+                        .font(.caption2.weight(.bold))
                         .foregroundStyle(.indigo)
-                        .labelStyle(.titleAndIcon)
                         .fixedSize()
                         .accessibilityLabel("Posisjonsbasert værvarsel")
                         .accessibilityHint("Dette stedet følger telefonens aktuelle posisjon.")

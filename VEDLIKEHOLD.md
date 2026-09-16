@@ -63,6 +63,15 @@ tydelig posisjonsikon på det lagrede stedet.
  duplisert posisjonssted. Hjemkortets eksisterende posisjonslabel og ikon
  vises samtidig. Ny regresjonstest dekker både treff og avstand uten treff.
 
+**BRUKER-017 · FULLFØRT 2026-09-16** — Hjemkortet viser lagret stedsnavn
+ normalt (for eksempel «oppi Hornburu») med et lite posisjonsikon når GPS
+ traff stedet. Posisjonskortet beholder egen indigo/cyan-bakgrunn. Nedbør-
+ raden bruker nå samme kompakte 07/15/23-markører som øvrige rader; doble
+ yttertall og Dag/Kveld/Natt-etiketter er fjernet. Overskriften er «Resten av
+ i dag, [ukedag dato]» til venstre med Yr-tid til høyre, «Neste 48 timer» er
+ borte, bjellen står i egen fylt sirkel uten delestrek, og radene er gjort
+ lavere for å få plass til tre døgn på iPhone.
+
 **AUTO-174 · ÅPEN** — Kontroller at GPS-valg ved appstart ikke overskriver
 manuelt valgt sted når posisjonsdata kommer sent. Legg til test før eventuell
 endring.
