@@ -18,6 +18,28 @@ struct HomeFavorites: Codable, Equatable {
     }
 }
 
+/// Pure swipe policy shared by the home view and its regression tests. Vertical
+/// scrolling is never interpreted as a place change, and duplicate favorite
+/// IDs cannot create a phantom intermediate page.
+enum HomeSwipeSelection {
+    static func nextIndex(
+        currentID: UUID,
+        placeIDs: [UUID],
+        horizontalTranslation: Double,
+        verticalTranslation: Double,
+        minimumDistance: Double = 70
+    ) -> Int? {
+        let uniqueIDs = placeIDs.reduce(into: [UUID]()) { result, id in
+            if !result.contains(id) { result.append(id) }
+        }
+        guard abs(horizontalTranslation) > abs(verticalTranslation),
+              abs(horizontalTranslation) > minimumDistance,
+              let currentIndex = uniqueIDs.firstIndex(of: currentID) else { return nil }
+        let next = horizontalTranslation < 0 ? currentIndex + 1 : currentIndex - 1
+        return uniqueIDs.indices.contains(next) ? next : nil
+    }
+}
+
 struct SharedPlaceSelection: Codable, Equatable {
     var ids: [UUID] = []
     func resolved(available: [Place]) -> [UUID] {

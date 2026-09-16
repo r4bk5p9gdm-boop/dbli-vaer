@@ -30,6 +30,28 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(SharedPlaceSelection(ids: [a.id, a.id, b.id, c.id, UUID()]).resolved(available: [a,b,c]), [a.id,b.id,c.id])
     }
 
+    func testHomeSwipeIgnoresVerticalDragsAndDeduplicatesFavorites() {
+        let current = UUID(), right = UUID(), left = UUID()
+        XCTAssertNil(HomeSwipeSelection.nextIndex(
+            currentID: current,
+            placeIDs: [left, current, current, right],
+            horizontalTranslation: 20,
+            verticalTranslation: 90
+        ))
+        XCTAssertEqual(HomeSwipeSelection.nextIndex(
+            currentID: current,
+            placeIDs: [left, current, current, right],
+            horizontalTranslation: -100,
+            verticalTranslation: 4
+        ), 2)
+        XCTAssertEqual(HomeSwipeSelection.nextIndex(
+            currentID: current,
+            placeIDs: [left, current, current, right],
+            horizontalTranslation: 100,
+            verticalTranslation: 4
+        ), 0)
+    }
+
     func testWeatherGlanceDropsStaleNowStatusAndKeepsOnePerType() {
         let stale = WeatherStatus(ruleID: UUID(), type: .regn, text: "Regn nå.", eventAt: base.addingTimeInterval(-2 * 3_600), isNow: true)
         let current = WeatherStatus(ruleID: UUID(), type: .regn, text: "Regn nå.", eventAt: base.addingTimeInterval(-10 * 60), isNow: true)

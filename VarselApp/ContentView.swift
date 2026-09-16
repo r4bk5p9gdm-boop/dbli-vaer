@@ -226,13 +226,20 @@ struct HomeView: View {
             .refreshable { _ = await store.refreshAll() }
             .contentShape(Rectangle())
             .highPriorityGesture(DragGesture(minimumDistance: 45).onEnded { value in
-                guard abs(value.translation.width) > abs(value.translation.height), abs(value.translation.width) > 70, swipePlaces.count > 1,
-                      let current = store.selected,
-                      let index = swipePlaces.firstIndex(where: { $0.id == current.id }) else { return }
-                let next = value.translation.width < 0 ? index + 1 : index - 1
-                guard swipePlaces.indices.contains(next) else { return }
+                let uniqueIDs = swipePlaces.map(\.id).reduce(into: [UUID]()) { ids, id in
+                    if !ids.contains(id) { ids.append(id) }
+                }
+                guard let current = store.selected,
+                      let next = HomeSwipeSelection.nextIndex(
+                        currentID: current.id,
+                        placeIDs: uniqueIDs,
+                        horizontalTranslation: value.translation.width,
+                        verticalTranslation: value.translation.height
+                      ),
+                      let nextID = uniqueIDs[next],
+                      let nextPlace = swipePlaces.first(where: { $0.id == nextID }) else { return }
                 transitionDirection = value.translation.width < 0 ? .trailing : .leading
-                withAnimation(.easeInOut(duration: 0.32)) { store.select(swipePlaces[next]) }
+                withAnimation(.easeInOut(duration: 0.32)) { store.select(nextPlace) }
             })
             .sheet(item: $editing) { r in RuleEditorView(rule: r, isNew: false) }
             .sheet(isPresented: $showingSettings) { RulesView() }

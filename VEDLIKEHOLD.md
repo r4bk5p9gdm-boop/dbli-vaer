@@ -464,8 +464,9 @@ duggpunkt eller Yr-temperaturen i prognosen.
 import eller gjenoppretting) nullstiller nå GPS-markeringen automatisk. Bare
 oppstartsforløpet for aktuell posisjon kan sette den tilbake.
 
-**AUTO-081 · ÅPEN** — Kontroller at helside-sveip ikke endrer valgt sted ved
-vertikal scrolling eller når favorittlisten inneholder duplikate steder.
+**AUTO-081 · FULLFØRT 2026-09-16** — Sveiplogikken er trukket ut i en ren,
+testbar policy som avviser vertikale drag og dedupliserer favoritt-ID-er før
+sidebytte. Regresjonstest dekker begge retninger og yttergrensene.
 
 **AUTO-082 · ÅPEN** — Dokumenter en lett byggkontroll som kan kjøres uten
 CoreSimulator når simulator-tjenesten er utilgjengelig.
