@@ -54,6 +54,13 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-023 · ÅPEN** — Flytt pushbjellen til høyre side av raden. Værikon
+og radtittel (for eksempel «Nedbør») skal starte helt til venstre.
+
+**BRUKER-023 · FULLFØRT 2026-09-16** — Bjellen ligger nå i en egen smal
+ kolonne til høyre. Ikon og tittel starter helt til venstre uten innrykk, og
+ den fylte oransje sirkelen er beholdt med egen VoiceOver-tekst.
+
 **BRUKER-022 · ÅPEN** — Flytt teksten «nå» fra over nålinjen til under
 linjen, under værfeltene/radchipsene.
 

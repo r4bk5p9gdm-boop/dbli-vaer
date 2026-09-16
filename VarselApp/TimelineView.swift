@@ -307,29 +307,23 @@ private struct WeatherBandLabel: View {
     let color: Color
     let showsNotification: Bool
 
-    private let notificationColumnWidth: CGFloat = 9
-
     var body: some View {
         HStack(spacing: 3) {
-            Group {
-                if showsNotification {
-                    Image(systemName: "bell.fill")
-                        .foregroundStyle(.white)
-                        .background(Circle().fill(Color.orange).frame(width: 14, height: 14))
-                } else {
-                    Color.clear
-                }
-            }
-            .font(.system(size: 7))
-            .frame(width: notificationColumnWidth)
-            .accessibilityHidden(true)
-
             HStack(spacing: 3) {
                 Image(systemName: systemImage)
                     .foregroundStyle(color)
                 Text(title)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+
+            if showsNotification {
+                Image(systemName: "bell.fill")
+                    .font(.system(size: 7))
+                    .foregroundStyle(.white)
+                    .frame(width: 14, height: 14)
+                    .background(Circle().fill(Color.orange))
+                    .accessibilityLabel("Pushvarsel aktivert for (title)")
+            }
         }
         .font(.caption)
         .lineLimit(1)
