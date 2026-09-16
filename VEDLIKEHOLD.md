@@ -93,10 +93,7 @@ dagshodene. Manglende Swift-interpolering er korrigert, slik at dag, dato og
 ukedag vises som faktiske verdier i stedet for «(dayNumber)», «(weekday)»
 eller «(dateText)».
 
-**BRUKER-027 · ÅPEN** — Posisjonsmarkøren skal høre til stedsnavnet og stå
-rett foran det. GPS-stedet skal bruke samme lilla/indigo tekstfarge.
-
-**BRUKER-027 · FULLFØRT 2026-09-16** — Posisjonspilen står nå rett foran
+**BRUKER-027 · FULLFØRT 2026-09-16** — Posisjonsmarkøren står rett foran
 stedsnavnet, og GPS-stedsnavnet får indigo tekstfarge. Vanlige steder beholder
 blå valgfarge.
 
