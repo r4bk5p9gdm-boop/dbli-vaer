@@ -693,6 +693,8 @@ final class Store: ObservableObject {
                 updatedAt: updatedAt
             )
         }
+        // Snapshot identity requires both the same UUID and Yr coordinate;
+        // a renamed or moved place must never inherit another place's data.
         guard let cached, cached.place.id == place.id,
               ForecastLocation(place: cached.place) == ForecastLocation(place: place),
               !cached.forecast.isEmpty, cached.updatedAt >= cutoff else { return nil }

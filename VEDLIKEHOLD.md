@@ -676,8 +676,9 @@ snapshot-vakten og påvirkes ikke av tom/ugyldig widgetdata.
 blir nil før sveiplisten bygges; eksisterende regresjonstest dekker ingen
 duplikat- eller hoppesider og ingen oppdiktede erstatningssteder.
 
-**AUTO-133 · ÅPEN** — Test at widget- og Watch-snapshot avviser koordinater
-som ikke lenger matcher valgt sted.
+**AUTO-133 · FULLFØRT 2026-09-16** — Snapshot-fallback krever både samme
+sted-ID og Yr-koordinat. Eksisterende regresjonstester dekker flyttet sted,
+nytt posisjonssted og alias med samme koordinater.
 
 **AUTO-134 · ÅPEN** — Verifiser at planleggingskøen beholder nyeste resultat
 ved tre raske replanlegginger.
