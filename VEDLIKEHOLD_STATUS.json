@@ -2,6 +2,6 @@
   "continue": true,
   "lastScheduledStart": "2026-09-13T05:15:12.787Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-057 fullført: total nettverksfeil går ikke videre til lastUpdate eller replanlegging.",
+  "lastProgress": "AUTO-058 fullført: lokaliserte feiltekster beholder stedsnavn og tydelig instruksjon om nytt forsøk.",
   "stopReason": "AUTO-modus aktiv: blokkerte brukeroppgaver hoppes over, og arbeidet fortsetter på neste ublokkerte oppgave."
 }

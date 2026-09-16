@@ -368,14 +368,18 @@ for stedene som faktisk fikk ny prognose. Feilstatus for andre steder beholdes.
 bekrefter at total feil ikke går videre til `lastUpdate` eller replanlegging;
 siste vellykkede tidspunkt blir stående.
 
-**AUTO-058 · ÅPEN** — Kontroller at lokaliserte feiltekster ikke mister
-stedsnavn eller instruksjon om ny oppdatering.
+**AUTO-058 · FULLFØRT 2026-09-16** — Engelsk og norsk feilmelding beholder
+stedsnavn i «sist hentede prognose»-prefikset og har eksplisitt instruksjon
+om nytt forsøk («Pull to try again»/«Dra ned …»).
 
 **AUTO-059 · ÅPEN** — Test at feilstatus ryddes når samme sted senere får
 en gyldig prognose.
 
 **AUTO-060 · ÅPEN** — Kontroller at siste oppdateringstidspunkt bruker
 samme klokkegrunnlag ved manuell og bakgrunnsrefresh.
+
+**AUTO-061 · ÅPEN** — Verifiser at feilstatus ikke vises etter vellykket
+manuell oppdatering.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
