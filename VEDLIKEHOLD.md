@@ -614,6 +614,15 @@ feilet sted ikke hindrer andre steder fra å få fersk prognose.
 dedupliseres nå på sted-ID før grensen på tre brukes. Regresjonstest dekker
 duplikat, sletting/omdøping og tre unike oppføringer.
 
+**AUTO-117 · ÅPEN** — Test at Watch-widgeten viser samme valgte språk og
+skilletegn som iPhone etter en ny overføring.
+
+**AUTO-118 · ÅPEN** — Verifiser at varselhistorikk ikke vokser over avtalt
+korttidsgrense ved mange bakgrunnsoppdateringer.
+
+**AUTO-119 · ÅPEN** — Test at feil ved én Yr-forespørsel gir tydelig sted-
+spesifikk feil uten å overskrive siste gode prognose.
+
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
 Widget-/prognosefallback ved tom prognose, flyttet sted og manglende data er
