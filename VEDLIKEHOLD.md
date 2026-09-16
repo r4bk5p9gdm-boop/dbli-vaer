@@ -61,7 +61,8 @@ egen VoiceOver-label med værtype og antall oppsatte pushvarsler.
 `Rule.filtered`-funksjon. Alle regler av valgt type beholdes, og regresjonstest
 dekker to regnregler samt «alle».
 
-**AUTO-161 · ÅPEN** — Kontroller at visuell radbryter ikke endrer pushregler.
+**AUTO-161 · FULLFØRT 2026-09-16** — Regresjonstest bekrefter at skjuling av
+en visuell værtype-rad ikke endrer aktive pushregler eller deres antall.
 
 **AUTO-162 · ÅPEN** — Legg til regresjon for tom pushregel-liste i filtervisning.
 

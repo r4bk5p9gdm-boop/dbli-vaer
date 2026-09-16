@@ -2488,6 +2488,17 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(Rule.filtered([rainA, rainB, wind], by: nil).count, 3)
     }
 
+    func testVisualAlertVisibilityIsIndependentFromPushRules() {
+        var rule = Rule(type: .regn)
+        rule.enabled = true
+        var place = Place(name: "Klinga", lat: 64, lon: 11, rules: [rule])
+        XCTAssertTrue(place.isAlertTypeVisible(.regn))
+        place.hiddenAlertTypes = [.regn]
+        XCTAssertFalse(place.isAlertTypeVisible(.regn))
+        XCTAssertTrue(place.rules[0].enabled)
+        XCTAssertEqual(place.enabledRuleCount, 1)
+    }
+
     func testBackgroundRefreshSchedulesNextAttemptAfterThirtyMinutes() {
         XCTAssertEqual(
             BackgroundRefresh.earliestBeginDate(now: base),
