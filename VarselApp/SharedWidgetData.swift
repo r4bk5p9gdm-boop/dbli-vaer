@@ -37,12 +37,12 @@ enum WeatherGlance {
 
     static func compactEventLabel(for status: WeatherStatus) -> String {
         switch status.type {
-        case .regn: "Regn!"
-        case .sno: "Snø!"
-        case .vind: "Vind!"
-        case .dugg: "Dogg!"
-        case .sol: "Sol!"
-        case .frost: "Frost!"
+        case .regn: return "Regn!"
+        case .sno: return "Snø!"
+        case .vind: return "Vind!"
+        case .dugg: return "Dogg!"
+        case .sol: return "Sol!"
+        case .frost: return "Frost!"
         case .temperatur:
             let isHigh = status.text.localizedCaseInsensitiveContains("over")
             let marker = isHigh ? ">" : "<"
@@ -50,7 +50,7 @@ enum WeatherGlance {
                 .split(whereSeparator: { $0 == " " || $0 == "°" })
                 .first(where: { Double(String($0).replacingOccurrences(of: ",", with: ".")) != nil })
                 .map(String.init) ?? ""
-            return number.isEmpty ? "Temp!" : "(marker)(number)°"
+            return number.isEmpty ? "Temp!" : "\(marker)\(number)°"
         }
     }
 

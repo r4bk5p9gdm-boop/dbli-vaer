@@ -54,6 +54,10 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-011 · FULLFØRT 2026-09-16** — Rettet Swift-kompilasjonsfeil i
+Watch/widget-felleskoden: `compactEventLabel` returnerer nå eksplisitt fra
+alle `switch`-grener og setter sammen temperaturtegnet korrekt.
+
 **AUTO-152 · FULLFØRT 2026-09-16** — Watch/widget-logikken har nå en felles,
 testbar `WeatherGlance.nextEvents` som alltid filtrerer bort NÅ-status. Test
 dekker at neste snøhendelse velges når regn pågår akkurat nå.
