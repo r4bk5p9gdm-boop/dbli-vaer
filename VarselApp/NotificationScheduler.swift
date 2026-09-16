@@ -284,6 +284,8 @@ enum NotificationScheduler {
             c.threadIdentifier = a.rule.id.uuidString
             if let placeID = a.placeID {
                 c.userInfo = [NotificationRoute.placeIDKey: placeID.uuidString]
+                // Encode the current Place (including a custom name) so a
+                // notification opened after renaming routes to fresh data.
                 if let place = places.first(where: { $0.id == placeID }),
                    let data = try? JSONEncoder().encode(NotificationPlanContext(place: place, rule: a.rule, languageStyle: languageStyle)) {
                     c.userInfo[planContextKey] = data

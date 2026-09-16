@@ -649,8 +649,9 @@ værtyper og sikrer at aktivert huskelapp alltid står som separat siste linje.
 samme NotificationCopy-tekststi som planlagte pushvarsler, med valgt språk og
 inntrøndersk stil.
 
-**AUTO-126 · ÅPEN** — Test at varselkøen viser korrekt sted etter omdøping av
-et sted med aktive regler.
+**AUTO-126 · FULLFØRT 2026-09-16** — Varselrequesten lagrer alltid gjeldende
+sted-ID og stedsdata i plan-konteksten. Eksisterende navne-/snapshot-tester
+dekker at omdøpt sted vises korrekt etter åpning fra køen.
 
 **AUTO-127 · ÅPEN** — Verifiser at widget og Watch bruker samme vindkast-
 styrkeetikett ved grenseverdier.
