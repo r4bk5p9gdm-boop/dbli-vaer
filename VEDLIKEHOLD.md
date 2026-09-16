@@ -504,11 +504,21 @@ posisjonstillatelse/avslag for å verifisere CoreLocation-callbacks. Koden er
 idempotent og nullstiller markeringen før hvert forsøk; hoppes over til fysisk
 enhet er tilgjengelig.
 
-**AUTO-090 · ÅPEN** — Kontroller at posisjonsmerket følger valgt sted etter
-app-omstart og ikke lagres som varig stedsegenskap.
+**AUTO-090 · FULLFØRT 2026-09-16** — Regresjonstest bekrefter at
+posisjonsmerket er runtime-tilstand og ikke finnes i den vedvarende
+store-serialiseringen. Etter omstart må GPS-oppslag derfor lykkes på nytt.
 
 **AUTO-091 · ÅPEN** — Verifiser at varslingslenke til manuelt sted ikke
 aktiverer GPS-merket etter appstart.
+
+**AUTO-092 · ÅPEN** — Test at valgt manuelt sted og GPS-sted kan byttes flere
+ganger uten å miste riktig overgangsretning i hjemvisningen.
+
+**AUTO-093 · ÅPEN** — Kontroller at avvist posisjonstilgang gir tydelig,
+handlingsrettet tekst i oppstartsveiviseren.
+
+**AUTO-094 · ÅPEN** — Verifiser at widgetens «Posisjon»-navn ikke overskriver
+et brukerdefinert stedsnavn.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.

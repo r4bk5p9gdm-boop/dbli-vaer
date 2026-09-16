@@ -106,6 +106,14 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual("Ålesund".compare("åLESUND", options: [.caseInsensitive, .diacriticInsensitive]), .orderedSame)
     }
 
+    func testCurrentLocationBadgeIsNotPersistedAcrossRestart() throws {
+        let place = Place(name: "Klinga", lat: 64.4, lon: 11.5)
+        let state = PersistedStoreState(places: [place], selectedID: place.id, log: [])
+        let object = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(state)) as? [String: Any])
+
+        XCTAssertNil(object["selectionIsCurrentLocation"])
+    }
+
     func testPlacePersistsSecondSunDisplayThreshold() throws {
         var place = Place(name: "Selbu", lat: 63, lon: 11)
         place.displaySunThreshold = 10
