@@ -161,15 +161,6 @@ struct HomeView: View {
         return orderedIDs.compactMap { id in store.places.first { $0.id == id } }
     }
 
-    private var swipeHint: String? {
-        guard HomeSwipeSelection.shouldShowHint(placeCount: swipePlaces.count) else { return nil }
-        let names = swipePlaces.map(\.displayName)
-        if store.selectionIsCurrentLocation {
-            return "Nåværende posisjon  " + names.dropFirst().map { "→ \($0)" }.joined(separator: "   ")
-        }
-        return names.joined(separator: "   ‹   ")
-    }
-
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -190,13 +181,6 @@ struct HomeView: View {
                     if let p = store.selected {
                         let fc = store.selectedForecast
                         let visibleForecast = Array(fc.prefix(48))
-                        if let swipeHint {
-                            Text(swipeHint)
-                                .font(.caption2.weight(.medium))
-                                .foregroundStyle(.secondary)
-                                .frame(maxWidth: .infinity, alignment: .center)
-                                .accessibilityLabel("Sveip mellom steder: \(swipeHint)")
-                        }
                         if !visibleForecast.isEmpty {
                             CurrentWeatherCard(
                                 place: p,
