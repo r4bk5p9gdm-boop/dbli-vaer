@@ -89,6 +89,13 @@ final class PlannerTests: XCTestCase {
         ))
     }
 
+    func testLateCurrentLocationDoesNotReplaceManualSelection() {
+        let initial = UUID()
+        XCTAssertTrue(Store.shouldApplyCurrentLocation(selectionAtRequestStart: initial, currentSelection: initial))
+        XCTAssertFalse(Store.shouldApplyCurrentLocation(selectionAtRequestStart: initial, currentSelection: UUID()))
+        XCTAssertFalse(Store.shouldApplyCurrentLocation(selectionAtRequestStart: nil, currentSelection: initial))
+    }
+
     func testHomeSwipeOrderKeepsCurrentPlaceBetweenDistinctFavorites() {
         let left = UUID(), current = UUID(), right = UUID()
         XCTAssertEqual(

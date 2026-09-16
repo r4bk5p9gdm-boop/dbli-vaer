@@ -148,6 +148,9 @@ final class ForecastRefreshQueue {
 
 @MainActor
 final class Store: ObservableObject {
+    static func shouldApplyCurrentLocation(selectionAtRequestStart: UUID?, currentSelection: UUID?) -> Bool {
+        selectionAtRequestStart == currentSelection
+    }
     // Foreground and background work must share live rules and forecasts.
     // A separate instance can overwrite newer settings when its log is saved.
     static let shared = Store()
@@ -369,6 +372,11 @@ final class Store: ObservableObject {
     /// Select the saved place nearest the phone at launch, or add a lightweight
     /// current-location place when no saved place is nearby.
     func selectCurrentLocationIfPossible() async {
+        // Do not let a slow GPS lookup overwrite a place the user selected
+        // while the lookup was in flight (for example from a notification or
+        // a swipe). The startup selection is only valid if the selection is
+        // still the one that was visible when the request began.
+        let selectionAtRequestStart = selectedID
         // Clear a previous GPS badge before attempting a new lookup. If
         // permission is denied or the request fails, the existing place remains
         // visible but is never presented as freshly position-based.
@@ -377,6 +385,10 @@ final class Store: ObservableObject {
         // existing notifications remain fully usable when access is denied.
         let locationManager = LocationManager()
         guard let location = try? await locationManager.current() else { return }
+        guard Self.shouldApplyCurrentLocation(
+            selectionAtRequestStart: selectionAtRequestStart,
+            currentSelection: selectedID
+        ) else { return }
         let nearest = places.min { a, b in
             CLLocation(latitude: a.lat, longitude: a.lon).distance(from: location)
                 < CLLocation(latitude: b.lat, longitude: b.lon).distance(from: location)

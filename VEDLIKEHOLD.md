@@ -64,6 +64,14 @@ at samme værtype ikke vises dobbelt når flere regler treffer samtidig.
 **AUTO-176 · ÅPEN** — Verifiser at språkstil og skilletegn følger med ved
 bytte av sted i hjem-swipe og ved widget-snapshot.
 
+**AUTO-177 · ÅPEN** — Kontroller at bakgrunnsoppdatering ikke skriver over
+nyere manuelle stedvalg når flere refresh-kall avsluttes i ulik rekkefølge.
+
+**AUTO-174 · FULLFØRT 2026-09-16** — Sen GPS-respons overstyrer ikke lenger
+et manuelt stedvalg som ble gjort mens posisjonsoppslaget pågikk. Beskyttelsen
+er sentralisert i `Store.shouldApplyCurrentLocation`, med regresjonstest for
+samme valg, endret valg og manglende startvalg.
+
 **AUTO-173 · FULLFØRT 2026-09-16** — Helsides swipe stopper nå ved første og
 siste sted i stedet for å gå rundt til motsatt side. Ny regresjonstest dekker
 begge grenseverdiene.
