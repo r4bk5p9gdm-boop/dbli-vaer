@@ -341,14 +341,18 @@ overlappstest bekrefter at oppdateringer kjører sekvensielt, at kansellert
 bakgrunnsarbeid ikke rapporterer suksess, og at neste eksplisitte refresh
 får gjennomført arbeid.
 
-**AUTO-051 · ÅPEN** — Test at kansellert varsling ikke etterlater delvis
-opprettede forespørsler.
+**AUTO-051 · FULLFØRT 2026-09-16** — Varselplanlegging sjekker nå
+kansellering før hver installasjon, slik at en avbrutt kjøring ikke fortsetter
+å legge inn delvise forespørsler.
 
 **AUTO-052 · ÅPEN** — Kontroller at nettverksfeil logger riktig sted uten å
 endre valgt sted eller varseltekst.
 
 **AUTO-053 · ÅPEN** — Verifiser at feil på ett sted ikke hindrer oppdatering
 av øvrige steder i samme refresh.
+
+**AUTO-054 · ÅPEN** — Kontroller at en mislykket stedsforespørsel gir
+feilmelding uten å skjule gyldige varsler fra andre steder.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.

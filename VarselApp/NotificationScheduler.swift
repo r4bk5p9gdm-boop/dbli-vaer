@@ -272,6 +272,7 @@ enum NotificationScheduler {
         var replacementContexts: [String: Data] = [:]
         var firstScheduledAt = preserved.compactMap { nextFireDate(for: $0) }.min()
         for a in requested {
+            guard !Task.isCancelled else { break }
             let c = UNMutableNotificationContent()
             c.title = NotificationCopy.title(for: a.rule, placeName: a.placeName, possible: a.possible, languageStyle: languageStyle)
             c.body = NotificationCopy.message(for: a.rule, eventAt: a.eventAt, referenceAt: a.fireAt, possible: a.possible, eventDetail: a.eventDetail, languageStyle: languageStyle)
