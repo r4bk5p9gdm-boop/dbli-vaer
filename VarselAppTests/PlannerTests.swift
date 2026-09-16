@@ -2520,6 +2520,14 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(store.selectionIsCurrentLocation)
     }
 
+    func testDeletedHomeFavoriteResolvesToEmptySlot() {
+        let left = UUID()
+        let missing = UUID()
+        let resolved = HomeFavorites(left: left, right: missing).resolved(availableIDs: Set([left]))
+        XCTAssertEqual(resolved.left, left)
+        XCTAssertNil(resolved.right)
+    }
+
     func testRuleFilterReturnsEmptyForTypeWithoutRules() {
         let rain = Rule(type: .regn)
         XCTAssertTrue(Rule.filtered([rain], by: .sno).isEmpty)

@@ -62,7 +62,9 @@ gang i rekkefølgen.
 favorittstil. Regresjonstest bekrefter at et manuelt valg nullstiller
 posisjonsmarkeringen selv når samme sted var valgt fra GPS rett før.
 
-**AUTO-171 · ÅPEN** — Test favorittrekkefølge etter sletting av sted.
+**AUTO-171 · FULLFØRT 2026-09-16** — Slettede favoritt-ID-er løses nå til
+tom plass uten at et annet sted flyttes inn. Regresjonstest dekker venstre/
+høyre-favoritt etter sletting.
 
 **AUTO-172 · ÅPEN** — Kontroller at swipe-hjelp ikke vises med ett sted.
 
