@@ -1195,6 +1195,8 @@ struct PlacesView: View {
 
 private struct GlobalSettingsView: View {
     @AppStorage(WeatherTextSeparator.key, store: WeatherTextSeparator.defaults) private var textSeparator = WeatherTextSeparator.space.rawValue
+    @AppStorage(WatchPlaceSettings.sourceKey) private var watchPlaceSource = WatchPlaceSource.position.rawValue
+    @AppStorage(WatchPlaceSettings.fixedPlaceIDKey) private var watchFixedPlaceID = ""
     @EnvironmentObject private var store: Store
     @Environment(\.dismiss) private var dismiss
     @State private var showingOnboarding = false
@@ -1234,22 +1236,9 @@ private struct GlobalSettingsView: View {
                 }
 
                 Section("CarPlay") {
-                    Text("Steder i CarPlay og Watch")
+                    Text("Steder i CarPlay")
                         .font(.subheadline.weight(.semibold))
-                    ForEach(0..<3, id: \.self) { index in
-                        Picker(index == 0 ? "Primært sted" : "Sted \(index + 1)", selection: Binding<UUID?>(
-                            get: { store.resolvedSharedPlaceIDs.indices.contains(index) ? store.resolvedSharedPlaceIDs[index] : nil },
-                            set: { id in
-                                var ids = store.resolvedSharedPlaceIDs
-                                if ids.count <= index { ids.append(contentsOf: Array(repeating: store.places.first?.id ?? UUID(), count: index + 1 - ids.count)) }
-                                if let id { ids[index] = id } else if ids.indices.contains(index) { ids.remove(at: index) }
-                                store.sharedPlaceSelection = SharedPlaceSelection(ids: ids)
-                            })) {
-                            Text("Ikke valgt").tag(nil as UUID?)
-                            ForEach(store.places) { place in Text(place.nameWithPreposition).tag(Optional(place.id)) }
-                        }
-                    }
-                    Text("CarPlay kan vise opptil tre valgte steder. Watch bruker fortsatt primærstedet som standard.")
+                    Text("CarPlay følger nå hjemmesveipingen: posisjon, Stjerne 1 og Stjerne 2. Velg stjernene på Steder-siden.")
                         .font(.caption).foregroundStyle(.secondary)
                     Label("CarPlay-widgeten er klar", systemImage: "car.fill")
                     Text("Krever iOS 26 eller nyere. Legg til D bli Vær! fra widgetinnstillingene for bilen under Innstillinger › Generelt › CarPlay.")
@@ -1269,7 +1258,20 @@ private struct GlobalSettingsView: View {
 
                 Section("Apple Watch") {
                     Label("Watch-app og komplikasjoner er med", systemImage: "applewatch")
-                    Text("Klokka følger valgt sted fra iPhone. Du kan åpne Watch-appen, legge D bli Vær! i Smart stabel og velge komplikasjonen på urskiven.")
+                    Picker("Datakilde", selection: $watchPlaceSource) {
+                        ForEach(WatchPlaceSource.allCases) { source in
+                            Text(source.label).tag(source.rawValue)
+                        }
+                    }
+                    if WatchPlaceSource(rawValue: watchPlaceSource) == .fixed {
+                        Picker("Fast sted", selection: $watchFixedPlaceID) {
+                            Text("Velg sted").tag("")
+                            ForEach(store.places) { place in
+                                Text(place.nameWithPreposition).tag(place.id.uuidString)
+                            }
+                        }
+                    }
+                    Text("Aktuell posisjon følger telefonens siste GPS-sted. Fast sted låser Watch til stedet du velger her.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -1283,6 +1285,8 @@ private struct GlobalSettingsView: View {
                     }
                 }
             }
+            .onChange(of: watchPlaceSource) { _, _ in store.refreshDisplaySettings() }
+            .onChange(of: watchFixedPlaceID) { _, _ in store.refreshDisplaySettings() }
             .fullScreenCover(isPresented: $showingOnboarding) {
                 OnboardingWizardView { showingOnboarding = false }
             }

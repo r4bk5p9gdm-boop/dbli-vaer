@@ -20,6 +20,24 @@ struct HomeFavorites: Codable, Equatable {
     }
 }
 
+enum WatchPlaceSource: String, CaseIterable, Identifiable {
+    case position
+    case fixed
+
+    var id: String { rawValue }
+    var label: String {
+        switch self {
+        case .position: "Aktuell posisjon"
+        case .fixed: "Fast sted"
+        }
+    }
+}
+
+enum WatchPlaceSettings {
+    static let sourceKey = "varsel.watchPlaceSource"
+    static let fixedPlaceIDKey = "varsel.watchFixedPlaceID"
+}
+
 /// Pure swipe policy shared by the home view and its regression tests. Vertical
 /// scrolling is never interpreted as a place change, and duplicate favorite
 /// IDs cannot create a phantom intermediate page.

@@ -54,6 +54,10 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-035 · FULLFØRT 2026-09-16** — CarPlay bruker samme rekkefølge som
+hjemmesveipingen (posisjon, Stjerne 1, Stjerne 2). Watch har nå en global
+innstilling for aktuell posisjon eller fast sted.
+
 **BRUKER-034 · FULLFØRT 2026-09-16** — Flyttet valg av hjemmesveipefavoritter
 til Steder-siden som Stjerne 1 og Stjerne 2. Sveipefølgen er nå stabil:
 posisjon → stjerne 1 → stjerne 2, og prikkindikatoren følger samme indeks
