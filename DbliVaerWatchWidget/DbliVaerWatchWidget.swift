@@ -111,7 +111,7 @@ struct WatchWeatherWidgetView: View {
                 }
                 .widgetAccentable()
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel(localized(status?.text ?? temperature))
+                .accessibilityLabel(circularAccessibilityLabel)
             case .accessoryCorner:
                 Image(systemName: icon)
                     .font(.title3)
@@ -154,6 +154,11 @@ struct WatchWeatherWidgetView: View {
     private var temperature: String {
         guard let current else { return "--°" }
         return "\(current.temp.formatted(.number.precision(.fractionLength(0))))°"
+    }
+
+    private var circularAccessibilityLabel: String {
+        guard let status else { return temperature }
+        return "\(localized(WeatherGlance.compactEventLabel(for: status))), \(compactEventTime(status.eventAt))"
     }
 
     private func compactEventTime(_ date: Date) -> String {

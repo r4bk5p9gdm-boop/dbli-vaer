@@ -86,7 +86,9 @@ inntrøndersk med tankestrek.
 erstattes. Regresjonstest bekrefter at eksisterende cache og tidspunkt
 beholdes ved tom refresh.
 
-**AUTO-158 · ÅPEN** — Kontroller tilgjengelighetslabel for sirkulær widget.
+**AUTO-158 · FULLFØRT 2026-09-16** — Den sirkulære Watch-widgeten har nå en
+kort, entydig VoiceOver-label med værtype og relativ tid, i stedet for bare
+rå varseltekst.
 
 **BRUKER-010 · FULLFØRT 2026-09-16** — Watch-widgetens sirkulære variant
 viser neste kommende hendelse med kort relativ tid (`23m`, `2t`), tydelig
