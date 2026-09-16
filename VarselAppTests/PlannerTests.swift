@@ -2511,6 +2511,15 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    @MainActor
+    func testManualSelectionDoesNotCarryPositionStyle() {
+        let store = Store.shared
+        guard let place = store.places.first else { return }
+        store.select(place, fromCurrentLocation: true)
+        store.select(place)
+        XCTAssertFalse(store.selectionIsCurrentLocation)
+    }
+
     func testRuleFilterReturnsEmptyForTypeWithoutRules() {
         let rain = Rule(type: .regn)
         XCTAssertTrue(Rule.filtered([rain], by: .sno).isEmpty)

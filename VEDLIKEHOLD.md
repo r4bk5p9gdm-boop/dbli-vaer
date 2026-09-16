@@ -58,7 +58,9 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 regresjonstest for at nåværende posisjon som også er favoritt bare vises én
 gang i rekkefølgen.
 
-**AUTO-170 · ÅPEN** — Kontroller posisjonsstil ved manglende GPS-data.
+**AUTO-170 · FULLFØRT 2026-09-16** — Manglende GPS gir alltid vanlig
+favorittstil. Regresjonstest bekrefter at et manuelt valg nullstiller
+posisjonsmarkeringen selv når samme sted var valgt fra GPS rett før.
 
 **AUTO-171 · ÅPEN** — Test favorittrekkefølge etter sletting av sted.
 
