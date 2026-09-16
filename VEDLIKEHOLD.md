@@ -561,8 +561,9 @@ kan planlegges samtidig uten kollisjon.
 har nå en eksplisitt regresjonstest for favoritt og posisjonsalias. To navn
 med samme Yr-presisjon gir én nettverksforespørsel og to mottakere.
 
-**AUTO-104 · ÅPEN** — Test at utløpte varsel ikke blir liggende i
-Varslingsregler etter en vellykket replanlegging.
+**AUTO-104 · FULLFØRT 2026-09-16** — Oppryddingsregelen er dokumentert og
+regresjonstesten bekrefter at utløpte forespørsler fjernes, mens fremtidige
+og eksplisitt bevarte varsler blir stående etter replanlegging.
 
 **AUTO-105 · ÅPEN** — Kontroller at språkbytte ikke endrer regel-ID-er eller
 fører til doble varsler ved neste planlegging.

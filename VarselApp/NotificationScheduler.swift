@@ -174,6 +174,9 @@ enum NotificationScheduler {
         pendingIDs: [String], preservedIDs: Set<String>,
         successfulIDs: Set<String>, failedIDs: Set<String>
     ) -> [String] {
+        // Anything not explicitly preserved, replaced successfully, or kept
+        // as a failed-replacement fallback is safe to remove (including
+        // requests whose trigger has already elapsed).
         pendingIDs.filter {
             !preservedIDs.contains($0) &&
             !successfulIDs.contains($0) &&
