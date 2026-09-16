@@ -24,6 +24,11 @@ enum LiveWeatherActivityPolicy {
     static func canContinue(_ status: WeatherStatus, now: Date) -> Bool {
         status.isNow || (status.eventAt >= now && status.eventAt.timeIntervalSince(now) <= latestStart)
     }
+
+    static func forecastIsFresh(fetchedAt: Date, now: Date, maxAge: TimeInterval = 6 * 3_600) -> Bool {
+        let age = now.timeIntervalSince(fetchedAt)
+        return age >= 0 && age <= maxAge
+    }
 }
 
 @MainActor
@@ -180,7 +185,7 @@ enum LiveWeatherActivityManager {
               rule.type == .regn || rule.type == .sno,
               !rule.onlyWhenNearby || nearbyPlaceIDs.contains(place.id),
               let forecast,
-              (forecastFetchedAt == nil || now.timeIntervalSince(forecastFetchedAt!) <= forecastFreshness),
+              (forecastFetchedAt == nil || LiveWeatherActivityPolicy.forecastIsFresh(fetchedAt: forecastFetchedAt!, now: now, maxAge: forecastFreshness)),
               let status = Planner.status(
                 for: rule,
                 forecast: forecast,

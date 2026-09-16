@@ -585,8 +585,9 @@ etter tre tørre timer.
 «i natt» som eget uttrykk og «i mårrå» fra kl. 06, slik at midnattsskiftet
 ikke blander natt med neste morgen.
 
-**AUTO-110 · ÅPEN** — Verifiser at Live Activity avsluttes når prognosen blir
-foreldet uten å etterlate en aktiv status.
+**AUTO-110 · FULLFØRT 2026-09-16** — Live Activity-ferskhetskontrollen
+avviser nå også prognoser med fremtidig hentetidspunkt, i tillegg til eldre enn
+seks timer. Regresjonstest sikrer at foreldet data ikke holder aktiv status.
 
 **AUTO-111 · ÅPEN** — Test at posisjonsstedets lokale temperaturjustering
 brukes likt i hjem, widget og Watch-snapshot.

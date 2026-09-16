@@ -1390,6 +1390,12 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(WeatherLanguage.text("Regn i morgen kl. 06", style: .inntrondersk), "Regn i mårrå kl. 06")
     }
 
+    func testLiveActivityRejectsFutureDatedForecastAsNotFresh() {
+        XCTAssertTrue(LiveWeatherActivityPolicy.forecastIsFresh(fetchedAt: base, now: base.addingTimeInterval(60)))
+        XCTAssertFalse(LiveWeatherActivityPolicy.forecastIsFresh(fetchedAt: base.addingTimeInterval(60), now: base))
+        XCTAssertFalse(LiveWeatherActivityPolicy.forecastIsFresh(fetchedAt: base, now: base.addingTimeInterval(6 * 3_600 + 1)))
+    }
+
     @MainActor
     func testNotificationPlanLogReportsActualSchedulingResult() {
         XCTAssertEqual(
