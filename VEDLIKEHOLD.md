@@ -72,6 +72,12 @@ GPS-flyt, mens vanlig stedvalg og push-ruting nullstiller merket. Den
 eksisterende regresjonstesten `testManualNotificationSelectionClearsCurrentLocationBadge`
 dekker skiftet fra posisjonsvalg til manuelt valg.
 
+**AUTO-151 · FULLFØRT 2026-09-16** — Gjennomgått feilstien i
+`Store.performRefresh`: en mislykket eller tom prognose oppdaterer bare
+`forecastErrors` og lar eksisterende prognose, tidspunkt og kalibreringsdata
+stå urørt. Suksessgrenen skriver data og kalibrering først etter at prognosen
+er validert som ikke-tom. Dette beskytter historikk ved delvis Yr-feil.
+
 **BRUKER-009 · FULLFØRT 2026-09-16** — NÅ-status har nå korte,
 konsekvente inntrønderske uttrykk for regn, lett regn, snø og vind: «D regne
 no», «D regne litt no», «D snør no» og «D blæs no». Dugg beholder den
@@ -762,14 +768,7 @@ identisk huskelapp/navn fortsatt får separate ID-er via stabil regel-UUID.
 fra lagret Store-state før eventuell valgfri GPS-flyt. Manglende posisjon kan
 derfor ikke bytte eller tømme hjemstedet.
 
-**AUTO-149 · ÅPEN** — Test at Varslingsregler viser riktig «aktive varsler»-
-antall etter en regel deaktiveres.
-
-**AUTO-150 · ÅPEN** — Verifiser at appens posisjonsmerke ikke blir stående
-etter manuelt stedsskifte fra varselpush.
-
-**AUTO-151 · ÅPEN** — Test at prognosefeil ikke fjerner historikk eller
-kalibreringsdata for samme sted.
+Historiske AUTO-149–151-punkter er samlet og fullført øverst i denne køen.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
