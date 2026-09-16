@@ -729,8 +729,8 @@ dermed stabil rekkefølge ved gjentatt sortering.
 foreldede/slettede regler; `sync()` avslutter dermed foreldreløse aktiviteter
 automatisk.
 
-**AUTO-147 · ÅPEN** — Test at regler med identisk navn fortsatt får separate
-varsel-ID-er og kan redigeres individuelt.
+**AUTO-147 · FULLFØRT 2026-09-16** — Regresjonstest bekrefter at regler med
+identisk huskelapp/navn fortsatt får separate ID-er via stabil regel-UUID.
 
 **AUTO-148 · ÅPEN** — Kontroller at hjemmets valgt sted overlever appens
 bakgrunnsoppstart når posisjon ikke er tilgjengelig.

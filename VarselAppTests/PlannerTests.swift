@@ -1372,6 +1372,17 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(Set(NotificationScheduler.alertsToSchedule([first, second], now: base).map(\.id)).count, 2)
     }
 
+    func testIdenticallyNamedRulesKeepDistinctNotificationIDs() {
+        var firstRule = Rule(type: .regn)
+        firstRule.customName = "Paraply"
+        var secondRule = firstRule
+        secondRule.id = UUID()
+        let fireAt = base.addingTimeInterval(3_600)
+        let first = PlannedAlert(rule: firstRule, placeID: UUID(), placeName: "Klinga", eventAt: fireAt, fireAt: fireAt, index: 1, total: 1, quiet: false, possible: false, eventDetail: nil)
+        let second = PlannedAlert(rule: secondRule, placeID: first.placeID, placeName: "Klinga", eventAt: fireAt, fireAt: fireAt, index: 1, total: 1, quiet: false, possible: false, eventDetail: nil)
+        XCTAssertNotEqual(first.id, second.id)
+    }
+
     func testLanguageChangeDoesNotChangeRuleOrNotificationIdentity() {
         let rule = Rule(type: .regn)
         let place = Place(name: "Klinga", lat: 64, lon: 11)
