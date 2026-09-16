@@ -1301,12 +1301,12 @@ private struct PlaceRow: View {
                 if place.id == store.selectedID { Image(systemName: "checkmark.circle.fill").foregroundStyle(.blue) }
             }
             HStack {
-                if enabledRules.isEmpty {
+                if place.enabledRuleCount == 0 {
                     Text("Ingen aktive varsler")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 } else {
-                    Text("\(enabledRules.count) aktive \(enabledRules.count == 1 ? "varsel" : "varsler")" + nearbyText)
+                    Text("\(place.enabledRuleCount) aktive \(place.enabledRuleCount == 1 ? "varsel" : "varsler")" + nearbyText)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

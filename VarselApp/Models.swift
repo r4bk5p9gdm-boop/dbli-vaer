@@ -748,6 +748,10 @@ struct Place: Codable, Identifiable, Hashable {
     var areNotificationsEnabled: Bool { notificationsEnabled ?? true }
     var showsOnlyRuleAlerts: Bool { rulesOnlyDisplay ?? false }
     var localFrostMargin: Double { max(0, frostMargin ?? 0) }
+    /// Number of rules that are currently enabled for this place.
+    /// Keeping this calculation in the model prevents list views from
+    /// accidentally counting disabled rules after an inline edit.
+    var enabledRuleCount: Int { rules.reduce(into: 0) { if $1.enabled { $0 += 1 } } }
 
     private enum CodingKeys: String, CodingKey {
         case id, name, customName, lat, lon, preposition, rules, notificationsEnabled, rulesOnlyDisplay, hiddenAlertTypes, frostMargin, temperatureOffset, displayTemperatureThreshold, displayTemperatureHighThreshold, displayDewThreshold, displaySunThreshold, displaySunThreshold2, displayGustThreshold

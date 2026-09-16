@@ -2416,6 +2416,19 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(result.map(\.id), [position.id])
     }
 
+    func testPlaceEnabledRuleCountTracksInlineDeactivation() {
+        var first = Rule(type: .regn)
+        first.enabled = true
+        var second = Rule(type: .vind)
+        second.enabled = true
+        var place = Place(name: "Teststed", lat: 64, lon: 11, rules: [first, second])
+        XCTAssertEqual(place.enabledRuleCount, 2)
+        place.rules[0].enabled = false
+        XCTAssertEqual(place.enabledRuleCount, 1)
+        place.rules[1].enabled = false
+        XCTAssertEqual(place.enabledRuleCount, 0)
+    }
+
     func testBackgroundRefreshSchedulesNextAttemptAfterThirtyMinutes() {
         XCTAssertEqual(
             BackgroundRefresh.earliestBeginDate(now: base),

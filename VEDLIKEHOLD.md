@@ -54,6 +54,11 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-149 · FULLFØRT 2026-09-16** — Plasser har nå én sentral
+`enabledRuleCount`-beregning som brukes av stedslisten. Den teller bare
+aktiverte regler også etter inline-deaktivering, og regresjonstest dekker
+2 → 1 → 0 aktive varsler.
+
 **BRUKER-009 · FULLFØRT 2026-09-16** — NÅ-status har nå korte,
 konsekvente inntrønderske uttrykk for regn, lett regn, snø og vind: «D regne
 no», «D regne litt no», «D snør no» og «D blæs no». Dugg beholder den
