@@ -594,7 +594,14 @@ final class Store: ObservableObject {
             currentForecasts[id, default: []].sorted { $0.time < $1.time }.forEach { hasher.combine($0) }
         }
         nearbyPlaceIDs.sorted { $0.uuidString < $1.uuidString }.forEach { hasher.combine($0) }
-        hasher.combine(alertLanguageStyle.rawValue)
+        hasher.combine(Self.configurationSignature(languageStyle: alertLanguageStyle, separator: WeatherTextSeparator.current))
+        return hasher.finalize()
+    }
+
+    static func configurationSignature(languageStyle: AlertLanguageStyle, separator: WeatherTextSeparator) -> Int {
+        var hasher = Hasher()
+        hasher.combine(languageStyle.rawValue)
+        hasher.combine(separator.rawValue)
         return hasher.finalize()
     }
 

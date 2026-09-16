@@ -1405,6 +1405,11 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(snapshot.forecast.first?.temp, 12)
     }
 
+    func testSeparatorChangeChangesReplanConfigurationSignature() {
+        XCTAssertNotEqual(Store.configurationSignature(languageStyle: .bokmal, separator: .space), Store.configurationSignature(languageStyle: .bokmal, separator: .dash))
+        XCTAssertNotEqual(Store.configurationSignature(languageStyle: .bokmal, separator: .dash), Store.configurationSignature(languageStyle: .english, separator: .dash))
+    }
+
     @MainActor
     func testNotificationPlanLogReportsActualSchedulingResult() {
         XCTAssertEqual(

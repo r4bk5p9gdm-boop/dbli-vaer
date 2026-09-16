@@ -593,8 +593,9 @@ seks timer. Regresjonstest sikrer at foreldet data ikke holder aktiv status.
 lokale temperaturjustering som fallback-snapshot. Regresjonstest bekrefter at
 hjem, widget og Watch får justert temperatur fra samme rå Yr-verdi.
 
-**AUTO-112 · ÅPEN** — Kontroller at varslingsplanleggeren ikke lager ny
-push når samme hendelse bare endrer språk eller skilletegn.
+**AUTO-112 · FULLFØRT 2026-09-16** — Replanleggingssignaturen inkluderer nå
+skilletegn sammen med språk. Innholdet kan oppdateres uten nye varsel-ID-er,
+og regresjonstest bekrefter at begge innstillinger gir ny konfigurasjon.
 
 **AUTO-113 · ÅPEN** — Test at tom Nå-radar ikke fjerner et gyldig Yr-
 tabellvarsel fra nedbørsraden.
