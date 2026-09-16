@@ -437,6 +437,21 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(decoded.localTemperatureOffset, -2)
     }
 
+    func testFrostMarginSnapshotRoundTripKeepsRawYrTemperature() throws {
+        var place = Place(name: "Klinga", lat: 64.4, lon: 11.5)
+        place.frostMargin = 2.5
+        let hour = ForecastHour(time: base, temp: 1.5, precip: 0, wind: 1, cloud: 20, dew: 0.5, yrTemperature: 1.5)
+        let snapshot = WidgetWeatherSnapshot(place: place, forecast: [hour], updatedAt: base)
+        let restored = try JSONDecoder().decode(
+            WidgetWeatherSnapshot.self,
+            from: JSONEncoder().encode(snapshot)
+        )
+
+        XCTAssertEqual(restored.place.localFrostMargin, 2.5)
+        XCTAssertEqual(restored.forecast.first?.temp, 1.5)
+        XCTAssertEqual(restored.forecast.first?.yrTemperature, 1.5)
+    }
+
     func testCalibrationKeepsEvidenceAfterRollingHistoryExpires() throws {
         let place = Place(name: "Test", lat: 64, lon: 11)
         let hour = ForecastHour(time: base, temp: 4, precip: 0, wind: 1, cloud: 0, dew: 1)

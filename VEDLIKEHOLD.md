@@ -452,8 +452,9 @@ mot duggpunktet påvirkes.
 nå også live-statusbanen, ikke bare planlagte varsler. Den bekrefter at lokal
 margin brukes på terskelen og gir mulig frost-status uten å endre rå Yr-temp.
 
-**AUTO-078 · ÅPEN** — Kontroller at frostmargin ikke endrer rå Yr-temp i
- historikk eller eksport.
+**AUTO-078 · FULLFØRT 2026-09-16** — Snapshot-regresjon viser at frostmargin
+lagres og rundtrips gjennom widget/eksport uten å endre rå Yr-temperatur.
+Lokalt terskelavvik og Yr-verdi holdes separate etter dekoding.
 
 **AUTO-079 · ÅPEN** — Verifiser at duggpunktjustering ikke muterer rå
 prognoseverdier i lagret snapshot.
