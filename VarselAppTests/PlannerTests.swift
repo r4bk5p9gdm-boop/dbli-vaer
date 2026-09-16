@@ -452,6 +452,17 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(restored.forecast.first?.yrTemperature, 1.5)
     }
 
+    func testDewMatchingUsesRawDewPointAfterLocalTemperatureAdjustment() {
+        let hour = ForecastHour(time: base, temp: 6, precip: 0, wind: 1, cloud: 20, dew: 5)
+        let adjusted = hour.locallyAdjusted(by: -1)
+        var rule = Rule(type: .dugg)
+        rule.threshold = 1
+
+        XCTAssertTrue(rule.matches(adjusted))
+        XCTAssertEqual(adjusted.dew, hour.dew)
+        XCTAssertEqual(adjusted.yrTemperature, 6)
+    }
+
     func testCalibrationKeepsEvidenceAfterRollingHistoryExpires() throws {
         let place = Place(name: "Test", lat: 64, lon: 11)
         let hour = ForecastHour(time: base, temp: 4, precip: 0, wind: 1, cloud: 0, dew: 1)

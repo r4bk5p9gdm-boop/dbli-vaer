@@ -456,8 +456,9 @@ margin brukes på terskelen og gir mulig frost-status uten å endre rå Yr-temp.
 lagres og rundtrips gjennom widget/eksport uten å endre rå Yr-temperatur.
 Lokalt terskelavvik og Yr-verdi holdes separate etter dekoding.
 
-**AUTO-079 · ÅPEN** — Verifiser at duggpunktjustering ikke muterer rå
-prognoseverdier i lagret snapshot.
+**AUTO-079 · FULLFØRT 2026-09-16** — Regresjonstest bekrefter at duggvarsling
+beregnes med rått duggpunkt etter lokal temperaturjustering, uten å mutere
+duggpunkt eller Yr-temperaturen i prognosen.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
