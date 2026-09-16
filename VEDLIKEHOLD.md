@@ -106,11 +106,9 @@ lengden på faktisk treffende værperiode, og aldri mindre enn
 minimumsinnstillingen. Et 4-timers varsel blir derfor «Sol i 7 timer» når
 prognosen viser sju timer. Regresjonstest dekker lengre faktisk varighet.
 
-**BRUKER-024 · ÅPEN** — Bytt lilla natur-/nattbakgrunn i værfeltene til
-mørkegrå, slik at lilla ikke kan forveksles med varslingsfarge.
-
-**BRUKER-024 · FULLFØRT 2026-09-16** — Nattfeltene i alle værbånd bruker nå
- mørkegrå bakgrunn. Varslingsfargene er uendret og står tydeligere frem.
+**BRUKER-024 · FULLFØRT 2026-09-16** — Byttet lilla natur-/nattbakgrunn i
+værfeltene til mørkegrå, slik at lilla ikke kan forveksles med varslingsfarge.
+Varslingsfargene er uendret og står tydeligere frem.
 
 **BRUKER-023 · ÅPEN** — Flytt pushbjellen til høyre side av raden. Værikon
 og radtittel (for eksempel «Nedbør») skal starte helt til venstre.
