@@ -1397,6 +1397,15 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testWidgetFreshSnapshotAppliesLocalTemperatureOffsetLikeFallback() throws {
+        var place = Place(name: "Klinga", lat: 64, lon: 11)
+        place.localTemperatureOffset = 2
+        let raw = ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 20, dew: 5)
+        let snapshot = try XCTUnwrap(Store.widgetSnapshot(place: place, forecast: [raw], updatedAt: base, cached: nil))
+        XCTAssertEqual(snapshot.forecast.first?.temp, 12)
+    }
+
+    @MainActor
     func testNotificationPlanLogReportsActualSchedulingResult() {
         XCTAssertEqual(
             Store.notificationPlanLogText(.init(requestedCount: 0, scheduledCount: 0, failedCount: 0, firstScheduledAt: nil)),

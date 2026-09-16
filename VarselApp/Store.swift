@@ -669,7 +669,11 @@ final class Store: ObservableObject {
         guard let place else { return nil }
         let cutoff = now.addingTimeInterval(-6 * 3_600)
         if !forecast.isEmpty, let updatedAt, updatedAt >= cutoff {
-            return WidgetWeatherSnapshot(place: place, forecast: forecast, updatedAt: updatedAt)
+            return WidgetWeatherSnapshot(
+                place: place,
+                forecast: forecast.map { $0.locallyAdjusted(by: place.localTemperatureOffset) },
+                updatedAt: updatedAt
+            )
         }
         guard let cached, cached.place.id == place.id,
               ForecastLocation(place: cached.place) == ForecastLocation(place: place),

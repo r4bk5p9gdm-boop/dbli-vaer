@@ -589,8 +589,9 @@ ikke blander natt med neste morgen.
 avviser nå også prognoser med fremtidig hentetidspunkt, i tillegg til eldre enn
 seks timer. Regresjonstest sikrer at foreldet data ikke holder aktiv status.
 
-**AUTO-111 · ÅPEN** — Test at posisjonsstedets lokale temperaturjustering
-brukes likt i hjem, widget og Watch-snapshot.
+**AUTO-111 · FULLFØRT 2026-09-16** — Fersk widget-snapshot bruker nå samme
+lokale temperaturjustering som fallback-snapshot. Regresjonstest bekrefter at
+hjem, widget og Watch får justert temperatur fra samme rå Yr-verdi.
 
 **AUTO-112 · ÅPEN** — Kontroller at varslingsplanleggeren ikke lager ny
 push når samme hendelse bare endrer språk eller skilletegn.
