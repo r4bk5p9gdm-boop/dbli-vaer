@@ -640,11 +640,13 @@ struct RulesView: View {
     @State private var editing: Rule?
     @State private var creating = false
     @State private var testAlertMessage: String?
+    @State private var pushFilter: AlertType?
 
     var body: some View {
         NavigationStack {
             List {
                 if var p = store.selected {
+                    let visibleRules = p.rules.filter { pushFilter == nil || $0.type == pushFilter }
                     Section {
                         Menu {
                             ForEach(store.places) { candidate in
@@ -771,6 +773,11 @@ struct RulesView: View {
                                 } else {
                                     Text(type.label)
                                 }
+                                Button("Push \(p.rules.filter { $0.type == type }.count)") {
+                                    pushFilter = type
+                                }
+                                .font(.caption2.weight(.semibold))
+                                .buttonStyle(.bordered)
                                 Spacer()
                                 Toggle("Vis \(type.label)", isOn: Binding(
                                     get: { p.isAlertTypeVisible(type) },
@@ -783,12 +790,20 @@ struct RulesView: View {
                                 )).labelsHidden()
                             }
                         }
-                    } header: { Text("Synlige værrader på Hjem")
+                    } header: {
+                        HStack {
+                            Text("Synlige værrader på Hjem")
+                            Spacer()
+                            if pushFilter != nil {
+                                Button("Vis alle push") { pushFilter = nil }
+                                    .font(.caption2)
+                            }
+                        }
                     } footer: {
                         Text("Grensene gjelder visning uten aktive regler. Aktive varsler beholder egne grenser. Dugggrensen er avstand mellom lufttemperatur og duggpunkt; Yr-verdien endres ikke. Solgrensen er maksimalt skydekke for gult felt.")
                     }
                     Section {
-                        ForEach(p.rules) { r in
+                        ForEach(visibleRules) { r in
                         HStack {
                             RoundedRectangle(cornerRadius: 2).fill(r.type.color).frame(width: 4, height: 40)
                             VStack(alignment: .leading, spacing: 2) {
@@ -814,7 +829,12 @@ struct RulesView: View {
                         }
                         .opacity(r.enabled ? 1 : 0.55)
                         }
-                        .onDelete { idx in p.rules.remove(atOffsets: idx); store.update(p); Task { await store.replan() } }
+                        .onDelete { idx in
+                            let ids = Set(idx.compactMap { visibleRules.indices.contains($0) ? visibleRules[$0].id : nil })
+                            p.rules.removeAll { ids.contains($0.id) }
+                            store.update(p)
+                            Task { await store.replan() }
+                        }
                         Button {
                             creating = true
                         } label: {

@@ -54,6 +54,12 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-014 · FULLFØRT 2026-09-16** — Innstillingene viser nå en Push-knapp
+på hver værtype-rad med antall regler. Trykk på typen for å filtrere
+varslingsreglene og redigere flere pushvarsler av samme type; «Vis alle push»
+nullstiller filteret. Visuell radbryter og pushregler er dermed tydelig
+separert.
+
 **BRUKER-013 · FULLFØRT 2026-09-16** — Duggdetaljen bruker nå én
 selvforklarende tekst: «Duggfall ved [lokal temperatur]° [tid] (ukedag).»
 Den gamle «forskjell fra lufttemperaturen»-setningen er fjernet. Dugggrensen
