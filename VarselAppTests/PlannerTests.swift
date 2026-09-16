@@ -764,6 +764,14 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(status.first?.isNow == true)
     }
 
+    func testEventTimePhraseUsesProvidedTimezoneForDayBoundary() {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let reference = calendar.date(from: DateComponents(year: 2030, month: 1, day: 1, hour: 23))!
+        let event = calendar.date(from: DateComponents(year: 2030, month: 1, day: 2, hour: 6))!
+        XCTAssertEqual(eventTimePhrase(event, relativeTo: reference, calendar: calendar), "i morgen, tirsdag kl. 06")
+    }
+
     func testSharedWidgetDataSkipsIdenticalEncodedSnapshot() {
         let data = Data("snapshot".utf8)
         XCTAssertFalse(SharedWidgetData.shouldWrite(existing: data, new: data))

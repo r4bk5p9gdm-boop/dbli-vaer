@@ -92,7 +92,14 @@ fallback fra cache på både iPhone og Watch.
  at en gammel stedstekst blir vist på nytt sted.
 
 **AUTO-186 · ÅPEN** — Legg til lettvekts test av Watch-snapshot når stedets
- egen visningstittel endres uten koordinatendring.
+egen visningstittel endres uten koordinatendring.
+
+**AUTO-187 · ÅPEN** — Kontroller at natt/morgen-grensen i varseltekst er
+ stabil ved sommertid og vintertid.
+
+**AUTO-184 · FULLFØRT 2026-09-16** — Tidsfraser testes nå med eksplisitt
+ tidssone ved døgnskifte, slik at «i morgen» ikke avhenger av maskinens
+ lokale tidssone.
 
 **AUTO-183 · FULLFØRT 2026-09-16** — Cache-fallback beholder nå også
  prognosealder, språkstil og skilletegn. Regresjonstest dekker at Watch/widget
