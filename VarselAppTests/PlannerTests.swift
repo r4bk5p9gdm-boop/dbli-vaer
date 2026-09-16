@@ -344,6 +344,8 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(AlertType.vind.matches(hour, threshold: 9))
         hour.gust = .nan
         XCTAssertFalse(AlertType.vind.matches(hour, threshold: 9))
+        hour.gust = .infinity
+        XCTAssertFalse(AlertType.vind.matches(hour, threshold: 9))
     }
 
     func testRainSnowIconUsesSameOneDegreeBoundaryAsRules() {

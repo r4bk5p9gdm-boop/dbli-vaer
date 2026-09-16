@@ -83,7 +83,11 @@ vindkastverdi, slik at vind ikke feilaktig varsles som null.
  når snapshot og delte steder er identiske.
 
 **AUTO-183 · ÅPEN** — Verifiser at prognosealder vises korrekt etter
- fallback fra cache på både iPhone og Watch.
+fallback fra cache på både iPhone og Watch.
+
+**AUTO-181 · FULLFØRT 2026-09-16** — Vindvarsling krever eksplisitt,
+ endelig vindkastverdi og faller aldri tilbake til middelvind. Regresjonstesten
+ dekker manglende, NaN og uendelig kastverdi.
 
 **AUTO-180 · FULLFØRT 2026-09-16** — Lokal temperaturjustering brukes nå
  konsekvent i fersk og cached widgetprognose. Cached data justeres ikke på
