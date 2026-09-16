@@ -71,6 +71,24 @@ final class PlannerTests: XCTestCase {
         ), 1)
     }
 
+    func testHomeSwipeDoesNotWrapPastFirstOrLastPlace() {
+        let first = UUID(), middle = UUID(), last = UUID()
+        let pages = [first, middle, last]
+
+        XCTAssertNil(HomeSwipeSelection.nextIndex(
+            currentID: first,
+            placeIDs: pages,
+            horizontalTranslation: 120,
+            verticalTranslation: 0
+        ))
+        XCTAssertNil(HomeSwipeSelection.nextIndex(
+            currentID: last,
+            placeIDs: pages,
+            horizontalTranslation: -120,
+            verticalTranslation: 0
+        ))
+    }
+
     func testHomeSwipeOrderKeepsCurrentPlaceBetweenDistinctFavorites() {
         let left = UUID(), current = UUID(), right = UUID()
         XCTAssertEqual(

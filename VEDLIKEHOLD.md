@@ -54,6 +54,20 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-174 · ÅPEN** — Kontroller at GPS-valg ved appstart ikke overskriver
+manuelt valgt sted når posisjonsdata kommer sent. Legg til test før eventuell
+endring.
+
+**AUTO-175 · ÅPEN** — Gjennomgå rotasjonsstatus på hjemskjermen for å sikre
+at samme værtype ikke vises dobbelt når flere regler treffer samtidig.
+
+**AUTO-176 · ÅPEN** — Verifiser at språkstil og skilletegn følger med ved
+bytte av sted i hjem-swipe og ved widget-snapshot.
+
+**AUTO-173 · FULLFØRT 2026-09-16** — Helsides swipe stopper nå ved første og
+siste sted i stedet for å gå rundt til motsatt side. Ny regresjonstest dekker
+begge grenseverdiene.
+
 **AUTO-169 · FULLFØRT 2026-09-16** — Hjemmets swipe-policy har nå eksplisitt
 regresjonstest for at nåværende posisjon som også er favoritt bare vises én
 gang i rekkefølgen.
