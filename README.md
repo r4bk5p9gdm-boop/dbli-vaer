@@ -46,3 +46,8 @@ bygger iPhone-, iPhone-widget-, Watch- og Watch-widget-målene mot generiske
 enheter, bruker en delt avledet-data-mappe og starter ingen simulator. Det
 stopper hvis et annet `xcodebuild` allerede kjører eller en simulator er
 startet, slik at vedlikehold og Claude ikke konkurrerer om ressurser.
+
+Kontrollen er også riktig fallback når CoreSimulator ikke svarer. En melding
+om `CoreSimulatorService connection refused` betyr da bare at simulator-/UI-
+test ikke kan kjøres; den generiske kompileringen kan fortsatt verifisere
+målene. Start en konkret simulator i Xcode først når du trenger runtime-test.

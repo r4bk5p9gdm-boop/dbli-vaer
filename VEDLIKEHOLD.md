@@ -468,8 +468,19 @@ oppstartsforløpet for aktuell posisjon kan sette den tilbake.
 testbar policy som avviser vertikale drag og dedupliserer favoritt-ID-er før
 sidebytte. Regresjonstest dekker begge retninger og yttergrensene.
 
-**AUTO-082 · ÅPEN** — Dokumenter en lett byggkontroll som kan kjøres uten
-CoreSimulator når simulator-tjenesten er utilgjengelig.
+**AUTO-082 · FULLFØRT 2026-09-16** — README forklarer nå at
+`verify_targets.sh` er den anbefalte fallbacken ved CoreSimulator-feil:
+generiske iOS-/watchOS-mål kan fortsatt kompileres uten simulator, mens
+runtime-/UI-test utsettes til en konkret simulator er tilgjengelig.
+
+**AUTO-083 · ÅPEN** — Kontroller at generisk iOS-bygg velger samme
+deployment-target som Xcode-prosjektet uten simulator-runtime.
+
+**AUTO-084 · ÅPEN** — Legg regresjonstest for tom prognose etter stedssveip,
+slik at forrige stedsdata ikke vises på ny side.
+
+**AUTO-085 · ÅPEN** — Gå gjennom widget-/Watch-snapshotens ferskhetsgrense
+etter posisjonsbasert stedsskifte.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
