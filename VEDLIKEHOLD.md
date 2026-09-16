@@ -422,14 +422,18 @@ sted-ID. Aliassteder får derfor egne temperaturer uten ekstra nettverkskall.
 per sted-ID og anvender hvert steds lokale offset før snapshot sendes til
 widget og Watch. Ingen justert prognose deles mellom aliassteder.
 
-**AUTO-072 · ÅPEN** — Verifiser at koordinatavrunding ikke flytter et sted
-over i feil Yr-rute.
+**AUTO-072 · FULLFØRT 2026-09-16** — Koordinatpresisjonsregresjonen dekker
+grenseverdier rundt samme Yr-rute og bekrefter at små avrundingsforskjeller
+ikke flytter stedet til en annen forespørselsgruppe.
 
 **AUTO-073 · ÅPEN** — Test at aliassteder med ulike lokale temperaturoffsets
 ikke deler justert prognose ved widget- eller Watch-synkronisering.
 
 **AUTO-074 · ÅPEN** — Kontroller at fukt- og vindverdier ikke påvirkes av
 lokal temperaturjustering.
+
+**AUTO-075 · ÅPEN** — Test at lokal temperaturjustering ikke endrer
+nedbørstype eller vindkastverdier.
 
 **AUTO-005 · FULLFØRT 2026-09-15** — Lanseringssjekk for første åpning er
 dekket av smoke-test for seed-steder, unike navn og grunnleggende planlegging.
