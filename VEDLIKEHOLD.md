@@ -60,11 +60,10 @@ visningsgrensen for høy
 temperatur inn i værbåndet. Perioder over grensen får nå oransje markering,
 mens lavgrensen og aktive temperaturregler beholder eksisterende markering.
 
-**BRUKER-031 · ÅPEN** — Solens prosentvelgere skal vise at verdien er
-skydekke, for eksempel «20 % skydekke».
-
-**BRUKER-031 · FULLFØRT 2026-09-16** — Solvelgerne på hjeminnstillinger og
-varselredigering viser nå «% skydekke» i stedet for en uklar prosentverdi.
+**BRUKER-031 · FULLFØRT 2026-09-16** — Solens prosentvelgere skulle vise at
+verdien er skydekke, for eksempel «20 % skydekke». Solvelgerne på
+hjeminnstillinger og varselredigering viser nå «% skydekke» i stedet for en
+uklar prosentverdi.
 
 **BRUKER-030 · ÅPEN** — Fjern literal «(title)» fra hjemmets dagshode og
 tilgjengelighetstekst.
