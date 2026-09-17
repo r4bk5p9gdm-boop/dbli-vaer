@@ -58,6 +58,10 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder
 bruker nå samme validering.
 
+**AUTO-217 · FULLFØRT 2026-09-17** — Steder uten gyldig avstand legges nå
+stabilt sist i automatisk sortering, mens gyldige steder fortsatt sorteres
+etter hjemsted. Ett skadet sted påvirker dermed ikke resten av listen.
+
 **AUTO-215 · FULLFØRT 2026-09-17** — Avstandsrekkefølgen tåler nå ugyldige
 koordinater uten at sorteringen blir ustabil. Slike steder beholder lagret
 rekkefølge i stedet for å forstyrre resten av stedslisten.

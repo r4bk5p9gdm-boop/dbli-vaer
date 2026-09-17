@@ -1080,8 +1080,8 @@ struct PlacesView: View {
         return pinned + store.places.enumerated().filter { !pinnedIDs.contains($0.element.id) }
             .sorted { lhs, rhs in
                 guard let homeLocation else { return lhs.offset < rhs.offset }
-                guard let left = lhs.element.distance(to: homeLocation),
-                      let right = rhs.element.distance(to: homeLocation) else { return lhs.offset < rhs.offset }
+                let left = lhs.element.distance(to: homeLocation) ?? .infinity
+                let right = rhs.element.distance(to: homeLocation) ?? .infinity
                 return left == right ? lhs.offset < rhs.offset : left < right
             }.map(\.element)
     }
