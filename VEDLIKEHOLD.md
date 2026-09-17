@@ -100,8 +100,10 @@ mens steder uten dekning beholder sin tidligere prognose.
 `testForecastCacheInvalidatesRemovedAndMovedPlaces` som verifikasjon av at
 slettede/flyttede steder invaliderer egen cache, mens andre steder beholdes.
 
-**AUTO-198 · ÅPEN** — Test at cachelagret lokal temperaturjustering ikke
-dobles ved app-oppstart og ny visning.
+**AUTO-198 · FULLFØRT 2026-09-17** — Eksisterende regresjonstest
+`testWidgetFreshSnapshotAppliesLocalTemperatureOffsetLikeFallback` bekrefter
+at lokal temperaturjustering brukes én gang både i fersk og cachelagret
+snapshot ved app-oppstart.
 
 **AUTO-199 · ÅPEN** — Kontroller at oppdateringsindikatoren alltid avsluttes
 etter både vellykket og mislykket nettverksforsøk.
