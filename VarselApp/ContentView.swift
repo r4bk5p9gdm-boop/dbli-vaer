@@ -360,16 +360,6 @@ private struct CurrentWeatherCard: View {
                 .fixedSize()
                 .layoutPriority(3)
 
-                if let onEdit {
-                    Button(action: onEdit) {
-                        Image(systemName: "pencil")
-                            .font(.caption.weight(.semibold))
-                            .frame(width: 28, height: 28)
-                    }
-                    .buttonStyle(.bordered)
-                    .controlSize(.small)
-                    .accessibilityLabel("Rediger varsler for \(place.displayName)")
-                }
             }
 
             HStack(spacing: 5) {
@@ -484,6 +474,16 @@ private struct CurrentWeatherCard: View {
                 }
             }
             Spacer(minLength: 0)
+            if let onEdit {
+                Button(action: onEdit) {
+                    Image(systemName: "pencil")
+                        .font(.caption.weight(.semibold))
+                        .frame(width: 26, height: 26)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.small)
+                .accessibilityLabel("Rediger varsler for \(place.displayName)")
+            }
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 8)

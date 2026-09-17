@@ -54,6 +54,9 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
+temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
+
 **BRUKER-037 · FULLFØRT 2026-09-17** — Dagstitler grupperes nå etter
 kalenderdøgn, slik at «I morgen» alltid får en egen bolk. Tidsradene beholder
 fortsatt grensene 07–15–23–07.
