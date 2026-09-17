@@ -211,8 +211,9 @@ fallbackdekningen.
 `testWatchTransferCarriesLanguageAndSeparator` bekrefter at språkvalg og
 skilletegn beholdes gjennom serialisering til offline widget-/Watch-visning.
 
-**AUTO-224 · ÅPEN** — Test at cachelagret prognose bruker samme lokale
-temperaturformat etter oppstart som ved fersk data.
+**AUTO-224 · FULLFØRT 2026-09-17** — Cachede `ForecastHour`-verdier går
+gjennom samme `forecasts`-beregning og lokale formattering som ferske data.
+Temperaturformat-regresjonene låser identisk visning etter oppstart.
 
 **AUTO-225 · ÅPEN** — Kontroller at rammene vises selv om bare én stedscache
 er tilgjengelig ved oppstart.
