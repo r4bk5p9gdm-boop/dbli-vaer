@@ -105,8 +105,19 @@ slettede/flyttede steder invaliderer egen cache, mens andre steder beholdes.
 at lokal temperaturjustering brukes én gang både i fersk og cachelagret
 snapshot ved app-oppstart.
 
-**AUTO-199 · ÅPEN** — Kontroller at oppdateringsindikatoren alltid avsluttes
-etter både vellykket og mislykket nettverksforsøk.
+**AUTO-199 · FULLFØRT 2026-09-17** — Verifiserte oppdateringslivsløpet i
+`performRefresh`: `isRefreshing` settes før arbeidet og nullstilles ubetinget
+via `defer`, også ved feil, avbrudd og delvis nettverksresultat. Dermed blir
+ikke «Oppdaterer …»-indikatoren hengende.
+
+**AUTO-200 · ÅPEN** — Test at foreldet cache fortsatt viser korrekt sted etter
+omdøping, uten å arve værdata fra et annet sted.
+
+**AUTO-201 · ÅPEN** — Test at lagret prognosecache tåler skadet enkeltpost og
+fortsatt laster øvrige steder.
+
+**AUTO-202 · ÅPEN** — Kontroller at cachelagring ikke skjer for tomme eller
+ugyldige prognoser etter manuell oppdatering.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
