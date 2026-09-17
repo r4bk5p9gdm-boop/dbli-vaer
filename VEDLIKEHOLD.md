@@ -164,8 +164,9 @@ hjemskjermen. Rullerende hjemstatus dedupliserer værtyper etter type; flere
 regler av samme type kan fortsatt varsle separat. Regresjonstest dekker to
 regnregler og vind.
 
-**AUTO-176 · ÅPEN** — Verifiser at språkstil og skilletegn følger med ved
-bytte av sted i hjem-swipe og ved widget-snapshot.
+**AUTO-176 · FULLFØRT 2026-09-16** — Verifiserte at språkstil og skilletegn
+følger med ved bytte av sted i hjem-swipe og ved widget-snapshot. Testen
+dekker inntrøndersk språk og valgt skilletegn etter Watch/widget-dekoding.
 
 **AUTO-177 · ÅPEN** — Kontroller at bakgrunnsoppdatering ikke skriver over
 nyere manuelle stedvalg når flere refresh-kall avsluttes i ulik rekkefølge.
@@ -231,10 +232,6 @@ egen visningstittel endres uten koordinatendring.
 **AUTO-177 · FULLFØRT 2026-09-16** — Refresh-køen er verifisert med test som
 viser at en avbrutt, ventende oppdatering ikke starter og ikke kan overskrive
 en nyere oppdatering. Køen fortsetter deretter med neste gyldige arbeid.
-
-**AUTO-176 · FULLFØRT 2026-09-16** — Widget-/Watch-snapshot beholder
-inntrøndersk språk og valgt skilletegn ved dekoding og lokalisering. Testen
-verifiserer «Doggfall natt te onsda'n — kl. 05» etter overføring.
 
 **AUTO-174 · FULLFØRT 2026-09-16** — Sen GPS-respons overstyrer ikke lenger
 et manuelt stedvalg som ble gjort mens posisjonsoppslaget pågikk. Beskyttelsen
