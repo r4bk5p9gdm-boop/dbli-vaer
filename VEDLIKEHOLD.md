@@ -180,8 +180,9 @@ Nå-status. Statusberegningen beholder siste gyldige Nå-status.
 skrevet oftere enn nødvendig ved identisk prognose. Delte widgetdata
 sammenlignes med eksisterende bytes før lagring.
 
-**AUTO-180 · ÅPEN** — Kontroller at lokal temperaturjustering brukes likt i
- hjem, push og widget ved delvise prognoser.
+**AUTO-180 · FULLFØRT 2026-09-16** — Kontrollerte at lokal
+temperaturjustering brukes likt i hjem, push og widget ved delvise prognoser.
+Fersk og cached widgetprognose bruker samme justering uten dobbel påføring.
 
 **AUTO-181 · ÅPEN** — Legg til regresjon for vindkastgrenser ved manglende
 vindkastverdi, slik at vind ikke feilaktig varsles som null.
@@ -219,10 +220,6 @@ egen visningstittel endres uten koordinatendring.
 **AUTO-181 · FULLFØRT 2026-09-16** — Vindvarsling krever eksplisitt,
  endelig vindkastverdi og faller aldri tilbake til middelvind. Regresjonstesten
  dekker manglende, NaN og uendelig kastverdi.
-
-**AUTO-180 · FULLFØRT 2026-09-16** — Lokal temperaturjustering brukes nå
- konsekvent i fersk og cached widgetprognose. Cached data justeres ikke på
- nytt ved feilrefresh, og regresjonstest dekker begge veier.
 
 **AUTO-174 · FULLFØRT 2026-09-16** — Sen GPS-respons overstyrer ikke lenger
 et manuelt stedvalg som ble gjort mens posisjonsoppslaget pågikk. Beskyttelsen
