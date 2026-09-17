@@ -197,7 +197,7 @@ struct HomeView: View {
                                 Text(forecastHeaderTitle).font(.subheadline.bold())
                                 Spacer()
                                 let updateDate = store.lastUpdate
-                                let isStale = updateDate.map { Date().timeIntervalSince($0) > 2 * 3_600 } ?? true
+                                let isStale = Store.isForecastStale(updateDate)
                                 HStack(spacing: 4) {
                                     Text("Yr.no" + (updateDate.map { " · \(timeLabel($0))" } ?? " · ikke hentet"))
                                         .font(.caption)

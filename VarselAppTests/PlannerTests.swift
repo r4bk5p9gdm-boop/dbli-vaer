@@ -2266,6 +2266,12 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(result.updatedAt, base)
     }
 
+    func testOldForecastIsMarkedStaleWithoutChangingCachedData() {
+        XCTAssertFalse(Store.isForecastStale(base, now: base.addingTimeInterval(2 * 3_600)))
+        XCTAssertTrue(Store.isForecastStale(base, now: base.addingTimeInterval(2 * 3_600 + 1)))
+        XCTAssertTrue(Store.isForecastStale(nil, now: base))
+    }
+
     func testWatchTransferPolicyRejectsDuplicateTimestamp() {
         XCTAssertTrue(WatchTransferPolicy.accepts(base.addingTimeInterval(1), after: base))
         XCTAssertFalse(WatchTransferPolicy.accepts(base, after: base))

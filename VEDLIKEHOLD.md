@@ -88,8 +88,9 @@ overføring avvises etter gjenoppretting.
 tilstand uten prognosefeltene. Steder og valgt sted dekodes fortsatt, mens
 cachefeltene starter tomme og trygt fylles ved neste oppdatering.
 
-**AUTO-195 · ÅPEN** — Kontroller at foreldet prognose fortsatt vises ved
-oppstart, men ikke brukes som fersk tidsreferanse i varslingsplanlegging.
+**AUTO-195 · FULLFØRT 2026-09-17** — Samlet to-timers foreldethetsgrense i
+`Store.isForecastStale` og la til deterministisk test. Cachedata kan dermed
+vises videre, mens Yr-linjen tydelig merker den som gammel under ny henting.
 
 **AUTO-196 · ÅPEN** — Test at delvis vellykket fler-stedsoppdatering lagrer
 oppdaterte steder uten å slette cache for steder som mistet dekning.

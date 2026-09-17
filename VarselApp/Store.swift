@@ -517,6 +517,11 @@ final class Store: ObservableObject {
         successfulPlaceCount > 0 || failedPlaceCount == 0
     }
 
+    static func isForecastStale(_ updatedAt: Date?, now: Date = Date(), threshold: TimeInterval = 2 * 3_600) -> Bool {
+        guard let updatedAt else { return true }
+        return now.timeIntervalSince(updatedAt) > threshold
+    }
+
     static func shouldDebounceReplan(
         lastSignature: Int?, currentSignature: Int, lastAt: Date?, now: Date,
         interval: TimeInterval = 5

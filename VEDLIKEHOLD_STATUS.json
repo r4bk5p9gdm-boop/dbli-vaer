@@ -2,6 +2,6 @@
   "continue": true,
   "lastScheduledStart": "2026-09-13T05:15:12.787Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-194 fullført: eldre lagret tilstand uten prognosefelt migreres trygt, med regresjonstest.",
-  "stopReason": "AUTO-modus aktiv med 15 minutters intervall: AUTO-195 er neste prioritet."
+  "lastProgress": "AUTO-195 fullført: felles og testbar to-timers foreldethetsgrense for cached prognose og Yr-status.",
+  "stopReason": "AUTO-modus aktiv med 15 minutters intervall: AUTO-196 er neste prioritet."
 }
