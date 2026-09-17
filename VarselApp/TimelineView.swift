@@ -283,19 +283,17 @@ private struct WeatherBandsForecast: View {
                         .frame(width: trackWidth * nowFraction, height: max(0, proxy.size.height - 29))
                         .offset(x: labelWidth, y: 29)
 
-                    VStack(spacing: 1) {
-                        Color.clear.frame(height: 15)
-                        Capsule()
-                            .fill(Color.orange)
-                            .frame(width: 2)
-                        Text("nå")
-                            .font(.system(size: 8, weight: .bold, design: .rounded))
-                            .foregroundStyle(Color.orange)
-                    }
-                    .frame(height: proxy.size.height)
-                    .position(x: markerX, y: proxy.size.height / 2)
-                    .accessibilityElement(children: .ignore)
-                    .accessibilityLabel("Nå er klokken \(now.formatted(.dateTime.hour().minute()))")
+                    Capsule()
+                        .fill(Color.orange)
+                        .frame(width: 2, height: max(0, proxy.size.height - 29))
+                        .position(x: markerX, y: 29 + max(0, proxy.size.height - 29) / 2)
+
+                    Text("nå")
+                        .font(.system(size: 8, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color.orange)
+                        .position(x: markerX, y: proxy.size.height + 5)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("Nå er klokken \(now.formatted(.dateTime.hour().minute()))")
                 }
                 .allowsHitTesting(false)
             }

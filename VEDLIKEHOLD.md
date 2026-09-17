@@ -54,6 +54,10 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-036 · FULLFØRT 2026-09-17** — Flyttet «nå»-teksten helt under
+værbåndene, slik at den ikke ligger inne i nederste rad. Nålinjen starter
+fortsatt ved øvre radkant og går gjennom radflaten.
+
 **BRUKER-035 · FULLFØRT 2026-09-16** — CarPlay bruker samme rekkefølge som
 hjemmesveipingen (posisjon, Stjerne 1, Stjerne 2). Watch har nå en global
 innstilling for aktuell posisjon eller fast sted.
