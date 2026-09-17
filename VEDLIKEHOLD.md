@@ -71,8 +71,9 @@ endret rekkefølge oppdateres. La til regresjonstest for begge tilfeller.
 `SharedWidgetData.clear()` fjerner både værsnapshot og delingslisten samtidig,
 slik at gammel CarPlay-data ikke blir liggende etter sletting.
 
-**AUTO-192 · ÅPEN** — Test at et tomt eller ufullstendig prognosesvar ikke
-overskriver siste gyldige widget-/Watch-snapshot.
+**AUTO-192 · FULLFØRT 2026-09-17** — Utvidet snapshot-regresjonen med et
+ufullstendig svar uten oppdateringstidspunkt. Det faller nå eksplisitt tilbake
+til siste gyldige snapshot i stedet for å skrive deldata til widget/Watch.
 
 **AUTO-193 · ÅPEN** — Test at raskt etterfølgende Watch-overføringer beholder
 nyeste sted og avviser eldre overføring etter omstart.

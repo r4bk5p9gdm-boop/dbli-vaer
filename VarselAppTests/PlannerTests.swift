@@ -2218,6 +2218,23 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(SharedWidgetData.load()?.forecast, [hour])
     }
 
+    func testIncompleteWidgetRefreshWithoutTimestampKeepsCachedSnapshot() throws {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let cachedHour = ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 20, dew: 5)
+        let partialHour = ForecastHour(time: base.addingTimeInterval(3_600), temp: 11, precip: 0, wind: 1, cloud: 20, dew: 6)
+        let cached = WidgetWeatherSnapshot(place: place, forecast: [cachedHour], updatedAt: base)
+
+        let result = try XCTUnwrap(Store.widgetSnapshot(
+            place: place,
+            forecast: [partialHour],
+            updatedAt: nil,
+            cached: cached,
+            now: base.addingTimeInterval(60)
+        ))
+        XCTAssertEqual(result.forecast, [cachedHour])
+        XCTAssertEqual(result.updatedAt, base)
+    }
+
     func testWatchTransferPolicyRejectsDuplicateTimestamp() {
         XCTAssertTrue(WatchTransferPolicy.accepts(base.addingTimeInterval(1), after: base))
         XCTAssertFalse(WatchTransferPolicy.accepts(base, after: base))
