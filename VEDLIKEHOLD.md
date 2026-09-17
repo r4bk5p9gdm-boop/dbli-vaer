@@ -61,8 +61,9 @@ avstandssortering.
 **AUTO-224 · FULLFØRT 2026-09-18** — La til regresjonstest som bekrefter at
 manuell stedsrekkefølge beholdes gjennom serialisering av lagret tilstand.
 
-**AUTO-225 · ÅPEN** — Kontroller tilgjengelighetsopplesing for hjemsted,
-favorittstjerner og sorteringsvalg i redigeringslisten.
+**AUTO-225 · FULLFØRT 2026-09-18** — La til eksplisitte VoiceOver-hint for
+sorteringsvalg og hjemsted. Stjerneknappene hadde allerede egne tilgjengelige
+navn og beholder dem.
 
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder

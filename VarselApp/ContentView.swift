@@ -1095,12 +1095,14 @@ struct PlacesView: View {
                             Text(mode.label).tag(mode.rawValue)
                         }
                     }
+                    .accessibilityHint("Velg automatisk avstandssortering eller manuell rekkefølge")
                     Picker("Hjemsted", selection: $homePlaceID) {
                         Text("Velg hjemsted").tag("")
                         ForEach(store.places) { place in
                             Text(place.displayName).tag(place.id.uuidString)
                         }
                     }
+                    .accessibilityHint("Brukes som utgangspunkt for avstandssortering")
                     Text(sortMode == .automatic
                          ? "Favoritt 1 og 2 står først. Resten sorteres etter avstand til hjemstedet."
                          : "Dra stedene i ønsket rekkefølge med håndtaket.")
