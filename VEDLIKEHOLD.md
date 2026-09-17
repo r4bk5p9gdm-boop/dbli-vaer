@@ -163,8 +163,10 @@ nettverksoppdateringen er ferdig.
 **AUTO-212 · FULLFØRT 2026-09-17** — La til eksplisitt offline-omstartstest:
 siste prognose og hentetid dekodes uendret når nettverket er helt borte.
 
-**AUTO-213 · ÅPEN** — Kontroller at foreldet cache ikke blokkerer visning av
-stedets rammer og navn mens oppdatering pågår.
+**AUTO-213 · FULLFØRT 2026-09-17** — Hjemvisningen bruker fortsatt
+`visibleForecast` når cache finnes, uavhengig av `isRefreshing`. Dermed står
+sted, rammer og værbånd synlig mens Yr hentes på nytt; dette er dekket av
+cache-/snapshot-regresjonene.
 
 **AUTO-214 · ÅPEN** — Test at cachelagret oppdateringstid vises likt i hjem,
 widget og Watch-overføring.
