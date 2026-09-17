@@ -159,8 +159,10 @@ i disse endringene.
 ikke overskriver manuelt valgt sted når posisjonsdata kommer sent. Testen
 `testLateCurrentLocationDoesNotReplaceManualSelection` dekker scenariet.
 
-**AUTO-175 · ÅPEN** — Gjennomgå rotasjonsstatus på hjemskjermen for å sikre
-at samme værtype ikke vises dobbelt når flere regler treffer samtidig.
+**AUTO-175 · FULLFØRT 2026-09-16** — Gjennomgått rotasjonsstatus på
+hjemskjermen. Rullerende hjemstatus dedupliserer værtyper etter type; flere
+regler av samme type kan fortsatt varsle separat. Regresjonstest dekker to
+regnregler og vind.
 
 **AUTO-176 · ÅPEN** — Verifiser at språkstil og skilletegn følger med ved
 bytte av sted i hjem-swipe og ved widget-snapshot.
@@ -233,11 +235,6 @@ en nyere oppdatering. Køen fortsetter deretter med neste gyldige arbeid.
 **AUTO-176 · FULLFØRT 2026-09-16** — Widget-/Watch-snapshot beholder
 inntrøndersk språk og valgt skilletegn ved dekoding og lokalisering. Testen
 verifiserer «Doggfall natt te onsda'n — kl. 05» etter overføring.
-
-**AUTO-175 · FULLFØRT 2026-09-16** — Rullerende hjemstatus dedupliserer nå
-værtyper etter type. Flere regler av samme type kan fortsatt varsle separat,
-men sammendraget viser hver type maks én gang. Ny regresjonstest dekker to
-regnregler og vind.
 
 **AUTO-174 · FULLFØRT 2026-09-16** — Sen GPS-respons overstyrer ikke lenger
 et manuelt stedvalg som ble gjort mens posisjonsoppslaget pågikk. Beskyttelsen
