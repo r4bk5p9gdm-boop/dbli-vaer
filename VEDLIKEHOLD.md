@@ -54,6 +54,11 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-043 · FULLFØRT 2026-09-17** — Steder kan nå velge hjemsted og
+sorteringsmodus. Standardrekkefølgen viser favoritt 1 og 2 først, deretter
+øvrige steder etter avstand til hjemstedet. Manuell modus beholder dra-og-slipp.
+Redigeringslisten er komprimert, og stjernevalgene vises som ryddige ikoner.
+
 **BRUKER-042 · FULLFØRT 2026-09-17** — Sveipeprikkene på hjemskjermen
 viser nå bare unike steder. Når Favoritt 1 er samme som posisjon, slås de to
 prikkene sammen og siden viser kun gyldige sveiperetninger.

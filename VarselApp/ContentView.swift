@@ -1,4 +1,5 @@
 import SwiftUI
+import CoreLocation
 
 struct LocalCalibrationView: View {
     @EnvironmentObject var store: Store
@@ -1048,6 +1049,13 @@ private struct WatchedRule: Identifiable {
     var id: String { "\(place.id)-\(rule.id)" }
 }
 
+private enum PlaceSortMode: String, CaseIterable, Identifiable {
+    case automatic
+    case manual
+    var id: String { rawValue }
+    var label: String { self == .automatic ? "Favoritter og avstand" : "Manuell rekkefølge" }
+}
+
 struct PlacesView: View {
     var onOpen: (Place) -> Void = { Store.shared.select($0) }
     @EnvironmentObject var store: Store
@@ -1057,13 +1065,33 @@ struct PlacesView: View {
     @State private var locationError: String?
     @State private var showingExporter = false
     @State private var editingPlaces = false
+    @AppStorage("varsel.homePlaceID") private var homePlaceID = ""
+    @AppStorage("varsel.placeSortMode") private var placeSortMode = PlaceSortMode.automatic.rawValue
+
+    private var sortMode: PlaceSortMode { PlaceSortMode(rawValue: placeSortMode) ?? .automatic }
+    private var orderedPlaces: [Place] {
+        guard sortMode == .automatic else { return store.places }
+        let favorites = store.resolvedHomeFavorites
+        let byID = Dictionary(uniqueKeysWithValues: store.places.map { ($0.id, $0) })
+        let pinned = [favorites.right, favorites.left].compactMap { $0 }.compactMap { byID[$0] }
+        let pinnedIDs = Set(pinned.map(\.id))
+        let home = UUID(uuidString: homePlaceID).flatMap { byID[$0] } ?? store.selected
+        let homeLocation = home.map { CLLocation(latitude: $0.lat, longitude: $0.lon) }
+        return pinned + store.places.enumerated().filter { !pinnedIDs.contains($0.element.id) }
+            .sorted { lhs, rhs in
+                guard let homeLocation else { return lhs.offset < rhs.offset }
+                let left = CLLocation(latitude: lhs.element.lat, longitude: lhs.element.lon).distance(from: homeLocation)
+                let right = CLLocation(latitude: rhs.element.lat, longitude: rhs.element.lon).distance(from: homeLocation)
+                return left == right ? lhs.offset < rhs.offset : left < right
+            }.map(\.element)
+    }
 
     private var alertPlaces: [Place] {
-        store.places.filter { $0.areNotificationsEnabled && $0.rules.contains(where: \.enabled) }
+        orderedPlaces.filter { $0.areNotificationsEnabled && $0.rules.contains(where: \.enabled) }
     }
 
     private var savedPlaces: [Place] {
-        store.places.filter { !$0.areNotificationsEnabled || !$0.rules.contains(where: \.enabled) }
+        orderedPlaces.filter { !$0.areNotificationsEnabled || !$0.rules.contains(where: \.enabled) }
     }
 
     var body: some View {
@@ -1071,6 +1099,23 @@ struct PlacesView: View {
             Group {
                 if editingPlaces {
                     List {
+                Section("Rekkefølge") {
+                    Picker("Sorter steder", selection: $placeSortMode) {
+                        ForEach(PlaceSortMode.allCases) { mode in
+                            Text(mode.label).tag(mode.rawValue)
+                        }
+                    }
+                    Picker("Hjemsted", selection: $homePlaceID) {
+                        Text("Velg hjemsted").tag("")
+                        ForEach(store.places) { place in
+                            Text(place.displayName).tag(place.id.uuidString)
+                        }
+                    }
+                    Text(sortMode == .automatic
+                         ? "Favoritt 1 og 2 står først. Resten sorteres etter avstand til hjemstedet."
+                         : "Dra stedene i ønsket rekkefølge med håndtaket.")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
                 if store.places.isEmpty {
                     ContentUnavailableView(
                         "Ingen steder",
@@ -1081,7 +1126,7 @@ struct PlacesView: View {
                 if !alertPlaces.isEmpty {
                     Section("Steder med aktive varsler") {
                         ForEach(alertPlaces) { place in
-                            PlaceRow(place: place)
+                            PlaceRow(place: place, compact: true)
                         }
                         .onDelete { offsets in remove(offsets, from: alertPlaces) }
                         .onMove { source, destination in move(source, to: destination, within: alertPlaces) }
@@ -1091,7 +1136,7 @@ struct PlacesView: View {
                 if !savedPlaces.isEmpty {
                     Section("Lagret for å sjekke") {
                         ForEach(savedPlaces) { place in
-                            PlaceRow(place: place)
+                            PlaceRow(place: place, compact: true)
                         }
                         .onDelete { offsets in remove(offsets, from: savedPlaces) }
                         .onMove { source, destination in move(source, to: destination, within: savedPlaces) }
@@ -1123,10 +1168,11 @@ struct PlacesView: View {
                         Text("Nye steder lagres uten varsler. Velg et sted og opprett varslene du vil ha under Varsler.")
                     }
                     }
+                    .environment(\.editMode, .constant(sortMode == .manual ? .active : .inactive))
                 } else {
                     ScrollView {
                         LazyVStack(spacing: 12) {
-                            ForEach(store.places) { place in
+                            ForEach(orderedPlaces) { place in
                                 if let forecast = store.forecasts[place.id], !forecast.isEmpty {
                                     CurrentWeatherCard(
                                         place: place,
@@ -1183,6 +1229,7 @@ struct PlacesView: View {
     }
 
     private func move(_ source: IndexSet, to destination: Int, within visiblePlaces: [Place]) {
+        guard sortMode == .manual else { return }
         var reordered = visiblePlaces
         reordered.move(fromOffsets: source, toOffset: destination)
         let visibleIDs = Set(visiblePlaces.map(\.id))
@@ -1299,6 +1346,7 @@ private struct GlobalSettingsView: View {
 private struct PlaceRow: View {
     @EnvironmentObject private var store: Store
     let place: Place
+    var compact = false
     @State private var showingNameEditor = false
     @State private var nameDraft = ""
 
@@ -1306,7 +1354,7 @@ private struct PlaceRow: View {
     private var nearbyRuleCount: Int { enabledRules.filter(\.onlyWhenNearby).count }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: compact ? 5 : 10) {
             HStack(spacing: 10) {
                 HStack(spacing: 6) {
                     Menu {
@@ -1324,7 +1372,7 @@ private struct PlaceRow: View {
                     }
                     Button { store.select(place) } label: {
                         Text(place.displayName)
-                            .font(.title3.weight(.light))
+                            .font(compact ? .body.weight(.medium) : .title3.weight(.light))
                     }
                     .buttonStyle(.plain)
                 }
@@ -1349,7 +1397,7 @@ private struct PlaceRow: View {
                 Spacer()
                 if store.forecastErrors[place.id] != nil { Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange) }
             }
-            HStack(spacing: 8) {
+            HStack(spacing: compact ? 5 : 8) {
                 Button(place.areNotificationsEnabled ? "Push på" : "Push av", systemImage: place.areNotificationsEnabled ? "bell.fill" : "bell.slash") {
                     update { $0.notificationsEnabled = !place.areNotificationsEnabled }
                 }
@@ -1366,21 +1414,25 @@ private struct PlaceRow: View {
                     Button {
                         toggleFavorite(slot: 1)
                     } label: {
-                        Label("Stjerne 1", systemImage: isFavorite1 ? "star.fill" : "star")
+                        if compact { Image(systemName: isFavorite1 ? "star.fill" : "star") }
+                        else { Label("Stjerne 1", systemImage: isFavorite1 ? "star.fill" : "star") }
                     }
+                    .accessibilityLabel("Stjerne 1")
                     .tint(isFavorite1 ? .orange : nil)
                     Button {
                         toggleFavorite(slot: 2)
                     } label: {
-                        Label("Stjerne 2", systemImage: isFavorite2 ? "star.fill" : "star")
+                        if compact { Image(systemName: isFavorite2 ? "star.fill" : "star") }
+                        else { Label("Stjerne 2", systemImage: isFavorite2 ? "star.fill" : "star") }
                     }
+                    .accessibilityLabel("Stjerne 2")
                     .tint(isFavorite2 ? .orange : nil)
             }
             .font(.caption.weight(.medium))
             .buttonStyle(.bordered)
-            .controlSize(.small)
+            .controlSize(compact ? .mini : .small)
         }
-        .padding(.vertical, 5)
+        .padding(.vertical, compact ? 2 : 5)
         .sheet(isPresented: $showingNameEditor) {
             NavigationStack {
                 Form {
