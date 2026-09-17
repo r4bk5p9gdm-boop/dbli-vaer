@@ -24,6 +24,12 @@ private final class FakeNotificationCenter: NotificationCenterClient {
 }
 
 final class PlannerTests: XCTestCase {
+    func testPlaceDistanceRejectsMalformedCoordinates() {
+        let home = CLLocation(latitude: 64, longitude: 11)
+        XCTAssertNotNil(Place(name: "Klinga", lat: 64.01, lon: 11.01).distance(to: home))
+        XCTAssertNil(Place(name: "Ugyldig", lat: 91, lon: 11).distance(to: home))
+    }
+
     func testPersistedStoreStateRoundTripsForecastCacheAndTimestamp() throws {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 20, dew: 5)

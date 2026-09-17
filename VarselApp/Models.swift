@@ -1,4 +1,5 @@
 import SwiftUI
+import CoreLocation
 
 func compactTemperatureText(_ temperature: Double) -> String {
     guard temperature.isFinite else { return "–°" }
@@ -890,6 +891,15 @@ struct Place: Codable, Identifiable, Hashable {
     }
 
     func isAlertTypeVisible(_ type: AlertType) -> Bool { !(hiddenAlertTypes ?? []).contains(type) }
+}
+
+extension Place {
+    func distance(to location: CLLocation) -> CLLocationDistance? {
+        guard lat.isFinite, lon.isFinite,
+              (-90...90).contains(lat), (-180...180).contains(lon) else { return nil }
+        let value = CLLocation(latitude: lat, longitude: lon).distance(from: location)
+        return value.isFinite ? value : nil
+    }
 }
 
 struct PlannedAlert: Identifiable, Hashable {
