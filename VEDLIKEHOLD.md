@@ -147,8 +147,9 @@ tidssone, ikke Yr-/UTC-tid.
 sted-ID; nye oppdateringer erstatter samme nøkkel i stedet for å samle
 versjoner. La til regresjonstest som låser denne egenskapen.
 
-**AUTO-209 · ÅPEN** — Test at prognosecache lagres etter en vellykket
-manuell stedshenting før appen lukkes.
+**AUTO-209 · FULLFØRT 2026-09-17** — Vellykket manuell stedshenting lagrer nå
+prognose og hentetid umiddelbart, før varsling og øvrig planlegging kjøres.
+Dette beskytter cache ved app-suspensjon eller terminering rett etter henting.
 
 **AUTO-210 · ÅPEN** — Kontroller at cache og hentetid oppdateres samlet, slik
 at Yr-linjen ikke viser nytt klokkeslett med gamle værdata.

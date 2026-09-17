@@ -720,6 +720,9 @@ final class Store: ObservableObject {
             calibration.record(place: place, hours: forecast, fetchedAt: Date())
             forecastErrors.removeValue(forKey: place.id)
             lastUpdate = Date()
+            // Persist before replanning so a successful manual fetch survives
+            // suspension or termination during notification setup.
+            save()
         } catch {
             guard !Task.isCancelled,
                   let currentPlace = Self.currentRecipients(for: [place], in: places).first else { return }
