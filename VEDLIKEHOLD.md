@@ -192,8 +192,9 @@ vindkastverdi og faller aldri tilbake til middelvind.
 oppdaterer tidslinjen når snapshot og delte steder er identiske. Identiske
 data sender ikke ny Watch-overføring eller widget-tidslinjereload.
 
-**AUTO-183 · ÅPEN** — Verifiser at prognosealder vises korrekt etter
-fallback fra cache på både iPhone og Watch.
+**AUTO-183 · FULLFØRT 2026-09-16** — Verifiserte at prognosealder vises
+korrekt etter cache-fallback på både iPhone og Watch. Cache beholder også
+språkstil og skilletegn, med regresjonstest for fersk og cached prognose.
 
 **AUTO-184 · ÅPEN** — Kontroller at NÅ-status og neste-hendelse bruker samme
  tidsone etter enhetens tidssonebytte.
@@ -210,10 +211,6 @@ egen visningstittel endres uten koordinatendring.
 **AUTO-184 · FULLFØRT 2026-09-16** — Tidsfraser testes nå med eksplisitt
  tidssone ved døgnskifte, slik at «i morgen» ikke avhenger av maskinens
  lokale tidssone.
-
-**AUTO-183 · FULLFØRT 2026-09-16** — Cache-fallback beholder nå også
- prognosealder, språkstil og skilletegn. Regresjonstest dekker at Watch/widget
- får samme metadata som fersk og cached prognose.
 
 **AUTO-174 · FULLFØRT 2026-09-16** — Sen GPS-respons overstyrer ikke lenger
 et manuelt stedvalg som ble gjort mens posisjonsoppslaget pågikk. Beskyttelsen
