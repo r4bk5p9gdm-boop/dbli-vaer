@@ -36,6 +36,25 @@ enum WatchPlaceSource: String, CaseIterable, Identifiable {
 enum WatchPlaceSettings {
     static let sourceKey = "varsel.watchPlaceSource"
     static let fixedPlaceIDKey = "varsel.watchFixedPlaceID"
+
+    /// Resolves the place the Watch should display without allowing a stale
+    /// saved UUID to produce an empty or unrelated snapshot.
+    static func resolvedPlaceID(
+        source: WatchPlaceSource,
+        fixedPlaceID: UUID?,
+        selectedID: UUID?,
+        currentLocationID: UUID?,
+        availableIDs: Set<UUID>
+    ) -> UUID? {
+        switch source {
+        case .fixed:
+            guard let fixedPlaceID, availableIDs.contains(fixedPlaceID) else { return selectedID.flatMap { availableIDs.contains($0) ? $0 : nil } }
+            return fixedPlaceID
+        case .position:
+            return currentLocationID.flatMap { availableIDs.contains($0) ? $0 : nil }
+                ?? selectedID.flatMap { availableIDs.contains($0) ? $0 : nil }
+        }
+    }
 }
 
 /// Pure swipe policy shared by the home view and its regression tests. Vertical

@@ -59,8 +59,9 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 hjemskjermen og i Store/CarPlay, og la til regresjonstest for posisjon →
 Stjerne 1 → Stjerne 2 med duplikatfjerning.
 
-**AUTO-189 · ÅPEN** — Test at Watch-kilden «Fast sted» faller trygt tilbake
-til valgt sted når den lagrede UUID-en er slettet eller ugyldig.
+**AUTO-189 · FULLFØRT 2026-09-17** — Samlet Watch-stedsoppslag i
+`WatchPlaceSettings.resolvedPlaceID`, med trygg tilbakeføring til valgt sted
+ved slettet/ugyldig fast UUID og regresjonstest for dette tilfellet.
 
 **AUTO-190 · ÅPEN** — Kontroller at CarPlay-delingslisten oppdateres når
 Stjerne 1 eller Stjerne 2 endres, uten å skrive identiske widgetdata på nytt.

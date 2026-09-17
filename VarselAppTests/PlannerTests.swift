@@ -39,6 +39,23 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testWatchFixedPlaceFallsBackWhenSavedUUIDIsMissing() {
+        let selected = UUID()
+        let deleted = UUID()
+        let available: Set<UUID> = [selected]
+
+        XCTAssertEqual(
+            WatchPlaceSettings.resolvedPlaceID(
+                source: .fixed,
+                fixedPlaceID: deleted,
+                selectedID: selected,
+                currentLocationID: nil,
+                availableIDs: available
+            ),
+            selected
+        )
+    }
+
     private let base = Date(timeIntervalSince1970: 2_000_000_000)
 
     func testSharedPlaceSelectionResolvesOnlyExistingUniquePlacesAndCapsAtThree() {

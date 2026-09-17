@@ -785,9 +785,14 @@ final class Store: ObservableObject {
         let sharedPlacesChanged = SharedWidgetData.saveSharedPlaces(sharedPlaces)
         let watchSource = WatchPlaceSource(rawValue: UserDefaults.standard.string(forKey: WatchPlaceSettings.sourceKey) ?? "position") ?? .position
         let watchPlaceID = UserDefaults.standard.string(forKey: WatchPlaceSettings.fixedPlaceIDKey).flatMap(UUID.init(uuidString:))
-        let watchPlace = watchSource == .fixed
-            ? watchPlaceID.flatMap { id in places.first { $0.id == id } } ?? selected
-            : currentLocationPlaceID.flatMap { id in places.first { $0.id == id } } ?? selected
+        let watchPlaceIDToUse = WatchPlaceSettings.resolvedPlaceID(
+            source: watchSource,
+            fixedPlaceID: watchPlaceID,
+            selectedID: selected?.id,
+            currentLocationID: currentLocationPlaceID,
+            availableIDs: Set(places.map(\.id))
+        )
+        let watchPlace = watchPlaceIDToUse.flatMap { id in places.first { $0.id == id } }
         if let watchSnapshot = Self.widgetSnapshot(
             place: watchPlace, forecast: watchPlace.flatMap { forecasts[$0.id] } ?? [],
             updatedAt: watchPlace.flatMap { forecastUpdatedAt[$0.id] }, cached: snapshot
