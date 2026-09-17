@@ -114,11 +114,9 @@ Varslingsfargene er uendret og står tydeligere frem.
 kolonne til høyre. Ikon og tittel starter helt til venstre uten innrykk, og
 den fylte oransje sirkelen er beholdt med egen VoiceOver-tekst.
 
-**BRUKER-022 · ÅPEN** — Flytt teksten «nå» fra over nålinjen til under
-linjen, under værfeltene/radchipsene.
-
-**BRUKER-022 · FULLFØRT 2026-09-16** — «nå» ligger nå under den oransje
- nålinjen, slik at markørteksten ikke dekker øvre del av værfeltene.
+**BRUKER-022 · FULLFØRT 2026-09-16** — Flyttet teksten «nå» fra over
+nålinjen til under linjen, under værfeltene/radchipsene, slik at teksten ikke
+dekker øvre del av værfeltene.
 
 **BRUKER-021 · ÅPEN** — Samle dag og dato på venstresiden i tidslinjen:
 «Resten av i dag, onsdag 16. sept», «I morgen, 17. sept» og «Fredag 18.
