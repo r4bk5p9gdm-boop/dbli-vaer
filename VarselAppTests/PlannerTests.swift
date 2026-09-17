@@ -1663,6 +1663,22 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(SharedWidgetData.loadSharedPlaces().map(\.id), [second.id, first.id])
     }
 
+    func testSharedWidgetClearRemovesSnapshotAndCarPlayPlacesTogether() {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 20, dew: 5)
+        SharedWidgetData.clear()
+        defer { SharedWidgetData.clear() }
+
+        XCTAssertTrue(SharedWidgetData.save(place: place, forecast: [hour], updatedAt: base))
+        XCTAssertTrue(SharedWidgetData.saveSharedPlaces([place]))
+        XCTAssertNotNil(SharedWidgetData.load())
+        XCTAssertEqual(SharedWidgetData.loadSharedPlaces().map(\.id), [place.id])
+
+        SharedWidgetData.clear()
+        XCTAssertNil(SharedWidgetData.load())
+        XCTAssertTrue(SharedWidgetData.loadSharedPlaces().isEmpty)
+    }
+
     @MainActor
     func testNotificationPlanLogReportsActualSchedulingResult() {
         XCTAssertEqual(

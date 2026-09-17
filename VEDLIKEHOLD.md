@@ -67,9 +67,9 @@ ved slettet/ugyldig fast UUID og regresjonstest for dette tilfellet.
 CarPlay-/widgetdelingslisten: identiske stedslister skrives ikke på nytt, mens
 endret rekkefølge oppdateres. La til regresjonstest for begge tilfeller.
 
-**AUTO-191 · ÅPEN** — Legg til regresjonstest for at sletting av delt
-stedsliste rydder både stedssammendrag og værsnapshot uten å etterlate gammel
-CarPlay-data.
+**AUTO-191 · FULLFØRT 2026-09-17** — La til regresjonstest for at
+`SharedWidgetData.clear()` fjerner både værsnapshot og delingslisten samtidig,
+slik at gammel CarPlay-data ikke blir liggende etter sletting.
 
 **AUTO-192 · ÅPEN** — Test at et tomt eller ufullstendig prognosesvar ikke
 overskriver siste gyldige widget-/Watch-snapshot.
