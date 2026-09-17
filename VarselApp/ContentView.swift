@@ -1072,18 +1072,8 @@ struct PlacesView: View {
     private var orderedPlaces: [Place] {
         guard sortMode == .automatic else { return store.places }
         let favorites = store.resolvedHomeFavorites
-        let byID = Dictionary(uniqueKeysWithValues: store.places.map { ($0.id, $0) })
-        let pinned = [favorites.right, favorites.left].compactMap { $0 }.compactMap { byID[$0] }
-        let pinnedIDs = Set(pinned.map(\.id))
-        let home = UUID(uuidString: homePlaceID).flatMap { byID[$0] } ?? store.selected
-        let homeLocation = home.map { CLLocation(latitude: $0.lat, longitude: $0.lon) }
-        return pinned + store.places.enumerated().filter { !pinnedIDs.contains($0.element.id) }
-            .sorted { lhs, rhs in
-                guard let homeLocation else { return lhs.offset < rhs.offset }
-                let left = lhs.element.distance(to: homeLocation) ?? .infinity
-                let right = rhs.element.distance(to: homeLocation) ?? .infinity
-                return left == right ? lhs.offset < rhs.offset : left < right
-            }.map(\.element)
+        let homeID = UUID(uuidString: homePlaceID) ?? store.selected?.id
+        return PlaceOrdering.automatic(store.places, favorite1ID: favorites.right, favorite2ID: favorites.left, homeID: homeID)
     }
 
     private var alertPlaces: [Place] {

@@ -34,6 +34,15 @@ final class PlannerTests: XCTestCase {
         XCTAssertNil(Place(name: "Klinga", lat: 64, lon: 11).distance(to: CLLocation(latitude: .nan, longitude: 11)))
     }
 
+    func testAutomaticPlaceOrderingPinsFavoritesThenSortsByHomeDistance() {
+        let home = Place(name: "Hjem", lat: 64, lon: 11)
+        let near = Place(name: "Nær", lat: 64.01, lon: 11.01)
+        let far = Place(name: "Fjern", lat: 65, lon: 12)
+        let favorite = Place(name: "Favoritt", lat: 66, lon: 13)
+        let result = PlaceOrdering.automatic([far, near, favorite, home], favorite1ID: favorite.id, favorite2ID: nil, homeID: home.id)
+        XCTAssertEqual(result.map(\.id), [favorite.id, home.id, near.id, far.id])
+    }
+
     func testPersistedStoreStateRoundTripsForecastCacheAndTimestamp() throws {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 20, dew: 5)

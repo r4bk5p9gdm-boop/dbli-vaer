@@ -54,8 +54,9 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
-**AUTO-223 · ÅPEN** — Legg til enhetstest for automatisk stedsrekkefølge:
-favoritt 1, favoritt 2 og avstand til hjemsted.
+**AUTO-223 · FULLFØRT 2026-09-18** — Flyttet den automatiske stedsrekkefølgen
+til `PlaceOrdering.automatic` og la til regresjonstest for favoritt først og
+avstandssortering.
 
 **AUTO-224 · ÅPEN** — Kontroller at manuell rekkefølge overlever omstart og
 ikke overskrives når automatisk sortering slås av og på.

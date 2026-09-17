@@ -907,6 +907,23 @@ extension Place {
     }
 }
 
+enum PlaceOrdering {
+    static func automatic(_ places: [Place], favorite1ID: UUID?, favorite2ID: UUID?, homeID: UUID?) -> [Place] {
+        let byID = Dictionary(uniqueKeysWithValues: places.map { ($0.id, $0) })
+        let pinned = [favorite1ID, favorite2ID].compactMap { $0 }.compactMap { byID[$0] }
+        let pinnedIDs = Set(pinned.map(\.id))
+        let home = homeID.flatMap { byID[$0] }
+        let homeLocation = home.map { CLLocation(latitude: $0.lat, longitude: $0.lon) }
+        return pinned + places.enumerated().filter { !pinnedIDs.contains($0.element.id) }
+            .sorted { lhs, rhs in
+                guard let homeLocation else { return lhs.offset < rhs.offset }
+                let left = lhs.element.distance(to: homeLocation) ?? .infinity
+                let right = rhs.element.distance(to: homeLocation) ?? .infinity
+                return left == right ? lhs.offset < rhs.offset : left < right
+            }.map(\.element)
+    }
+}
+
 struct PlannedAlert: Identifiable, Hashable {
     let rule: Rule
     let placeID: UUID?
