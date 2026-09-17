@@ -132,14 +132,10 @@ kantlinje ved kolonnegrensene i stedet for midt i hvert felt. 07 står mellom
 radetiketten og første felt, 15 mellom første og andre, og 23 mellom andre og
 tredje. Nedbør-raden bruker samme oppsett som alle andre rader.
 
-**BRUKER-018 · ÅPEN** — Fjern dobbel tittelrad for dagens tidslinje. Hjemmet
-skal ha én overskrift med «Resten av i dag, [dato]» og Yr-tid, mens neste
-dag(er) beholder egne dagshoder.
-
-**BRUKER-018 · FULLFØRT 2026-09-16** — Dagens interne dagshode skjules nå
- når hjemmet allerede viser «Resten av i dag» med Yr-tid. I morgen og senere
- dager beholder egne dagshoder, så tidslinjen får én og bare én tittelrad for
- i dag.
+**BRUKER-018 · FULLFØRT 2026-09-16** — Fjernet dobbel tittelrad for dagens
+tidslinje. Dagens interne dagshode skjules når hjemmet allerede viser
+«Resten av i dag» med Yr-tid. I morgen og senere dager beholder egne
+dagshoder, så tidslinjen får én og bare én tittelrad for i dag.
 
 **BRUKER-016 · ÅPEN** — Når aktuell posisjon treffer et lagret sted, skal
 stedet brukes direkte (uten ekstra posisjonssted) og hjemkortet vise et
