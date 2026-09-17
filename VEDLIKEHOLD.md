@@ -127,14 +127,10 @@ datotekst til høyre er fjernet.
 15 og 23 ved mellomgrensene, samt en avsluttende 07 etter nattfeltet, slik at
 07–15–23–07 markerer hele værdøgnet.
 
-**BRUKER-019 · ÅPEN** — Plasser tidsmarkørene på øvre kantlinje mellom
-radetiketten og værfeltene: 07 ved start, 15 mellom første og andre felt, og
-23 mellom andre og tredje felt.
-
-**BRUKER-019 · FULLFØRT 2026-09-16** — Markørene ligger nå på øvre kantlinje
- ved kolonnegrensene i stedet for midt i hvert felt. 07 står mellom
- radetiketten og første felt, 15 mellom første og andre, og 23 mellom andre
- og tredje. Nedbør-raden bruker samme oppsett som alle andre rader.
+**BRUKER-019 · FULLFØRT 2026-09-16** — Plasserte tidsmarkørene på øvre
+kantlinje ved kolonnegrensene i stedet for midt i hvert felt. 07 står mellom
+radetiketten og første felt, 15 mellom første og andre, og 23 mellom andre og
+tredje. Nedbør-raden bruker samme oppsett som alle andre rader.
 
 **BRUKER-018 · ÅPEN** — Fjern dobbel tittelrad for dagens tidslinje. Hjemmet
 skal ha én overskrift med «Resten av i dag, [dato]» og Yr-tid, mens neste
