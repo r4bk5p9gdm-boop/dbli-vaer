@@ -88,13 +88,21 @@ struct PersistedStoreState: Codable {
     var places: [Place]
     var selectedID: UUID?
     var log: [LogEntry]
+    /// Forecast cache is persisted with configuration so launch can render
+    /// the last known bands before the network responds.
+    var forecasts: [UUID: [ForecastHour]] = [:]
+    var forecastUpdatedAt: [UUID: Date] = [:]
+    var lastUpdate: Date?
 
-    private enum CodingKeys: String, CodingKey { case places, selectedID, log }
+    private enum CodingKeys: String, CodingKey { case places, selectedID, log, forecasts, forecastUpdatedAt, lastUpdate }
 
-    init(places: [Place], selectedID: UUID?, log: [LogEntry]) {
+    init(places: [Place], selectedID: UUID?, log: [LogEntry], forecasts: [UUID: [ForecastHour]] = [:], forecastUpdatedAt: [UUID: Date] = [:], lastUpdate: Date? = nil) {
         self.places = places
         self.selectedID = selectedID
         self.log = log
+        self.forecasts = forecasts
+        self.forecastUpdatedAt = forecastUpdatedAt
+        self.lastUpdate = lastUpdate
     }
 
     init(from decoder: Decoder) throws {
@@ -102,6 +110,9 @@ struct PersistedStoreState: Codable {
         places = (try? values.decode([LossyDecodable<Place>].self, forKey: .places))?.compactMap(\.value) ?? []
         selectedID = try? values.decode(UUID.self, forKey: .selectedID)
         log = (try? values.decode([LossyDecodable<LogEntry>].self, forKey: .log))?.compactMap(\.value) ?? []
+        forecasts = (try? values.decode([UUID: [ForecastHour]].self, forKey: .forecasts)) ?? [:]
+        forecastUpdatedAt = (try? values.decode([UUID: Date].self, forKey: .forecastUpdatedAt)) ?? [:]
+        lastUpdate = try? values.decode(Date.self, forKey: .lastUpdate)
     }
 }
 
@@ -285,16 +296,25 @@ final class Store: ObservableObject {
         alertLanguageStyle = AlertLanguageStyle.persisted(
             UserDefaults.standard.string(forKey: "varsel.alertLanguageStyle") ?? ""
         ) ?? .bokmal
+        var restoredForecasts: [UUID: [ForecastHour]] = [:]
+        var restoredForecastUpdatedAt: [UUID: Date] = [:]
+        var restoredLastUpdate: Date?
         if let d = UserDefaults.standard.data(forKey: key),
            let p = try? JSONDecoder().decode(PersistedStoreState.self, from: d),
            !p.places.isEmpty {
             // Restored selection is authoritative when GPS is unavailable;
             // location lookup is only attempted by the explicit startup flow.
             places = p.places; selectedID = p.selectedID; log = p.log
+            restoredForecasts = p.forecasts
+            restoredForecastUpdatedAt = p.forecastUpdatedAt
+            restoredLastUpdate = p.lastUpdate
         } else {
             places = Self.launchPlaces; selectedID = places.first?.id; log = []
             UserDefaults.standard.set(launchPlacesVersion, forKey: launchPlacesVersionKey)
         }
+        rawForecasts = restoredForecasts
+        forecastUpdatedAt = restoredForecastUpdatedAt
+        lastUpdate = restoredLastUpdate
 
         if selectedID.map({ id in places.contains { $0.id == id } }) != true {
             selectedID = places.first?.id
@@ -592,6 +612,7 @@ final class Store: ObservableObject {
             successfulPlaceCount: successfulPlaceCount, failedPlaceCount: failedNames.count
         ) else { return false }
         lastUpdate = Date()
+        save()
         await replan()
         return failedNames.isEmpty
     }
@@ -716,7 +737,11 @@ final class Store: ObservableObject {
     }
 
     private func save() {
-        if let d = try? JSONEncoder().encode(PersistedStoreState(places: places, selectedID: selectedID, log: log)) {
+        if let d = try? JSONEncoder().encode(PersistedStoreState(
+            places: places, selectedID: selectedID, log: log,
+            forecasts: rawForecasts, forecastUpdatedAt: forecastUpdatedAt,
+            lastUpdate: lastUpdate
+        )) {
             UserDefaults.standard.set(d, forKey: key)
         }
     }

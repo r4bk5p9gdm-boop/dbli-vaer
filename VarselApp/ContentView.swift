@@ -196,13 +196,19 @@ struct HomeView: View {
                             HStack {
                                 Text(forecastHeaderTitle).font(.subheadline.bold())
                                 Spacer()
-                                if store.isRefreshing {
-                                    ProgressView().controlSize(.small)
-                                } else {
-                                    Text("Yr.no" + (store.lastUpdate.map { " · \(timeLabel($0))" } ?? ""))
+                                let updateDate = store.lastUpdate
+                                let isStale = updateDate.map { Date().timeIntervalSince($0) > 2 * 3_600 } ?? true
+                                HStack(spacing: 4) {
+                                    Text("Yr.no" + (updateDate.map { " · \(timeLabel($0))" } ?? " · ikke hentet"))
                                         .font(.caption)
-                                        .foregroundStyle(.secondary)
+                                        .foregroundStyle(isStale ? .orange : .secondary)
+                                        .opacity(isStale ? 0.72 : 1)
+                                    if store.isRefreshing {
+                                        ProgressView().controlSize(.small)
+                                            .accessibilityLabel("Oppdaterer værdata")
+                                    }
                                 }
+                                .help(isStale ? "Siste prognose er eldre enn to timer. Oppdaterer …" : "Prognosen er oppdatert")
                             }
                             if fc.isEmpty {
                                 Text(store.error ?? "Henter prognose …").font(.footnote).foregroundStyle(.secondary)

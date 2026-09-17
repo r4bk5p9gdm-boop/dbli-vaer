@@ -54,6 +54,11 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-039 · FULLFØRT 2026-09-17** — Prognoser lagres nå lokalt sammen med
+stedene. Ved oppstart vises siste kjente rammer og stedsnavn straks, også uten
+dekning. Yr-linjen viser oppdateringsindikator under henting og får gammel
+formatering når dataene er eldre enn to timer.
+
 **AUTO-188 · FULLFØRT 2026-09-17** — Samlet rekkefølgen for
 `homeSwipePlaceIDs` i `HomeSwipeSelection.orderedHomeIDs`, brukte den både på
 hjemskjermen og i Store/CarPlay, og la til regresjonstest for posisjon →

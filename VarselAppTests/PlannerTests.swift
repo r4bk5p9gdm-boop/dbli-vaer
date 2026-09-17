@@ -24,6 +24,19 @@ private final class FakeNotificationCenter: NotificationCenterClient {
 }
 
 final class PlannerTests: XCTestCase {
+    func testPersistedStoreStateRoundTripsForecastCacheAndTimestamp() throws {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 20, dew: 5)
+        let state = PersistedStoreState(
+            places: [place], selectedID: place.id, log: [],
+            forecasts: [place.id: [hour]], forecastUpdatedAt: [place.id: base], lastUpdate: base
+        )
+        let decoded = try JSONDecoder().decode(PersistedStoreState.self, from: JSONEncoder().encode(state))
+        XCTAssertEqual(decoded.forecasts[place.id], [hour])
+        XCTAssertEqual(decoded.forecastUpdatedAt[place.id], base)
+        XCTAssertEqual(decoded.lastUpdate, base)
+    }
+
     func testHomeSwipeOrderUsesPositionThenStarsAndDeduplicates() {
         let position = UUID()
         let star1 = UUID()
