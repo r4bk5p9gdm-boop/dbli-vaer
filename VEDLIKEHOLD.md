@@ -210,8 +210,10 @@ kan følge med til et annet sted.
 `testPositionSnapshotPreservesUserDefinedPlaceName` dekker Watch/widget-
 snapshot når visningstittel endres uten koordinatendring.
 
-**AUTO-187 · ÅPEN** — Kontroller at natt/morgen-grensen i varseltekst er
- stabil ved sommertid og vintertid.
+**AUTO-187 · FULLFØRT 2026-09-17** — Kontrollerte natt-/morgen-grensen i
+varseltekst ved sommertid og vintertid. Testene bruker eksplisitt
+`Europe/Oslo`-kalender og verifiserer at kl. 02 fortsatt er «i natt», mens
+kl. 06 blir «i morgen» ved døgnskifte.
 
 **AUTO-174 · FULLFØRT 2026-09-16** — Sen GPS-respons overstyrer ikke lenger
 et manuelt stedvalg som ble gjort mens posisjonsoppslaget pågikk. Beskyttelsen
