@@ -176,8 +176,9 @@ ulik rekkefølge. Refresh-køen avbryter foreldede ventende oppdateringer.
 prognose ikke gir tom roterende hjemstatus når det fortsatt finnes en gyldig
 Nå-status. Statusberegningen beholder siste gyldige Nå-status.
 
-**AUTO-179 · ÅPEN** — Sjekk at widget-cache ikke blir skrevet oftere enn
- nødvendig ved identisk prognose, slik at batteri og bakgrunnsarbeid spares.
+**AUTO-179 · FULLFØRT 2026-09-16** — Sjekket at widget-cache ikke blir
+skrevet oftere enn nødvendig ved identisk prognose. Delte widgetdata
+sammenlignes med eksisterende bytes før lagring.
 
 **AUTO-180 · ÅPEN** — Kontroller at lokal temperaturjustering brukes likt i
  hjem, push og widget ved delvise prognoser.
@@ -222,10 +223,6 @@ egen visningstittel endres uten koordinatendring.
 **AUTO-180 · FULLFØRT 2026-09-16** — Lokal temperaturjustering brukes nå
  konsekvent i fersk og cached widgetprognose. Cached data justeres ikke på
  nytt ved feilrefresh, og regresjonstest dekker begge veier.
-
-**AUTO-179 · FULLFØRT 2026-09-16** — Delte widgetdata sammenlignes nå med
- eksisterende bytes før lagring. Identiske snapshot og stedslister skriver
- ikke UserDefaults på nytt. Test dekker lik, manglende og endret data.
 
 **AUTO-174 · FULLFØRT 2026-09-16** — Sen GPS-respons overstyrer ikke lenger
 et manuelt stedvalg som ble gjort mens posisjonsoppslaget pågikk. Beskyttelsen
