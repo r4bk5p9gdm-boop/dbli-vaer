@@ -96,8 +96,9 @@ vises videre, mens Yr-linjen tydelig merker den som gammel under ny henting.
 delvis vellykket fler-stedsoppdatering. Minst ett vellykket sted kan lagres,
 mens steder uten dekning beholder sin tidligere prognose.
 
-**AUTO-197 · ÅPEN** — Test at lagret cache for et slettet sted fjernes ved
-stedsmigrering, uten å påvirke andre steders prognoser.
+**AUTO-197 · FULLFØRT 2026-09-17** — Dokumenterte eksisterende
+`testForecastCacheInvalidatesRemovedAndMovedPlaces` som verifikasjon av at
+slettede/flyttede steder invaliderer egen cache, mens andre steder beholdes.
 
 **AUTO-198 · ÅPEN** — Test at cachelagret lokal temperaturjustering ikke
 dobles ved app-oppstart og ny visning.
