@@ -160,8 +160,8 @@ som et konsistent par; la til regresjonstest.
 oppstartstestene bekrefter at første visning kan bruke lagret prognose før
 nettverksoppdateringen er ferdig.
 
-**AUTO-212 · ÅPEN** — Test at siste cache beholdes når appen startes på nytt
-med fullstendig nettverksbortfall.
+**AUTO-212 · FULLFØRT 2026-09-17** — La til eksplisitt offline-omstartstest:
+siste prognose og hentetid dekodes uendret når nettverket er helt borte.
 
 **AUTO-213 · ÅPEN** — Kontroller at foreldet cache ikke blokkerer visning av
 stedets rammer og navn mens oppdatering pågår.

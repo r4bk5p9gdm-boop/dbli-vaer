@@ -71,6 +71,22 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(restored.forecasts[second.id]?.first?.temp, 9)
     }
 
+    func testOfflineRestartKeepsLastForecastAndFetchTimeUnchanged() throws {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let hour = ForecastHour(time: base, temp: 7, precip: 0, wind: 1, cloud: 80, dew: 5)
+        let state = PersistedStoreState(
+            places: [place], selectedID: place.id, log: [],
+            forecasts: [place.id: [hour]], forecastUpdatedAt: [place.id: base], lastUpdate: base
+        )
+        let restored = try JSONDecoder().decode(
+            PersistedStoreState.self,
+            from: JSONEncoder().encode(state)
+        )
+        XCTAssertEqual(restored.forecasts[place.id], [hour])
+        XCTAssertEqual(restored.forecastUpdatedAt[place.id], base)
+        XCTAssertEqual(restored.lastUpdate, base)
+    }
+
     func testFailedRefreshKeepsOriginalCacheTimestamp() throws {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let hour = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 30, dew: 4)
