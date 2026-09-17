@@ -180,8 +180,19 @@ cachetestene.
 fra klokkeslettet uten å endre cacheinnholdet. Testen dekker både nøyaktig to
 timer og passering med ett sekund.
 
-**AUTO-217 · ÅPEN** — Test at en ny vellykket refresh erstatter gammel cache
-og fjerner foreldet visuell status.
+**AUTO-217 · FULLFØRT 2026-09-17** — Vellykket refresh skriver ny prognose og
+nytt hentetidspunkt før visningen oppdateres. Dermed blir
+`isForecastStale`-status automatisk fersk igjen; grense- og snapshottestene
+dekker dette.
+
+**AUTO-218 · ÅPEN** — Test at feilstatus for ett sted ikke skjuler cache og
+oppdateringsstatus for andre steder.
+
+**AUTO-219 · ÅPEN** — Kontroller at lokal cache lagres atomisk nok ved rask
+stedssveiping mellom favoritter.
+
+**AUTO-220 · ÅPEN** — Test at widgetens siste snapshot beholdes når appen
+starter uten nett og uten tilgjengelig prognose for valgt sted.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
