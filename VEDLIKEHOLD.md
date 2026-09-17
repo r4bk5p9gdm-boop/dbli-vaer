@@ -54,6 +54,16 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-188 · ÅPEN** — Legg til en lettvekts regresjonstest for at
+`homeSwipePlaceIDs` holder posisjon, Stjerne 1 og Stjerne 2 i stabil rekkefølge
+og fjerner duplikater.
+
+**AUTO-189 · ÅPEN** — Test at Watch-kilden «Fast sted» faller trygt tilbake
+til valgt sted når den lagrede UUID-en er slettet eller ugyldig.
+
+**AUTO-190 · ÅPEN** — Kontroller at CarPlay-delingslisten oppdateres når
+Stjerne 1 eller Stjerne 2 endres, uten å skrive identiske widgetdata på nytt.
+
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
 
