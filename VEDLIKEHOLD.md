@@ -62,6 +62,10 @@ bruker nå samme validering.
 stabilt sist i automatisk sortering, mens gyldige steder fortsatt sorteres
 etter hjemsted. Ett skadet sted påvirker dermed ikke resten av listen.
 
+**AUTO-218 · FULLFØRT 2026-09-17** — Utvidet regresjonstesten for
+stedsavstand med NaN-koordinat. Skadet importdata blir dermed eksplisitt
+avvist før den når sorteringslogikken.
+
 **AUTO-215 · FULLFØRT 2026-09-17** — Avstandsrekkefølgen tåler nå ugyldige
 koordinater uten at sorteringen blir ustabil. Slike steder beholder lagret
 rekkefølge i stedet for å forstyrre resten av stedslisten.
