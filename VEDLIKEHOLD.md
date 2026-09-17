@@ -200,8 +200,10 @@ språkstil og skilletegn, med regresjonstest for fersk og cached prognose.
  neste-hendelse bruker samme tidssone etter enhetens tidssonebytte. Tidsfraser
  testes med eksplisitt tidssone ved døgnskifte.
 
-**AUTO-185 · ÅPEN** — Gjennomgå feiltekster ved delvis Yr-svar for å unngå
- at en gammel stedstekst blir vist på nytt sted.
+**AUTO-185 · FULLFØRT 2026-09-17** — Gjennomgått feiltekster ved delvis
+Yr-svar. Feil lagres per sted-ID, og `forecastErrorMessage` bygger teksten
+fra mottakerstedet ved hver oppdatering, slik at en gammel stedstekst ikke
+kan følge med til et annet sted.
 
 **AUTO-186 · ÅPEN** — Legg til lettvekts test av Watch-snapshot når stedets
 egen visningstittel endres uten koordinatendring.
