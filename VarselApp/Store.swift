@@ -749,9 +749,11 @@ final class Store: ObservableObject {
     }
 
     private func save() {
+        let cachedForecasts = rawForecasts.filter { !$0.value.isEmpty }
+        let cachedTimestamps = forecastUpdatedAt.filter { cachedForecasts[$0.key] != nil }
         if let d = try? JSONEncoder().encode(PersistedStoreState(
             places: places, selectedID: selectedID, log: log,
-            forecasts: rawForecasts, forecastUpdatedAt: forecastUpdatedAt,
+            forecasts: cachedForecasts, forecastUpdatedAt: cachedTimestamps,
             lastUpdate: lastUpdate
         )) {
             UserDefaults.standard.set(d, forKey: key)

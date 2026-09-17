@@ -144,6 +144,17 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(cache[place.id]?.first?.temp, 9)
     }
 
+    func testPersistedCacheKeepsTimestampOnlyWhenForecastExists() throws {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let state = PersistedStoreState(
+            places: [place], selectedID: place.id, log: [],
+            forecasts: [:], forecastUpdatedAt: [place.id: base], lastUpdate: base
+        )
+        let decoded = try JSONDecoder().decode(PersistedStoreState.self, from: JSONEncoder().encode(state))
+        let consistent = decoded.forecastUpdatedAt.filter { decoded.forecasts[$0.key] != nil }
+        XCTAssertTrue(consistent.isEmpty)
+    }
+
     func testHomeSwipeOrderUsesPositionThenStarsAndDeduplicates() {
         let position = UUID()
         let star1 = UUID()

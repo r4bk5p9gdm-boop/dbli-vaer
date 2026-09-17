@@ -151,8 +151,9 @@ versjoner. La til regresjonstest som låser denne egenskapen.
 prognose og hentetid umiddelbart, før varsling og øvrig planlegging kjøres.
 Dette beskytter cache ved app-suspensjon eller terminering rett etter henting.
 
-**AUTO-210 · ÅPEN** — Kontroller at cache og hentetid oppdateres samlet, slik
-at Yr-linjen ikke viser nytt klokkeslett med gamle værdata.
+**AUTO-210 · FULLFØRT 2026-09-17** — `save()` filtrerer nå bort hentetid
+uten tilhørende ikke-tom prognose. Cache og Yr-tidspunkt lagres dermed alltid
+som et konsistent par; la til regresjonstest.
 
 **AUTO-211 · ÅPEN** — Test at appens første visning bruker cache før en
 nettverksoppdatering fullføres.
