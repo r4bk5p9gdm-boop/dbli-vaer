@@ -123,8 +123,8 @@ alene, mens øvrige prognoser fortsatt lastes. La til regresjonstest.
 `isUsableForecast`-sperre som masseoppdatering. Tomme Yr-svar lagres ikke og
 kan derfor ikke overskrive siste gyldige cache; la til regresjonstest.
 
-**AUTO-203 · ÅPEN** — Test at cachelagret prognose gjenbrukes etter omstart
-selv når nettverket er utilgjengelig.
+**AUTO-203 · FULLFØRT 2026-09-17** — La til offline-oppstartstest som
+dekoder sted, prognose og hentetid fra lagret tilstand uten nettverkskall.
 
 **AUTO-204 · ÅPEN** — Test at gammel cache ikke får oppdatert hentetid ved en
 mislykket refresh.

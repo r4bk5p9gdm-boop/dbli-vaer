@@ -37,6 +37,20 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(decoded.lastUpdate, base)
     }
 
+    func testPersistedForecastCacheIsAvailableForOfflineLaunch() throws {
+        let place = Place(name: "Hornburu", lat: 64.2, lon: 11.4)
+        let hour = ForecastHour(time: base, temp: 9, precip: 0, wind: 1, cloud: 40, dew: 5)
+        let encoded = try JSONEncoder().encode(PersistedStoreState(
+            places: [place], selectedID: place.id, log: [],
+            forecasts: [place.id: [hour]], forecastUpdatedAt: [place.id: base], lastUpdate: base
+        ))
+
+        let restored = try JSONDecoder().decode(PersistedStoreState.self, from: encoded)
+        XCTAssertEqual(restored.places.first?.displayName, "Hornburu")
+        XCTAssertEqual(restored.forecasts[place.id]?.first, hour)
+        XCTAssertEqual(restored.forecastUpdatedAt[place.id], base)
+    }
+
     func testPersistedStoreStateMigratesLegacyDataWithoutForecastCache() throws {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let legacy = PersistedStoreState(places: [place], selectedID: place.id, log: [])
