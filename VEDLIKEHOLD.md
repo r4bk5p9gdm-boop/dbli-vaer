@@ -84,8 +84,9 @@ til siste gyldige snapshot i stedet for å skrive deldata til widget/Watch.
 av raskt etterfølgende Watch-overføringer: nyeste sted beholdes, og eldre
 overføring avvises etter gjenoppretting.
 
-**AUTO-194 · ÅPEN** — Test migrering av eldre lagret tilstand uten prognosefelt
-slik at steder og valgt sted fortsatt åpnes uten dekning.
+**AUTO-194 · FULLFØRT 2026-09-17** — La til migreringstest for eldre lagret
+tilstand uten prognosefeltene. Steder og valgt sted dekodes fortsatt, mens
+cachefeltene starter tomme og trygt fylles ved neste oppdatering.
 
 **AUTO-195 · ÅPEN** — Kontroller at foreldet prognose fortsatt vises ved
 oppstart, men ikke brukes som fersk tidsreferanse i varslingsplanlegging.

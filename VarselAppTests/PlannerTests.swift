@@ -37,6 +37,24 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(decoded.lastUpdate, base)
     }
 
+    func testPersistedStoreStateMigratesLegacyDataWithoutForecastCache() throws {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let legacy = PersistedStoreState(places: [place], selectedID: place.id, log: [])
+        let data = try JSONEncoder().encode(legacy)
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        object.removeValue(forKey: "forecasts")
+        object.removeValue(forKey: "forecastUpdatedAt")
+        object.removeValue(forKey: "lastUpdate")
+        let legacyData = try JSONSerialization.data(withJSONObject: object)
+
+        let decoded = try JSONDecoder().decode(PersistedStoreState.self, from: legacyData)
+        XCTAssertEqual(decoded.places.map(\.id), [place.id])
+        XCTAssertEqual(decoded.selectedID, place.id)
+        XCTAssertTrue(decoded.forecasts.isEmpty)
+        XCTAssertTrue(decoded.forecastUpdatedAt.isEmpty)
+        XCTAssertNil(decoded.lastUpdate)
+    }
+
     func testHomeSwipeOrderUsesPositionThenStarsAndDeduplicates() {
         let position = UUID()
         let star1 = UUID()
