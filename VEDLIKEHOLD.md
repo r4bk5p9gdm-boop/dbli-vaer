@@ -205,8 +205,10 @@ Yr-svar. Feil lagres per sted-ID, og `forecastErrorMessage` bygger teksten
 fra mottakerstedet ved hver oppdatering, slik at en gammel stedstekst ikke
 kan følge med til et annet sted.
 
-**AUTO-186 · ÅPEN** — Legg til lettvekts test av Watch-snapshot når stedets
-egen visningstittel endres uten koordinatendring.
+**AUTO-186 · FULLFØRT 2026-09-17** — Lettvekts testene
+`testFreshPositionSnapshotUsesUpdatedPlaceName` og
+`testPositionSnapshotPreservesUserDefinedPlaceName` dekker Watch/widget-
+snapshot når visningstittel endres uten koordinatendring.
 
 **AUTO-187 · ÅPEN** — Kontroller at natt/morgen-grensen i varseltekst er
  stabil ved sommertid og vintertid.
