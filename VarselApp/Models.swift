@@ -1,6 +1,11 @@
 import SwiftUI
 import CoreLocation
 
+enum PlaceOrderingSettings {
+    static let homePlaceIDKey = "varsel.homePlaceID"
+    static let sortModeKey = "varsel.placeSortMode"
+}
+
 func compactTemperatureText(_ temperature: Double) -> String {
     guard temperature.isFinite else { return "–°" }
     return "\(temperature.formatted(.number.precision(.fractionLength(0))))°"

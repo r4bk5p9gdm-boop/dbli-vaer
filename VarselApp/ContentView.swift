@@ -1065,8 +1065,8 @@ struct PlacesView: View {
     @State private var locationError: String?
     @State private var showingExporter = false
     @State private var editingPlaces = false
-    @AppStorage("varsel.homePlaceID") private var homePlaceID = ""
-    @AppStorage("varsel.placeSortMode") private var placeSortMode = PlaceSortMode.automatic.rawValue
+    @AppStorage(PlaceOrderingSettings.homePlaceIDKey) private var homePlaceID = ""
+    @AppStorage(PlaceOrderingSettings.sortModeKey) private var placeSortMode = PlaceSortMode.automatic.rawValue
 
     private var sortMode: PlaceSortMode { PlaceSortMode(rawValue: placeSortMode) ?? .automatic }
     private var orderedPlaces: [Place] {
@@ -1351,7 +1351,7 @@ private struct PlaceRow: View {
     @EnvironmentObject private var store: Store
     let place: Place
     var compact = false
-    @AppStorage("varsel.homePlaceID") private var homePlaceID = ""
+    @AppStorage(PlaceOrderingSettings.homePlaceIDKey) private var homePlaceID = ""
     @State private var showingNameEditor = false
     @State private var nameDraft = ""
 
