@@ -54,6 +54,15 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-223 · ÅPEN** — Legg til enhetstest for automatisk stedsrekkefølge:
+favoritt 1, favoritt 2 og avstand til hjemsted.
+
+**AUTO-224 · ÅPEN** — Kontroller at manuell rekkefølge overlever omstart og
+ikke overskrives når automatisk sortering slås av og på.
+
+**AUTO-225 · ÅPEN** — Kontroller tilgjengelighetsopplesing for hjemsted,
+favorittstjerner og sorteringsvalg i redigeringslisten.
+
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder
 bruker nå samme validering.
