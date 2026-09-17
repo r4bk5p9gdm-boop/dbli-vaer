@@ -51,6 +51,18 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(restored.forecastUpdatedAt[place.id], base)
     }
 
+    func testFailedRefreshKeepsOriginalCacheTimestamp() throws {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let hour = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 30, dew: 4)
+        let cached = WidgetWeatherSnapshot(place: place, forecast: [hour], updatedAt: base)
+        let fallback = try XCTUnwrap(Store.widgetSnapshot(
+            place: place, forecast: [], updatedAt: nil, cached: cached,
+            now: base.addingTimeInterval(90 * 60)
+        ))
+        XCTAssertEqual(fallback.updatedAt, base)
+        XCTAssertEqual(fallback.forecast, [hour])
+    }
+
     func testPersistedStoreStateMigratesLegacyDataWithoutForecastCache() throws {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let legacy = PersistedStoreState(places: [place], selectedID: place.id, log: [])

@@ -126,8 +126,9 @@ kan derfor ikke overskrive siste gyldige cache; la til regresjonstest.
 **AUTO-203 · FULLFØRT 2026-09-17** — La til offline-oppstartstest som
 dekoder sted, prognose og hentetid fra lagret tilstand uten nettverkskall.
 
-**AUTO-204 · ÅPEN** — Test at gammel cache ikke får oppdatert hentetid ved en
-mislykket refresh.
+**AUTO-204 · FULLFØRT 2026-09-17** — La til eksplisitt regresjonstest for
+mislykket refresh: siste prognose beholdes med opprinnelig hentetid, slik at
+gammel cache ikke ser ferskere ut enn den er.
 
 **AUTO-205 · ÅPEN** — Kontroller at cache begrenses til kjente sted-ID-er ved
 lasting, slik at slettede steder ikke blir liggende i minnet.
