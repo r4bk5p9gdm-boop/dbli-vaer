@@ -29,6 +29,7 @@ final class PlannerTests: XCTestCase {
         XCTAssertNotNil(Place(name: "Klinga", lat: 64.01, lon: 11.01).distance(to: home))
         XCTAssertNil(Place(name: "Ugyldig", lat: 91, lon: 11).distance(to: home))
         XCTAssertNil(Place(name: "Manglende", lat: .nan, lon: 11).distance(to: home))
+        XCTAssertNil(Place(name: "Ugyldig lengdegrad", lat: 64, lon: 181).distance(to: home))
     }
 
     func testPersistedStoreStateRoundTripsForecastCacheAndTimestamp() throws {

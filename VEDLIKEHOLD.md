@@ -66,6 +66,10 @@ etter hjemsted. Ett skadet sted påvirker dermed ikke resten av listen.
 stedsavstand med NaN-koordinat. Skadet importdata blir dermed eksplisitt
 avvist før den når sorteringslogikken.
 
+**AUTO-219 · FULLFØRT 2026-09-17** — Avstandstesten dekker også ugyldig
+lengdegrad over 180 grader, slik at delvis ødelagte stedsimporter ikke får
+uforutsigbar sortering.
+
 **AUTO-215 · FULLFØRT 2026-09-17** — Avstandsrekkefølgen tåler nå ugyldige
 koordinater uten at sorteringen blir ustabil. Slike steder beholder lagret
 rekkefølge i stedet for å forstyrre resten av stedslisten.
