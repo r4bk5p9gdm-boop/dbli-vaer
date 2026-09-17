@@ -155,8 +155,19 @@ Dette beskytter cache ved app-suspensjon eller terminering rett etter henting.
 uten tilhørende ikke-tom prognose. Cache og Yr-tidspunkt lagres dermed alltid
 som et konsistent par; la til regresjonstest.
 
-**AUTO-211 · ÅPEN** — Test at appens første visning bruker cache før en
-nettverksoppdatering fullføres.
+**AUTO-211 · FULLFØRT 2026-09-17** — Oppstartsrekkefølgen laster
+`Store.shared` og dekoder cache før `.task` starter `refreshAll()`. Offline-
+oppstartstestene bekrefter at første visning kan bruke lagret prognose før
+nettverksoppdateringen er ferdig.
+
+**AUTO-212 · ÅPEN** — Test at siste cache beholdes når appen startes på nytt
+med fullstendig nettverksbortfall.
+
+**AUTO-213 · ÅPEN** — Kontroller at foreldet cache ikke blokkerer visning av
+stedets rammer og navn mens oppdatering pågår.
+
+**AUTO-214 · ÅPEN** — Test at cachelagret oppdateringstid vises likt i hjem,
+widget og Watch-overføring.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
