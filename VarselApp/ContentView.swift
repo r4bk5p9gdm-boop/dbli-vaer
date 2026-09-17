@@ -1223,9 +1223,13 @@ struct PlacesView: View {
     }
 
     private func remove(_ offsets: IndexSet, from places: [Place]) {
-        store.removePlaces(ids: Set(offsets.compactMap { index in
+        let removedIDs = Set(offsets.compactMap { index in
             places.indices.contains(index) ? places[index].id : nil
-        }))
+        })
+        store.removePlaces(ids: removedIDs)
+        if let homeID = UUID(uuidString: homePlaceID), removedIDs.contains(homeID) {
+            homePlaceID = ""
+        }
     }
 
     private func move(_ source: IndexSet, to destination: Int, within visiblePlaces: [Place]) {

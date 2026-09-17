@@ -54,6 +54,10 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-213 · FULLFØRT 2026-09-17** — Når hjemstedet slettes fra
+redigeringslisten, nullstilles hjemstedreferansen samtidig. Automatisk
+avstandsrekkefølge faller dermed ikke tilbake på en foreldet UUID.
+
 **BRUKER-043 · FULLFØRT 2026-09-17** — Steder kan nå velge hjemsted og
 sorteringsmodus. Standardrekkefølgen viser favoritt 1 og 2 først, deretter
 øvrige steder etter avstand til hjemstedet. Manuell modus beholder dra-og-slipp.
