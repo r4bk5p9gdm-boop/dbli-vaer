@@ -215,8 +215,9 @@ skilletegn beholdes gjennom serialisering til offline widget-/Watch-visning.
 gjennom samme `forecasts`-beregning og lokale formattering som ferske data.
 Temperaturformat-regresjonene låser identisk visning etter oppstart.
 
-**AUTO-225 · ÅPEN** — Kontroller at rammene vises selv om bare én stedscache
-er tilgjengelig ved oppstart.
+**AUTO-225 · FULLFØRT 2026-09-17** — Hjemmet velger cache per aktivt sted;
+én tilgjengelig stedscache er nok til å tegne rammer og værbånd, uavhengig av
+om andre steder mangler data.
 
 **AUTO-226 · ÅPEN** — Test at cachelagret oppdateringstid ikke overskrives av
 en tom bakgrunnsoppdatering.
