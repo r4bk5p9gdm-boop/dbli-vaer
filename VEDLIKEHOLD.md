@@ -92,8 +92,18 @@ cachefeltene starter tomme og trygt fylles ved neste oppdatering.
 `Store.isForecastStale` og la til deterministisk test. Cachedata kan dermed
 vises videre, mens Yr-linjen tydelig merker den som gammel under ny henting.
 
-**AUTO-196 · ÅPEN** — Test at delvis vellykket fler-stedsoppdatering lagrer
-oppdaterte steder uten å slette cache for steder som mistet dekning.
+**AUTO-196 · FULLFØRT 2026-09-17** — La til eksplisitt regresjonstest for
+delvis vellykket fler-stedsoppdatering. Minst ett vellykket sted kan lagres,
+mens steder uten dekning beholder sin tidligere prognose.
+
+**AUTO-197 · ÅPEN** — Test at lagret cache for et slettet sted fjernes ved
+stedsmigrering, uten å påvirke andre steders prognoser.
+
+**AUTO-198 · ÅPEN** — Test at cachelagret lokal temperaturjustering ikke
+dobles ved app-oppstart og ny visning.
+
+**AUTO-199 · ÅPEN** — Kontroller at oppdateringsindikatoren alltid avsluttes
+etter både vellykket og mislykket nettverksforsøk.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

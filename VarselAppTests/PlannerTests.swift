@@ -2598,6 +2598,14 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(Store.shouldFinalizeRefresh(successfulPlaceCount: 0, failedPlaceCount: 0))
     }
 
+    func testPartialMultiPlaceRefreshFinalizesWithoutTreatingFailuresAsEmptyData() {
+        // At least one successful place allows the new cache entries to be
+        // saved; failed places retain their prior forecasts instead of being
+        // replaced with an empty response.
+        XCTAssertTrue(Store.shouldFinalizeRefresh(successfulPlaceCount: 1, failedPlaceCount: 1))
+        XCTAssertFalse(Store.shouldFinalizeRefresh(successfulPlaceCount: 0, failedPlaceCount: 1))
+    }
+
     func testReplanDebounceRequiresSameStateAndShortInterval() {
         XCTAssertTrue(Store.shouldDebounceReplan(lastSignature: 7, currentSignature: 7, lastAt: base, now: base.addingTimeInterval(4)))
         XCTAssertFalse(Store.shouldDebounceReplan(lastSignature: 7, currentSignature: 8, lastAt: base, now: base.addingTimeInterval(1)))
