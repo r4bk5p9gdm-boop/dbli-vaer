@@ -176,8 +176,9 @@ tillegg: ved manglende posisjon beholdes valgt sted og lokal cache. Dette er
 dekket av `testLateCurrentLocationDoesNotReplaceManualSelection` og offline-
 cachetestene.
 
-**AUTO-216 · ÅPEN** — Kontroller at foreldet status oppdateres ved passering
-av to-timersgrensen uten å endre selve prognosen.
+**AUTO-216 · FULLFØRT 2026-09-17** — `Store.isForecastStale` beregner status
+fra klokkeslettet uten å endre cacheinnholdet. Testen dekker både nøyaktig to
+timer og passering med ett sekund.
 
 **AUTO-217 · ÅPEN** — Test at en ny vellykket refresh erstatter gammel cache
 og fjerner foreldet visuell status.
