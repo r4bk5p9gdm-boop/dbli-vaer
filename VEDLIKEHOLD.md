@@ -70,6 +70,10 @@ avvist før den når sorteringslogikken.
 lengdegrad over 180 grader, slik at delvis ødelagte stedsimporter ikke får
 uforutsigbar sortering.
 
+**AUTO-220 · FULLFØRT 2026-09-17** — La til kontroll av nullavstand for
+identiske hjem- og stedkoordinater. Dette låser grunnlaget for at hjemstedet
+alltid rangeres nærmest når det ikke er en favoritt.
+
 **AUTO-215 · FULLFØRT 2026-09-17** — Avstandsrekkefølgen tåler nå ugyldige
 koordinater uten at sorteringen blir ustabil. Slike steder beholder lagret
 rekkefølge i stedet for å forstyrre resten av stedslisten.

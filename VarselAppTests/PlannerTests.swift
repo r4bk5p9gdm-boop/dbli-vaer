@@ -26,6 +26,7 @@ private final class FakeNotificationCenter: NotificationCenterClient {
 final class PlannerTests: XCTestCase {
     func testPlaceDistanceRejectsMalformedCoordinates() {
         let home = CLLocation(latitude: 64, longitude: 11)
+        XCTAssertEqual(Place(name: "Hjem", lat: 64, lon: 11).distance(to: home), 0, accuracy: 0.001)
         XCTAssertNotNil(Place(name: "Klinga", lat: 64.01, lon: 11.01).distance(to: home))
         XCTAssertNil(Place(name: "Ugyldig", lat: 91, lon: 11).distance(to: home))
         XCTAssertNil(Place(name: "Manglende", lat: .nan, lon: 11).distance(to: home))
