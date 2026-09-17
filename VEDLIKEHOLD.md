@@ -207,8 +207,18 @@ feilteksten over en eksisterende cache: værbånd vises når prognosen finnes,
 mens feilstatus holdes separat per sted. Dette følger fler-stedsfeil- og
 fallbackdekningen.
 
-**AUTO-223 · ÅPEN** — Test at cachelagret språk og skilletegn følger med ved
-offline widget-/Watch-visning.
+**AUTO-223 · FULLFØRT 2026-09-17** — Eksisterende
+`testWatchTransferCarriesLanguageAndSeparator` bekrefter at språkvalg og
+skilletegn beholdes gjennom serialisering til offline widget-/Watch-visning.
+
+**AUTO-224 · ÅPEN** — Test at cachelagret prognose bruker samme lokale
+temperaturformat etter oppstart som ved fersk data.
+
+**AUTO-225 · ÅPEN** — Kontroller at rammene vises selv om bare én stedscache
+er tilgjengelig ved oppstart.
+
+**AUTO-226 · ÅPEN** — Test at cachelagret oppdateringstid ikke overskrives av
+en tom bakgrunnsoppdatering.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
