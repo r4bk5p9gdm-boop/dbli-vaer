@@ -202,8 +202,10 @@ nett ved oppstart. Eksisterende offline-/fallbacktester dekker dette.
 `testWidgetFreshAndFallbackUseSamePlaceIdentityForPositionSelection` dekker
 at små koordinatendringer innen Yr-presisjon beholder samme sted-ID og cache.
 
-**AUTO-222 · ÅPEN** — Kontroller at refresh-feilteksten ikke erstatter
-cachede værbånd når gammel prognose fortsatt finnes.
+**AUTO-222 · FULLFØRT 2026-09-17** — Hjemvisningen prioriterer ikke
+feilteksten over en eksisterende cache: værbånd vises når prognosen finnes,
+mens feilstatus holdes separat per sted. Dette følger fler-stedsfeil- og
+fallbackdekningen.
 
 **AUTO-223 · ÅPEN** — Test at cachelagret språk og skilletegn følger med ved
 offline widget-/Watch-visning.
