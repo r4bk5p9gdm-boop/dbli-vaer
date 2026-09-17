@@ -198,8 +198,9 @@ deterministiske også når delingsoppdateringen skjer rett etterpå.
 til siste gyldige snapshot når valgt sted ikke har fersk prognose, også uten
 nett ved oppstart. Eksisterende offline-/fallbacktester dekker dette.
 
-**AUTO-221 · ÅPEN** — Test at lokal cache og widgetsnapshot bruker samme
-stedidentitet etter koordinatjustering innen Yr-presisjon.
+**AUTO-221 · FULLFØRT 2026-09-17** — Eksisterende
+`testWidgetFreshAndFallbackUseSamePlaceIdentityForPositionSelection` dekker
+at små koordinatendringer innen Yr-presisjon beholder samme sted-ID og cache.
 
 **AUTO-222 · ÅPEN** — Kontroller at refresh-feilteksten ikke erstatter
 cachede værbånd når gammel prognose fortsatt finnes.
