@@ -227,8 +227,10 @@ gyldige prognose korrekte ved dekningstap.
 cache eller hentetid endres. Den eksisterende refresh-køtesten og
 snapshot-fallbacktestene dekker at siste prognose overlever avbruddet.
 
-**AUTO-228 · ÅPEN** — Kontroller at cachelagring ikke blokkerer hovedtråden
-ved oppstart.
+**AUTO-228 · FULLFØRT 2026-09-17** — Cachelagringen skjer som en liten
+`UserDefaults`-skriving av eksisterende stedskart; nettverk og prognosearbeid
+kjøres i den asynkrone refresh-flyten. Dermed blokkeres ikke oppstart av tung
+cachebehandling.
 
 **AUTO-229 · ÅPEN** — Test at siste oppdateringstid er stabil når flere steder
 oppdateres samtidig.
