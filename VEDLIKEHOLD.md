@@ -232,8 +232,18 @@ snapshot-fallbacktestene dekker at siste prognose overlever avbruddet.
 kjøres i den asynkrone refresh-flyten. Dermed blokkeres ikke oppstart av tung
 cachebehandling.
 
-**AUTO-229 · ÅPEN** — Test at siste oppdateringstid er stabil når flere steder
-oppdateres samtidig.
+**AUTO-229 · FULLFØRT 2026-09-17** — Fler-stedsrefresh setter global
+`lastUpdate` én gang etter batchen, mens stedsspesifikke tidspunkt lagres per
+sted. Dermed er Yr-tiden stabil selv når flere steder oppdateres samtidig.
+
+**AUTO-230 · ÅPEN** — Test at cachede stedstidspunkt fortsatt er tilgjengelige
+selv om global siste oppdatering mangler.
+
+**AUTO-231 · ÅPEN** — Kontroller at refresh i bakgrunnen ikke erstatter en
+nyere cache med et eldre svar.
+
+**AUTO-232 · ÅPEN** — Test at cache lagres etter delvis vellykket refresh før
+varslingsplanlegging avsluttes.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
