@@ -110,8 +110,10 @@ snapshot ved app-oppstart.
 via `defer`, også ved feil, avbrudd og delvis nettverksresultat. Dermed blir
 ikke «Oppdaterer …»-indikatoren hengende.
 
-**AUTO-200 · ÅPEN** — Test at foreldet cache fortsatt viser korrekt sted etter
-omdøping, uten å arve værdata fra et annet sted.
+**AUTO-200 · FULLFØRT 2026-09-17** — Eksisterende
+`testWidgetFallbackKeepsActualForecastAgeAndCurrentName` bekrefter at
+foreldet cache kan vises med nytt navn, mens stedets identitet og værdata
+forblir den samme.
 
 **AUTO-201 · ÅPEN** — Test at lagret prognosecache tåler skadet enkeltpost og
 fortsatt laster øvrige steder.
