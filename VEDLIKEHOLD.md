@@ -74,6 +74,10 @@ uforutsigbar sortering.
 identiske hjem- og stedkoordinater. Dette låser grunnlaget for at hjemstedet
 alltid rangeres nærmest når det ikke er en favoritt.
 
+**AUTO-221 · FULLFØRT 2026-09-17** — Avstandstesten dekker også ugyldig
+hjemposisjon. Sorteringen faller dermed trygt tilbake selv om hjemstedet
+selv mangler gyldige koordinater.
+
 **AUTO-215 · FULLFØRT 2026-09-17** — Avstandsrekkefølgen tåler nå ugyldige
 koordinater uten at sorteringen blir ustabil. Slike steder beholder lagret
 rekkefølge i stedet for å forstyrre resten av stedslisten.
