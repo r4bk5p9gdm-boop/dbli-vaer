@@ -137,14 +137,11 @@ tidslinje. Dagens interne dagshode skjules når hjemmet allerede viser
 «Resten av i dag» med Yr-tid. I morgen og senere dager beholder egne
 dagshoder, så tidslinjen får én og bare én tittelrad for i dag.
 
-**BRUKER-016 · ÅPEN** — Når aktuell posisjon treffer et lagret sted, skal
-stedet brukes direkte (uten ekstra posisjonssted) og hjemkortet vise et
-tydelig posisjonsikon på det lagrede stedet.
-
-**BRUKER-016 · FULLFØRT 2026-09-16** — GPS-oppslaget gjenbruker nå nærmeste
- lagrede sted innen 15 km, slik at Klinga/Hornburu ikke får et ekstra,
- duplisert posisjonssted. Hjemkortets eksisterende posisjonslabel og ikon
- vises samtidig. Ny regresjonstest dekker både treff og avstand uten treff.
+**BRUKER-016 · FULLFØRT 2026-09-16** — Når aktuell posisjon treffer et
+lagret sted, gjenbruker GPS-oppslaget nærmeste lagrede sted innen 15 km, slik
+at Klinga/Hornburu ikke får et ekstra, duplisert posisjonssted. Hjemkortets
+posisjonslabel og ikon vises samtidig. Ny regresjonstest dekker både treff og
+avstand uten treff.
 
 **BRUKER-017 · FULLFØRT 2026-09-16** — Hjemkortet viser lagret stedsnavn
  normalt (for eksempel «oppi Hornburu») med et lite posisjonsikon når GPS
