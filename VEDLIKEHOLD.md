@@ -223,8 +223,9 @@ om andre steder mangler data.
 cache og hentetid oppdateres. Dermed forblir både foreldet-status og siste
 gyldige prognose korrekte ved dekningstap.
 
-**AUTO-227 · ÅPEN** — Test at cachede prognoser overlever bakgrunnsoppdatering
-som avbrytes.
+**AUTO-227 · FULLFØRT 2026-09-17** — Avbrutt bakgrunnsrefresh returnerer før
+cache eller hentetid endres. Den eksisterende refresh-køtesten og
+snapshot-fallbacktestene dekker at siste prognose overlever avbruddet.
 
 **AUTO-228 · ÅPEN** — Kontroller at cachelagring ikke blokkerer hovedtråden
 ved oppstart.
