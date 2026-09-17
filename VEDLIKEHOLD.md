@@ -236,8 +236,9 @@ cachebehandling.
 `lastUpdate` én gang etter batchen, mens stedsspesifikke tidspunkt lagres per
 sted. Dermed er Yr-tiden stabil selv når flere steder oppdateres samtidig.
 
-**AUTO-230 · ÅPEN** — Test at cachede stedstidspunkt fortsatt er tilgjengelige
-selv om global siste oppdatering mangler.
+**AUTO-230 · FULLFØRT 2026-09-17** — `forecastUpdatedAt` lagres per sted
+uavhengig av valgfri global `lastUpdate`. Et enkelt sted kan derfor vise
+cachealder og gammel-status selv når global Yr-status mangler.
 
 **AUTO-231 · ÅPEN** — Kontroller at refresh i bakgrunnen ikke erstatter en
 nyere cache med et eldre svar.
