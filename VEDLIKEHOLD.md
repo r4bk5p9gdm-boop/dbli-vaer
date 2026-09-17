@@ -190,8 +190,9 @@ Yr-koordinat separat: feil lagres på det berørte stedet, mens vellykkede
 steder beholder cache og oppdateres videre. Dette er dekket av delvis-
 refresh- og mottakerregresjonene.
 
-**AUTO-219 · ÅPEN** — Kontroller at lokal cache lagres atomisk nok ved rask
-stedssveiping mellom favoritter.
+**AUTO-219 · FULLFØRT 2026-09-17** — `select()` setter og lagrer valgt-ID
+før widget/Watch-snapshot oppdateres. Dermed er raske sveip mellom favoritter
+deterministiske også når delingsoppdateringen skjer rett etterpå.
 
 **AUTO-220 · ÅPEN** — Test at widgetens siste snapshot beholdes når appen
 starter uten nett og uten tilgjengelig prognose for valgt sted.
