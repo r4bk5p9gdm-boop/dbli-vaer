@@ -115,8 +115,9 @@ ikke «Oppdaterer …»-indikatoren hengende.
 foreldet cache kan vises med nytt navn, mens stedets identitet og værdata
 forblir den samme.
 
-**AUTO-201 · ÅPEN** — Test at lagret prognosecache tåler skadet enkeltpost og
-fortsatt laster øvrige steder.
+**AUTO-201 · FULLFØRT 2026-09-17** — Cachedekodingen bruker nå tapsfri
+enkeltpost-filtrering for prognoser og tidspunkt. En skadet stedspost forkastes
+alene, mens øvrige prognoser fortsatt lastes. La til regresjonstest.
 
 **AUTO-202 · ÅPEN** — Kontroller at cachelagring ikke skjer for tomme eller
 ugyldige prognoser etter manuell oppdatering.

@@ -110,8 +110,10 @@ struct PersistedStoreState: Codable {
         places = (try? values.decode([LossyDecodable<Place>].self, forKey: .places))?.compactMap(\.value) ?? []
         selectedID = try? values.decode(UUID.self, forKey: .selectedID)
         log = (try? values.decode([LossyDecodable<LogEntry>].self, forKey: .log))?.compactMap(\.value) ?? []
-        forecasts = (try? values.decode([UUID: [ForecastHour]].self, forKey: .forecasts)) ?? [:]
-        forecastUpdatedAt = (try? values.decode([UUID: Date].self, forKey: .forecastUpdatedAt)) ?? [:]
+        let lossyForecasts = (try? values.decode([UUID: LossyDecodable<[ForecastHour]>].self, forKey: .forecasts)) ?? [:]
+        forecasts = lossyForecasts.compactMapValues(\.value)
+        let lossyTimestamps = (try? values.decode([UUID: LossyDecodable<Date>].self, forKey: .forecastUpdatedAt)) ?? [:]
+        forecastUpdatedAt = lossyTimestamps.compactMapValues(\.value)
         lastUpdate = try? values.decode(Date.self, forKey: .lastUpdate)
     }
 }

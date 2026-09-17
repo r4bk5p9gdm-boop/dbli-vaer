@@ -55,6 +55,25 @@ final class PlannerTests: XCTestCase {
         XCTAssertNil(decoded.lastUpdate)
     }
 
+    func testPersistedStoreStateKeepsHealthyCacheWhenOneForecastEntryIsCorrupt() throws {
+        let first = Place(name: "Klinga", lat: 64, lon: 11)
+        let second = Place(name: "Namsos", lat: 64.5, lon: 11.5)
+        let state = PersistedStoreState(
+            places: [first, second], selectedID: first.id, log: [],
+            forecasts: [first.id: forecast(values: [(8, 0, 1, 20, 4)])],
+            forecastUpdatedAt: [first.id: base]
+        )
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(state)) as? [String: Any])
+        var forecasts = try XCTUnwrap(object["forecasts"] as? [String: Any])
+        forecasts[second.id.uuidString] = ["not": "a forecast"]
+        object["forecasts"] = forecasts
+        let data = try JSONSerialization.data(withJSONObject: object)
+
+        let decoded = try JSONDecoder().decode(PersistedStoreState.self, from: data)
+        XCTAssertEqual(decoded.forecasts[first.id]?.count, 1)
+        XCTAssertNil(decoded.forecasts[second.id])
+    }
+
     func testHomeSwipeOrderUsesPositionThenStarsAndDeduplicates() {
         let position = UUID()
         let star1 = UUID()
