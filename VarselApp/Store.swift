@@ -525,6 +525,11 @@ final class Store: ObservableObject {
         return now.timeIntervalSince(updatedAt) > threshold
     }
 
+    static func shouldReplaceForecast(existingAt: Date?, incomingAt: Date) -> Bool {
+        guard let existingAt else { return true }
+        return incomingAt >= existingAt
+    }
+
     static func shouldDebounceReplan(
         lastSignature: Int?, currentSignature: Int, lastAt: Date?, now: Date,
         interval: TimeInterval = 5
@@ -598,10 +603,12 @@ final class Store: ObservableObject {
                     switch result {
                     case .success(let forecast):
                         successfulPlaceCount += matchingPlaces.count
+                        let fetchedAt = Date()
                         for place in matchingPlaces {
+                            guard Self.shouldReplaceForecast(existingAt: forecastUpdatedAt[place.id], incomingAt: fetchedAt) else { continue }
                             forecasts[place.id] = forecast
-                            forecastUpdatedAt[place.id] = Date()
-                            calibration.record(place: place, hours: forecast, fetchedAt: Date())
+                            forecastUpdatedAt[place.id] = fetchedAt
+                            calibration.record(place: place, hours: forecast, fetchedAt: fetchedAt)
                             forecastErrors.removeValue(forKey: place.id)
                         }
                     case .failure(let error):
@@ -715,9 +722,11 @@ final class Store: ObservableObject {
             guard !Task.isCancelled,
                   Self.isUsableForecast(forecast),
                   !Self.currentRecipients(for: [place], in: places).isEmpty else { return }
+            let fetchedAt = Date()
+            guard Self.shouldReplaceForecast(existingAt: forecastUpdatedAt[place.id], incomingAt: fetchedAt) else { return }
             forecasts[place.id] = forecast
-            forecastUpdatedAt[place.id] = Date()
-            calibration.record(place: place, hours: forecast, fetchedAt: Date())
+            forecastUpdatedAt[place.id] = fetchedAt
+            calibration.record(place: place, hours: forecast, fetchedAt: fetchedAt)
             forecastErrors.removeValue(forKey: place.id)
             lastUpdate = Date()
             // Persist before replanning so a successful manual fetch survives

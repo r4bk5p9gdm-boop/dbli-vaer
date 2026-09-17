@@ -248,8 +248,9 @@ sted. Dermed er Yr-tiden stabil selv når flere steder oppdateres samtidig.
 uavhengig av valgfri global `lastUpdate`. Et enkelt sted kan derfor vise
 cachealder og gammel-status selv når global Yr-status mangler.
 
-**AUTO-231 · ÅPEN** — Kontroller at refresh i bakgrunnen ikke erstatter en
-nyere cache med et eldre svar.
+**AUTO-231 · FULLFØRT 2026-09-17** — La inn tidsvakt med
+`shouldReplaceForecast`: bare svar med like nytt eller nyere hentetid kan
+skrive stedscache. Eldre bakgrunnssvar avvises, med regresjonstest.
 
 **AUTO-232 · ÅPEN** — Test at cache lagres etter delvis vellykket refresh før
 varslingsplanlegging avsluttes.

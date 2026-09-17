@@ -2402,6 +2402,12 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(Store.isForecastStale(nil, now: base))
     }
 
+    func testOlderForecastCannotReplaceNewerCache() {
+        XCTAssertFalse(Store.shouldReplaceForecast(existingAt: base, incomingAt: base.addingTimeInterval(-1)))
+        XCTAssertTrue(Store.shouldReplaceForecast(existingAt: base, incomingAt: base.addingTimeInterval(1)))
+        XCTAssertTrue(Store.shouldReplaceForecast(existingAt: nil, incomingAt: base))
+    }
+
     func testWatchTransferPolicyRejectsDuplicateTimestamp() {
         XCTAssertTrue(WatchTransferPolicy.accepts(base.addingTimeInterval(1), after: base))
         XCTAssertFalse(WatchTransferPolicy.accepts(base, after: base))
