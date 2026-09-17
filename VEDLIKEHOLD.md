@@ -54,6 +54,10 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-037 · FULLFØRT 2026-09-17** — Dagstitler grupperes nå etter
+kalenderdøgn, slik at «I morgen» alltid får en egen bolk. Tidsradene beholder
+fortsatt grensene 07–15–23–07.
+
 **BRUKER-036 · FULLFØRT 2026-09-17** — Flyttet «nå»-teksten helt under
 værbåndene, slik at den ikke ligger inne i nederste rad. Nålinjen starter
 fortsatt ved øvre radkant og går gjennom radflaten.

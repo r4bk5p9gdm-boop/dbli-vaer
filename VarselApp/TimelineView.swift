@@ -30,7 +30,7 @@ struct ForecastVariantsView: View {
         VStack(spacing: 7) {
             ForEach(days) { day in
                 VStack(alignment: .leading, spacing: 4) {
-                    if !Calendar.current.isDate(day.date, inSameDayAs: weatherDayDate(for: Date())) {
+                    if !Calendar.current.isDate(day.date, inSameDayAs: Calendar.current.startOfDay(for: Date())) {
                         ForecastDayHeader(day: day)
                     }
                     switch mode {
@@ -82,8 +82,9 @@ private struct ForecastDay: Identifiable {
     var id: Date { date }
 
     static func make(from forecast: [ForecastHour], calendar: Calendar = .current) -> [ForecastDay] {
-        // A weather day runs from 07 to 07 so the final band can be the whole night.
-        let grouped = Dictionary(grouping: forecast) { weatherDayDate(for: $0.time, calendar: calendar) }
+        // Day headers follow calendar days. The bands themselves still cover
+        // 07–15–23–07, so the overnight segment remains visually connected.
+        let grouped = Dictionary(grouping: forecast) { calendar.startOfDay(for: $0.time) }
         return grouped.keys.sorted().map { date in
             ForecastDay(date: date, hours: grouped[date, default: []].sorted { $0.time < $1.time })
         }
@@ -123,7 +124,7 @@ private struct ForecastDayHeader: View {
     }
 
     private func dayTitle(_ date: Date) -> String {
-        let today = weatherDayDate(for: Date())
+        let today = Calendar.current.startOfDay(for: Date())
         let calendar = Calendar.current
         let dayNumber = calendar.component(.day, from: date)
         let monthNames = ["", "jan", "feb", "mars", "apr", "mai", "juni", "juli", "aug", "sept", "okt", "nov", "des"]
@@ -206,7 +207,7 @@ private struct WeatherBandsForecast: View {
     }
 
     private var isToday: Bool {
-        Calendar.current.isDate(day.date, inSameDayAs: weatherDayDate(for: now))
+        Calendar.current.isDate(day.date, inSameDayAs: Calendar.current.startOfDay(for: now))
     }
 
     private var nowFraction: CGFloat {
