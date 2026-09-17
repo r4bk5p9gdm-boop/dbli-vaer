@@ -54,6 +54,10 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-042 · FULLFØRT 2026-09-17** — Sveipeprikkene på hjemskjermen
+viser nå bare unike steder. Når Favoritt 1 er samme som posisjon, slås de to
+prikkene sammen og siden viser kun gyldige sveiperetninger.
+
 **BRUKER-041 · FULLFØRT 2026-09-17** — Nedtellingsringen på Watch har nå
 fargegradering: varselfargen går via oransje til rød nær hendelsen, slik at
 «snart» blir synlig uten å lese klokkeslettet.

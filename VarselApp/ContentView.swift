@@ -180,9 +180,10 @@ struct HomeView: View {
                                 onSelect: { place in store.select(place) },
                                 onEdit: { showingSettings = true }
                             )
+                            let pageCount = max(1, swipePlaces.count)
                             HStack(spacing: 6) {
-                                let activeIndex = max(0, min(2, swipePlaces.firstIndex(where: { $0.id == p.id }) ?? 0))
-                                ForEach(0..<3, id: \.self) { index in
+                                let activeIndex = min(pageCount - 1, max(0, swipePlaces.firstIndex(where: { $0.id == p.id }) ?? 0))
+                                ForEach(0..<pageCount, id: \.self) { index in
                                     Circle()
                                         .fill(index == activeIndex ? Color.indigo : Color.secondary.opacity(0.25))
                                         .frame(width: index == activeIndex ? 7 : 5, height: index == activeIndex ? 7 : 5)
@@ -190,7 +191,7 @@ struct HomeView: View {
                             }
                             .frame(maxWidth: .infinity)
                             .accessibilityElement(children: .ignore)
-                            .accessibilityLabel("Stedside \(activeIndexForSelectedPlace + 1) av 3")
+                            .accessibilityLabel("Stedside \(activeIndexForSelectedPlace + 1) av \(pageCount)")
                         }
                         VStack(alignment: .leading, spacing: 10) {
                             HStack {
@@ -268,7 +269,8 @@ struct HomeView: View {
     }
 
     private var activeIndexForSelectedPlace: Int {
-        max(0, min(2, swipePlaces.firstIndex(where: { $0.id == store.selected?.id }) ?? 0))
+        let pageCount = max(1, swipePlaces.count)
+        return min(pageCount - 1, max(0, swipePlaces.firstIndex(where: { $0.id == store.selected?.id }) ?? 0))
     }
 }
 
