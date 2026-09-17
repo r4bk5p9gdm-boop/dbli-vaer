@@ -80,8 +80,18 @@ slik at gammel CarPlay-data ikke blir liggende etter sletting.
 ufullstendig svar uten oppdateringstidspunkt. Det faller nå eksplisitt tilbake
 til siste gyldige snapshot i stedet for å skrive deldata til widget/Watch.
 
-**AUTO-193 · ÅPEN** — Test at raskt etterfølgende Watch-overføringer beholder
-nyeste sted og avviser eldre overføring etter omstart.
+**AUTO-193 · FULLFØRT 2026-09-17** — La til regresjonstest for serialisering
+av raskt etterfølgende Watch-overføringer: nyeste sted beholdes, og eldre
+overføring avvises etter gjenoppretting.
+
+**AUTO-194 · ÅPEN** — Test migrering av eldre lagret tilstand uten prognosefelt
+slik at steder og valgt sted fortsatt åpnes uten dekning.
+
+**AUTO-195 · ÅPEN** — Kontroller at foreldet prognose fortsatt vises ved
+oppstart, men ikke brukes som fersk tidsreferanse i varslingsplanlegging.
+
+**AUTO-196 · ÅPEN** — Test at delvis vellykket fler-stedsoppdatering lagrer
+oppdaterte steder uten å slette cache for steder som mistet dekning.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

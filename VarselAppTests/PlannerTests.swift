@@ -2254,6 +2254,27 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(WatchTransferPolicy.accepts(base.addingTimeInterval(-1), after: base))
     }
 
+    func testWatchRapidTransfersKeepNewestPlaceAndRejectOlderAfterRestart() throws {
+        let oldPlace = Place(name: "Klinga", lat: 64, lon: 11)
+        let newPlace = Place(name: "Hornburu", lat: 64.1, lon: 11.1)
+        let old = WatchWeatherTransfer(
+            snapshot: WidgetWeatherSnapshot(place: oldPlace, forecast: forecast(values: [(8, 0, 1, 20, 4)]), updatedAt: base),
+            sentAt: base
+        )
+        let newest = WatchWeatherTransfer(
+            snapshot: WidgetWeatherSnapshot(place: newPlace, forecast: forecast(values: [(9, 0, 1, 20, 5)]), updatedAt: base.addingTimeInterval(1)),
+            sentAt: base.addingTimeInterval(1)
+        )
+
+        let restoredNewest = try JSONDecoder().decode(
+            WatchWeatherTransfer.self,
+            from: JSONEncoder().encode(newest)
+        )
+        XCTAssertEqual(restoredNewest.snapshot?.place.id, newPlace.id)
+        XCTAssertTrue(WatchTransferPolicy.accepts(restoredNewest.sentAt, after: old.sentAt))
+        XCTAssertFalse(WatchTransferPolicy.accepts(old.sentAt, after: restoredNewest.sentAt))
+    }
+
     func testWidgetHourLabelsUseLocalTimeAcrossOsloMidnightAndDST() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
