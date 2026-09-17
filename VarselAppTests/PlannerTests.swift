@@ -43,6 +43,14 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(result.map(\.id), [favorite.id, home.id, near.id, far.id])
     }
 
+    func testManualPlaceOrderSurvivesPersistedStateRoundTrip() throws {
+        let first = Place(name: "Først", lat: 64, lon: 11)
+        let second = Place(name: "Deretter", lat: 65, lon: 12)
+        let state = PersistedStoreState(places: [second, first], selectedID: second.id, log: [])
+        let decoded = try JSONDecoder().decode(PersistedStoreState.self, from: JSONEncoder().encode(state))
+        XCTAssertEqual(decoded.places.map(\.id), [second.id, first.id])
+    }
+
     func testPersistedStoreStateRoundTripsForecastCacheAndTimestamp() throws {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 20, dew: 5)

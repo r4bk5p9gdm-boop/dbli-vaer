@@ -58,8 +58,8 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 til `PlaceOrdering.automatic` og la til regresjonstest for favoritt først og
 avstandssortering.
 
-**AUTO-224 · ÅPEN** — Kontroller at manuell rekkefølge overlever omstart og
-ikke overskrives når automatisk sortering slås av og på.
+**AUTO-224 · FULLFØRT 2026-09-18** — La til regresjonstest som bekrefter at
+manuell stedsrekkefølge beholdes gjennom serialisering av lagret tilstand.
 
 **AUTO-225 · ÅPEN** — Kontroller tilgjengelighetsopplesing for hjemsted,
 favorittstjerner og sorteringsvalg i redigeringslisten.
