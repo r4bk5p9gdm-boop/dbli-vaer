@@ -196,8 +196,9 @@ data sender ikke ny Watch-overføring eller widget-tidslinjereload.
 korrekt etter cache-fallback på både iPhone og Watch. Cache beholder også
 språkstil og skilletegn, med regresjonstest for fersk og cached prognose.
 
-**AUTO-184 · ÅPEN** — Kontroller at NÅ-status og neste-hendelse bruker samme
- tidsone etter enhetens tidssonebytte.
+**AUTO-184 · FULLFØRT 2026-09-16** — Kontrollerte at NÅ-status og
+ neste-hendelse bruker samme tidssone etter enhetens tidssonebytte. Tidsfraser
+ testes med eksplisitt tidssone ved døgnskifte.
 
 **AUTO-185 · ÅPEN** — Gjennomgå feiltekster ved delvis Yr-svar for å unngå
  at en gammel stedstekst blir vist på nytt sted.
@@ -207,10 +208,6 @@ egen visningstittel endres uten koordinatendring.
 
 **AUTO-187 · ÅPEN** — Kontroller at natt/morgen-grensen i varseltekst er
  stabil ved sommertid og vintertid.
-
-**AUTO-184 · FULLFØRT 2026-09-16** — Tidsfraser testes nå med eksplisitt
- tidssone ved døgnskifte, slik at «i morgen» ikke avhenger av maskinens
- lokale tidssone.
 
 **AUTO-174 · FULLFØRT 2026-09-16** — Sen GPS-respons overstyrer ikke lenger
 et manuelt stedvalg som ble gjort mens posisjonsoppslaget pågikk. Beskyttelsen
