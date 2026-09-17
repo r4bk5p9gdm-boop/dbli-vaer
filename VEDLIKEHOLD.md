@@ -1230,8 +1230,11 @@ deretter AUTO 25.
 24. **AUTO · FERDIG** — Når alle forespurte steder feiler, behold eksisterende
    varslingsplan, widget/Watch-data og oppdateringstid. Feilmeldinger vises
    fortsatt. En bevisst tom stedsliste kan fortsatt rydde planen.
-25. **AUTO · ÅPEN** — Kontroller Live Activity ved delvis manglende værdata.
-   Utvid også integrasjonstestene for kansellering midt i nettverkshenting.
+25. **AUTO · PÅ VENT 2026-09-17** — Kontroller Live Activity ved delvis
+   manglende værdata og utvid integrasjonstestene for kansellering midt i
+   nettverkshenting. Krever fysisk ActivityKit-kjøring på iPhone eller
+   konfigurert simulator; beholdt som neste kandidat når slik testflate er
+   tilgjengelig.
 26. **AUTO · FERDIG** — Bufrede prognoser og hentefeil fjernes ved endrede
    koordinater eller sletting av sted, også ved direkte redigering av listen.
    Omdøping, regelendringer og sortering beholder gyldige værdata.
