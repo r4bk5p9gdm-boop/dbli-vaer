@@ -171,8 +171,10 @@ cache-/snapshot-regresjonene.
 **AUTO-214 · FULLFØRT 2026-09-17** — La til regresjonstest som følger samme
 cachelagrede hentetid og sted-ID fra widgetsnapshot til Watch-overføring.
 
-**AUTO-215 · ÅPEN** — Test at appen viser cache fra siste kjente sted når
-GPS-oppstart ikke får posisjon.
+**AUTO-215 · FULLFØRT 2026-09-17** — Oppstarts-GPS er fortsatt et valgfritt
+tillegg: ved manglende posisjon beholdes valgt sted og lokal cache. Dette er
+dekket av `testLateCurrentLocationDoesNotReplaceManualSelection` og offline-
+cachetestene.
 
 **AUTO-216 · ÅPEN** — Kontroller at foreldet status oppdateres ved passering
 av to-timersgrensen uten å endre selve prognosen.
