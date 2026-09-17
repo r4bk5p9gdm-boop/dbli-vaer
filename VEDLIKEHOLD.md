@@ -118,14 +118,10 @@ den fylte oransje sirkelen er beholdt med egen VoiceOver-tekst.
 nålinjen til under linjen, under værfeltene/radchipsene, slik at teksten ikke
 dekker øvre del av værfeltene.
 
-**BRUKER-021 · ÅPEN** — Samle dag og dato på venstresiden i tidslinjen:
-«Resten av i dag, onsdag 16. sept», «I morgen, 17. sept» og «Fredag 18.
-sept». Fjern separat datotekst til høyre.
-
-**BRUKER-021 · FULLFØRT 2026-09-16** — Dagshodet er nå én venstrejustert
- tekstlinje med dag og dato. Dagens dagshode bruker «Resten av i dag,
- [ukedag] [dato]», neste dag «I morgen, [dato]», og senere dager «[ukedag]
- [dato]». Den separate datoen på høyre side er fjernet.
+**BRUKER-021 · FULLFØRT 2026-09-16** — Samlet dag og dato på venstresiden i
+tidslinjen. Dagshodet er én venstrejustert tekstlinje: «Resten av i dag,
+[ukedag] [dato]», «I morgen, [dato]» eller «[ukedag] [dato]». Separat
+datotekst til høyre er fjernet.
 
 **BRUKER-020 · ÅPEN** — Vis også 07 på høyre kant etter tredje felt, slik at
 07–15–23–07 markerer hele værdøgnet.
