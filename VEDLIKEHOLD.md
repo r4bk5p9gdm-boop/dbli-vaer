@@ -188,8 +188,9 @@ Fersk og cached widgetprognose bruker samme justering uten dobbel påføring.
 ved manglende vindkastverdi. Vindvarsling krever eksplisitt, endelig
 vindkastverdi og faller aldri tilbake til middelvind.
 
-**AUTO-182 · ÅPEN** — Kontroller at widget-refresh ikke oppdaterer tidslinjen
- når snapshot og delte steder er identiske.
+**AUTO-182 · FULLFØRT 2026-09-16** — Kontrollerte at widget-refresh ikke
+oppdaterer tidslinjen når snapshot og delte steder er identiske. Identiske
+data sender ikke ny Watch-overføring eller widget-tidslinjereload.
 
 **AUTO-183 · ÅPEN** — Verifiser at prognosealder vises korrekt etter
 fallback fra cache på både iPhone og Watch.
@@ -213,10 +214,6 @@ egen visningstittel endres uten koordinatendring.
 **AUTO-183 · FULLFØRT 2026-09-16** — Cache-fallback beholder nå også
  prognosealder, språkstil og skilletegn. Regresjonstest dekker at Watch/widget
  får samme metadata som fersk og cached prognose.
-
-**AUTO-182 · FULLFØRT 2026-09-16** — Widget- og Watch-synkronisering
- rapporterer nå om snapshot/stedsliste faktisk endret seg. Identiske data
- sender ikke ny Watch-overføring eller widget-tidslinjereload.
 
 **AUTO-174 · FULLFØRT 2026-09-16** — Sen GPS-respons overstyrer ikke lenger
 et manuelt stedvalg som ble gjort mens posisjonsoppslaget pågikk. Beskyttelsen
