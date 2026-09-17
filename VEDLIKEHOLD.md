@@ -185,8 +185,10 @@ nytt hentetidspunkt før visningen oppdateres. Dermed blir
 `isForecastStale`-status automatisk fersk igjen; grense- og snapshottestene
 dekker dette.
 
-**AUTO-218 · ÅPEN** — Test at feilstatus for ett sted ikke skjuler cache og
-oppdateringsstatus for andre steder.
+**AUTO-218 · FULLFØRT 2026-09-17** — Fler-stedsrefresh håndterer hvert
+Yr-koordinat separat: feil lagres på det berørte stedet, mens vellykkede
+steder beholder cache og oppdateres videre. Dette er dekket av delvis-
+refresh- og mottakerregresjonene.
 
 **AUTO-219 · ÅPEN** — Kontroller at lokal cache lagres atomisk nok ved rask
 stedssveiping mellom favoritter.
