@@ -155,9 +155,9 @@ Bygg mot fysisk iOS-destinasjon ble forsøkt; det stoppet i den eksisterende
 SwiftUIMacros/swift-plugin-server-feilen i miljøet, ikke med en ny Swift-feil
 i disse endringene.
 
-**AUTO-174 · ÅPEN** — Kontroller at GPS-valg ved appstart ikke overskriver
-manuelt valgt sted når posisjonsdata kommer sent. Legg til test før eventuell
-endring.
+**AUTO-174 · FULLFØRT 2026-09-16** — Kontrollerte at GPS-valg ved appstart
+ikke overskriver manuelt valgt sted når posisjonsdata kommer sent. Testen
+`testLateCurrentLocationDoesNotReplaceManualSelection` dekker scenariet.
 
 **AUTO-175 · ÅPEN** — Gjennomgå rotasjonsstatus på hjemskjermen for å sikre
 at samme værtype ikke vises dobbelt når flere regler treffer samtidig.
