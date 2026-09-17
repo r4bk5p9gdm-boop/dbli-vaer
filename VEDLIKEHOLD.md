@@ -168,8 +168,17 @@ siste prognose og hentetid dekodes uendret når nettverket er helt borte.
 sted, rammer og værbånd synlig mens Yr hentes på nytt; dette er dekket av
 cache-/snapshot-regresjonene.
 
-**AUTO-214 · ÅPEN** — Test at cachelagret oppdateringstid vises likt i hjem,
-widget og Watch-overføring.
+**AUTO-214 · FULLFØRT 2026-09-17** — La til regresjonstest som følger samme
+cachelagrede hentetid og sted-ID fra widgetsnapshot til Watch-overføring.
+
+**AUTO-215 · ÅPEN** — Test at appen viser cache fra siste kjente sted når
+GPS-oppstart ikke får posisjon.
+
+**AUTO-216 · ÅPEN** — Kontroller at foreldet status oppdateres ved passering
+av to-timersgrensen uten å endre selve prognosen.
+
+**AUTO-217 · ÅPEN** — Test at en ny vellykket refresh erstatter gammel cache
+og fjerner foreldet visuell status.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

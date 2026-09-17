@@ -87,6 +87,20 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(restored.lastUpdate, base)
     }
 
+    func testCachedTimestampIsPreservedAcrossWidgetAndWatchTransfer() throws {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let snapshot = WidgetWeatherSnapshot(
+            place: place, forecast: forecast(values: [(8, 0, 1, 20, 4)]), updatedAt: base
+        )
+        let transfer = WatchWeatherTransfer(snapshot: snapshot, sentAt: base.addingTimeInterval(1))
+        let restored = try JSONDecoder().decode(
+            WatchWeatherTransfer.self,
+            from: JSONEncoder().encode(transfer)
+        )
+        XCTAssertEqual(restored.snapshot?.updatedAt, snapshot.updatedAt)
+        XCTAssertEqual(restored.snapshot?.place.id, snapshot.place.id)
+    }
+
     func testFailedRefreshKeepsOriginalCacheTimestamp() throws {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let hour = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 30, dew: 4)
