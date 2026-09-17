@@ -103,7 +103,7 @@ struct WatchWeatherWidgetView: View {
                     AccessoryWidgetBackground()
                     Circle()
                         .trim(from: 0, to: status.map(progress(for:)) ?? 0.2)
-                        .stroke(tint, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                        .stroke(ringGradient, style: StrokeStyle(lineWidth: 3, lineCap: .round))
                         .rotationEffect(.degrees(-90))
                         .padding(2)
                     VStack(spacing: 1) {
@@ -165,6 +165,13 @@ struct WatchWeatherWidgetView: View {
     private var circularAccessibilityLabel: String {
         guard let status else { return temperature }
         return "\(localized(WeatherGlance.compactEventLabel(for: status, languageStyle: entry.snapshot?.languageStyle ?? .bokmal))), \(compactEventTime(status.eventAt))"
+    }
+
+    private var ringGradient: AngularGradient {
+        // The visible leading edge is urgent red; as the ring gets longer it
+        // transitions through orange to the weather type's normal tint.
+        let colors: [Color] = status == nil ? [tint, tint] : [.red, .orange, tint]
+        return AngularGradient(colors: colors, center: .center, startAngle: .degrees(-90), endAngle: .degrees(270))
     }
 
     private func compactEventTime(_ date: Date) -> String {

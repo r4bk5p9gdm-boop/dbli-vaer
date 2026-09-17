@@ -54,6 +54,10 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-041 · FULLFØRT 2026-09-17** — Nedtellingsringen på Watch har nå
+fargegradering: varselfargen går via oransje til rød nær hendelsen, slik at
+«snart» blir synlig uten å lese klokkeslettet.
+
 **BRUKER-040 · FULLFØRT 2026-09-17** — Watch-sirkelens kantlinje er nå en
 nedtellingsring: den starter full ved begynnelsen av 12-timersvinduet og blir
 kortere fram mot hendelsen, med fargen for aktuell varseltype beholdt.
