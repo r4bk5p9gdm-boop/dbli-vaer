@@ -138,8 +138,10 @@ til widget/Watch; la til regresjonstest.
 gjenoppretting av flere steders prognoser. Hver sted-ID beholder sin egen cache
 og kan vises parallelt uten nye nettverkskall.
 
-**AUTO-207 · ÅPEN** — Test at cachelagret Yr-tidspunkt formateres stabilt i
-lokal tidssone på tvers av sommertid.
+**AUTO-207 · FULLFØRT 2026-09-17** — Eksisterende
+`testWidgetHourLabelsUseLocalTimeAcrossOsloMidnightAndDST` dekker lokal
+tidssone og sommertid. Cachelagret hentetid formatteres med appens lokale
+tidssone, ikke Yr-/UTC-tid.
 
 **AUTO-208 · ÅPEN** — Kontroller at lagret cache ikke vokser uten grense når
 prognoser oppdateres mange ganger.
