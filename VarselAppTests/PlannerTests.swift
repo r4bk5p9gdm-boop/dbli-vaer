@@ -100,6 +100,20 @@ final class PlannerTests: XCTestCase {
         XCTAssertNil(decoded.forecasts[second.id])
     }
 
+    func testPersistedCacheCanBeFilteredToKnownPlaces() throws {
+        let known = Place(name: "Klinga", lat: 64, lon: 11)
+        let deletedID = UUID()
+        let state = PersistedStoreState(
+            places: [known], selectedID: known.id, log: [],
+            forecasts: [known.id: forecast(values: [(8, 0, 1, 20, 4)]), deletedID: forecast(values: [(3, 0, 1, 100, 1)])],
+            forecastUpdatedAt: [known.id: base, deletedID: base]
+        )
+        let decoded = try JSONDecoder().decode(PersistedStoreState.self, from: JSONEncoder().encode(state))
+        let knownIDs = Set(decoded.places.map(\.id))
+        XCTAssertEqual(decoded.forecasts.filter { knownIDs.contains($0.key) }.count, 1)
+        XCTAssertFalse(knownIDs.contains(deletedID))
+    }
+
     func testHomeSwipeOrderUsesPositionThenStarsAndDeduplicates() {
         let position = UUID()
         let star1 = UUID()

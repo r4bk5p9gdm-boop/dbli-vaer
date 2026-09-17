@@ -314,8 +314,9 @@ final class Store: ObservableObject {
             places = Self.launchPlaces; selectedID = places.first?.id; log = []
             UserDefaults.standard.set(launchPlacesVersion, forKey: launchPlacesVersionKey)
         }
-        rawForecasts = restoredForecasts
-        forecastUpdatedAt = restoredForecastUpdatedAt
+        let knownPlaceIDs = Set(places.map(\.id))
+        rawForecasts = restoredForecasts.filter { knownPlaceIDs.contains($0.key) }
+        forecastUpdatedAt = restoredForecastUpdatedAt.filter { knownPlaceIDs.contains($0.key) }
         lastUpdate = restoredLastUpdate
 
         if selectedID.map({ id in places.contains { $0.id == id } }) != true {

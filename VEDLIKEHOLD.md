@@ -130,8 +130,18 @@ dekoder sted, prognose og hentetid fra lagret tilstand uten nettverkskall.
 mislykket refresh: siste prognose beholdes med opprinnelig hentetid, slik at
 gammel cache ikke ser ferskere ut enn den er.
 
-**AUTO-205 · ÅPEN** — Kontroller at cache begrenses til kjente sted-ID-er ved
-lasting, slik at slettede steder ikke blir liggende i minnet.
+**AUTO-205 · FULLFØRT 2026-09-17** — Cache filtreres nå mot stedene som
+faktisk lastes inn. Slettede/ukjente ID-er beholdes ikke i minnet eller videre
+til widget/Watch; la til regresjonstest.
+
+**AUTO-206 · ÅPEN** — Test at cache fra flere steder fortsatt kan vises
+parallelt etter oppstart uten ekstra nettverkskall.
+
+**AUTO-207 · ÅPEN** — Test at cachelagret Yr-tidspunkt formateres stabilt i
+lokal tidssone på tvers av sommertid.
+
+**AUTO-208 · ÅPEN** — Kontroller at lagret cache ikke vokser uten grense når
+prognoser oppdateres mange ganger.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
