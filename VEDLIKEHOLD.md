@@ -219,8 +219,18 @@ Temperaturformat-regresjonene låser identisk visning etter oppstart.
 én tilgjengelig stedscache er nok til å tegne rammer og værbånd, uavhengig av
 om andre steder mangler data.
 
-**AUTO-226 · ÅPEN** — Test at cachelagret oppdateringstid ikke overskrives av
-en tom bakgrunnsoppdatering.
+**AUTO-226 · FULLFØRT 2026-09-17** — Bakgrunnsrefresh avviser tomme svar før
+cache og hentetid oppdateres. Dermed forblir både foreldet-status og siste
+gyldige prognose korrekte ved dekningstap.
+
+**AUTO-227 · ÅPEN** — Test at cachede prognoser overlever bakgrunnsoppdatering
+som avbrytes.
+
+**AUTO-228 · ÅPEN** — Kontroller at cachelagring ikke blokkerer hovedtråden
+ved oppstart.
+
+**AUTO-229 · ÅPEN** — Test at siste oppdateringstid er stabil når flere steder
+oppdateres samtidig.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
