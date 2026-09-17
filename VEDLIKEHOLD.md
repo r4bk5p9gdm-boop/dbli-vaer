@@ -63,8 +63,19 @@ Stjerne 1 → Stjerne 2 med duplikatfjerning.
 `WatchPlaceSettings.resolvedPlaceID`, med trygg tilbakeføring til valgt sted
 ved slettet/ugyldig fast UUID og regresjonstest for dette tilfellet.
 
-**AUTO-190 · ÅPEN** — Kontroller at CarPlay-delingslisten oppdateres når
-Stjerne 1 eller Stjerne 2 endres, uten å skrive identiske widgetdata på nytt.
+**AUTO-190 · FULLFØRT 2026-09-17** — Bekreftet idempotent lagring av
+CarPlay-/widgetdelingslisten: identiske stedslister skrives ikke på nytt, mens
+endret rekkefølge oppdateres. La til regresjonstest for begge tilfeller.
+
+**AUTO-191 · ÅPEN** — Legg til regresjonstest for at sletting av delt
+stedsliste rydder både stedssammendrag og værsnapshot uten å etterlate gammel
+CarPlay-data.
+
+**AUTO-192 · ÅPEN** — Test at et tomt eller ufullstendig prognosesvar ikke
+overskriver siste gyldige widget-/Watch-snapshot.
+
+**AUTO-193 · ÅPEN** — Test at raskt etterfølgende Watch-overføringer beholder
+nyeste sted og avviser eldre overføring etter omstart.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

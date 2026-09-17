@@ -1651,6 +1651,18 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(Set(summaries.map(\.id)).count, 3)
     }
 
+    func testSharedWidgetPlacesOnlyWriteWhenOrderOrContentChanges() {
+        let first = Place(name: "Klinga", lat: 64, lon: 11)
+        let second = Place(name: "Hornburu", lat: 64.1, lon: 11.1)
+        SharedWidgetData.clear()
+        defer { SharedWidgetData.clear() }
+
+        XCTAssertTrue(SharedWidgetData.saveSharedPlaces([first, second]))
+        XCTAssertFalse(SharedWidgetData.saveSharedPlaces([first, second]))
+        XCTAssertTrue(SharedWidgetData.saveSharedPlaces([second, first]))
+        XCTAssertEqual(SharedWidgetData.loadSharedPlaces().map(\.id), [second.id, first.id])
+    }
+
     @MainActor
     func testNotificationPlanLogReportsActualSchedulingResult() {
         XCTAssertEqual(
