@@ -184,8 +184,9 @@ sammenlignes med eksisterende bytes før lagring.
 temperaturjustering brukes likt i hjem, push og widget ved delvise prognoser.
 Fersk og cached widgetprognose bruker samme justering uten dobbel påføring.
 
-**AUTO-181 · ÅPEN** — Legg til regresjon for vindkastgrenser ved manglende
-vindkastverdi, slik at vind ikke feilaktig varsles som null.
+**AUTO-181 · FULLFØRT 2026-09-16** — La til regresjon for vindkastgrenser
+ved manglende vindkastverdi. Vindvarsling krever eksplisitt, endelig
+vindkastverdi og faller aldri tilbake til middelvind.
 
 **AUTO-182 · ÅPEN** — Kontroller at widget-refresh ikke oppdaterer tidslinjen
  når snapshot og delte steder er identiske.
@@ -216,10 +217,6 @@ egen visningstittel endres uten koordinatendring.
 **AUTO-182 · FULLFØRT 2026-09-16** — Widget- og Watch-synkronisering
  rapporterer nå om snapshot/stedsliste faktisk endret seg. Identiske data
  sender ikke ny Watch-overføring eller widget-tidslinjereload.
-
-**AUTO-181 · FULLFØRT 2026-09-16** — Vindvarsling krever eksplisitt,
- endelig vindkastverdi og faller aldri tilbake til middelvind. Regresjonstesten
- dekker manglende, NaN og uendelig kastverdi.
 
 **AUTO-174 · FULLFØRT 2026-09-16** — Sen GPS-respons overstyrer ikke lenger
 et manuelt stedvalg som ble gjort mens posisjonsoppslaget pågikk. Beskyttelsen
