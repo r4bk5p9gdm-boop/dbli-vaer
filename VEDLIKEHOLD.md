@@ -123,11 +123,9 @@ tidslinjen. Dagshodet er én venstrejustert tekstlinje: «Resten av i dag,
 [ukedag] [dato]», «I morgen, [dato]» eller «[ukedag] [dato]». Separat
 datotekst til høyre er fjernet.
 
-**BRUKER-020 · ÅPEN** — Vis også 07 på høyre kant etter tredje felt, slik at
+**BRUKER-020 · FULLFØRT 2026-09-16** — Øvre kantlinje viser 07 ved start,
+15 og 23 ved mellomgrensene, samt en avsluttende 07 etter nattfeltet, slik at
 07–15–23–07 markerer hele værdøgnet.
-
-**BRUKER-020 · FULLFØRT 2026-09-16** — Øvre kantlinje viser nå 07 ved start,
-15 og 23 ved mellomgrensene, samt en avsluttende 07 etter nattfeltet.
 
 **BRUKER-019 · ÅPEN** — Plasser tidsmarkørene på øvre kantlinje mellom
 radetiketten og værfeltene: 07 ved start, 15 mellom første og andre felt, og
