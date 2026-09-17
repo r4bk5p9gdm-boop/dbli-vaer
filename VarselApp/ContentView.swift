@@ -143,17 +143,11 @@ struct HomeView: View {
     }
 
     private var swipePlaces: [Place] {
-        let favorites = store.resolvedHomeFavorites
-        let position = store.currentLocationPlaceID.flatMap { id in store.places.first { $0.id == id } }
-        let favorite1 = favorites.right.flatMap { id in store.places.first { $0.id == id } }
-        let favorite2 = favorites.left.flatMap { id in store.places.first { $0.id == id } }
-        // Stable order keeps the three dots and both swipe directions in sync:
-        // current position, star 1, star 2.
-        return [position, favorite1, favorite2]
-            .compactMap { $0 }
-            .reduce(into: [Place]()) { result, place in
-                if !result.contains(where: { $0.id == place.id }) { result.append(place) }
-            }
+        // Use the same source as widgets/CarPlay so dots and swipe direction
+        // cannot drift from the shared-device place order.
+        return store.homeSwipePlaceIDs.compactMap { id in
+            store.places.first { $0.id == id }
+        }
     }
 
     var body: some View {

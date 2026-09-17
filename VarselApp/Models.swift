@@ -44,6 +44,14 @@ enum WatchPlaceSettings {
 enum HomeSwipeSelection {
     static func shouldShowHint(placeCount: Int) -> Bool { placeCount > 1 }
 
+    /// Shared home-page order: live position first, then the two starred
+    /// places. Missing or repeated IDs are removed without changing order.
+    static func orderedHomeIDs(positionID: UUID?, favorite1ID: UUID?, favorite2ID: UUID?) -> [UUID] {
+        [positionID, favorite1ID, favorite2ID].compactMap { $0 }.reduce(into: [UUID]()) { result, id in
+            if !result.contains(id) { result.append(id) }
+        }
+    }
+
     static func orderedIDs(leftID: UUID?, currentID: UUID?, rightID: UUID?) -> [UUID] {
         [leftID, currentID, rightID].compactMap { $0 }.reduce(into: [UUID]()) { result, id in
             if !result.contains(id) { result.append(id) }

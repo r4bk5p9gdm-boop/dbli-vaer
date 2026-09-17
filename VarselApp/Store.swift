@@ -210,14 +210,13 @@ final class Store: ObservableObject {
     }
     var homeSwipePlaceIDs: [UUID] {
         let favorites = resolvedHomeFavorites
-        let ids = [
-            currentLocationPlaceID,
-            favorites.right,
-            favorites.left
-        ].compactMap { $0 }
-        return ids.reduce(into: [UUID]()) { result, id in
-            if !result.contains(id), places.contains(where: { $0.id == id }) { result.append(id) }
-        }
+        let ids = HomeSwipeSelection.orderedHomeIDs(
+            positionID: currentLocationPlaceID,
+            favorite1ID: favorites.right,
+            favorite2ID: favorites.left
+        )
+        let available = Set(places.map(\.id))
+        return ids.filter { available.contains($0) }
     }
     @Published var sharedPlaceSelection: SharedPlaceSelection = {
         guard let data = UserDefaults.standard.data(forKey: "varsel.sharedPlaces"), let value = try? JSONDecoder().decode(SharedPlaceSelection.self, from: data) else { return SharedPlaceSelection() }

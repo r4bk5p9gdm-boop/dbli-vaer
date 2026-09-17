@@ -24,6 +24,21 @@ private final class FakeNotificationCenter: NotificationCenterClient {
 }
 
 final class PlannerTests: XCTestCase {
+    func testHomeSwipeOrderUsesPositionThenStarsAndDeduplicates() {
+        let position = UUID()
+        let star1 = UUID()
+        let star2 = UUID()
+
+        XCTAssertEqual(
+            HomeSwipeSelection.orderedHomeIDs(positionID: position, favorite1ID: star1, favorite2ID: star2),
+            [position, star1, star2]
+        )
+        XCTAssertEqual(
+            HomeSwipeSelection.orderedHomeIDs(positionID: position, favorite1ID: position, favorite2ID: star2),
+            [position, star2]
+        )
+    }
+
     private let base = Date(timeIntervalSince1970: 2_000_000_000)
 
     func testSharedPlaceSelectionResolvesOnlyExistingUniquePlacesAndCapsAtThree() {
