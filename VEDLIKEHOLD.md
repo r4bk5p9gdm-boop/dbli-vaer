@@ -119,8 +119,18 @@ forblir den samme.
 enkeltpost-filtrering for prognoser og tidspunkt. En skadet stedspost forkastes
 alene, mens øvrige prognoser fortsatt lastes. La til regresjonstest.
 
-**AUTO-202 · ÅPEN** — Kontroller at cachelagring ikke skjer for tomme eller
-ugyldige prognoser etter manuell oppdatering.
+**AUTO-202 · FULLFØRT 2026-09-17** — Manuell stedshenting bruker nå samme
+`isUsableForecast`-sperre som masseoppdatering. Tomme Yr-svar lagres ikke og
+kan derfor ikke overskrive siste gyldige cache; la til regresjonstest.
+
+**AUTO-203 · ÅPEN** — Test at cachelagret prognose gjenbrukes etter omstart
+selv når nettverket er utilgjengelig.
+
+**AUTO-204 · ÅPEN** — Test at gammel cache ikke får oppdatert hentetid ved en
+mislykket refresh.
+
+**AUTO-205 · ÅPEN** — Kontroller at cache begrenses til kjente sted-ID-er ved
+lasting, slik at slettede steder ikke blir liggende i minnet.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

@@ -2603,6 +2603,10 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(Store.isUsableForecast(forecast(values: [(8, 0, 1, 40, 3)])))
     }
 
+    func testManualPlaceRefreshRejectsEmptyYrResponseBeforeCaching() {
+        XCTAssertFalse(Store.isUsableForecast([]), "Tomt Yr-svar skal ikke bli ny cache")
+    }
+
     func testEmptyForecastCreatesNoSnowAlert() {
         let rule = Rule(type: .sno)
         let result = Planner.plan(rule: rule, forecast: [], placeName: "Klinga", now: base)

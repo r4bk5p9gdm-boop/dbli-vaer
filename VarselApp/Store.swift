@@ -712,6 +712,7 @@ final class Store: ObservableObject {
         do {
             let forecast = try await YrService.fetch(lat: place.lat, lon: place.lon)
             guard !Task.isCancelled,
+                  Self.isUsableForecast(forecast),
                   !Self.currentRecipients(for: [place], in: places).isEmpty else { return }
             forecasts[place.id] = forecast
             forecastUpdatedAt[place.id] = Date()
