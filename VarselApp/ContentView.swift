@@ -1351,6 +1351,7 @@ private struct PlaceRow: View {
     @EnvironmentObject private var store: Store
     let place: Place
     var compact = false
+    @AppStorage("varsel.homePlaceID") private var homePlaceID = ""
     @State private var showingNameEditor = false
     @State private var nameDraft = ""
 
@@ -1379,6 +1380,12 @@ private struct PlaceRow: View {
                             .font(compact ? .body.weight(.medium) : .title3.weight(.light))
                     }
                     .buttonStyle(.plain)
+                    if homePlaceID == place.id.uuidString {
+                        Image(systemName: "house.fill")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .accessibilityLabel("Hjemsted")
+                    }
                 }
                 Spacer()
                 if let current = store.forecasts[place.id]?.first {

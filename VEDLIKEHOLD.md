@@ -54,6 +54,10 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-214 · FULLFØRT 2026-09-17** — Redigeringslisten viser nå et lite
+hjemikon ved stedet som er valgt som hjemsted, slik at avstandsgrunnlaget for
+automatisk sortering er synlig uten å åpne innstillingene.
+
 **AUTO-213 · FULLFØRT 2026-09-17** — Når hjemstedet slettes fra
 redigeringslisten, nullstilles hjemstedreferansen samtidig. Automatisk
 avstandsrekkefølge faller dermed ikke tilbake på en foreldet UUID.
