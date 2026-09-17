@@ -168,8 +168,9 @@ regnregler og vind.
 følger med ved bytte av sted i hjem-swipe og ved widget-snapshot. Testen
 dekker inntrøndersk språk og valgt skilletegn etter Watch/widget-dekoding.
 
-**AUTO-177 · ÅPEN** — Kontroller at bakgrunnsoppdatering ikke skriver over
-nyere manuelle stedvalg når flere refresh-kall avsluttes i ulik rekkefølge.
+**AUTO-177 · FULLFØRT 2026-09-16** — Kontrollerte at bakgrunnsoppdatering
+ikke skriver over nyere manuelle stedvalg når flere refresh-kall avsluttes i
+ulik rekkefølge. Refresh-køen avbryter foreldede ventende oppdateringer.
 
 **AUTO-178 · ÅPEN** — Kontroller at tom eller delvis prognose ikke gir en
 tom roterende hjemstatus når det fortsatt finnes en gyldig Nå-status.
@@ -228,10 +229,6 @@ egen visningstittel endres uten koordinatendring.
 **AUTO-178 · FULLFØRT 2026-09-16** — Statusberegningen beholder en gyldig
  Nå-status også når Yr bare leverer én prognosetime. Ny test dekker kort og
  delvis prognose med duggfall.
-
-**AUTO-177 · FULLFØRT 2026-09-16** — Refresh-køen er verifisert med test som
-viser at en avbrutt, ventende oppdatering ikke starter og ikke kan overskrive
-en nyere oppdatering. Køen fortsetter deretter med neste gyldige arbeid.
 
 **AUTO-174 · FULLFØRT 2026-09-16** — Sen GPS-respons overstyrer ikke lenger
 et manuelt stedvalg som ble gjort mens posisjonsoppslaget pågikk. Beskyttelsen
