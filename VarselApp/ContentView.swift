@@ -1082,6 +1082,7 @@ struct PlacesView: View {
                 guard let homeLocation else { return lhs.offset < rhs.offset }
                 let left = CLLocation(latitude: lhs.element.lat, longitude: lhs.element.lon).distance(from: homeLocation)
                 let right = CLLocation(latitude: rhs.element.lat, longitude: rhs.element.lon).distance(from: homeLocation)
+                guard left.isFinite, right.isFinite else { return lhs.offset < rhs.offset }
                 return left == right ? lhs.offset < rhs.offset : left < right
             }.map(\.element)
     }

@@ -54,6 +54,10 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-215 · FULLFØRT 2026-09-17** — Avstandsrekkefølgen tåler nå ugyldige
+koordinater uten at sorteringen blir ustabil. Slike steder beholder lagret
+rekkefølge i stedet for å forstyrre resten av stedslisten.
+
 **AUTO-214 · FULLFØRT 2026-09-17** — Redigeringslisten viser nå et lite
 hjemikon ved stedet som er valgt som hjemsted, slik at avstandsgrunnlaget for
 automatisk sortering er synlig uten å åpne innstillingene.
