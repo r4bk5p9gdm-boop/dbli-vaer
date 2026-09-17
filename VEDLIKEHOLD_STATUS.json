@@ -2,6 +2,6 @@
   "continue": true,
   "lastScheduledStart": "2026-09-13T05:15:12.787Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-177 køført: fullført refresh-køtest er ikke lenger registrert som ÅPEN.",
+  "lastProgress": "AUTO-178 køført: fullført delvis-prognosetest er ikke lenger registrert som ÅPEN.",
   "stopReason": "AUTO-modus aktiv med 15 minutters intervall: BRUKER-016 er fullført, og neste AUTO-oppgave tas ved neste kjøring."
 }

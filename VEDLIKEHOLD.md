@@ -172,8 +172,9 @@ dekker inntrøndersk språk og valgt skilletegn etter Watch/widget-dekoding.
 ikke skriver over nyere manuelle stedvalg når flere refresh-kall avsluttes i
 ulik rekkefølge. Refresh-køen avbryter foreldede ventende oppdateringer.
 
-**AUTO-178 · ÅPEN** — Kontroller at tom eller delvis prognose ikke gir en
-tom roterende hjemstatus når det fortsatt finnes en gyldig Nå-status.
+**AUTO-178 · FULLFØRT 2026-09-16** — Kontrollerte at tom eller delvis
+prognose ikke gir tom roterende hjemstatus når det fortsatt finnes en gyldig
+Nå-status. Statusberegningen beholder siste gyldige Nå-status.
 
 **AUTO-179 · ÅPEN** — Sjekk at widget-cache ikke blir skrevet oftere enn
  nødvendig ved identisk prognose, slik at batteri og bakgrunnsarbeid spares.
@@ -225,10 +226,6 @@ egen visningstittel endres uten koordinatendring.
 **AUTO-179 · FULLFØRT 2026-09-16** — Delte widgetdata sammenlignes nå med
  eksisterende bytes før lagring. Identiske snapshot og stedslister skriver
  ikke UserDefaults på nytt. Test dekker lik, manglende og endret data.
-
-**AUTO-178 · FULLFØRT 2026-09-16** — Statusberegningen beholder en gyldig
- Nå-status også når Yr bare leverer én prognosetime. Ny test dekker kort og
- delvis prognose med duggfall.
 
 **AUTO-174 · FULLFØRT 2026-09-16** — Sen GPS-respons overstyrer ikke lenger
 et manuelt stedvalg som ble gjort mens posisjonsoppslaget pågikk. Beskyttelsen
