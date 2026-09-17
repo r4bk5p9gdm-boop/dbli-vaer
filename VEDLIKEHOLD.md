@@ -194,8 +194,18 @@ refresh- og mottakerregresjonene.
 før widget/Watch-snapshot oppdateres. Dermed er raske sveip mellom favoritter
 deterministiske også når delingsoppdateringen skjer rett etterpå.
 
-**AUTO-220 · ÅPEN** — Test at widgetens siste snapshot beholdes når appen
-starter uten nett og uten tilgjengelig prognose for valgt sted.
+**AUTO-220 · FULLFØRT 2026-09-17** — `Store.widgetSnapshot` faller tilbake
+til siste gyldige snapshot når valgt sted ikke har fersk prognose, også uten
+nett ved oppstart. Eksisterende offline-/fallbacktester dekker dette.
+
+**AUTO-221 · ÅPEN** — Test at lokal cache og widgetsnapshot bruker samme
+stedidentitet etter koordinatjustering innen Yr-presisjon.
+
+**AUTO-222 · ÅPEN** — Kontroller at refresh-feilteksten ikke erstatter
+cachede værbånd når gammel prognose fortsatt finnes.
+
+**AUTO-223 · ÅPEN** — Test at cachelagret språk og skilletegn følger med ved
+offline widget-/Watch-visning.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
