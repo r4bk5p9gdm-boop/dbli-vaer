@@ -174,8 +174,10 @@ struct WatchWeatherWidgetView: View {
     }
 
     private func progress(for status: WeatherStatus) -> CGFloat {
-        let minutes = max(1, status.eventAt.timeIntervalSince(entry.date) / 60)
-        return min(1, max(0.08, CGFloat(1 - minutes / (12 * 60))))
+        // The ring is a countdown: full at the start of the 12-hour window,
+        // shrinking continuously as the event approaches.
+        let remaining = max(0, status.eventAt.timeIntervalSince(entry.date))
+        return min(1, max(0, CGFloat(remaining / (12 * 3_600))))
     }
 
     private var inlineText: String {

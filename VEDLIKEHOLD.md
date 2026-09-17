@@ -54,6 +54,10 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-040 · FULLFØRT 2026-09-17** — Watch-sirkelens kantlinje er nå en
+nedtellingsring: den starter full ved begynnelsen av 12-timersvinduet og blir
+kortere fram mot hendelsen, med fargen for aktuell varseltype beholdt.
+
 **BRUKER-039 · FULLFØRT 2026-09-17** — Prognoser lagres nå lokalt sammen med
 stedene. Ved oppstart vises siste kjente rammer og stedsnavn straks, også uten
 dekning. Yr-linjen viser oppdateringsindikator under henting og får gammel
