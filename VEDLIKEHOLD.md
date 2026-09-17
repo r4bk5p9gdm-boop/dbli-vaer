@@ -143,8 +143,18 @@ og kan vises parallelt uten nye nettverkskall.
 tidssone og sommertid. Cachelagret hentetid formatteres med appens lokale
 tidssone, ikke Yr-/UTC-tid.
 
-**AUTO-208 · ÅPEN** — Kontroller at lagret cache ikke vokser uten grense når
-prognoser oppdateres mange ganger.
+**AUTO-208 · FULLFØRT 2026-09-17** — Cachemodellen har én prognosepost per
+sted-ID; nye oppdateringer erstatter samme nøkkel i stedet for å samle
+versjoner. La til regresjonstest som låser denne egenskapen.
+
+**AUTO-209 · ÅPEN** — Test at prognosecache lagres etter en vellykket
+manuell stedshenting før appen lukkes.
+
+**AUTO-210 · ÅPEN** — Kontroller at cache og hentetid oppdateres samlet, slik
+at Yr-linjen ikke viser nytt klokkeslett med gamle værdata.
+
+**AUTO-211 · ÅPEN** — Test at appens første visning bruker cache før en
+nettverksoppdatering fullføres.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

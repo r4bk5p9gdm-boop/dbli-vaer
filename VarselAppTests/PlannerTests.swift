@@ -134,6 +134,16 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(knownIDs.contains(deletedID))
     }
 
+    func testForecastCacheReplacesSamePlaceInsteadOfAccumulatingVersions() {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let first = forecast(values: [(8, 0, 1, 20, 4)])
+        let second = forecast(values: [(9, 0, 1, 30, 5)])
+        var cache: [UUID: [ForecastHour]] = [place.id: first]
+        cache[place.id] = second
+        XCTAssertEqual(cache.count, 1)
+        XCTAssertEqual(cache[place.id]?.first?.temp, 9)
+    }
+
     func testHomeSwipeOrderUsesPositionThenStarsAndDeduplicates() {
         let position = UUID()
         let star1 = UUID()
