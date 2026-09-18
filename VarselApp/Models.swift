@@ -232,7 +232,7 @@ enum WeatherLanguage {
             // these replacements before the generic «nå» -> «no» mapping.
             .replacingOccurrences(of: "Litt regn nå", with: LanguageCatalog.value("now.rain_light", language: "tr", fallback: "D regne litt no"))
             .replacingOccurrences(of: "Mulig regn nå", with: LanguageCatalog.value("now.rain_possible", language: "tr", fallback: "D kan bli regn no"))
-            .replacingOccurrences(of: "Regn nå", with: LanguageCatalog.value("now.rain", language: "tr", fallback: "D regne no"))
+            .replacingOccurrences(of: "Regn nå", with: LanguageCatalog.value("now.rain", language: "tr", fallback: "D Regne!"))
             .replacingOccurrences(of: "Snø nå", with: LanguageCatalog.value("now.snow", language: "tr", fallback: "D snør no"))
             .replacingOccurrences(of: "Vindkast nå", with: LanguageCatalog.value("now.wind", language: "tr", fallback: "D blæs no"))
             .replacingOccurrences(of: "Vind nå", with: LanguageCatalog.value("now.wind", language: "tr", fallback: "D blæs no"))
