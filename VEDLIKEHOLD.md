@@ -1939,3 +1939,6 @@ Ingen.
 - **BRUKER-074 · FULLFØRT 2026-09-18** — Utvidet stedskortene på Steder:
   trykk på en stedrad viser nå samme tredagers værbånd med varselsrader som
   Hjem, mens den kompakte raden fortsatt brukes når stedet er lukket.
+- **BRUKER-075 · FULLFØRT 2026-09-18** — Tilbakestilte Steder-oversikten til
+  den tidligere nå-visningen: alle steder viser nå værkort med aktuell
+  temperatur, værstatus og roterende nå-varsel direkte i oversikten.

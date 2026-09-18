@@ -1082,7 +1082,6 @@ struct PlacesView: View {
     @State private var locationError: String?
     @State private var showingExporter = false
     @State private var editingPlaces = false
-    @State private var expandedPlaceID: UUID?
     @AppStorage(PlaceOrderingSettings.homePlaceIDKey) private var homePlaceID = ""
     @AppStorage(PlaceOrderingSettings.sortModeKey) private var placeSortMode = PlaceSortMode.automatic.rawValue
 
@@ -1183,57 +1182,33 @@ struct PlacesView: View {
                     ScrollView {
                         LazyVStack(spacing: 12) {
                             ForEach(orderedPlaces) { place in
-                                Button {
-                                    withAnimation(.easeInOut(duration: 0.22)) {
-                                        expandedPlaceID = expandedPlaceID == place.id ? nil : place.id
-                                    }
-                                } label: {
-                                    PlaceOverviewRow(
-                                        place: place,
-                                        forecast: store.forecasts[place.id] ?? [],
-                                        isExpanded: expandedPlaceID == place.id,
-                                        forecastError: store.forecastErrors[place.id]
-                                    )
-                                }
-                                .buttonStyle(.plain)
-
-                                if expandedPlaceID == place.id,
-                                   let forecast = store.forecasts[place.id],
-                                   !forecast.isEmpty {
+                                if let forecast = store.forecasts[place.id], !forecast.isEmpty {
                                     CurrentWeatherCard(
                                         place: place,
                                         places: store.places,
                                         forecast: Array(forecast.prefix(72)),
                                         languageStyle: store.alertLanguageStyle,
                                         isCurrentLocation: false,
-                                        onSelect: { _ in },
-                                        onEdit: { editingPlaces = true },
+                                        onSelect: { place in onOpen(place) },
                                         showsPlaceMenu: false
                                     )
-                                    VStack(alignment: .leading, spacing: 8) {
+                                    .contentShape(RoundedRectangle(cornerRadius: 18))
+                                    .onTapGesture { onOpen(place) }
+                                } else {
+                                    VStack(alignment: .leading, spacing: 5) {
                                         HStack {
-                                            Text("Neste 3 døgn")
-                                                .font(.subheadline.weight(.semibold))
-                                            Spacer()
-                                            Text("Yr.no")
-                                                .font(.caption)
-                                                .foregroundStyle(.secondary)
+                                            WeatherWordmark(languageStyle: store.alertLanguageStyle)
+                                            Text(place.nameWithPreposition)
+                                                .font(.headline)
+                                                .foregroundStyle(.blue)
                                         }
-                                        ForecastVariantsView(
-                                            forecast: Array(forecast.prefix(72)),
-                                            rules: place.rulesForDisplay,
-                                            frostMargin: place.localFrostMargin,
-                                            mode: .weatherBands,
-                                            sunThreshold2: place.resolvedDisplaySunThreshold2,
-                                            temperatureLowThreshold: place.resolvedDisplayTemperatureThreshold,
-                                            temperatureHighThreshold: place.resolvedDisplayTemperatureHighThreshold,
-                                            latitude: place.lat,
-                                            longitude: place.lon
-                                        )
+                                        Text(store.forecastErrors[place.id] ?? "Henter prognose …")
+                                            .font(.footnote)
+                                            .foregroundStyle(.secondary)
                                     }
-                                    .padding(12)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .background(.background, in: RoundedRectangle(cornerRadius: 18))
+                                    .card()
+                                    .contentShape(Rectangle())
+                                    .onTapGesture { onOpen(place) }
                                 }
                             }
                         }
