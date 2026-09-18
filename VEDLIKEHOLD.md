@@ -1955,3 +1955,6 @@ Ingen.
   tredagersvarselet visuelt. Ekspansjonen kommer nå direkte under nå-kortet
   med delt kantlinje og roligere overgang, og Hjem-prikkene er trukket nærmere
   værkortet uten å flyttes bort fra swipe-indikatoren.
+- **BRUKER-079 · FULLFØRT 2026-09-18** — La inn et kodifisert varselmal-
+  utkast øverst i `VARSELTEKSTER.md`, med førstelinje, andrelinje og
+  teksttabeller for regn, snø, vindkast, dugg, frost, sol og temperatur.

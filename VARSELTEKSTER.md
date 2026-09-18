@@ -1,5 +1,89 @@
 # Varseltekster
 
+## Kodifisert varselmal — utkast til gjennomgang
+
+Dette er arbeidsstrukturen for alle værtyper. Måleverdier oversettes først
+til en kort tekst fra tabellene under. Råverdier kan legges til senere dersom
+de er nyttige, men skal ikke være hovedteksten.
+
+### Første linje
+
+```text
+Det blir [Værtype]! [sted] [tid]
+```
+
+Eksempler: `Det blir Regn! på Klinga om tre timer.` ·
+`Det blir Sol! oppi Selbu i morgen.`
+
+`Værtype` har stor forbokstav og utropstegn. `tid` bruker kort språk:
+«om en halvtime», «om tre timer», «i dag», «i kveld», «i natt», «i morgen»
+eller «til helga». Stedet beholder valgt preposisjon.
+
+### Andre linje
+
+```text
+[Beskrivelse] [dag/tid], kl. [TT]
+```
+
+Eksempler: `Kraftig regn i morgen, lørdag kl. 10.` ·
+`Lett snøfall i natt kl. 02.` · `Frisk bris til helga, søndag kl. 14.`
+
+Ved nært varsel kan andre linje være kort: `Litt regn om en halvtime.`
+
+### Teksttabeller — første utkast
+
+#### Regn
+
+| Grunnlag i varselperioden | Tekst |
+|---|---|
+| Svært lite / spredte dråper | Yr eller litt regn |
+| Lite nedbør | Litt regn |
+| Jevnt moderat nedbør | Regn |
+| Stor mengde eller langvarig nedbør | Kraftig regn |
+| Korte, avgrensede perioder | Regnbyger |
+
+#### Snø
+
+| Grunnlag i varselperioden | Tekst |
+|---|---|
+| Svært lite snø | Enkelte snøfnugg |
+| Lite snøfall | Lett snøfall |
+| Jevnt snøfall | Snøfall |
+| Stor mengde eller tett snø | Kraftig snøfall |
+| Korte, avgrensede perioder | Snøbyger |
+| Blanding av regn og snø | Sludd |
+
+#### Vindkast (forenklet Beaufort-ordbok)
+
+| Vindkast | Tekst |
+|---:|---|
+| Under 5 m/s | Lette vindkast |
+| 5–9 m/s | Frisk bris |
+| 10–16 m/s | Kraftige vindkast |
+| 17–23 m/s | Sterk vind |
+| 24 m/s eller mer | Stormkast |
+
+#### Dugg og frost
+
+| Tilstand | Tekst |
+|---|---|
+| Duggpunkt nær lufttemperaturen | Fare for dugg |
+| Duggfall er nært forestående | Duggfall |
+| Lokal frostmargin slår til | Fare for frost |
+| Temperatur faktisk 0 °C eller lavere | Frost |
+
+#### Sol og temperatur
+
+| Tilstand | Tekst |
+|---|---|
+| Lavt skydekke i kortere gløtt | Solgløtt |
+| Lang periode med lite skydekke | Sol |
+| Temperatur under valgt grense | Under [X]° |
+| Temperatur over valgt grense | Over [X]° |
+
+Disse tabellene er et språk- og tekstutkast. Tersklene finjusteres etter at
+Mathias har gått gjennom formuleringene og sett dem i appen.
+
 Referanse for komplette tekster på tvers av iPhone, Apple Watch og CarPlay.
 Hver værtype har samme rekkefølge: app-push, nåstatus, Watch og CarPlay.
 CarPlay kan vise flere korte linjer: først stedene, deretter nærmeste
