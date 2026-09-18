@@ -142,6 +142,9 @@ utvidbar. Trykk på et sted for å åpne værdetaljer inline, uten å hoppe til
 Hjem. Redigeringsknappen i den åpne visningen brukes fortsatt til stjerner og
 annet stedsoppsett.
 
+**BRUKER-066 · FULLFØRT 2026-09-18** — Endret meny- og sidetittelen
+«Varslingsregler» til det enklere «Varsler».
+
 
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder

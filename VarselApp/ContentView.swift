@@ -96,7 +96,7 @@ struct ContentView: View {
         TabView(selection: $selectedTab) {
             HomeView().tabItem { Label("Hjem", systemImage: "cloud.sun") }.tag(Tab.home)
             PlacesView(onOpen: { place in store.select(place); selectedTab = .home }).tabItem { Label("Steder", systemImage: "mappin.and.ellipse") }.tag(Tab.places)
-            AlertQueueView().tabItem { Label("Varslingsregler", systemImage: "bell.and.waves.left.and.right") }.tag(Tab.queue)
+            AlertQueueView().tabItem { Label("Varsler", systemImage: "bell.and.waves.left.and.right") }.tag(Tab.queue)
             GlobalSettingsView(showsDoneButton: false)
                 .tabItem { Label("Innstillinger", systemImage: "gearshape") }
                 .tag(Tab.settings)
@@ -1027,7 +1027,7 @@ struct AlertQueueView: View {
                     }
                 }
             }
-            .navigationTitle("Varslingsregler")
+            .navigationTitle("Varsler")
             .refreshable { _ = await store.refreshAll() }
         }
     }
