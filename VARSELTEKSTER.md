@@ -188,6 +188,10 @@ vanligvis den lille systemwidgeten.
 
 ## Sol
 
+I solvarsler betyr «om» når solperioden starter, mens «i» beskriver hvor
+lenge den varer. Derfor er «Sol om 4 timer» en startbeskjed, mens «Sol i fire
+timer» er varigheten.
+
 | Situasjon | Full tekst |
 |---|---|
 | **App push-varsel** |  |

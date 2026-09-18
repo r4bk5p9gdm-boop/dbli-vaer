@@ -1968,3 +1968,5 @@ Ingen.
   værtyper i `VARSELTEKSTER.md` etter malen: «Det blir/kan bli [Værtype]!",
   kort tid i første linje og tekstlig beskrivelse med dag, klokkeslett og
   varighet i andre linje.
+- **BRUKER-083 · FULLFØRT 2026-09-18** — Samordnet sol-eksemplene og la inn
+  eksplisitt språkregel: «om» brukes for starttidspunkt, «i» for varighet.
