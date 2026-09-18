@@ -181,7 +181,10 @@ private struct WeatherBandsForecast: View {
         rules.filter { [.regn, .sno, .dugg].contains($0.type) }
     }
     private var otherRules: [Rule] {
-        rules.filter { ![.regn, .sno, .dugg].contains($0.type) }
+        rules.filter { ![.regn, .sno, .dugg, .frost].contains($0.type) }
+    }
+    private var temperatureRules: [Rule] {
+        otherRules.filter { $0.type == .temperatur } + rules.filter { $0.type == .frost }
     }
 
     private var isToday: Bool {
@@ -236,13 +239,15 @@ private struct WeatherBandsForecast: View {
                         }
                     }
                     ForEach(AlertType.allCases.filter { type in
-                        otherRules.contains { $0.type == type }
+                        otherRules.contains { $0.type == type } || (type == .temperatur && !temperatureRules.isEmpty)
                     }) { type in
-                        let typeRules = otherRules.filter { $0.type == type }
+                        let typeRules = type == .temperatur ? temperatureRules : otherRules.filter { $0.type == type }
                         HStack(spacing: 7) {
                             WeatherBandLabel(
                                 title: type.label,
-                                systemImage: type.systemImage,
+                                systemImage: type == .temperatur && typeRules.contains(where: { $0.type == .frost })
+                                    ? "thermometer.snowflake"
+                                    : type.systemImage,
                                 color: type.color,
                                 showsNotification: typeRules.contains(where: { !$0.isDisplayOnly })
                             )

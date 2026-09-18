@@ -353,8 +353,15 @@ private struct CurrentWeatherCard: View {
                 }
 
                 HStack(spacing: 4) {
-                    Text("\(Int(current.temp.rounded()))°")
-                        .font(.system(size: 29, weight: .light, design: .rounded))
+                    ZStack {
+                        if frostIsActiveNow {
+                            Image(systemName: AlertType.frost.systemImage)
+                                .font(.system(size: 34, weight: .semibold))
+                                .foregroundStyle(AlertType.frost.color.opacity(0.24))
+                        }
+                        Text("\(Int(current.temp.rounded()))°")
+                            .font(.system(size: 29, weight: .light, design: .rounded))
+                    }
                     Image(systemName: currentCondition.systemImage)
                         .font(.system(size: 27, weight: .semibold))
                         .symbolRenderingMode(.hierarchical)
@@ -501,6 +508,10 @@ private struct CurrentWeatherCard: View {
 
     private var currentCondition: CurrentWeatherCondition {
         CurrentWeatherCondition.resolve(current, precipitationIsFalling: precipitation.isFallingNow)
+    }
+
+    private var frostIsActiveNow: Bool {
+        current.temp <= 1 + place.localFrostMargin
     }
 }
 

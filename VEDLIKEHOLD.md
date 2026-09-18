@@ -150,6 +150,10 @@ til neste planlagte pushvarsel (10–60 minutter fram), ikke bare til selve
 værstarten. Regnet kan dermed starte om en time, mens Live Activity begynner
 når pushen skal sendes om et kvarter.
 
+**BRUKER-069 · FULLFØRT 2026-09-18** — Lot frost følge temperatur-raden
+visuelt og la til en frostmarkør bak aktuell temperatur når lokal frostmargin
+slår til. Eksisterende radfarger er beholdt.
+
 
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder
