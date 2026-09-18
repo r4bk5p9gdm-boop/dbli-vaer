@@ -98,6 +98,11 @@ duplisert samleoversikt.
 **BRUKER-052 · FULLFØRT 2026-09-18** — La til en Devices-seksjon som
 grupperer Watch- og CarPlay-tekster under hver værtype.
 
+**BRUKER-053 · FULLFØRT 2026-09-18** — Bygde om VARSELTEKSTER.md slik at
+hver værtype har egne, samlete rader for app-push (sikkert/usikkert),
+nåstatus, Apple Watch-formatene og CarPlay. Duggfall-eksempelet følger den
+godkjente teksten med «D bli Duggfall!» og «D kan bli Duggfall!».
+
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder
 bruker nå samme validering.
