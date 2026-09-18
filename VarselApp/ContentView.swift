@@ -467,18 +467,25 @@ private struct CurrentWeatherCard: View {
     }
 
     private func headline(title: String, detail: String?, systemImage: String, color: Color) -> some View {
-        HStack(spacing: 11) {
-            Image(systemName: systemImage)
-                .font(.title3)
-                .foregroundStyle(color)
-                .frame(width: 28)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title).font(.subheadline.weight(.semibold)).lineLimit(1)
-                if let detail, !detail.isEmpty {
-                    Text(detail).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+        HStack(spacing: 6) {
+            HStack(spacing: 11) {
+                Image(systemName: systemImage)
+                    .font(.title3)
+                    .foregroundStyle(color)
+                    .frame(width: 28)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title).font(.subheadline.weight(.semibold)).lineLimit(1)
+                    if let detail, !detail.isEmpty {
+                        Text(detail).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                    }
                 }
+                Spacer(minLength: 0)
             }
-            Spacer(minLength: 0)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 8)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(color.opacity(0.09), in: RoundedRectangle(cornerRadius: 11))
+
             if let onEdit {
                 Button(action: onEdit) {
                     Image(systemName: "pencil")
@@ -490,9 +497,6 @@ private struct CurrentWeatherCard: View {
                 .accessibilityLabel("Rediger varsler for \(place.displayName)")
             }
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 8)
-        .background(color.opacity(0.09), in: RoundedRectangle(cornerRadius: 11))
     }
 
     private var currentCondition: CurrentWeatherCondition {
