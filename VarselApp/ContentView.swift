@@ -357,7 +357,7 @@ private struct CurrentWeatherCard: View {
                         if frostIsActiveNow {
                             Image(systemName: AlertType.frost.systemImage)
                                 .font(.system(size: 34, weight: .semibold))
-                                .foregroundStyle(AlertType.frost.color.opacity(0.24))
+                                .foregroundStyle(Color.white.opacity(0.34))
                         }
                         Text("\(Int(current.temp.rounded()))°")
                             .font(.system(size: 29, weight: .light, design: .rounded))

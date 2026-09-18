@@ -154,6 +154,9 @@ når pushen skal sendes om et kvarter.
 visuelt og la til en frostmarkør bak aktuell temperatur når lokal frostmargin
 slår til. Eksisterende radfarger er beholdt.
 
+**BRUKER-070 · FULLFØRT 2026-09-18** — Gjorde frostmarkøren bak aktuell
+temperatur hvit og diskret, uten å endre radfargene.
+
 
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder
