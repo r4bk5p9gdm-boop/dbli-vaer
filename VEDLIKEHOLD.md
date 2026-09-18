@@ -1936,3 +1936,6 @@ Ingen.
   koordinatene den bruker, og den tunge radtypeberegningen er delt opp i
   navngitte hjelpeegenskaper. Dette fjerner de rapporterte type- og scope-
   feilene i filen.
+- **BRUKER-074 · FULLFØRT 2026-09-18** — Utvidet stedskortene på Steder:
+  trykk på en stedrad viser nå samme tredagers værbånd med varselsrader som
+  Hjem, mens den kompakte raden fortsatt brukes når stedet er lukket.

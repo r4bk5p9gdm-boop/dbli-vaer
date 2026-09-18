@@ -1203,13 +1203,37 @@ struct PlacesView: View {
                                     CurrentWeatherCard(
                                         place: place,
                                         places: store.places,
-                                        forecast: Array(forecast.prefix(48)),
+                                        forecast: Array(forecast.prefix(72)),
                                         languageStyle: store.alertLanguageStyle,
                                         isCurrentLocation: false,
                                         onSelect: { _ in },
                                         onEdit: { editingPlaces = true },
                                         showsPlaceMenu: false
                                     )
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        HStack {
+                                            Text("Neste 3 døgn")
+                                                .font(.subheadline.weight(.semibold))
+                                            Spacer()
+                                            Text("Yr.no")
+                                                .font(.caption)
+                                                .foregroundStyle(.secondary)
+                                        }
+                                        ForecastVariantsView(
+                                            forecast: Array(forecast.prefix(72)),
+                                            rules: place.rulesForDisplay,
+                                            frostMargin: place.localFrostMargin,
+                                            mode: .weatherBands,
+                                            sunThreshold2: place.resolvedDisplaySunThreshold2,
+                                            temperatureLowThreshold: place.resolvedDisplayTemperatureThreshold,
+                                            temperatureHighThreshold: place.resolvedDisplayTemperatureHighThreshold,
+                                            latitude: place.lat,
+                                            longitude: place.lon
+                                        )
+                                    }
+                                    .padding(12)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(.background, in: RoundedRectangle(cornerRadius: 18))
                                 }
                             }
                         }
