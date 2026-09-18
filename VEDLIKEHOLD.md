@@ -1958,3 +1958,9 @@ Ingen.
 - **BRUKER-079 · FULLFØRT 2026-09-18** — La inn et kodifisert varselmal-
   utkast øverst i `VARSELTEKSTER.md`, med førstelinje, andrelinje og
   teksttabeller for regn, snø, vindkast, dugg, frost, sol og temperatur.
+- **BRUKER-080 · FULLFØRT 2026-09-18** — La varighet inn som fast del av
+  andrelinjemalen, med naturlige formuleringer som «i to timer», «gjennom
+  natta» og «store deler av dagen».
+- **BRUKER-081 · FULLFØRT 2026-09-18** — Definerte kortvarig som forventet
+  varighet under én time. Varighetsleddet kan da sløyfes når det ikke gir
+  ekstra informasjon.

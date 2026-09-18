@@ -22,13 +22,20 @@ eller «til helga». Stedet beholder valgt preposisjon.
 ### Andre linje
 
 ```text
-[Beskrivelse] [dag/tid], kl. [TT]
+[Beskrivelse] [dag/tid], kl. [TT] — [varighet]
 ```
 
-Eksempler: `Kraftig regn i morgen, lørdag kl. 10.` ·
-`Lett snøfall i natt kl. 02.` · `Frisk bris til helga, søndag kl. 14.`
+Eksempler: `Kraftig regn i morgen, lørdag kl. 10 — i to timer.` ·
+`Lett snøfall i natt kl. 02 — gjennom natta.` ·
+`Frisk bris til helga, søndag kl. 14 — i tre timer.`
 
-Ved nært varsel kan andre linje være kort: `Litt regn om en halvtime.`
+Ved nært varsel kan andre linje være kort: `Litt regn om en halvtime — i 20 minutter.`
+
+Varigheten skal også være tekstbasert: «en liten stund», «i 20 minutter»,
+«i to timer», «gjennom natta» eller «store deler av dagen». Unngå rått
+timeantall når en naturlig formulering er bedre. Kortvarig betyr her forventet
+varighet under én time; da kan varighetsleddet sløyfes når det ikke tilfører
+ny informasjon.
 
 ### Teksttabeller — første utkast
 
