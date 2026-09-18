@@ -333,7 +333,7 @@
     "detail.dew_risk": {
       "en": "Risk of dew",
       "nb": "Fare for dugg",
-      "tr": "No e d doggfall"
+      "tr": "D e Duggfall!"
     },
     "detail.snow": {
       "en": "Estimated {mengde} mm of snow over {varighet}.",
