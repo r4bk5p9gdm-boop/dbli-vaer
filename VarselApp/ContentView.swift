@@ -1388,7 +1388,7 @@ private struct PlaceOverviewRow: View {
                     }
                 }
                 if let current {
-                    Text("(Int(current.temp.rounded()))° · (place.enabledRuleCount) aktive (place.enabledRuleCount == 1 ? "varsel" : "varsler")")
+                    Text("\(Int(current.temp.rounded()))° · \(place.enabledRuleCount) aktive \(place.enabledRuleCount == 1 ? "varsel" : "varsler")")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 } else {
@@ -1401,7 +1401,7 @@ private struct PlaceOverviewRow: View {
             if let current {
                 Image(systemName: current.cloud <= 20 ? "sun.max.fill" : (current.precipitationRiskRate >= 0.1 ? "cloud.rain.fill" : "cloud.fill"))
                     .foregroundStyle(current.cloud <= 20 ? .orange : .blue)
-                Text("(Int(current.temp.rounded()))°")
+                Text("\(Int(current.temp.rounded()))°")
                     .font(.title3.weight(.medium))
             }
             Image(systemName: isExpanded ? "chevron.up" : "chevron.down")

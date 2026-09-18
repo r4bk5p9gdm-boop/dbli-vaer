@@ -161,6 +161,9 @@ temperatur hvit og diskret, uten å endre radfargene.
 markering ved faktisk temperatur på 0° eller kaldere, blå markering ved
 frostfare over 0° på grunn av lokal margin, og frostikon i begge tilfeller.
 
+**BRUKER-072 · FULLFØRT 2026-09-18** — Rettet to manglende Swift-
+interpoleringer i den nye utvidbare Steder-raden.
+
 
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder
