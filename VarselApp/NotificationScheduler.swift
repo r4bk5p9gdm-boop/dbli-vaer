@@ -31,6 +31,38 @@ enum NotificationCopy {
         return LanguageCatalog.value(key, language: languageStyle.catalogCode, fallback: fallback, arguments: ["vaertype": localizedWeatherName(for: rule, languageStyle: languageStyle), "sted": placeName, "temperatur": rule.threshold.formatted(.number.precision(.fractionLength(0...1)))]).trimmingCharacters(in: .whitespaces)
     }
 
+    static func title(for rule: Rule, placeName: String, eventAt: Date, referenceAt: Date, possible: Bool = false, languageStyle: AlertLanguageStyle = .bokmal) -> String {
+        let weather = localizedWeatherName(for: rule, languageStyle: languageStyle)
+        let lowerWeather = weather.prefix(1).lowercased() + weather.dropFirst()
+        let timing = shortNotificationTime(eventAt, relativeTo: referenceAt, languageStyle: languageStyle)
+        switch languageStyle {
+        case .english:
+            return "It will be \(lowerWeather) \(placeName) \(timing)."
+        case .inntrondersk:
+            return "D \(possible ? "kan bli" : "bli") \(weather) \(placeName) \(timing)."
+        case .bokmal:
+            return "Det \(possible ? "kan bli" : "blir") \(lowerWeather) \(placeName) \(timing)."
+        }
+    }
+
+    private static func shortNotificationTime(_ eventAt: Date, relativeTo reference: Date, languageStyle: AlertLanguageStyle) -> String {
+        let minutes = max(0, Int((eventAt.timeIntervalSince(reference) / 60).rounded()))
+        if minutes <= 180 {
+            return WeatherLanguage.text(eventTimePhrase(eventAt, relativeTo: reference), style: languageStyle)
+        }
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: eventAt)
+        if calendar.isDate(eventAt, inSameDayAs: reference) {
+            if hour < 6 { return "i natt" }
+            if hour >= 15 { return "i kveld" }
+            return "i dag"
+        }
+        if let tomorrow = calendar.date(byAdding: .day, value: 1, to: reference), calendar.isDate(eventAt, inSameDayAs: tomorrow) {
+            return hour < 6 ? "i natt" : "i morgen"
+        }
+        return "til helga"
+    }
+
     private static func localizedWeatherName(for rule: Rule, languageStyle: AlertLanguageStyle) -> String {
         guard languageStyle == .english else { return alertWeatherName(for: rule) }
         switch rule.type {
@@ -277,7 +309,7 @@ enum NotificationScheduler {
         for a in requested {
             guard !Task.isCancelled else { break }
             let c = UNMutableNotificationContent()
-            c.title = NotificationCopy.title(for: a.rule, placeName: a.placeName, possible: a.possible, languageStyle: languageStyle)
+            c.title = NotificationCopy.title(for: a.rule, placeName: a.placeName, eventAt: a.eventAt, referenceAt: a.fireAt, possible: a.possible, languageStyle: languageStyle)
             c.body = NotificationCopy.message(for: a.rule, eventAt: a.eventAt, referenceAt: a.fireAt, possible: a.possible, eventDetail: a.eventDetail, languageStyle: languageStyle)
             c.sound = a.quiet ? nil : .default
             c.interruptionLevel = a.quiet ? .passive : .active
@@ -362,7 +394,7 @@ enum NotificationScheduler {
         let content = UNMutableNotificationContent()
         // Keep the manual test notification on the exact same copy path as
         // scheduled alerts, including selected language and dialect rules.
-        content.title = NotificationCopy.title(for: rule, placeName: place.nameWithPreposition, possible: possible, languageStyle: languageStyle)
+        content.title = NotificationCopy.title(for: rule, placeName: place.nameWithPreposition, eventAt: eventAt, referenceAt: now, possible: possible, languageStyle: languageStyle)
         content.body = NotificationCopy.message(for: rule, eventAt: eventAt, referenceAt: now, possible: possible, languageStyle: languageStyle)
         content.sound = .default
         content.interruptionLevel = .active

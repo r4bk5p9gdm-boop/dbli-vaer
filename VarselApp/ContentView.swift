@@ -986,7 +986,7 @@ struct AlertQueueView: View {
                                     .foregroundStyle(.orange)
                                     .padding(.top, 3)
                                 VStack(alignment: .leading, spacing: 3) {
-                                    Text(NotificationCopy.title(for: alert.rule, placeName: alert.placeName, possible: alert.possible, languageStyle: store.alertLanguageStyle))
+                                    Text(NotificationCopy.title(for: alert.rule, placeName: alert.placeName, eventAt: alert.eventAt, referenceAt: alert.fireAt, possible: alert.possible, languageStyle: store.alertLanguageStyle))
                                         .font(.subheadline.weight(.semibold))
                                     Text(NotificationCopy.message(for: alert.rule, eventAt: alert.eventAt, referenceAt: alert.fireAt, possible: alert.possible, eventDetail: alert.eventDetail, languageStyle: store.alertLanguageStyle))
                                         .font(.caption).foregroundStyle(.secondary)

@@ -1946,3 +1946,8 @@ Ingen.
   men lagt til trykk-til-ekspandering under hvert kort. Den åpne delen viser
   tredagers værbånd med samme varselsrader og terskler som Hjem, uten en ekstra
   kompakt stedrad.
+- **BRUKER-077 · FULLFØRT 2026-09-18** — Varseloversikten og push-tittelen
+  viser nå værtype, sted og kort tidshorisont i første linje. Nære hendelser
+  bruker «om en halvtime»/«om to timer», mens senere hendelser bruker «i natt»,
+  «i morgen» eller «til helga» uten ukedag. Detaljlinjen beholder presist
+  klokkeslett og mengde.
