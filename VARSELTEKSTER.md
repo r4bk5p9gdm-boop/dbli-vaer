@@ -44,10 +44,14 @@ senere skal kobles til alle visningene.
 ```
 
 Eksempler: `Kraftig regn lørdag, kl. 10 — i to timer.` ·
-`Lett snøfall tirsdag, kl. 02 — gjennom natta.` ·
+`Lett snøfall kl. 02 — gjennom natta.` ·
 `Frisk bris søndag, kl. 14 — i tre timer.`
 
 Ved nært varsel kan andre linje være kort: `Litt regn om en halvtime — i 20 minutter.`
+
+Når første linje allerede sier «i dag», «i kveld» eller «i natt», går andrelinjen
+rett på klokkeslettet: `Lett snøfall kl. 02 — gjennom natta.` Ukedag brukes når
+hendelsen ligger i morgen, senere eller til helga.
 
 Varigheten skal også være tekstbasert: «en liten stund», «i 20 minutter»,
 «i to timer», «gjennom natta» eller «store deler av dagen». Unngå rått
@@ -157,8 +161,8 @@ vanligvis den lille systemwidgeten.
 | Situasjon | Full tekst |
 |---|---|
 | **App push-varsel** |  |
-| Sikkert pushvarsel | **Det blir Snø! oppi Bangdalen i natt.**<br>Lett snøfall tirsdag, kl. 02 — gjennom natta. |
-| Usikkert pushvarsel | **Det kan bli Snø! oppi Bangdalen i natt.**<br>Mulig snø tirsdag, kl. 02 — en liten stund. |
+| Sikkert pushvarsel | **Det blir Snø! oppi Bangdalen i natt.**<br>Lett snøfall kl. 02 — gjennom natta. |
+| Usikkert pushvarsel | **Det kan bli Snø! oppi Bangdalen i natt.**<br>Mulig snø kl. 02 — en liten stund. |
 | **Nåstatus i app** |  |
 | Pågår nå | **Det Snør!**<br>Snø i Nå-varselet den neste halvtimen. |
 | **Apple Watch** |  |
@@ -174,8 +178,8 @@ vanligvis den lille systemwidgeten.
 | Situasjon | Full tekst |
 |---|---|
 | **App push-varsel** |  |
-| Sikkert pushvarsel | **Det blir Frost! på Klinga i natt.**<br>Frost tirsdag, kl. 04 — gjennom natta. |
-| Usikkert pushvarsel | **Det kan bli Frost! på Klinga i natt.**<br>Fare for frost tirsdag, kl. 04 — en liten stund. |
+| Sikkert pushvarsel | **Det blir Frost! på Klinga i natt.**<br>Frost kl. 04 — gjennom natta. |
+| Usikkert pushvarsel | **Det kan bli Frost! på Klinga i natt.**<br>Fare for frost kl. 04 — en liten stund. |
 | **Nåstatus i app** |  |
 | Pågår nå | **D e Frost!**<br>Lokalt anslag er under frostgrensen. |
 | Temperaturgrense | **D bli Under 5°! på Klinga**<br>Temperaturen kan gå under 5° i natt — tirsdag kl. 03. |
@@ -230,7 +234,7 @@ timer» er varigheten.
 | Situasjon | Full tekst |
 |---|---|
 | **App push-varsel** |  |
-| Under grense | **Det blir Under 10°! nerri Namsos i natt.**<br>Under 10° tirsdag, kl. 02 — gjennom natta. |
+| Under grense | **Det blir Under 10°! nerri Namsos i natt.**<br>Under 10° kl. 02 — gjennom natta. |
 | Over grense | **Det blir Over 20°! på Klinga i morgen.**<br>Over 20° onsdag, kl. 14 — i tre timer. |
 | **Nåstatus i app** |  |
 | Pågår nå | **D e Under 10°!**<br>Det er under 10° nå. |

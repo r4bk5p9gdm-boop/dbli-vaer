@@ -1976,3 +1976,6 @@ Ingen.
 - **BRUKER-085 · FULLFØRT 2026-09-18** — Fjernet gjentatt «i morgen»/«i
   natt» fra andrelinjen. Den bruker nå beskrivelse + ukedag + klokkeslett,
   mens tidskategorien står i første linje.
+- **BRUKER-086 · FULLFØRT 2026-09-18** — Forenklet andrelinjen ytterligere
+  for hendelser samme dag, kveld eller natt: den går rett på klokkeslettet
+  når første linje allerede har tidskategorien.
