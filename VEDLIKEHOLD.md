@@ -1951,3 +1951,7 @@ Ingen.
   bruker «om en halvtime»/«om to timer», mens senere hendelser bruker «i natt»,
   «i morgen» eller «til helga» uten ukedag. Detaljlinjen beholder presist
   klokkeslett og mengde.
+- **BRUKER-078 · FULLFØRT 2026-09-18** — Strammet sammen Steder-kortet og
+  tredagersvarselet visuelt. Ekspansjonen kommer nå direkte under nå-kortet
+  med delt kantlinje og roligere overgang, og Hjem-prikkene er trukket nærmere
+  værkortet uten å flyttes bort fra swipe-indikatoren.

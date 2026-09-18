@@ -191,6 +191,8 @@ struct HomeView: View {
                                 }
                             }
                             .frame(maxWidth: .infinity)
+                            .padding(.top, -3)
+                            .padding(.bottom, -2)
                             .accessibilityElement(children: .ignore)
                             .accessibilityLabel("Stedside \(activeIndexForSelectedPlace + 1) av \(pageCount)")
                         }
@@ -1185,49 +1187,57 @@ struct PlacesView: View {
                             ForEach(orderedPlaces) { place in
                                 if let forecast = store.forecasts[place.id], !forecast.isEmpty {
                                     let visibleForecast = Array(forecast.prefix(72))
-                                    CurrentWeatherCard(
-                                        place: place,
-                                        places: store.places,
-                                        forecast: visibleForecast,
-                                        languageStyle: store.alertLanguageStyle,
-                                        isCurrentLocation: false,
-                                        onSelect: { _ in },
-                                        showsPlaceMenu: false
-                                    )
-                                    .contentShape(RoundedRectangle(cornerRadius: 18))
-                                    .onTapGesture {
-                                        withAnimation(.easeInOut(duration: 0.22)) {
-                                            expandedPlaceID = expandedPlaceID == place.id ? nil : place.id
-                                        }
-                                    }
-
-                                    if expandedPlaceID == place.id {
-                                        VStack(alignment: .leading, spacing: 8) {
-                                            HStack {
-                                                Text("Neste 3 døgn")
-                                                    .font(.subheadline.weight(.semibold))
-                                                Spacer()
-                                                Image(systemName: "chevron.up")
-                                                    .font(.caption.weight(.semibold))
-                                                    .foregroundStyle(.secondary)
+                                    VStack(spacing: 0) {
+                                        CurrentWeatherCard(
+                                            place: place,
+                                            places: store.places,
+                                            forecast: visibleForecast,
+                                            languageStyle: store.alertLanguageStyle,
+                                            isCurrentLocation: false,
+                                            onSelect: { _ in },
+                                            showsPlaceMenu: false
+                                        )
+                                        .contentShape(RoundedRectangle(cornerRadius: 18))
+                                        .onTapGesture {
+                                            withAnimation(.easeInOut(duration: 0.22)) {
+                                                expandedPlaceID = expandedPlaceID == place.id ? nil : place.id
                                             }
-                                            ForecastVariantsView(
-                                                forecast: visibleForecast,
-                                                rules: place.rulesForDisplay,
-                                                frostMargin: place.localFrostMargin,
-                                                mode: .weatherBands,
-                                                sunThreshold2: place.resolvedDisplaySunThreshold2,
-                                                temperatureLowThreshold: place.resolvedDisplayTemperatureThreshold,
-                                                temperatureHighThreshold: place.resolvedDisplayTemperatureHighThreshold,
-                                                latitude: place.lat,
-                                                longitude: place.lon
-                                            )
                                         }
-                                        .padding(12)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .background(.background, in: RoundedRectangle(cornerRadius: 18))
-                                        .transition(.opacity.combined(with: .move(edge: .top)))
+
+                                        if expandedPlaceID == place.id {
+                                            VStack(alignment: .leading, spacing: 8) {
+                                                HStack {
+                                                    Text("Neste 3 døgn")
+                                                        .font(.subheadline.weight(.semibold))
+                                                    Spacer()
+                                                    Image(systemName: "chevron.up")
+                                                        .font(.caption.weight(.semibold))
+                                                        .foregroundStyle(.secondary)
+                                                }
+                                                ForecastVariantsView(
+                                                    forecast: visibleForecast,
+                                                    rules: place.rulesForDisplay,
+                                                    frostMargin: place.localFrostMargin,
+                                                    mode: .weatherBands,
+                                                    sunThreshold2: place.resolvedDisplaySunThreshold2,
+                                                    temperatureLowThreshold: place.resolvedDisplayTemperatureThreshold,
+                                                    temperatureHighThreshold: place.resolvedDisplayTemperatureHighThreshold,
+                                                    latitude: place.lat,
+                                                    longitude: place.lon
+                                                )
+                                            }
+                                            .padding(12)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .background(.background)
+                                            .clipShape(RoundedRectangle(cornerRadius: 18))
+                                            .overlay(alignment: .top) {
+                                                Divider().opacity(0.45)
+                                            }
+                                            .transition(.opacity.combined(with: .scale(scale: 0.985, anchor: .top)))
+                                        }
                                     }
+                                    .clipShape(RoundedRectangle(cornerRadius: 18))
+                                    .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.blue.opacity(0.12)))
                                 } else {
                                     VStack(alignment: .leading, spacing: 5) {
                                         HStack {
