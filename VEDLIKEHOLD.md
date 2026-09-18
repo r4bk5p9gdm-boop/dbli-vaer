@@ -145,6 +145,11 @@ annet stedsoppsett.
 **BRUKER-066 · FULLFØRT 2026-09-18** — Endret meny- og sidetittelen
 «Varslingsregler» til det enklere «Varsler».
 
+**BRUKER-067 · FULLFØRT 2026-09-18** — Knyttet oppstart av Live Activity
+til neste planlagte pushvarsel (10–60 minutter fram), ikke bare til selve
+værstarten. Regnet kan dermed starte om en time, mens Live Activity begynner
+når pushen skal sendes om et kvarter.
+
 
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder

@@ -1,6 +1,6 @@
 {
   "lastScheduledStart": "2026-09-13T05:15:12.787Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-066 fullført: Menyen heter nå Varsler i stedet for Varslingsregler.",
+  "lastProgress": "BRUKER-067 fullført: Live Activity følger nå planlagt push-tidspunkt, ikke bare værstart.",
   "stopReason": "Ingen meningsfull oppgave akkurat nå; planleggeren bruker 240 minutters intervall og forsøker arbeid igjen ved neste kjøring."
 }

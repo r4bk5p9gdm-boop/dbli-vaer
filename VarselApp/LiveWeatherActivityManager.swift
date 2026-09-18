@@ -21,6 +21,11 @@ enum LiveWeatherActivityPolicy {
         return seconds >= earliestStart && seconds <= latestStart
     }
 
+    static func canStart(at notificationAt: Date, now: Date) -> Bool {
+        let seconds = notificationAt.timeIntervalSince(now)
+        return seconds >= earliestStart && seconds <= latestStart
+    }
+
     static func canContinue(_ status: WeatherStatus, now: Date) -> Bool {
         status.isNow || (status.eventAt >= now && status.eventAt.timeIntervalSince(now) <= latestStart)
     }
@@ -141,7 +146,7 @@ enum LiveWeatherActivityManager {
                         forecastFetchedAt: forecastUpdatedAt[place.id],
                         nearbyPlaceIDs: nearbyPlaceIDs,
                         now: now,
-                        isEligible: LiveWeatherActivityPolicy.canStart
+                        isContinuation: false
                     )
                 }
             }
@@ -169,7 +174,7 @@ enum LiveWeatherActivityManager {
                 forecastFetchedAt: forecastUpdatedAt[place.id],
                 nearbyPlaceIDs: nearbyPlaceIDs,
                 now: now,
-                isEligible: LiveWeatherActivityPolicy.canContinue
+                isContinuation: true
             )
         }).first
     }
@@ -181,7 +186,7 @@ enum LiveWeatherActivityManager {
         forecastFetchedAt: Date?,
         nearbyPlaceIDs: Set<UUID>,
         now: Date,
-        isEligible: (WeatherStatus, Date) -> Bool
+        isContinuation: Bool
     ) -> Candidate? {
         guard rule.enabled, !rule.isDisplayOnly,
               rule.type == .regn || rule.type == .sno,
@@ -193,8 +198,21 @@ enum LiveWeatherActivityManager {
                 forecast: forecast,
                 frostMargin: place.localFrostMargin,
                 now: now
-              ),
-              isEligible(status, now) else { return nil }
+              ) else { return nil }
+        let notificationAt = Planner.plan(
+            rule: rule,
+            forecast: forecast,
+            placeName: place.nameWithPreposition,
+            placeID: place.id,
+            frostMargin: place.localFrostMargin,
+            now: now
+        ).alerts.first?.fireAt
+        if isContinuation {
+            guard LiveWeatherActivityPolicy.canContinue(status, now: now) else { return nil }
+        } else {
+            guard let notificationAt,
+                  LiveWeatherActivityPolicy.canStart(at: notificationAt, now: now) else { return nil }
+        }
         let summary = precipitationSummary(
             rule: rule,
             eventAt: status.eventAt,
