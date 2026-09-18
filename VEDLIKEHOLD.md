@@ -119,6 +119,10 @@ CarPlay-widget fra iPhone-widgeten.
 **BRUKER-057 · FULLFØRT 2026-09-18** — Endret tabellradene til det
 entydige navnet «CarPlay-widget».
 
+**BRUKER-058 · FULLFØRT 2026-09-18** — Flyttet nå-streken opp til toppen av
+vær-radblokken slik at den dekker alle radene, samtidig som klokkeslettlinjen
+over radene forblir fri.
+
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder
 bruker nå samme validering.

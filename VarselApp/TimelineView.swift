@@ -280,16 +280,21 @@ private struct WeatherBandsForecast: View {
                 GeometryReader { proxy in
                     let trackWidth = max(0, proxy.size.width - labelWidth)
                     let markerX = labelWidth + trackWidth * nowFraction
+                    // Headeren er 12 pt høy med 6 pt mellomrom før første
+                    // vær-rad. Nå-streken skal dekke alle radene, men ikke
+                    // starte nede i første rad slik den gjorde med 29 pt.
+                    let bandsTop: CGFloat = 18
+                    let bandsHeight = max(0, proxy.size.height - bandsTop)
 
                     Rectangle()
                         .fill(Color.secondary.opacity(0.07))
-                        .frame(width: trackWidth * nowFraction, height: max(0, proxy.size.height - 29))
-                        .offset(x: labelWidth, y: 29)
+                        .frame(width: trackWidth * nowFraction, height: bandsHeight)
+                        .offset(x: labelWidth, y: bandsTop)
 
                     Capsule()
                         .fill(Color.orange)
-                        .frame(width: 2, height: max(0, proxy.size.height - 29))
-                        .position(x: markerX, y: 29 + max(0, proxy.size.height - 29) / 2)
+                        .frame(width: 2, height: bandsHeight)
+                        .position(x: markerX, y: bandsTop + bandsHeight / 2)
 
                     Text("nå")
                         .font(.system(size: 8, weight: .bold, design: .rounded))
