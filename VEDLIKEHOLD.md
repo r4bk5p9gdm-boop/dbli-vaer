@@ -1931,3 +1931,8 @@ Ingen.
   36 av 36 tester bestod.
 - 2026-09-10: Git-grunnlinje og aktiv vedlikeholdsarbeider med planlagt
   vurderingsrytme. Hele testpakken besto (36 av 36).
+- **BRUKER-073 · FULLFØRT 2026-09-18** — Rettet `TimelineView`-kompilering:
+  ForecastDay-iterasjonen har eksplisitt identitet, værbåndvisningen får
+  koordinatene den bruker, og den tunge radtypeberegningen er delt opp i
+  navngitte hjelpeegenskaper. Dette fjerner de rapporterte type- og scope-
+  feilene i filen.

@@ -30,7 +30,7 @@ struct ForecastVariantsView: View {
 
     var body: some View {
         VStack(spacing: 7) {
-            ForEach(days) { day in
+            ForEach(days, id: \.id) { day in
                 VStack(alignment: .leading, spacing: 4) {
                     if !Calendar.current.isDate(day.date, inSameDayAs: Calendar.current.startOfDay(for: Date())) {
                         ForecastDayHeader(day: day)
@@ -174,6 +174,8 @@ private struct WeatherBandsForecast: View {
     let sunThreshold2: Double
     let temperatureLowThreshold: Double
     let temperatureHighThreshold: Double
+    let latitude: Double
+    let longitude: Double
     let now: Date
 
     private let labelWidth: CGFloat = 85
@@ -185,6 +187,15 @@ private struct WeatherBandsForecast: View {
     }
     private var temperatureRules: [Rule] {
         otherRules.filter { $0.type == .temperatur } + rules.filter { $0.type == .frost }
+    }
+    private var displayedTypes: [AlertType] {
+        AlertType.allCases.filter { type in
+            otherRules.contains { $0.type == type } || (type == .temperatur && !temperatureRules.isEmpty)
+        }
+    }
+
+    private func rulesForType(_ type: AlertType) -> [Rule] {
+        type == .temperatur ? temperatureRules : otherRules.filter { $0.type == type }
     }
 
     private var isToday: Bool {
@@ -238,10 +249,8 @@ private struct WeatherBandsForecast: View {
                             MoistureBandTrack(day: day, rules: moistureRules)
                         }
                     }
-                    ForEach(AlertType.allCases.filter { type in
-                        otherRules.contains { $0.type == type } || (type == .temperatur && !temperatureRules.isEmpty)
-                    }) { type in
-                        let typeRules = type == .temperatur ? temperatureRules : otherRules.filter { $0.type == type }
+                    ForEach(displayedTypes) { type in
+                        let typeRules = rulesForType(type)
                         HStack(spacing: 7) {
                             WeatherBandLabel(
                                 title: type.label,
