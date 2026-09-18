@@ -2,6 +2,8 @@
 
 Referanse for komplette tekster på tvers av iPhone, Apple Watch og CarPlay.
 Hver værtype har samme rekkefølge: app-push, nåstatus, Watch og CarPlay.
+CarPlay kan vise flere korte linjer: først stedene, deretter nærmeste
+hendelse og så neste hendelse.
 
 ## Duggfall
 
@@ -18,7 +20,7 @@ Hver værtype har samme rekkefølge: app-push, nåstatus, Watch og CarPlay.
 | Rund klokkesirkel | **Dogg!**<br>**45m** |
 | Stor/rektangulær widget | **Klinga 8°**<br>**Neste 12 timer**<br>Dogg! om 45 m |
 | **CarPlay** |  |
-| CarPlay | **Klinga · 8° · Dogg! om 45 m** |
+| CarPlay | **D bli Vær! på Klinga**<br>Også oppå Hornburu.<br>Doggfall i natt.<br>Regn om 3 timer. |
 
 ## Regn
 
@@ -35,7 +37,7 @@ Hver værtype har samme rekkefølge: app-push, nåstatus, Watch og CarPlay.
 | Rund klokkesirkel | **Regn!**<br>**23m** |
 | Stor/rektangulær widget | **Klinga 12°**<br>**Neste 12 timer**<br>Regn! om 23 m |
 | **CarPlay** |  |
-| CarPlay | **Klinga · 12° · Regn! om 23 m** |
+| CarPlay | **D bli Vær! på Klinga**<br>Også oppå Hornburu.<br>Regn om 23 m.<br>Doggfall i natt. |
 
 ## Snø
 
@@ -52,7 +54,7 @@ Hver værtype har samme rekkefølge: app-push, nåstatus, Watch og CarPlay.
 | Rund klokkesirkel | **Snø!**<br>**2t** |
 | Stor/rektangulær widget | **Bangdalen 3°**<br>**Neste 12 timer**<br>Snø! om 2 t |
 | **CarPlay** |  |
-| CarPlay | **Bangdalen · 3° · Snø! om 2 t** |
+| CarPlay | **D bli Vær! oppi Bangdalen**<br>Snø om 2 timer.<br>Regn senere i kveld. |
 
 ## Frost
 
@@ -70,7 +72,7 @@ Hver værtype har samme rekkefølge: app-push, nåstatus, Watch og CarPlay.
 | Rund klokkesirkel | **Frost!**<br>**1t** |
 | Stor/rektangulær widget | **Klinga 2°**<br>**Neste 12 timer**<br>Frost! om 1 t |
 | **CarPlay** |  |
-| CarPlay | **Klinga · 2° · Frost! om 1 t** |
+| CarPlay | **D bli Vær! på Klinga**<br>Frost om 1 time.<br>Regn i natt. |
 
 ## Vindkast
 
@@ -87,7 +89,7 @@ Hver værtype har samme rekkefølge: app-push, nåstatus, Watch og CarPlay.
 | Rund klokkesirkel | **Vind!**<br>**23m** |
 | Stor/rektangulær widget | **Klinga 12°**<br>**Neste 12 timer**<br>Vind! om 23 m |
 | **CarPlay** |  |
-| CarPlay | **Klinga · 12° · Vind! om 23 m** |
+| CarPlay | **D bli Vær! på Klinga**<br>Vindkast om 23 minutter.<br>Doggfall i natt. |
 
 ## Sol
 
@@ -104,7 +106,7 @@ Hver værtype har samme rekkefølge: app-push, nåstatus, Watch og CarPlay.
 | Rund klokkesirkel | **Sol!**<br>**4t** |
 | Stor/rektangulær widget | **Hornburu 14°**<br>**Neste 12 timer**<br>Sol! om 4 t |
 | **CarPlay** |  |
-| CarPlay | **Hornburu · 14° · Sol! om 4 t** |
+| CarPlay | **D bli Vær! oppå Hornburu**<br>Sol om 4 timer.<br>Regn i natt. |
 
 ## Temperatur
 
@@ -121,7 +123,7 @@ Hver værtype har samme rekkefølge: app-push, nåstatus, Watch og CarPlay.
 | Rund klokkesirkel | **<10°**<br>**1t** |
 | Stor/rektangulær widget | **Namsos 8°**<br>**Neste 12 timer**<br><10° om 1 t |
 | **CarPlay** |  |
-| CarPlay | **Namsos · 8° · <10° om 1 t** |
+| CarPlay | **D bli Vær! nerri Namsos**<br>Under 10° om 1 time.<br>Regn i morgen. |
 
 ## Rene appvarsler
 

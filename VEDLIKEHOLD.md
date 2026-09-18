@@ -103,6 +103,10 @@ hver værtype har egne, samlete rader for app-push (sikkert/usikkert),
 nåstatus, Apple Watch-formatene og CarPlay. Duggfall-eksempelet følger den
 godkjente teksten med «D bli Duggfall!» og «D kan bli Duggfall!».
 
+**BRUKER-054 · FULLFØRT 2026-09-18** — Dokumenterte CarPlay som en
+flerlinjet visning: stedsoverskrift, eventuelt «Også …», nærmeste hendelse
+og neste hendelse. Eksemplene følger samme korte hverdagsspråk som appen.
+
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder
 bruker nå samme validering.
