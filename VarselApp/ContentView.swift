@@ -1082,6 +1082,7 @@ struct PlacesView: View {
     @State private var locationError: String?
     @State private var showingExporter = false
     @State private var editingPlaces = false
+    @State private var expandedPlaceID: UUID?
     @AppStorage(PlaceOrderingSettings.homePlaceIDKey) private var homePlaceID = ""
     @AppStorage(PlaceOrderingSettings.sortModeKey) private var placeSortMode = PlaceSortMode.automatic.rawValue
 
@@ -1183,17 +1184,50 @@ struct PlacesView: View {
                         LazyVStack(spacing: 12) {
                             ForEach(orderedPlaces) { place in
                                 if let forecast = store.forecasts[place.id], !forecast.isEmpty {
+                                    let visibleForecast = Array(forecast.prefix(72))
                                     CurrentWeatherCard(
                                         place: place,
                                         places: store.places,
-                                        forecast: Array(forecast.prefix(72)),
+                                        forecast: visibleForecast,
                                         languageStyle: store.alertLanguageStyle,
                                         isCurrentLocation: false,
-                                        onSelect: { place in onOpen(place) },
+                                        onSelect: { _ in },
                                         showsPlaceMenu: false
                                     )
                                     .contentShape(RoundedRectangle(cornerRadius: 18))
-                                    .onTapGesture { onOpen(place) }
+                                    .onTapGesture {
+                                        withAnimation(.easeInOut(duration: 0.22)) {
+                                            expandedPlaceID = expandedPlaceID == place.id ? nil : place.id
+                                        }
+                                    }
+
+                                    if expandedPlaceID == place.id {
+                                        VStack(alignment: .leading, spacing: 8) {
+                                            HStack {
+                                                Text("Neste 3 døgn")
+                                                    .font(.subheadline.weight(.semibold))
+                                                Spacer()
+                                                Image(systemName: "chevron.up")
+                                                    .font(.caption.weight(.semibold))
+                                                    .foregroundStyle(.secondary)
+                                            }
+                                            ForecastVariantsView(
+                                                forecast: visibleForecast,
+                                                rules: place.rulesForDisplay,
+                                                frostMargin: place.localFrostMargin,
+                                                mode: .weatherBands,
+                                                sunThreshold2: place.resolvedDisplaySunThreshold2,
+                                                temperatureLowThreshold: place.resolvedDisplayTemperatureThreshold,
+                                                temperatureHighThreshold: place.resolvedDisplayTemperatureHighThreshold,
+                                                latitude: place.lat,
+                                                longitude: place.lon
+                                            )
+                                        }
+                                        .padding(12)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .background(.background, in: RoundedRectangle(cornerRadius: 18))
+                                        .transition(.opacity.combined(with: .move(edge: .top)))
+                                    }
                                 } else {
                                     VStack(alignment: .leading, spacing: 5) {
                                         HStack {

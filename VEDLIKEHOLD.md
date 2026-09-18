@@ -1942,3 +1942,7 @@ Ingen.
 - **BRUKER-075 · FULLFØRT 2026-09-18** — Tilbakestilte Steder-oversikten til
   den tidligere nå-visningen: alle steder viser nå værkort med aktuell
   temperatur, værstatus og roterende nå-varsel direkte i oversikten.
+- **BRUKER-076 · FULLFØRT 2026-09-18** — Beholdt nå-kortene for alle steder,
+  men lagt til trykk-til-ekspandering under hvert kort. Den åpne delen viser
+  tredagers værbånd med samme varselsrader og terskler som Hjem, uten en ekstra
+  kompakt stedrad.
