@@ -226,6 +226,8 @@ enum WeatherLanguage {
             // is not accidentally phrased as a present status.
             .replacingOccurrences(of: "Fare for dugg nå", with: LanguageCatalog.value("now.dew", language: "tr", fallback: "D e Duggfall!"))
             .replacingOccurrences(of: "Duggfall nå", with: LanguageCatalog.value("now.dew", language: "tr", fallback: "D e Duggfall!"))
+            .replacingOccurrences(of: "Frost nå", with: LanguageCatalog.value("now.frost", language: "tr", fallback: "D e Frost!"))
+            .replacingOccurrences(of: "Sol i [0-9]+ timer nå\\.", with: LanguageCatalog.value("now.sun", language: "tr", fallback: "D e Sol!"), options: .regularExpression)
             .replacingOccurrences(of: "Fare for dugg", with: "Doggfall")
             .replacingOccurrences(of: "Duggfall", with: "Doggfall")
             // Current-condition messages are short, spoken phrases. Keep
@@ -234,8 +236,10 @@ enum WeatherLanguage {
             .replacingOccurrences(of: "Mulig regn nå", with: LanguageCatalog.value("now.rain_possible", language: "tr", fallback: "D kan bli regn no"))
             .replacingOccurrences(of: "Regn nå", with: LanguageCatalog.value("now.rain", language: "tr", fallback: "D Regne!"))
             .replacingOccurrences(of: "Snø nå", with: LanguageCatalog.value("now.snow", language: "tr", fallback: "D e Snø!"))
-            .replacingOccurrences(of: "Vindkast nå", with: LanguageCatalog.value("now.wind", language: "tr", fallback: "D e Vind!"))
-            .replacingOccurrences(of: "Vind nå", with: LanguageCatalog.value("now.wind", language: "tr", fallback: "D e Vind!"))
+            .replacingOccurrences(of: "Vindkast nå", with: LanguageCatalog.value("now.wind", language: "tr", fallback: "D Blæs!"))
+            .replacingOccurrences(of: "Vind nå", with: LanguageCatalog.value("now.wind", language: "tr", fallback: "D Blæs!"))
+            .replacingOccurrences(of: "Under ([0-9,.-]+)° nå\\.?", with: "D e Under $1°!", options: .regularExpression)
+            .replacingOccurrences(of: "!.", with: "!")
             .replacingOccurrences(of: "\\bnå\\b", with: LanguageCatalog.value("time.now", language: "tr", fallback: "no"), options: .regularExpression)
             .replacingOccurrences(of: "opptil", with: "oppte")
             .replacingOccurrences(of: "denne timen", with: LanguageCatalog.value("time.this_hour", language: "tr", fallback: "herre tima"))

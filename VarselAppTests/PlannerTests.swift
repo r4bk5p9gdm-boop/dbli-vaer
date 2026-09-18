@@ -481,7 +481,7 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(copy.rulesForDisplay.first { $0.type == .vind }?.threshold, 11)
         XCTAssertEqual(copy.rulesForDisplay.first { $0.type == .dugg }?.threshold, 2)
         XCTAssertEqual(copy.rulesForDisplay.first { $0.type == .sol }?.threshold, 35)
-        XCTAssertEqual(WeatherLanguage.text("Under 10° nå", style: .inntrondersk, separator: .dash), "Under 10 no")
+        XCTAssertEqual(WeatherLanguage.text("Under 10° nå", style: .inntrondersk, separator: .dash), "D e Under 10°!")
         XCTAssertEqual(WeatherLanguage.text("Duggfall natt til onsdag kl. 05", style: .inntrondersk, separator: .dash), "Doggfall natt te onsda'n — kl. 05")
         XCTAssertEqual(WeatherTextSeparator.comma.format("onsdag kl. 05"), "onsdag, kl. 05")
         XCTAssertEqual(WeatherTextSeparator.bullet.format("onsdag kl. 05"), "onsdag • kl. 05")
@@ -778,17 +778,19 @@ final class PlannerTests: XCTestCase {
     }
 
     func testDialectUsesNoEOnlyForCurrentDewStatus() {
-        XCTAssertEqual(WeatherLanguage.text("Fare for dugg nå.", style: .inntrondersk), "No e d doggfall.")
+        XCTAssertEqual(WeatherLanguage.text("Fare for dugg nå.", style: .inntrondersk), "D e Duggfall!")
         XCTAssertEqual(WeatherLanguage.text("Fare for dugg i natt kl. 01.", style: .inntrondersk), "Doggfall i natt kl. 01.")
         XCTAssertEqual(WeatherLanguage.text("Duggfall i morgen kl. 07.", style: .inntrondersk), "Doggfall i mårrå kl. 07.")
     }
 
     func testDialectCurrentWeatherUsesShortSpokenMessages() {
-        XCTAssertEqual(WeatherLanguage.text("Regn nå.", style: .inntrondersk), "D regne no.")
+        XCTAssertEqual(WeatherLanguage.text("Regn nå.", style: .inntrondersk), "D Regne!")
         XCTAssertEqual(WeatherLanguage.text("Mulig regn nå.", style: .inntrondersk), "D kan bli regn no.")
-        XCTAssertEqual(WeatherLanguage.text("Litt regn nå.", style: .inntrondersk), "D regne litt no.")
-        XCTAssertEqual(WeatherLanguage.text("Snø nå.", style: .inntrondersk), "D snør no.")
-        XCTAssertEqual(WeatherLanguage.text("Vindkast nå.", style: .inntrondersk), "D blæs no.")
+        XCTAssertEqual(WeatherLanguage.text("Litt regn nå.", style: .inntrondersk), "D e Litt Regn!")
+        XCTAssertEqual(WeatherLanguage.text("Snø nå.", style: .inntrondersk), "D e Snø!")
+        XCTAssertEqual(WeatherLanguage.text("Vindkast nå.", style: .inntrondersk), "D Blæs!")
+        XCTAssertEqual(WeatherLanguage.text("Frost nå.", style: .inntrondersk), "D e Frost!")
+        XCTAssertEqual(WeatherLanguage.text("Sol i 4 timer nå.", style: .inntrondersk), "D e Sol!")
     }
 
     func testWeatherGlanceUsesTwelveHoursAndOneEventPerType() {

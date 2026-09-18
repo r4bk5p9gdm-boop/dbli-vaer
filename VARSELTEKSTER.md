@@ -34,6 +34,7 @@ Watch, ikke et planlagt pushvarsel.
 |---|---|
 | Sikkert pushvarsel | **D bli Frost! på Klinga**<br>Frost i natt — tirsdag kl. 04.<br>Lokalt anslag: 1,8°. |
 | Usikkert pushvarsel | **D kan bli Frost! på Klinga**<br>Mulig frost i natt — tirsdag kl. 04.<br>Lokalt anslag: 2,6°. |
+| Pågår nå | **D e Frost!**<br>Lokalt anslag er under frostgrensen. |
 | Temperaturgrense | **D bli Under 5°! på Klinga**<br>Temperaturen kan gå under 5° i natt — tirsdag kl. 03. |
 
 ## Vindkast
@@ -42,7 +43,7 @@ Watch, ikke et planlagt pushvarsel.
 |---|---|
 | Sikkert pushvarsel | **D bli Vind! bortpå Klinga**<br>Vindkast i mårrå — mandag kl. 10.<br>Vindkast opptil 12 m/s · frisk bris. |
 | Sterkere vind | **D bli Vind! bortpå Klinga**<br>Vindkast i kveld — mandag kl. 19.<br>Vindkast opptil 18 m/s · sterk vind. |
-| Pågår nå | **D e Vind!**<br>Vindkast 9 m/s akkurat nå. |
+| Pågår nå | **D Blæs!**<br>Vindkast 9 m/s akkurat nå. |
 
 ## Sol
 
@@ -50,7 +51,7 @@ Watch, ikke et planlagt pushvarsel.
 |---|---|
 | Sikkert pushvarsel | **D bli Sol! inni Hornburu**<br>Sol i 7 timer i mårrå — fredag kl. 12. |
 | Usikkert pushvarsel | **D kan bli Sol! inni Hornburu**<br>Mulig sol i 4 timer i mårrå — fredag kl. 12.<br>20 % skydekke. |
-| Pågår nå | **D bli Sol!**<br>Solforholdene er gode nå. |
+| Pågår nå | **D e Sol!**<br>Solforholdene er gode nå. |
 
 ## Temperatur
 
@@ -58,7 +59,7 @@ Watch, ikke et planlagt pushvarsel.
 |---|---|
 | Under grense | **D bli Under 10°! nerri Namsos**<br>Temperaturen går under 10° i natt — tirsdag kl. 02. |
 | Over grense | **D bli Over 20°! på Klinga**<br>Temperaturen går over 20° i mårrå — onsdag kl. 14. |
-| Pågår nå | **D bli Under 10°!**<br>Det er under 10° nå. |
+| Pågår nå | **D e Under 10°!**<br>Det er under 10° nå. |
 
 ## Rene appvarsler
 

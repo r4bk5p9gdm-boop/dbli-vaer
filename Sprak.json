@@ -228,12 +228,22 @@
     "now.wind": {
       "en": "It’s windy now",
       "nb": "Vind nå",
-      "tr": "D e Vind!"
+      "tr": "D Blæs!"
     },
     "now.dew": {
       "en": "Dew now",
       "nb": "Fare for dugg nå",
       "tr": "D e Duggfall!"
+    },
+    "now.frost": {
+      "en": "Frost now",
+      "nb": "Frost nå",
+      "tr": "D e Frost!"
+    },
+    "now.sun": {
+      "en": "Sun now",
+      "nb": "Sol nå",
+      "tr": "D e Sol!"
     },
     "time.quarter": {
       "en": "in fifteen minutes",

@@ -77,6 +77,10 @@ komplette eksempler for push, Nå-status og appvarsler.
 bruker nå den samme formen «D e [værtype]!»: regn, lett regn, snø, vind og
 duggfall.
 
+**BRUKER-047 · FULLFØRT 2026-09-18** — Justerte pågår nå-formene etter siste
+språkrettelse: «D e Under X°!», «D Blæs!», «D e Frost!» og «D e Sol!», med
+oppdaterte språkregresjoner.
+
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder
 bruker nå samme validering.
