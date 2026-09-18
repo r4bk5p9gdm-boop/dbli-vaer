@@ -355,6 +355,46 @@
       "nb": "Vind opptil {vind} m/s. Kast opptil {kast} m/s.",
       "tr": "Vind opptil {vind} m/s. Kast opptil {kast} m/s."
     },
+    "template.first_line": {
+      "en": "It will be {vaertype}! {sted} {tid}.",
+      "nb": "Det blir {vaertype}! {sted} {tid}.",
+      "tr": "D bli {vaertype}! {sted} {tid}."
+    },
+    "template.second_line": {
+      "en": "{beskrivelse} {dag/tid}, at {klokkeslett} — {varighet}.",
+      "nb": "{beskrivelse} {dag/tid}, kl. {klokkeslett} — {varighet}.",
+      "tr": "{beskrivelse} {dag/tid}, kl. {klokkeslett} — {varighet}."
+    },
+    "detail.snow_light": {
+      "en": "Light snowfall",
+      "nb": "Lett snøfall",
+      "tr": "Lætt snøfall"
+    },
+    "detail.snow_heavy": {
+      "en": "Heavy snowfall",
+      "nb": "Kraftig snøfall",
+      "tr": "Kraftig snøfall"
+    },
+    "detail.wind_fresh_breeze": {
+      "en": "Fresh breeze",
+      "nb": "Frisk bris",
+      "tr": "Frisk bris"
+    },
+    "detail.wind_strong": {
+      "en": "Strong wind",
+      "nb": "Sterk vind",
+      "tr": "Sterk vind"
+    },
+    "detail.duration.short": {
+      "en": "briefly",
+      "nb": "en liten stund",
+      "tr": "ei lita stund"
+    },
+    "detail.duration.overnight": {
+      "en": "through the night",
+      "nb": "gjennom natta",
+      "tr": "gjennom natta"
+    },
     "detail.gust_missing": {
       "en": "Gust data unavailable.",
       "nb": "Kast ikke oppgitt.",

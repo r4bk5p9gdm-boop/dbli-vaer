@@ -1970,3 +1970,6 @@ Ingen.
   varighet i andre linje.
 - **BRUKER-083 · FULLFØRT 2026-09-18** — Samordnet sol-eksemplene og la inn
   eksplisitt språkregel: «om» brukes for starttidspunkt, «i» for varighet.
+- **BRUKER-084 · FULLFØRT 2026-09-18** — Utvidet språkgrunnlaget med en
+  egen mal- og beskrivelsesdel for bokmål, inntrøndersk og engelsk i både
+  `Sprak.json` og `VARSELTEKSTER.md`.

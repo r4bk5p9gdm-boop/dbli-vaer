@@ -19,6 +19,24 @@ Eksempler: `Det blir Regn! på Klinga om tre timer.` ·
 «om en halvtime», «om tre timer», «i dag», «i kveld», «i natt», «i morgen»
 eller «til helga». Stedet beholder valgt preposisjon.
 
+### Språkverdier for malen
+
+| Nøkkel | Bokmål | Inntrøndersk | English |
+|---|---|---|---|
+| Første linje | Det blir {Værtype}! {sted} {tid}. | D bli {Værtype}! {sted} {tid}. | It will be {WeatherType}! {place} {time}. |
+| Sikker beskrivelse | Litt regn | Litt regn | Light rain |
+| Kraftig regn | Kraftig regn | Kraftig regn | Heavy rain |
+| Lett snø | Lett snøfall | Lætt snøfall | Light snowfall |
+| Kraftig snø | Kraftig snøfall | Kraftig snøfall | Heavy snowfall |
+| Frisk vind | Frisk bris | Frisk bris | Fresh breeze |
+| Sterk vind | Sterk vind | Sterk vind | Strong wind |
+| Kort varighet | en liten stund | ei lita stund | briefly |
+| Gjennom natta | gjennom natta | gjennom natta | through the night |
+
+De samme språkverdiene ligger i `Sprak.json` under `template.*` og
+`detail.*`. Tabellen her er lesbar arbeidsreferanse; JSON-filen er kilden som
+senere skal kobles til alle visningene.
+
 ### Andre linje
 
 ```text
