@@ -1071,6 +1071,7 @@ struct PlacesView: View {
     @State private var locationError: String?
     @State private var showingExporter = false
     @State private var editingPlaces = false
+    @State private var expandedPlaceID: UUID?
     @AppStorage(PlaceOrderingSettings.homePlaceIDKey) private var homePlaceID = ""
     @AppStorage(PlaceOrderingSettings.sortModeKey) private var placeSortMode = PlaceSortMode.automatic.rawValue
 
@@ -1171,27 +1172,33 @@ struct PlacesView: View {
                     ScrollView {
                         LazyVStack(spacing: 12) {
                             ForEach(orderedPlaces) { place in
-                                if let forecast = store.forecasts[place.id], !forecast.isEmpty {
+                                Button {
+                                    withAnimation(.easeInOut(duration: 0.22)) {
+                                        expandedPlaceID = expandedPlaceID == place.id ? nil : place.id
+                                    }
+                                } label: {
+                                    PlaceOverviewRow(
+                                        place: place,
+                                        forecast: store.forecasts[place.id] ?? [],
+                                        isExpanded: expandedPlaceID == place.id,
+                                        forecastError: store.forecastErrors[place.id]
+                                    )
+                                }
+                                .buttonStyle(.plain)
+
+                                if expandedPlaceID == place.id,
+                                   let forecast = store.forecasts[place.id],
+                                   !forecast.isEmpty {
                                     CurrentWeatherCard(
                                         place: place,
                                         places: store.places,
-                                        forecast: forecast,
+                                        forecast: Array(forecast.prefix(48)),
                                         languageStyle: store.alertLanguageStyle,
                                         isCurrentLocation: false,
-                                        onSelect: { place in store.select(place) },
+                                        onSelect: { _ in },
+                                        onEdit: { editingPlaces = true },
                                         showsPlaceMenu: false
                                     )
-                                    .contentShape(RoundedRectangle(cornerRadius: 18))
-                                    .onTapGesture { onOpen(place) }
-                                } else {
-                                    VStack(alignment: .leading, spacing: 5) {
-                                        HStack { WeatherWordmark(languageStyle: store.alertLanguageStyle); Text(place.nameWithPreposition).font(.headline).foregroundStyle(.blue) }
-                                        Text(store.forecastErrors[place.id] ?? "Henter prognose …")
-                                            .font(.footnote).foregroundStyle(.secondary)
-                                    }
-                                    .card()
-                                    .contentShape(Rectangle())
-                                    .onTapGesture { onOpen(place) }
                                 }
                             }
                         }
@@ -1342,6 +1349,64 @@ private struct GlobalSettingsView: View {
                 OnboardingWizardView { showingOnboarding = false }
             }
         }
+    }
+}
+
+private struct PlaceOverviewRow: View {
+    let place: Place
+    let forecast: [ForecastHour]
+    let isExpanded: Bool
+    let forecastError: String?
+
+    private var current: ForecastHour? { forecast.first }
+
+    var body: some View {
+        HStack(spacing: 10) {
+            VStack(alignment: .leading, spacing: 3) {
+                HStack(spacing: 5) {
+                    Text(place.resolvedPreposition.rawValue)
+                        .font(.caption.italic())
+                        .foregroundStyle(.secondary)
+                    Text(place.displayName)
+                        .font(.headline)
+                    if place.id == Store.shared.selectedID {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.caption)
+                            .foregroundStyle(.blue)
+                            .accessibilityLabel("Valgt sted")
+                    }
+                }
+                if let current {
+                    Text("(Int(current.temp.rounded()))° · (place.enabledRuleCount) aktive (place.enabledRuleCount == 1 ? "varsel" : "varsler")")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text(forecastError ?? "Henter prognose …")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            Spacer(minLength: 0)
+            if let current {
+                Image(systemName: current.cloud <= 20 ? "sun.max.fill" : (current.precipitationRiskRate >= 0.1 ? "cloud.rain.fill" : "cloud.fill"))
+                    .foregroundStyle(current.cloud <= 20 ? .orange : .blue)
+                Text("(Int(current.temp.rounded()))°")
+                    .font(.title3.weight(.medium))
+            }
+            Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 11)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.background, in: RoundedRectangle(cornerRadius: 14))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .stroke(isExpanded ? Color.indigo.opacity(0.35) : Color.secondary.opacity(0.14), lineWidth: isExpanded ? 1.5 : 1)
+        )
+        .accessibilityElement(children: .combine)
+        .accessibilityHint(isExpanded ? "Trykk for å lukke værdetaljene" : "Trykk for å vise værdetaljer")
     }
 }
 

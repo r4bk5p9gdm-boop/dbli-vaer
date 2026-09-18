@@ -1,6 +1,6 @@
 {
   "lastScheduledStart": "2026-09-13T05:15:12.787Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-064 fullført: Rullerende varselbakgrunn og redigeringsknapp er visuelt skilt.",
+  "lastProgress": "BRUKER-065 fullført: Steder-rader kan åpnes og lukkes med værdetaljer inline.",
   "stopReason": "Ingen meningsfull oppgave akkurat nå; planleggeren bruker 240 minutters intervall og forsøker arbeid igjen ved neste kjøring."
 }
