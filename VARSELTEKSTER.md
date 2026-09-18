@@ -23,8 +23,8 @@ vanligvis den lille systemwidgeten.
 | Inline-widget | **Dogg! 45m** |
 | Hjørnekomplikasjon | Værikon med «Dogg!» som hjelpetekst |
 | Stor/rektangulær widget | **Klinga 8°**<br>**Neste 12 timer**<br>Dogg! om 45 m |
-| **CarPlay** |  |
-| CarPlay | **D bli Vær! på Klinga**<br>Også oppå Hornburu.<br>Doggfall i natt.<br>Regn om 3 timer. |
+| **CarPlay-widget** |  |
+| CarPlay-widget | **D bli Vær! på Klinga**<br>Også oppå Hornburu.<br>Doggfall i natt.<br>Regn om 3 timer. |
 
 ## Regn
 
@@ -40,8 +40,8 @@ vanligvis den lille systemwidgeten.
 | Inline-widget | **Regn! 23m** |
 | Hjørnekomplikasjon | Regnikon med «Regn!» som hjelpetekst |
 | Stor/rektangulær widget | **Klinga 12°**<br>**Neste 12 timer**<br>Regn! om 23 m |
-| **CarPlay** |  |
-| CarPlay | **D bli Vær! på Klinga**<br>Også oppå Hornburu.<br>Regn om 23 m.<br>Doggfall i natt. |
+| **CarPlay-widget** |  |
+| CarPlay-widget | **D bli Vær! på Klinga**<br>Også oppå Hornburu.<br>Regn om 23 m.<br>Doggfall i natt. |
 
 ## Snø
 
@@ -57,8 +57,8 @@ vanligvis den lille systemwidgeten.
 | Inline-widget | **Snø! 2t** |
 | Hjørnekomplikasjon | Snøikon med «Snø!» som hjelpetekst |
 | Stor/rektangulær widget | **Bangdalen 3°**<br>**Neste 12 timer**<br>Snø! om 2 t |
-| **CarPlay** |  |
-| CarPlay | **D bli Vær! oppi Bangdalen**<br>Snø om 2 timer.<br>Regn senere i kveld. |
+| **CarPlay-widget** |  |
+| CarPlay-widget | **D bli Vær! oppi Bangdalen**<br>Snø om 2 timer.<br>Regn senere i kveld. |
 
 ## Frost
 
@@ -75,8 +75,8 @@ vanligvis den lille systemwidgeten.
 | Inline-widget | **Frost! 1t** |
 | Hjørnekomplikasjon | Frostikon med «Frost!» som hjelpetekst |
 | Stor/rektangulær widget | **Klinga 2°**<br>**Neste 12 timer**<br>Frost! om 1 t |
-| **CarPlay** |  |
-| CarPlay | **D bli Vær! på Klinga**<br>Frost om 1 time.<br>Regn i natt. |
+| **CarPlay-widget** |  |
+| CarPlay-widget | **D bli Vær! på Klinga**<br>Frost om 1 time.<br>Regn i natt. |
 
 ## Vindkast
 
@@ -92,8 +92,8 @@ vanligvis den lille systemwidgeten.
 | Inline-widget | **Vind! 23m** |
 | Hjørnekomplikasjon | Vindikon med «Vind!» som hjelpetekst |
 | Stor/rektangulær widget | **Klinga 12°**<br>**Neste 12 timer**<br>Vind! om 23 m |
-| **CarPlay** |  |
-| CarPlay | **D bli Vær! på Klinga**<br>Vindkast om 23 minutter.<br>Doggfall i natt. |
+| **CarPlay-widget** |  |
+| CarPlay-widget | **D bli Vær! på Klinga**<br>Vindkast om 23 minutter.<br>Doggfall i natt. |
 
 ## Sol
 
@@ -109,8 +109,8 @@ vanligvis den lille systemwidgeten.
 | Inline-widget | **Sol! 4t** |
 | Hjørnekomplikasjon | Solikon med «Sol!» som hjelpetekst |
 | Stor/rektangulær widget | **Hornburu 14°**<br>**Neste 12 timer**<br>Sol! om 4 t |
-| **CarPlay** |  |
-| CarPlay | **D bli Vær! oppå Hornburu**<br>Sol om 4 timer.<br>Regn i natt. |
+| **CarPlay-widget** |  |
+| CarPlay-widget | **D bli Vær! oppå Hornburu**<br>Sol om 4 timer.<br>Regn i natt. |
 
 ## Temperatur
 
@@ -126,8 +126,8 @@ vanligvis den lille systemwidgeten.
 | Inline-widget | **<10° 1t** |
 | Hjørnekomplikasjon | Temperaturikon med «<10°» som hjelpetekst |
 | Stor/rektangulær widget | **Namsos 8°**<br>**Neste 12 timer**<br><10° om 1 t |
-| **CarPlay** |  |
-| CarPlay | **D bli Vær! nerri Namsos**<br>Under 10° om 1 time.<br>Regn i morgen. |
+| **CarPlay-widget** |  |
+| CarPlay-widget | **D bli Vær! nerri Namsos**<br>Under 10° om 1 time.<br>Regn i morgen. |
 
 ## Rene appvarsler
 
