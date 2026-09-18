@@ -115,6 +115,18 @@ skal være kort og lesbar under kjøring, for eksempel:
 CarPlay er en oversikt/widget, ikke en full redigeringsflate. Varselreglene
 stilles fortsatt i iPhone-appen.
 
+## Devices – varsler gruppert etter værtype
+
+| Værtype | Watch-sirkel / inline | CarPlay |
+|---|---|---|
+| Regn | **Regn! 23m** | **Klinga · Regn! om 23 m** |
+| Snø | **Snø! 2t** | **Bangdalen · Snø! om 2 t** |
+| Duggfall | **Dogg! 45m** | **Klinga · Dogg! om 45 m** |
+| Frost | **Frost! 1t** | **Klinga · Frost! om 1 t** |
+| Vindkast | **Vind! 23m** | **Klinga · Vind! om 23 m** |
+| Sol | **Sol! 4t** | **Hornburu · Sol! om 4 t** |
+| Temperatur | **<10° 1t** | **Namsos · <10° om 1 t** |
+
 ## Språkregel
 
 «D e [værtype]!» brukes når værtypen faktisk pågår. «D bli Regn!» brukes for

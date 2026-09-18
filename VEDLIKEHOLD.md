@@ -95,6 +95,9 @@ rektangulær Watch-widget, samt et kort avsnitt om Watch- og CarPlay-tekst.
 som egne rader under hver varseltype i `VARSELTEKSTER.md` og fjernet
 duplisert samleoversikt.
 
+**BRUKER-052 · FULLFØRT 2026-09-18** — La til en Devices-seksjon som
+grupperer Watch- og CarPlay-tekster under hver værtype.
+
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder
 bruker nå samme validering.
