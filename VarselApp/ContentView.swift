@@ -370,7 +370,7 @@ private struct CurrentWeatherCard: View {
             HStack(spacing: 5) {
                 LiveWeatherMetric(
                     icon: current.temp <= 1 ? AlertType.sno.systemImage : AlertType.regn.systemImage,
-                    label: current.temp <= 1 ? "Snø" : "Regn",
+                    label: "Nedbør",
                     value: precipitationMetricValue,
                     color: current.temp <= 1 ? AlertType.sno.color : AlertType.regn.color,
                     isActive: current.precipitationRiskRate >= 0.1
