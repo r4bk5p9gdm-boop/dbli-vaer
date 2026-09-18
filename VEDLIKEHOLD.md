@@ -1964,3 +1964,7 @@ Ingen.
 - **BRUKER-081 · FULLFØRT 2026-09-18** — Definerte kortvarig som forventet
   varighet under én time. Varighetsleddet kan da sløyfes når det ikke gir
   ekstra informasjon.
+- **BRUKER-082 · FULLFØRT 2026-09-18** — Renskrevet push-eksemplene for alle
+  værtyper i `VARSELTEKSTER.md` etter malen: «Det blir/kan bli [Værtype]!",
+  kort tid i første linje og tekstlig beskrivelse med dag, klokkeslett og
+  varighet i andre linje.
