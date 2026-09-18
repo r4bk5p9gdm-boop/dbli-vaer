@@ -130,6 +130,9 @@ over radene forblir fri.
 tydelige igjen med mørk grå grunnfarge. Varselmarkeringene oppå nattfargen
 beholder sine egne farger.
 
+**BRUKER-063 · FULLFØRT 2026-09-18** — Fjernet forklaringsblokken nederst
+på Hjem under værbåndene for å gi en renere og mer kompakt visning.
+
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder
 bruker nå samme validering.

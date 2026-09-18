@@ -50,30 +50,6 @@ struct ForecastVariantsView: View {
                 .background(.background, in: RoundedRectangle(cornerRadius: 14))
             }
 
-            VStack(alignment: .leading, spacing: 3) {
-                if mode == .weatherBands {
-                    Text("Helfarget = hovedvarsel · lyst = mulig ut fra maks og sannsynlighet")
-                }
-                HStack {
-                    Text(forecast.contains { !(($0.radarSamples ?? []).isEmpty) }
-                         ? "Nå-varsel 90 min · komplett timevarsel videre"
-                         : mode.footer)
-                    Spacer()
-                    Text("48 timer maks")
-                }
-            }
-            .font(.caption2)
-            .foregroundStyle(.secondary)
-        }
-    }
-}
-
-private extension ForecastDisplayMode {
-    var footer: String {
-        switch self {
-        case .timeCards: "Temperatur og nedbør i 3-timers steg"
-        case .weatherBands: "Når aktive regler slår til"
-        case .events: "Bare værhendelser som betyr noe"
         }
     }
 }
