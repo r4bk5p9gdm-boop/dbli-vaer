@@ -75,6 +75,30 @@ Watch, ikke et planlagt pushvarsel.
 | Varsler ikke aktivert | **D bli Vær!**<br>Appen må startes for å aktivere varsler. |
 | Ingen varsel akkurat nå | **D bli Vær!**<br>Ingen aktive værhendelser akkurat nå. |
 
+## Watch
+
+| Widget-format | Tekst og visning |
+|---|---|
+| Inline-widget | **Regn! 23m** — smal tekstlinje direkte på urskiven. |
+| Rund klokkesirkel | **Regn!**<br>**23m** — kort varseltekst og nedtelling i sirkelen. |
+| Stor/rektangulær widget | **Klinga 12°**<br>**Neste 12 timer**<br>D bli Regn! nerri Namsos — neste relevante varsel. |
+
+Watch-appen kan vise valgt sted eller posisjonssted. Den runde widgeten er
+laget for rask avlesning; den større widgeten viser sted, temperatur og neste
+varsel. Watch bruker samme korte varselnavn som appen, men pakker tidspunktet
+kompakt som `23m` eller `2t`.
+
+## CarPlay
+
+CarPlay viser de aktiverte stedene fra appens stedsliste og følger samme
+rekkefølge som hjemmesveipingen: posisjon, Favoritt 1 og Favoritt 2. Teksten
+skal være kort og lesbar under kjøring, for eksempel:
+
+**Klinga · 12° · Regn! om 23 m**
+
+CarPlay er en oversikt/widget, ikke en full redigeringsflate. Varselreglene
+stilles fortsatt i iPhone-appen.
+
 ## Språkregel
 
 «D e [værtype]!» brukes når værtypen faktisk pågår. «D bli Regn!» brukes for

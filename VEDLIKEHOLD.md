@@ -88,6 +88,9 @@ oppdaterte språkregresjoner.
 `VARSELTEKSTER.md` for alle varseltyper, med kort Watch-tekst og eksempel på
 nedtelling.
 
+**BRUKER-050 · FULLFØRT 2026-09-18** — Dokumenterte inline-, rund- og
+rektangulær Watch-widget, samt et kort avsnitt om Watch- og CarPlay-tekst.
+
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder
 bruker nå samme validering.
