@@ -69,6 +69,10 @@ navn og beholder dem.
 bare fram til lokal solnedgang for stedets koordinater. Regn, frost, vind og
 andre typer påvirkes ikke. La til regresjonstest for sol etter solnedgang.
 
+**BRUKER-045 · FULLFØRT 2026-09-18** — Nå-regn på inntrøndersk bruker nå
+«D Regne!». Opprettet `VARSELTEKSTER.md` med én tabell per varseltype og
+komplette eksempler for push, Nå-status og appvarsler.
+
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder
 bruker nå samme validering.
