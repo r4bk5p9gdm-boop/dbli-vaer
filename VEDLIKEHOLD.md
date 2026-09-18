@@ -91,6 +91,10 @@ nedtelling.
 **BRUKER-050 · FULLFØRT 2026-09-18** — Dokumenterte inline-, rund- og
 rektangulær Watch-widget, samt et kort avsnitt om Watch- og CarPlay-tekst.
 
+**BRUKER-051 · FULLFØRT 2026-09-18** — Flyttet de tre Watch-formatene inn
+som egne rader under hver varseltype i `VARSELTEKSTER.md` og fjernet
+duplisert samleoversikt.
+
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder
 bruker nå samme validering.
