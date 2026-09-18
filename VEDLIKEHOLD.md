@@ -73,6 +73,10 @@ andre typer påvirkes ikke. La til regresjonstest for sol etter solnedgang.
 «D Regne!». Opprettet `VARSELTEKSTER.md` med én tabell per varseltype og
 komplette eksempler for push, Nå-status og appvarsler.
 
+**BRUKER-046 · FULLFØRT 2026-09-18** — Alle inntrønderske pågår nå-tekster
+bruker nå den samme formen «D e [værtype]!»: regn, lett regn, snø, vind og
+duggfall.
+
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder
 bruker nå samme validering.

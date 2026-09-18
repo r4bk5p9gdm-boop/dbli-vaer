@@ -218,22 +218,22 @@
     "now.rain_light": {
       "en": "A little rain now",
       "nb": "Litt regn nå",
-      "tr": "D regne litt no"
+      "tr": "D e Litt Regn!"
     },
     "now.snow": {
       "en": "It’s snowing now",
       "nb": "Snø nå",
-      "tr": "D snør no"
+      "tr": "D e Snø!"
     },
     "now.wind": {
       "en": "It’s windy now",
       "nb": "Vind nå",
-      "tr": "D blæs no"
+      "tr": "D e Vind!"
     },
     "now.dew": {
       "en": "Dew now",
       "nb": "Fare for dugg nå",
-      "tr": "No e d doggfall"
+      "tr": "D e Duggfall!"
     },
     "time.quarter": {
       "en": "in fifteen minutes",

@@ -18,7 +18,7 @@ Watch, ikke et planlagt pushvarsel.
 |---|---|
 | Sikkert pushvarsel | **D bli Snø! oppi Bangdalen**<br>Snø i natt — tirsdag kl. 02.<br>Omtrent 3 cm nysnø. |
 | Usikkert pushvarsel | **D kan bli Snø! oppi Bangdalen**<br>Mulig snø i natt — tirsdag kl. 02.<br>Opptil 4 cm · 48 % sannsynlighet. |
-| Pågår nå | **D snør no**<br>Snø i Nå-varselet den neste halvtimen. |
+| Pågår nå | **D e Snø!**<br>Snø i Nå-varselet den neste halvtimen. |
 
 ## Duggfall
 
@@ -26,7 +26,7 @@ Watch, ikke et planlagt pushvarsel.
 |---|---|
 | Sikkert pushvarsel | **D bli Duggfall! på Klinga**<br>Doggfall i mårrå — onsdag kl. 05. |
 | Usikkert pushvarsel | **D kan bli Duggfall! på Klinga**<br>Mulig doggfall i mårrå — onsdag kl. 05. |
-| Pågår nå | **No e d doggfall**<br>Duggpunktet er nær lufttemperaturen. |
+| Pågår nå | **D e Duggfall!**<br>Duggpunktet er nær lufttemperaturen. |
 
 ## Frost
 
@@ -42,7 +42,7 @@ Watch, ikke et planlagt pushvarsel.
 |---|---|
 | Sikkert pushvarsel | **D bli Vind! bortpå Klinga**<br>Vindkast i mårrå — mandag kl. 10.<br>Vindkast opptil 12 m/s · frisk bris. |
 | Sterkere vind | **D bli Vind! bortpå Klinga**<br>Vindkast i kveld — mandag kl. 19.<br>Vindkast opptil 18 m/s · sterk vind. |
-| Pågår nå | **D blæs no**<br>Vindkast 9 m/s akkurat nå. |
+| Pågår nå | **D e Vind!**<br>Vindkast 9 m/s akkurat nå. |
 
 ## Sol
 
@@ -69,6 +69,5 @@ Watch, ikke et planlagt pushvarsel.
 
 ## Språkregel
 
-«D Regne!» brukes når regnet faktisk pågår. «D bli Regn!» brukes for et
-framtidig sikkert varsel. «D kan bli Regn!» brukes når varselet er usikkert.
-Inntrøndersk «no e d …» reserveres for Nå-status, ikke framtidige tidspunkt.
+«D e [værtype]!» brukes når værtypen faktisk pågår. «D bli Regn!» brukes for
+et framtidig sikkert varsel. «D kan bli Regn!» brukes når varselet er usikkert.
