@@ -5,6 +5,10 @@ Hver værtype har samme rekkefølge: app-push, nåstatus, Watch og CarPlay.
 CarPlay kan vise flere korte linjer: først stedene, deretter nærmeste
 hendelse og så neste hendelse.
 
+«Inline-komplikasjon», «rund komplikasjon» og «hjørnekomplikasjon» gjelder
+Apple Watch. CarPlay bruker i stedet en CarPlay-widget fra iPhone-widgeten,
+vanligvis den lille systemwidgeten.
+
 ## Duggfall
 
 | Situasjon | Full tekst |

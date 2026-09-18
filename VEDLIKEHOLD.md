@@ -112,6 +112,10 @@ dobbeltnavngivingen «Klokkesirkel»/«Rund klokkesirkel». Dokumentet bruker n�
 Watch-familiene rund komplikasjon, inline, hjørnekomplikasjon og
 rektangulær widget.
 
+**BRUKER-056 · FULLFØRT 2026-09-18** — Presiserte at inline-, rund- og
+hjørnekomplikasjon er Watch-begreper. CarPlay er dokumentert som en egen
+CarPlay-widget fra iPhone-widgeten.
+
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder
 bruker nå samme validering.

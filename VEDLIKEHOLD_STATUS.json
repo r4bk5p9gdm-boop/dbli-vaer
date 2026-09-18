@@ -1,6 +1,6 @@
 {
   "lastScheduledStart": "2026-09-13T05:15:12.787Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-055 fullført: Watch-formatene er navngitt entydig etter widgetfamiliene.",
+  "lastProgress": "BRUKER-056 fullført: CarPlay er skilt fra Watch-komplikasjoner og omtales som widget.",
   "stopReason": "Ingen meningsfull oppgave akkurat nå; planleggeren bruker 240 minutters intervall og forsøker arbeid igjen ved neste kjøring."
 }
