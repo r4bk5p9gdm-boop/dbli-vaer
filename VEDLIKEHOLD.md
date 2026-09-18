@@ -126,6 +126,10 @@ over radene forblir fri.
 **BRUKER-059 · FULLFØRT 2026-09-18** — Kalt den første nå-måleruten
 «Nedbør», siden den samler regn og snø i samme fukt-/nedbørvisning.
 
+**BRUKER-062 · FULLFØRT 2026-09-18** — Gjorde nattcellene i værstripene
+tydelige igjen med mørk grå grunnfarge. Varselmarkeringene oppå nattfargen
+beholder sine egne farger.
+
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder
 bruker nå samme validering.
