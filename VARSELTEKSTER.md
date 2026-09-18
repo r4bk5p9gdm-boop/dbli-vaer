@@ -40,12 +40,12 @@ senere skal kobles til alle visningene.
 ### Andre linje
 
 ```text
-[Beskrivelse] [dag/tid], kl. [TT] — [varighet]
+[Beskrivelse] [dag], kl. [TT] — [varighet]
 ```
 
-Eksempler: `Kraftig regn i morgen, lørdag kl. 10 — i to timer.` ·
-`Lett snøfall i natt kl. 02 — gjennom natta.` ·
-`Frisk bris til helga, søndag kl. 14 — i tre timer.`
+Eksempler: `Kraftig regn lørdag, kl. 10 — i to timer.` ·
+`Lett snøfall tirsdag, kl. 02 — gjennom natta.` ·
+`Frisk bris søndag, kl. 14 — i tre timer.`
 
 Ved nært varsel kan andre linje være kort: `Litt regn om en halvtime — i 20 minutter.`
 
@@ -123,8 +123,8 @@ vanligvis den lille systemwidgeten.
 | Situasjon | Full tekst |
 |---|---|
 | **App push-varsel** |  |
-| Sikkert pushvarsel | **Det blir Duggfall! på Klinga i morgen.**<br>Duggfall i morgen, onsdag kl. 05 — gjennom natta. |
-| Usikkert pushvarsel | **Det kan bli Duggfall! på Klinga i morgen.**<br>Mulig duggfall i morgen, onsdag kl. 05 — en liten stund. |
+| Sikkert pushvarsel | **Det blir Duggfall! på Klinga i morgen.**<br>Duggfall onsdag, kl. 05 — gjennom natta. |
+| Usikkert pushvarsel | **Det kan bli Duggfall! på Klinga i morgen.**<br>Mulig duggfall onsdag, kl. 05 — en liten stund. |
 | **Nåstatus i app** |  |
 | Pågår nå | **D e Duggfall!**<br>Duggpunktet er nær lufttemperaturen. |
 | **Apple Watch** |  |
@@ -140,8 +140,8 @@ vanligvis den lille systemwidgeten.
 | Situasjon | Full tekst |
 |---|---|
 | **App push-varsel** |  |
-| Sikkert pushvarsel | **Det blir Regn! nerri Namsos i morgen.**<br>Litt regn i morgen, mandag kl. 06 — en liten stund. |
-| Usikkert pushvarsel | **Det kan bli Regn! nerri Namsos i morgen.**<br>Mulig regn i morgen, mandag kl. 06 — en liten stund. |
+| Sikkert pushvarsel | **Det blir Regn! nerri Namsos i morgen.**<br>Litt regn mandag, kl. 06 — en liten stund. |
+| Usikkert pushvarsel | **Det kan bli Regn! nerri Namsos i morgen.**<br>Mulig regn mandag, kl. 06 — en liten stund. |
 | **Nåstatus i app** |  |
 | Pågår nå | **D Regne!**<br>0,2 mm i Nå-varselet den neste halvtimen. |
 | **Apple Watch** |  |
@@ -157,8 +157,8 @@ vanligvis den lille systemwidgeten.
 | Situasjon | Full tekst |
 |---|---|
 | **App push-varsel** |  |
-| Sikkert pushvarsel | **Det blir Snø! oppi Bangdalen i natt.**<br>Lett snøfall i natt, tirsdag kl. 02 — gjennom natta. |
-| Usikkert pushvarsel | **Det kan bli Snø! oppi Bangdalen i natt.**<br>Mulig snø i natt, tirsdag kl. 02 — en liten stund. |
+| Sikkert pushvarsel | **Det blir Snø! oppi Bangdalen i natt.**<br>Lett snøfall tirsdag, kl. 02 — gjennom natta. |
+| Usikkert pushvarsel | **Det kan bli Snø! oppi Bangdalen i natt.**<br>Mulig snø tirsdag, kl. 02 — en liten stund. |
 | **Nåstatus i app** |  |
 | Pågår nå | **Det Snør!**<br>Snø i Nå-varselet den neste halvtimen. |
 | **Apple Watch** |  |
@@ -174,8 +174,8 @@ vanligvis den lille systemwidgeten.
 | Situasjon | Full tekst |
 |---|---|
 | **App push-varsel** |  |
-| Sikkert pushvarsel | **Det blir Frost! på Klinga i natt.**<br>Frost i natt, tirsdag kl. 04 — gjennom natta. |
-| Usikkert pushvarsel | **Det kan bli Frost! på Klinga i natt.**<br>Fare for frost i natt, tirsdag kl. 04 — en liten stund. |
+| Sikkert pushvarsel | **Det blir Frost! på Klinga i natt.**<br>Frost tirsdag, kl. 04 — gjennom natta. |
+| Usikkert pushvarsel | **Det kan bli Frost! på Klinga i natt.**<br>Fare for frost tirsdag, kl. 04 — en liten stund. |
 | **Nåstatus i app** |  |
 | Pågår nå | **D e Frost!**<br>Lokalt anslag er under frostgrensen. |
 | Temperaturgrense | **D bli Under 5°! på Klinga**<br>Temperaturen kan gå under 5° i natt — tirsdag kl. 03. |
@@ -192,8 +192,8 @@ vanligvis den lille systemwidgeten.
 | Situasjon | Full tekst |
 |---|---|
 | **App push-varsel** |  |
-| Sikkert pushvarsel | **Det blir Vind! bortpå Klinga i morgen.**<br>Frisk bris i morgen, mandag kl. 10 — i tre timer. |
-| Sterkere vind | **Det blir Vind! bortpå Klinga i kveld.**<br>Sterk vind i kveld, mandag kl. 19 — i tre timer. |
+| Sikkert pushvarsel | **Det blir Vind! bortpå Klinga i morgen.**<br>Frisk bris mandag, kl. 10 — i tre timer. |
+| Sterkere vind | **Det blir Vind! bortpå Klinga i kveld.**<br>Sterk vind mandag, kl. 19 — i tre timer. |
 | **Nåstatus i app** |  |
 | Pågår nå | **D Blæs!**<br>Vindkast 9 m/s akkurat nå. |
 | **Apple Watch** |  |
@@ -213,8 +213,8 @@ timer» er varigheten.
 | Situasjon | Full tekst |
 |---|---|
 | **App push-varsel** |  |
-| Sikkert pushvarsel | **Det blir Sol! inni Hornburu i morgen.**<br>Sol i morgen, fredag kl. 12 — store deler av dagen. |
-| Usikkert pushvarsel | **Det kan bli Sol! inni Hornburu i morgen.**<br>Solgløtt i morgen, fredag kl. 12 — i fire timer. |
+| Sikkert pushvarsel | **Det blir Sol! inni Hornburu i morgen.**<br>Sol fredag, kl. 12 — store deler av dagen. |
+| Usikkert pushvarsel | **Det kan bli Sol! inni Hornburu i morgen.**<br>Solgløtt fredag, kl. 12 — i fire timer. |
 | **Nåstatus i app** |  |
 | Pågår nå | **D e Sol!**<br>Solforholdene er gode nå. |
 | **Apple Watch** |  |
@@ -230,8 +230,8 @@ timer» er varigheten.
 | Situasjon | Full tekst |
 |---|---|
 | **App push-varsel** |  |
-| Under grense | **Det blir Under 10°! nerri Namsos i natt.**<br>Under 10° i natt, tirsdag kl. 02 — gjennom natta. |
-| Over grense | **Det blir Over 20°! på Klinga i morgen.**<br>Over 20° i morgen, onsdag kl. 14 — i tre timer. |
+| Under grense | **Det blir Under 10°! nerri Namsos i natt.**<br>Under 10° tirsdag, kl. 02 — gjennom natta. |
+| Over grense | **Det blir Over 20°! på Klinga i morgen.**<br>Over 20° onsdag, kl. 14 — i tre timer. |
 | **Nåstatus i app** |  |
 | Pågår nå | **D e Under 10°!**<br>Det er under 10° nå. |
 | **Apple Watch** |  |

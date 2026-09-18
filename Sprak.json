@@ -361,9 +361,9 @@
       "tr": "D bli {vaertype}! {sted} {tid}."
     },
     "template.second_line": {
-      "en": "{beskrivelse} {dag/tid}, at {klokkeslett} — {varighet}.",
-      "nb": "{beskrivelse} {dag/tid}, kl. {klokkeslett} — {varighet}.",
-      "tr": "{beskrivelse} {dag/tid}, kl. {klokkeslett} — {varighet}."
+      "en": "{beskrivelse} {dag}, at {klokkeslett} — {varighet}.",
+      "nb": "{beskrivelse} {dag}, kl. {klokkeslett} — {varighet}.",
+      "tr": "{beskrivelse} {dag}, kl. {klokkeslett} — {varighet}."
     },
     "detail.snow_light": {
       "en": "Light snowfall",

@@ -1973,3 +1973,6 @@ Ingen.
 - **BRUKER-084 · FULLFØRT 2026-09-18** — Utvidet språkgrunnlaget med en
   egen mal- og beskrivelsesdel for bokmål, inntrøndersk og engelsk i både
   `Sprak.json` og `VARSELTEKSTER.md`.
+- **BRUKER-085 · FULLFØRT 2026-09-18** — Fjernet gjentatt «i morgen»/«i
+  natt» fra andrelinjen. Den bruker nå beskrivelse + ukedag + klokkeslett,
+  mens tidskategorien står i første linje.
