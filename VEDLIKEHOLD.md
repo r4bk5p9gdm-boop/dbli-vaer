@@ -84,6 +84,10 @@ oppdaterte språkregresjoner.
 **BRUKER-048 · FULLFØRT 2026-09-18** — Snøstatus pågår nå bruker nå
 «Det Snør!».
 
+**BRUKER-049 · FULLFØRT 2026-09-18** — La til egen «Klokkesirkel»-rad i
+`VARSELTEKSTER.md` for alle varseltyper, med kort Watch-tekst og eksempel på
+nedtelling.
+
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder
 bruker nå samme validering.
