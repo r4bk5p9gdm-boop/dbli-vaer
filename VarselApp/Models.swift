@@ -235,7 +235,7 @@ enum WeatherLanguage {
             .replacingOccurrences(of: "Litt regn nå", with: LanguageCatalog.value("now.rain_light", language: "tr", fallback: "D e Litt Regn!"))
             .replacingOccurrences(of: "Mulig regn nå", with: LanguageCatalog.value("now.rain_possible", language: "tr", fallback: "D kan bli regn no"))
             .replacingOccurrences(of: "Regn nå", with: LanguageCatalog.value("now.rain", language: "tr", fallback: "D Regne!"))
-            .replacingOccurrences(of: "Snø nå", with: LanguageCatalog.value("now.snow", language: "tr", fallback: "D e Snø!"))
+            .replacingOccurrences(of: "Snø nå", with: LanguageCatalog.value("now.snow", language: "tr", fallback: "Det Snør!"))
             .replacingOccurrences(of: "Vindkast nå", with: LanguageCatalog.value("now.wind", language: "tr", fallback: "D Blæs!"))
             .replacingOccurrences(of: "Vind nå", with: LanguageCatalog.value("now.wind", language: "tr", fallback: "D Blæs!"))
             .replacingOccurrences(of: "Under ([0-9,.-]+)° nå\\.?", with: "D e Under $1°!", options: .regularExpression)

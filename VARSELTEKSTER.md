@@ -18,7 +18,7 @@ Watch, ikke et planlagt pushvarsel.
 |---|---|
 | Sikkert pushvarsel | **D bli Snø! oppi Bangdalen**<br>Snø i natt — tirsdag kl. 02.<br>Omtrent 3 cm nysnø. |
 | Usikkert pushvarsel | **D kan bli Snø! oppi Bangdalen**<br>Mulig snø i natt — tirsdag kl. 02.<br>Opptil 4 cm · 48 % sannsynlighet. |
-| Pågår nå | **D e Snø!**<br>Snø i Nå-varselet den neste halvtimen. |
+| Pågår nå | **Det Snør!**<br>Snø i Nå-varselet den neste halvtimen. |
 
 ## Duggfall
 

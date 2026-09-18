@@ -787,7 +787,7 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(WeatherLanguage.text("Regn nå.", style: .inntrondersk), "D Regne!")
         XCTAssertEqual(WeatherLanguage.text("Mulig regn nå.", style: .inntrondersk), "D kan bli regn no.")
         XCTAssertEqual(WeatherLanguage.text("Litt regn nå.", style: .inntrondersk), "D e Litt Regn!")
-        XCTAssertEqual(WeatherLanguage.text("Snø nå.", style: .inntrondersk), "D e Snø!")
+        XCTAssertEqual(WeatherLanguage.text("Snø nå.", style: .inntrondersk), "Det Snør!")
         XCTAssertEqual(WeatherLanguage.text("Vindkast nå.", style: .inntrondersk), "D Blæs!")
         XCTAssertEqual(WeatherLanguage.text("Frost nå.", style: .inntrondersk), "D e Frost!")
         XCTAssertEqual(WeatherLanguage.text("Sol i 4 timer nå.", style: .inntrondersk), "D e Sol!")

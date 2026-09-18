@@ -81,6 +81,9 @@ duggfall.
 språkrettelse: «D e Under X°!», «D Blæs!», «D e Frost!» og «D e Sol!», med
 oppdaterte språkregresjoner.
 
+**BRUKER-048 · FULLFØRT 2026-09-18** — Snøstatus pågår nå bruker nå
+«Det Snør!».
+
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder
 bruker nå samme validering.
