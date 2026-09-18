@@ -157,6 +157,10 @@ slår til. Eksisterende radfarger er beholdt.
 **BRUKER-070 · FULLFØRT 2026-09-18** — Gjorde frostmarkøren bak aktuell
 temperatur hvit og diskret, uten å endre radfargene.
 
+**BRUKER-071 · FULLFØRT 2026-09-18** — Temperatur-raden viser nå hvit
+markering ved faktisk temperatur på 0° eller kaldere, blå markering ved
+frostfare over 0° på grunn av lokal margin, og frostikon i begge tilfeller.
+
 
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder

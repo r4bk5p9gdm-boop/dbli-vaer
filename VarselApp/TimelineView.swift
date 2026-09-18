@@ -365,15 +365,30 @@ private struct CombinedHourBandCell: View {
                     let offset = hourOffset(hourNumber, from: period.startHour)
                     let matchesSunPreview = type == .sol && !SolarCycle.isAfterSunset(hour.time, latitude: latitude, longitude: longitude) && hour.cloud <= sunThreshold2
                     let matchesTemperaturePreview = type == .temperatur && (hour.temp <= temperatureLowThreshold || hour.temp >= temperatureHighThreshold)
+                    let matchesFrost = type == .temperatur && rules.contains(where: {
+                        $0.type == .frost && $0.isActive(at: hour.time) && $0.matches(hour, frostMargin: frostMargin)
+                    })
                     if offset < 8, matchesSunPreview || matchesTemperaturePreview || (type != .sol && rules.contains(where: {
                         $0.isActive(at: hour.time) && $0.matches(hour, frostMargin: frostMargin)
                     })) {
                         Rectangle()
                             .fill(type == .temperatur && hour.temp >= temperatureHighThreshold
                                   ? Color.orange.opacity(0.78)
+                                  : type == .temperatur && hour.temp <= 0
+                                  ? Color.white.opacity(0.92)
                                   : type.color.opacity(type == .sol && hour.cloud > sunThreshold2 ? 0.35 : 0.78))
                             .frame(width: proxy.size.width / 8 + 0.5)
                             .offset(x: proxy.size.width * CGFloat(offset) / 8)
+                        if matchesFrost {
+                            Image(systemName: AlertType.frost.systemImage)
+                                .font(.system(size: 7, weight: .bold))
+                                .foregroundStyle(hour.temp <= 0 ? Color.blue : Color.white)
+                                .frame(width: proxy.size.width / 8, height: proxy.size.height)
+                                .position(
+                                    x: proxy.size.width * CGFloat(offset) / 8 + proxy.size.width / 16,
+                                    y: proxy.size.height / 2
+                                )
+                        }
                     }
                 }
             }
