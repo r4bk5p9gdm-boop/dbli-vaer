@@ -107,6 +107,11 @@ godkjente teksten med «D bli Duggfall!» og «D kan bli Duggfall!».
 flerlinjet visning: stedsoverskrift, eventuelt «Også …», nærmeste hendelse
 og neste hendelse. Eksemplene følger samme korte hverdagsspråk som appen.
 
+**BRUKER-055 · FULLFØRT 2026-09-18** — Fjernet den misvisende
+dobbeltnavngivingen «Klokkesirkel»/«Rund klokkesirkel». Dokumentet bruker nå
+Watch-familiene rund komplikasjon, inline, hjørnekomplikasjon og
+rektangulær widget.
+
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder
 bruker nå samme validering.

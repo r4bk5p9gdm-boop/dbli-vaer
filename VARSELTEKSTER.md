@@ -15,9 +15,9 @@ hendelse og så neste hendelse.
 | **Nåstatus i app** |  |
 | Pågår nå | **D e Duggfall!**<br>Duggpunktet er nær lufttemperaturen. |
 | **Apple Watch** |  |
-| Klokkesirkel | **Dogg!** · 45 m |
+| Rund komplikasjon (klokkesirkel) | **Dogg!** · 45 m |
 | Inline-widget | **Dogg! 45m** |
-| Rund klokkesirkel | **Dogg!**<br>**45m** |
+| Hjørnekomplikasjon | Værikon med «Dogg!» som hjelpetekst |
 | Stor/rektangulær widget | **Klinga 8°**<br>**Neste 12 timer**<br>Dogg! om 45 m |
 | **CarPlay** |  |
 | CarPlay | **D bli Vær! på Klinga**<br>Også oppå Hornburu.<br>Doggfall i natt.<br>Regn om 3 timer. |
@@ -32,9 +32,9 @@ hendelse og så neste hendelse.
 | **Nåstatus i app** |  |
 | Pågår nå | **D Regne!**<br>0,2 mm i Nå-varselet den neste halvtimen. |
 | **Apple Watch** |  |
-| Klokkesirkel | **Regn!** · 23 m |
+| Rund komplikasjon (klokkesirkel) | **Regn!** · 23 m |
 | Inline-widget | **Regn! 23m** |
-| Rund klokkesirkel | **Regn!**<br>**23m** |
+| Hjørnekomplikasjon | Regnikon med «Regn!» som hjelpetekst |
 | Stor/rektangulær widget | **Klinga 12°**<br>**Neste 12 timer**<br>Regn! om 23 m |
 | **CarPlay** |  |
 | CarPlay | **D bli Vær! på Klinga**<br>Også oppå Hornburu.<br>Regn om 23 m.<br>Doggfall i natt. |
@@ -49,9 +49,9 @@ hendelse og så neste hendelse.
 | **Nåstatus i app** |  |
 | Pågår nå | **Det Snør!**<br>Snø i Nå-varselet den neste halvtimen. |
 | **Apple Watch** |  |
-| Klokkesirkel | **Snø!** · 2 t |
+| Rund komplikasjon (klokkesirkel) | **Snø!** · 2 t |
 | Inline-widget | **Snø! 2t** |
-| Rund klokkesirkel | **Snø!**<br>**2t** |
+| Hjørnekomplikasjon | Snøikon med «Snø!» som hjelpetekst |
 | Stor/rektangulær widget | **Bangdalen 3°**<br>**Neste 12 timer**<br>Snø! om 2 t |
 | **CarPlay** |  |
 | CarPlay | **D bli Vær! oppi Bangdalen**<br>Snø om 2 timer.<br>Regn senere i kveld. |
@@ -67,9 +67,9 @@ hendelse og så neste hendelse.
 | Pågår nå | **D e Frost!**<br>Lokalt anslag er under frostgrensen. |
 | Temperaturgrense | **D bli Under 5°! på Klinga**<br>Temperaturen kan gå under 5° i natt — tirsdag kl. 03. |
 | **Apple Watch** |  |
-| Klokkesirkel | **Frost!** · 1 t |
+| Rund komplikasjon (klokkesirkel) | **Frost!** · 1 t |
 | Inline-widget | **Frost! 1t** |
-| Rund klokkesirkel | **Frost!**<br>**1t** |
+| Hjørnekomplikasjon | Frostikon med «Frost!» som hjelpetekst |
 | Stor/rektangulær widget | **Klinga 2°**<br>**Neste 12 timer**<br>Frost! om 1 t |
 | **CarPlay** |  |
 | CarPlay | **D bli Vær! på Klinga**<br>Frost om 1 time.<br>Regn i natt. |
@@ -84,9 +84,9 @@ hendelse og så neste hendelse.
 | **Nåstatus i app** |  |
 | Pågår nå | **D Blæs!**<br>Vindkast 9 m/s akkurat nå. |
 | **Apple Watch** |  |
-| Klokkesirkel | **Vind!** · 23 m |
+| Rund komplikasjon (klokkesirkel) | **Vind!** · 23 m |
 | Inline-widget | **Vind! 23m** |
-| Rund klokkesirkel | **Vind!**<br>**23m** |
+| Hjørnekomplikasjon | Vindikon med «Vind!» som hjelpetekst |
 | Stor/rektangulær widget | **Klinga 12°**<br>**Neste 12 timer**<br>Vind! om 23 m |
 | **CarPlay** |  |
 | CarPlay | **D bli Vær! på Klinga**<br>Vindkast om 23 minutter.<br>Doggfall i natt. |
@@ -101,9 +101,9 @@ hendelse og så neste hendelse.
 | **Nåstatus i app** |  |
 | Pågår nå | **D e Sol!**<br>Solforholdene er gode nå. |
 | **Apple Watch** |  |
-| Klokkesirkel | **Sol!** · 4 t |
+| Rund komplikasjon (klokkesirkel) | **Sol!** · 4 t |
 | Inline-widget | **Sol! 4t** |
-| Rund klokkesirkel | **Sol!**<br>**4t** |
+| Hjørnekomplikasjon | Solikon med «Sol!» som hjelpetekst |
 | Stor/rektangulær widget | **Hornburu 14°**<br>**Neste 12 timer**<br>Sol! om 4 t |
 | **CarPlay** |  |
 | CarPlay | **D bli Vær! oppå Hornburu**<br>Sol om 4 timer.<br>Regn i natt. |
@@ -118,9 +118,9 @@ hendelse og så neste hendelse.
 | **Nåstatus i app** |  |
 | Pågår nå | **D e Under 10°!**<br>Det er under 10° nå. |
 | **Apple Watch** |  |
-| Klokkesirkel | **<10°** · 1 t |
+| Rund komplikasjon (klokkesirkel) | **<10°** · 1 t |
 | Inline-widget | **<10° 1t** |
-| Rund klokkesirkel | **<10°**<br>**1t** |
+| Hjørnekomplikasjon | Temperaturikon med «<10°» som hjelpetekst |
 | Stor/rektangulær widget | **Namsos 8°**<br>**Neste 12 timer**<br><10° om 1 t |
 | **CarPlay** |  |
 | CarPlay | **D bli Vær! nerri Namsos**<br>Under 10° om 1 time.<br>Regn i morgen. |
