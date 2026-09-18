@@ -65,6 +65,10 @@ manuell stedsrekkefølge beholdes gjennom serialisering av lagret tilstand.
 sorteringsvalg og hjemsted. Stjerneknappene hadde allerede egne tilgjengelige
 navn og beholder dem.
 
+**BRUKER-044 · FULLFØRT 2026-09-18** — Solmarkeringer i værbåndene vises nå
+bare fram til lokal solnedgang for stedets koordinater. Regn, frost, vind og
+andre typer påvirkes ikke. La til regresjonstest for sol etter solnedgang.
+
 **AUTO-216 · FULLFØRT 2026-09-17** — Samlet validering av stedkoordinater i
 `Place.distance(to:)` og la til regresjonstest. Visning og sortering av steder
 bruker nå samme validering.

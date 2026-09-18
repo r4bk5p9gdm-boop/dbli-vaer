@@ -23,6 +23,8 @@ struct ForecastVariantsView: View {
     let sunThreshold2: Double
     let temperatureLowThreshold: Double
     let temperatureHighThreshold: Double
+    let latitude: Double
+    let longitude: Double
 
     private var days: [ForecastDay] { ForecastDay.make(from: forecast) }
 
@@ -38,7 +40,7 @@ struct ForecastVariantsView: View {
                         TimeCardsForecast(day: day, allForecast: forecast, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold)
                     case .weatherBands:
                         SwiftUI.TimelineView(.periodic(from: .now, by: 60)) { timeline in
-                            WeatherBandsForecast(day: day, rules: rules, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, now: timeline.date)
+                            WeatherBandsForecast(day: day, rules: rules, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, now: timeline.date)
                         }
                     case .events:
                         WeatherEventsForecast(day: day, rules: rules, frostMargin: frostMargin)
@@ -268,7 +270,7 @@ private struct WeatherBandsForecast: View {
                                 color: type.color,
                                 showsNotification: typeRules.contains(where: { !$0.isDisplayOnly })
                             )
-                            CombinedDayBandTrack(day: day, rules: typeRules, type: type, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold)
+                            CombinedDayBandTrack(day: day, rules: typeRules, type: type, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude)
                         }
                     }
                 }
@@ -340,11 +342,13 @@ private struct CombinedDayBandTrack: View {
     let sunThreshold2: Double
     let temperatureLowThreshold: Double
     let temperatureHighThreshold: Double
+    let latitude: Double
+    let longitude: Double
 
     var body: some View {
         HStack(spacing: 3) {
             ForEach(WeatherBandPeriod.all) { period in
-                CombinedHourBandCell(hours: day.hours, rules: rules, type: type, period: period, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold)
+                CombinedHourBandCell(hours: day.hours, rules: rules, type: type, period: period, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude)
             }
         }
         .frame(height: 18)
@@ -362,6 +366,8 @@ private struct CombinedHourBandCell: View {
     let sunThreshold2: Double
     let temperatureLowThreshold: Double
     let temperatureHighThreshold: Double
+    let latitude: Double
+    let longitude: Double
 
     var body: some View {
         GeometryReader { proxy in
@@ -371,11 +377,11 @@ private struct CombinedHourBandCell: View {
                 ForEach(hours) { hour in
                     let hourNumber = Calendar.current.component(.hour, from: hour.time)
                     let offset = hourOffset(hourNumber, from: period.startHour)
-                    let matchesSunPreview = type == .sol && hour.cloud <= sunThreshold2
+                    let matchesSunPreview = type == .sol && !SolarCycle.isAfterSunset(hour.time, latitude: latitude, longitude: longitude) && hour.cloud <= sunThreshold2
                     let matchesTemperaturePreview = type == .temperatur && (hour.temp <= temperatureLowThreshold || hour.temp >= temperatureHighThreshold)
-                    if offset < 8, matchesSunPreview || matchesTemperaturePreview || rules.contains(where: {
+                    if offset < 8, matchesSunPreview || matchesTemperaturePreview || (type != .sol && rules.contains(where: {
                         $0.isActive(at: hour.time) && $0.matches(hour, frostMargin: frostMargin)
-                    }) {
+                    })) {
                         Rectangle()
                             .fill(type == .temperatur && hour.temp >= temperatureHighThreshold
                                   ? Color.orange.opacity(0.78)

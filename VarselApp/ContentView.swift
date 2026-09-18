@@ -222,7 +222,9 @@ struct HomeView: View {
                                     mode: .weatherBands,
                                     sunThreshold2: p.resolvedDisplaySunThreshold2,
                                     temperatureLowThreshold: p.resolvedDisplayTemperatureThreshold,
-                                    temperatureHighThreshold: p.resolvedDisplayTemperatureHighThreshold
+                                    temperatureHighThreshold: p.resolvedDisplayTemperatureHighThreshold,
+                                    latitude: p.lat,
+                                    longitude: p.lon
                                 )
                             }
                         }.card()

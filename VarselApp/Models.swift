@@ -924,6 +924,30 @@ enum PlaceOrdering {
     }
 }
 
+enum SolarCycle {
+    static func isAfterSunset(_ date: Date, latitude: Double, longitude: Double) -> Bool {
+        guard latitude.isFinite, longitude.isFinite,
+              (-90...90).contains(latitude), (-180...180).contains(longitude) else { return false }
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        let day = calendar.ordinality(of: .day, in: .year, for: date) ?? 1
+        let radians = Double.pi / 180
+        let declination = 23.44 * sin(radians * (360 / 365 * Double(day - 81)))
+        let lat = latitude * radians
+        let dec = declination * radians
+        let cosine = (cos(90.833 * radians) - sin(lat) * sin(dec)) / (cos(lat) * cos(dec))
+        guard cosine < 1 else { return true }
+        guard cosine > -1 else { return false }
+        let hourAngle = acos(cosine) / radians
+        let offsetHours = Double(calendar.timeZone.secondsFromGMT(for: date)) / 3600
+        let solarNoon = 12 - longitude / 15 + offsetHours
+        let sunset = solarNoon + hourAngle / 15
+        let start = calendar.startOfDay(for: date)
+        let sunsetDate = start.addingTimeInterval(sunset * 3600)
+        return date >= sunsetDate
+    }
+}
+
 struct PlannedAlert: Identifiable, Hashable {
     let rule: Rule
     let placeID: UUID?

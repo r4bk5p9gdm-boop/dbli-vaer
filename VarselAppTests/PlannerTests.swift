@@ -51,6 +51,11 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(decoded.places.map(\.id), [second.id, first.id])
     }
 
+    func testSolarCycleSuppressesSunAfterLocalSunset() {
+        let evening = Calendar.current.date(from: DateComponents(year: 2026, month: 6, day: 21, hour: 23))!
+        XCTAssertTrue(SolarCycle.isAfterSunset(evening, latitude: 64, longitude: 11))
+    }
+
     func testPersistedStoreStateRoundTripsForecastCacheAndTimestamp() throws {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 20, dew: 5)
