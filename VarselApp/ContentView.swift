@@ -320,14 +320,19 @@ private struct CurrentWeatherCard: View {
                 WeatherWordmark(languageStyle: languageStyle)
 
                 if isCurrentLocation {
-                    HStack(spacing: 3) {
+                    ZStack {
                         Image(systemName: "location.fill")
-                            .font(.caption2.weight(.bold))
+                            .font(.title3.weight(.bold))
+                            .foregroundStyle(.indigo)
                         Text(languageStyle == .english ? "here" : "her")
-                            .font(.caption.weight(.bold))
+                            .font(.subheadline.weight(.heavy))
+                            .foregroundStyle(.indigo)
+                            .padding(.horizontal, 4)
+                            .padding(.vertical, 1)
+                            .background(.thinMaterial, in: Capsule())
+                            .offset(x: 8, y: 1)
                     }
-                    .foregroundStyle(.indigo)
-                    .fixedSize()
+                    .frame(width: languageStyle == .english ? 42 : 34, height: 26)
                     .accessibilityElement(children: .combine)
                     .accessibilityLabel("Posisjonsbasert værvarsel her")
                     .accessibilityHint("Dette stedet følger telefonens aktuelle posisjon.")

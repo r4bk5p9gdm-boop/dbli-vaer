@@ -54,6 +54,10 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-075 · FULLFØRT 2026-09-19** — Gjorde posisjonsmarkøren i Hjem-tittelen
+større og samlet: «her» ligger nå som en tydelig etikett oppå den større
+posisjonspilen, i stedet for som liten tekst ved siden av.
+
 **BRUKER-074 · FULLFØRT 2026-09-19** — Ga rullerende varsel på Hjem en egen
 to-linjers språkstruktur. Førstelinjen kan være direkte, som «Regn herre
 tima», mens detaljlinjen bruker samme værordbok som push uten å gjenta
