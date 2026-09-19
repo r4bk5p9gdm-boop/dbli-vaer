@@ -54,6 +54,11 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-078 · FULLFØRT 2026-09-19** — Gjorde andrelinjen i rullerende
+nedbørvarsel valgfri. Den skjules når den bare ville gjentatt værtypen i
+førstelinjen, som «Mulig regn herre tima». Den vises fortsatt når den tilfører
+styrke, for eksempel «Mulig småregn.», «Yr.» eller «Striskur.»
+
 **BRUKER-077 · FULLFØRT 2026-09-19** — Avgrenset rullerende varsel på Hjem til
 nå og neste 24 timer. Regn «om tre kvarter» får nå bare værbeskrivelsen
 «Småregn.» på andrelinjen, uten «snart» eller ny tidsangivelse. Samlet regn-

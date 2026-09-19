@@ -437,7 +437,7 @@ private struct CurrentWeatherCard: View {
                 if index == 0 {
                     headline(
                         title: WeatherLanguage.text(precipitation.title, style: languageStyle),
-                        detail: WeatherLanguage.text(precipitation.detail, style: languageStyle),
+                        detail: precipitation.detail.map { WeatherLanguage.text($0, style: languageStyle) },
                         systemImage: precipitation.systemImage,
                         color: precipitation.color
                     )
@@ -647,7 +647,7 @@ private struct LiveWeatherMetric: View {
 
 private struct CurrentPrecipitationSummary {
     let title: String
-    let detail: String
+    let detail: String?
     let systemImage: String
     let color: Color
     let isFallingNow: Bool
@@ -661,7 +661,7 @@ private struct CurrentPrecipitationSummary {
         if let latest, latest.time >= now.addingTimeInterval(-10 * 60), latest.rate >= 0.1 {
             return CurrentPrecipitationSummary(
                 title: current.temp <= 1 ? "Snø nå" : "Regn nå",
-                detail: "\(PrecipitationCopy.description(waterEquivalent: latest.rate, temperature: current.temp)).",
+                detail: precipitationDetail(waterEquivalent: latest.rate, temperature: current.temp),
                 systemImage: current.temp <= 1 ? "cloud.snow.fill" : "cloud.rain.fill",
                 color: .blue,
                 isFallingNow: true
@@ -676,7 +676,7 @@ private struct CurrentPrecipitationSummary {
             let kind = current.temp <= 1 ? "Snø" : "Regn"
             return CurrentPrecipitationSummary(
                 title: "\(kind) \(eventTimePhrase(upcoming.time, relativeTo: now))",
-                detail: "\(PrecipitationCopy.description(waterEquivalent: upcoming.rate, temperature: current.temp)).",
+                detail: precipitationDetail(waterEquivalent: upcoming.rate, temperature: current.temp),
                 systemImage: current.temp <= 1 ? "cloud.snow.fill" : "cloud.rain.fill",
                 color: .blue,
                 isFallingNow: false
@@ -686,7 +686,7 @@ private struct CurrentPrecipitationSummary {
         if current.precip >= 0.1 {
             return CurrentPrecipitationSummary(
                 title: current.temp <= 1 ? "Snø denne timen" : "Regn denne timen",
-                detail: "\(PrecipitationCopy.description(waterEquivalent: current.precip, temperature: current.temp)).",
+                detail: precipitationDetail(waterEquivalent: current.precip, temperature: current.temp),
                 systemImage: current.temp <= 1 ? "cloud.snow.fill" : "cloud.rain.fill",
                 color: .blue,
                 isFallingNow: false
@@ -696,7 +696,11 @@ private struct CurrentPrecipitationSummary {
         if current.precipitationRiskRate >= 0.1 {
             return CurrentPrecipitationSummary(
                 title: current.temp <= 1 ? "Mulig snø denne timen" : "Mulig regn denne timen",
-                detail: "Mulig \(PrecipitationCopy.description(waterEquivalent: current.precipMax ?? current.precipitationRiskRate, temperature: current.temp).lowercased()).",
+                detail: precipitationDetail(
+                    waterEquivalent: current.precipMax ?? current.precipitationRiskRate,
+                    temperature: current.temp,
+                    possible: true
+                ),
                 systemImage: "umbrella.fill",
                 color: .blue.opacity(0.75),
                 isFallingNow: false
@@ -709,9 +713,11 @@ private struct CurrentPrecipitationSummary {
             let possible = upcoming.precip < 0.1
             return CurrentPrecipitationSummary(
                 title: "\(precipitationHeadlineName(temperature: upcoming.temp, possible: possible)) \(eventTimePhrase(upcoming.time, relativeTo: now))",
-                detail: possible
-                    ? "Mulig \(PrecipitationCopy.description(waterEquivalent: upcoming.precipMax ?? upcoming.precipitationRiskRate, temperature: upcoming.temp).lowercased())."
-                    : "\(PrecipitationCopy.description(waterEquivalent: upcoming.precip, temperature: upcoming.temp)).",
+                detail: precipitationDetail(
+                    waterEquivalent: possible ? (upcoming.precipMax ?? upcoming.precipitationRiskRate) : upcoming.precip,
+                    temperature: upcoming.temp,
+                    possible: possible
+                ),
                 systemImage: possible ? "umbrella.fill" : (upcoming.temp <= 1 ? "cloud.snow.fill" : "cloud.rain.fill"),
                 color: possible ? .blue.opacity(0.75) : .blue,
                 isFallingNow: false
@@ -725,6 +731,19 @@ private struct CurrentPrecipitationSummary {
             color: .secondary,
             isFallingNow: false
         )
+    }
+
+    /// A second line is only useful when it says more than the weather type
+    /// already named in the headline. A generic rain/snow classification is
+    /// therefore deliberately omitted.
+    private static func precipitationDetail(waterEquivalent: Double, temperature: Double, possible: Bool = false) -> String? {
+        let description = PrecipitationCopy.description(
+            waterEquivalent: waterEquivalent,
+            temperature: temperature
+        )
+        let generic = temperature <= 1 ? description == "Snøfall" : description == "Regn"
+        guard !generic else { return nil }
+        return "\(possible ? "Mulig " : "")\(description.lowercased())."
     }
 
 }
