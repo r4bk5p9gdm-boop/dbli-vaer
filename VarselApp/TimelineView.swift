@@ -132,7 +132,9 @@ private struct ForecastDayFrame<Content: View>: View {
             content()
                 .padding(.horizontal, 9)
                 .padding(.top, 15)
-                .padding(.bottom, 9)
+                // The now-label sits just below the weather tracks. Keep it
+                // inside the day frame instead of visually touching its edge.
+                .padding(.bottom, 17)
                 .background(.background, in: RoundedRectangle(cornerRadius: 12))
                 .overlay {
                     RoundedRectangle(cornerRadius: 12)

@@ -1499,6 +1499,10 @@ SwiftUI-kompilatorens typearbeid og retter den rapporterte feilen i
 nå språklig: posisjonspil + «her» står før stedets preposisjon, slik at det
 for eksempel leses «D bli Vær! her på Klinga». Engelsk bruker «here».
 
+**BRUKER-094 · FULLFØRT 2026-09-19** — Ga hver dagsramme litt mer luft under
+nederste værbånd. «nå»-teksten får dermed en egen, rolig plass før rammens
+nederkant.
+
 46. **BRUKER · DELVIS IMPLEMENTERT** — Vindkastnivåer har navn og tall i
    regelvelgeren; kompakt værtekst viser bare kast. Små nedbørsmengder (fra
    0,1 mm/t) får blå markering selv uten aktiv regnregel. Radstripen viser
