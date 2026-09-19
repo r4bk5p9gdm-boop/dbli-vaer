@@ -1485,8 +1485,10 @@ Sprak-nøklene den bruker, og la til regresjonstest som krever bokmål,
 inntrøndersk og engelsk for hver nøkkel. Manglende pushtekst oppdages dermed
 før den kan falle tilbake til hardkodet tekst.
 
-**AUTO-155 · ÅPEN** — Legg til regresjonstest for kort tidstekst og regelen om
-at andrelinjen går rett på klokkeslett ved «i dag», «i kveld» og «i natt».
+**AUTO-155 · FULLFØRT 2026-09-19** — La til regresjonstest for detaljlinjens
+tidsregel: nære hendelser får ikke unødvendig klokkeslett, samme dag går rett
+på «kl.», og natt til neste dag bruker også bare klokkeslett. Testen låser at
+andrelinjen aldri gjentar «om to timer» fra førstelinjen.
 
 **BRUKER-087 · FULLFØRT 2026-09-19** — Tilpasset Hjems værbånd mellom kl. 05
 og 07: gårsdagen skjules, 05–07 får en smal nattdel foran dagens vanlige

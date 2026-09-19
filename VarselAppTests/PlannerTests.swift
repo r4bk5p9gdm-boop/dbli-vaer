@@ -1392,6 +1392,37 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(lines[0].contains("om to timer"))
     }
 
+    func testNotificationDetailUsesClockOnlyWhenItHelps() {
+        let sameDay = NotificationCopy.message(
+            for: Rule(type: .regn),
+            eventAt: base.addingTimeInterval(2 * 3_600),
+            referenceAt: base,
+            eventDetail: "Litt regn {tid} — i 2 timer."
+        )
+        XCTAssertTrue(sameDay.contains("kl. "), sameDay)
+        XCTAssertFalse(sameDay.contains("om to timer"), sameDay)
+
+        let near = NotificationCopy.message(
+            for: Rule(type: .regn),
+            eventAt: base.addingTimeInterval(30 * 60),
+            referenceAt: base,
+            eventDetail: "Yr {tid}."
+        )
+        XCTAssertEqual(near, "Yr.")
+
+        let calendar = Calendar.current
+        let evening = try! XCTUnwrap(calendar.date(bySettingHour: 21, minute: 0, second: 0, of: base))
+        let tomorrow = try! XCTUnwrap(calendar.date(byAdding: .day, value: 1, to: evening))
+        let night = try! XCTUnwrap(calendar.date(bySettingHour: 2, minute: 0, second: 0, of: tomorrow))
+        let overnight = NotificationCopy.message(
+            for: Rule(type: .frost),
+            eventAt: night,
+            referenceAt: evening,
+            eventDetail: "Frost {tid}."
+        )
+        XCTAssertEqual(overnight, "Frost kl. 02.")
+    }
+
     func testInntronderskKeepsMemoAsSeparateFinalLineForWeatherTypes() {
         for type in [AlertType.regn, .sno, .dugg, .frost, .vind, .temperatur, .sol] {
             var rule = Rule(type: type)
