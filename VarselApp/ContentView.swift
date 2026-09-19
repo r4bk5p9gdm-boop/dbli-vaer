@@ -214,10 +214,6 @@ struct HomeView: View {
                                 }
                                 .help(isStale ? "Siste prognose er eldre enn to timer. Oppdaterer …" : "Prognosen er oppdatert")
                             }
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 6)
-                            .background(Color.primary.opacity(0.045), in: RoundedRectangle(cornerRadius: 8))
-                            .overlay(alignment: .bottom) { Divider().opacity(0.55) }
                             if fc.isEmpty {
                                 Text(store.error ?? "Henter prognose …").font(.footnote).foregroundStyle(.secondary)
                             } else {
