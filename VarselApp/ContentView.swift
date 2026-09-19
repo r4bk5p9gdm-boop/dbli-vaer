@@ -183,7 +183,23 @@ struct HomeView: View {
                                     onEdit: { showingSettings = true },
                                     showsContainer: false
                                 )
-                                Divider().padding(.horizontal, 12)
+                                .background(
+                                    LinearGradient(
+                                        colors: store.selectionIsCurrentLocation
+                                            ? [Color.indigo.opacity(0.12), Color.cyan.opacity(0.08)]
+                                            : [Color.white, Color(red: 0.96, green: 0.98, blue: 1.0)],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ),
+                                    in: RoundedRectangle(cornerRadius: 18)
+                                )
+                                .padding(.horizontal, 4)
+                                .padding(.top, 4)
+
+                                Divider()
+                                    .padding(.horizontal, 16)
+                                    .padding(.top, 6)
+
                                 ForecastVariantsView(
                                     forecast: visibleForecast,
                                     rules: p.rulesForDisplay,
@@ -200,15 +216,11 @@ struct HomeView: View {
                                     isStale: Store.isForecastStale(store.lastUpdate)
                                 )
                                 .padding(.horizontal, 12)
+                                .padding(.top, 16)
+                                .padding(.bottom, 4)
                             }
                             .background(
-                                LinearGradient(
-                                    colors: store.selectionIsCurrentLocation
-                                        ? [Color.indigo.opacity(0.12), Color.cyan.opacity(0.08)]
-                                        : [Color.white, Color(red: 0.96, green: 0.98, blue: 1.0)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
+                                Color(uiColor: .systemBackground),
                                 in: RoundedRectangle(cornerRadius: 18)
                             )
                             .overlay(RoundedRectangle(cornerRadius: 18).stroke(store.selectionIsCurrentLocation ? Color.indigo.opacity(0.28) : Color.blue.opacity(0.12)))

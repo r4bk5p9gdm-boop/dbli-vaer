@@ -1516,6 +1516,10 @@ varseltekstsystemet i bokmål- og inntrøndersk-kolonner. Det skiller konsekvent
 mellom framtid, usikkerhet, nåstatus, tid og varighet. Engelsk står på vent i
 selve gjennomgangsdokumentet; appens språkverdier er ikke endret.
 
+**BRUKER-098 · FULLFØRT 2026-09-19** — Avsluttet Hjem-gradienten ved
+statusblokken. Tredagersvarselet bruker nå lys appbakgrunn i samme hovedramme,
+med mer luft mellom delingslinjen og første dagsramme.
+
 46. **BRUKER · DELVIS IMPLEMENTERT** — Vindkastnivåer har navn og tall i
    regelvelgeren; kompakt værtekst viser bare kast. Små nedbørsmengder (fra
    0,1 mm/t) får blå markering selv uten aktiv regnregel. Radstripen viser
