@@ -1470,6 +1470,11 @@ hardkodet tekst uten at det oppdages.
 **AUTO-155 · ÅPEN** — Legg til regresjonstest for kort tidstekst og regelen om
 at andrelinjen går rett på klokkeslett ved «i dag», «i kveld» og «i natt».
 
+**BRUKER-087 · FULLFØRT 2026-09-19** — Tilpasset Hjems værbånd mellom kl. 05
+og 07: gårsdagen skjules, 05–07 får en smal nattdel foran dagens vanlige
+07–15–23–07-bånd, og nå-streken følger den nye dagsraden. Både Nedbør og de
+andre værtypene bruker samme adaptive inndeling.
+
 46. **BRUKER · DELVIS IMPLEMENTERT** — Vindkastnivåer har navn og tall i
    regelvelgeren; kompakt værtekst viser bare kast. Små nedbørsmengder (fra
    0,1 mm/t) får blå markering selv uten aktiv regnregel. Radstripen viser

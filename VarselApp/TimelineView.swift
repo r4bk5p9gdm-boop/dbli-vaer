@@ -27,10 +27,18 @@ struct ForecastVariantsView: View {
     let longitude: Double
 
     private var days: [ForecastDay] { ForecastDay.make(from: forecast) }
+    private var visibleDays: [ForecastDay] {
+        let calendar = Calendar.current
+        let now = Date()
+        guard calendar.component(.hour, from: now) >= 5,
+              calendar.component(.hour, from: now) < 7 else { return days }
+        let today = calendar.startOfDay(for: now)
+        return days.filter { $0.date >= today }
+    }
 
     var body: some View {
         VStack(spacing: 7) {
-            ForEach(days, id: \.id) { day in
+            ForEach(visibleDays, id: \.id) { day in
                 VStack(alignment: .leading, spacing: 4) {
                     if !Calendar.current.isDate(day.date, inSameDayAs: Calendar.current.startOfDay(for: Date())) {
                         ForecastDayHeader(day: day)
@@ -79,12 +87,15 @@ private struct WeatherBandPeriod: Identifiable {
     let startHour: Int
     let label: String
     let isNight: Bool
+    let hours: Int
     var id: Int { startHour }
 
+    static let earlyMorning = WeatherBandPeriod(startHour: 5, label: "", isNight: true, hours: 2)
+
     static let all = [
-        WeatherBandPeriod(startHour: 7, label: "Dag", isNight: false),
-        WeatherBandPeriod(startHour: 15, label: "Kveld", isNight: false),
-        WeatherBandPeriod(startHour: 23, label: "Natt", isNight: true),
+        WeatherBandPeriod(startHour: 7, label: "Dag", isNight: false, hours: 8),
+        WeatherBandPeriod(startHour: 15, label: "Kveld", isNight: false, hours: 8),
+        WeatherBandPeriod(startHour: 23, label: "Natt", isNight: true, hours: 8),
     ]
 }
 
@@ -202,10 +213,21 @@ private struct WeatherBandsForecast: View {
         Calendar.current.isDate(day.date, inSameDayAs: Calendar.current.startOfDay(for: now))
     }
 
+    private var isEarlyMorning: Bool {
+        isToday && (5...6).contains(Calendar.current.component(.hour, from: now))
+    }
+
     private var nowFraction: CGFloat {
         let calendar = Calendar.current
-        let logicalDay = weatherDayDate(for: now, calendar: calendar)
-        let start = calendar.date(byAdding: .hour, value: 7, to: logicalDay) ?? logicalDay
+        if isEarlyMorning {
+            let startOfToday = calendar.startOfDay(for: now)
+            let start = calendar.date(byAdding: .hour, value: 5, to: startOfToday) ?? startOfToday
+            // 05–07 occupies two of the 26 visual hour cells.
+            return min(max(now.timeIntervalSince(start) / (26 * 3_600), 0), 2.0 / 26.0)
+        }
+        let logicalDay = isEarlyMorning ? calendar.startOfDay(for: now) : weatherDayDate(for: now, calendar: calendar)
+        let startHour = isEarlyMorning ? 5 : 7
+        let start = calendar.date(byAdding: .hour, value: startHour, to: logicalDay) ?? logicalDay
         let end = calendar.date(byAdding: .day, value: 1, to: start) ?? start.addingTimeInterval(86_400)
         return min(max(now.timeIntervalSince(start) / end.timeIntervalSince(start), 0), 1)
     }
@@ -217,14 +239,16 @@ private struct WeatherBandsForecast: View {
                     let labelWidth: CGFloat = 78
                     let trackWidth = max(0, proxy.size.width - labelWidth)
                     ZStack(alignment: .topLeading) {
-                        let markers = [7, 15, 23, 7]
-                        ForEach(Array(markers.enumerated()), id: \.offset) { index, hour in
-                            Text(String(format: "%02d", hour))
+                        let markers: [(hour: Int, fraction: CGFloat)] = isEarlyMorning
+                            ? [(5, 0), (7, 2.0 / 26.0), (15, 10.0 / 26.0), (23, 18.0 / 26.0), (7, 1)]
+                            : [(7, 0), (15, 1.0 / 3.0), (23, 2.0 / 3.0), (7, 1)]
+                        ForEach(Array(markers.enumerated()), id: \.offset) { _, marker in
+                            Text(String(format: "%02d", marker.hour))
                                 .font(.caption2)
                                 .foregroundStyle(.secondary)
                                 .frame(width: 24)
                                 .position(
-                                    x: labelWidth + trackWidth * CGFloat(index) / 3,
+                                    x: labelWidth + trackWidth * marker.fraction,
                                     y: 6
                                 )
                         }
@@ -246,7 +270,7 @@ private struct WeatherBandsForecast: View {
                                 color: AlertType.regn.color,
                                 showsNotification: moistureRules.contains(where: { !$0.isDisplayOnly })
                             )
-                            MoistureBandTrack(day: day, rules: moistureRules)
+                            MoistureBandTrack(day: day, rules: moistureRules, includeEarlyMorning: isEarlyMorning)
                         }
                     }
                     ForEach(displayedTypes) { type in
@@ -260,7 +284,7 @@ private struct WeatherBandsForecast: View {
                                 color: type.color,
                                 showsNotification: typeRules.contains(where: { !$0.isDisplayOnly })
                             )
-                            CombinedDayBandTrack(day: day, rules: typeRules, type: type, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude)
+                            CombinedDayBandTrack(day: day, rules: typeRules, type: type, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, includeEarlyMorning: isEarlyMorning)
                         }
                     }
                 }
@@ -339,11 +363,22 @@ private struct CombinedDayBandTrack: View {
     let temperatureHighThreshold: Double
     let latitude: Double
     let longitude: Double
+    let includeEarlyMorning: Bool
 
     var body: some View {
-        HStack(spacing: 3) {
-            ForEach(WeatherBandPeriod.all) { period in
-                CombinedHourBandCell(hours: day.hours, rules: rules, type: type, period: period, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude)
+        GeometryReader { proxy in
+            let spacing: CGFloat = 3
+            let gapCount: CGFloat = includeEarlyMorning ? 3 : 2
+            let availableWidth = max(0, proxy.size.width - spacing * gapCount)
+            HStack(spacing: spacing) {
+                if includeEarlyMorning {
+                    CombinedHourBandCell(hours: day.hours, rules: rules, type: type, period: .earlyMorning, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude)
+                        .frame(width: availableWidth * 2 / 26)
+                }
+                ForEach(WeatherBandPeriod.all) { period in
+                    CombinedHourBandCell(hours: day.hours, rules: rules, type: type, period: period, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude)
+                        .frame(width: availableWidth * 8 / 26)
+                }
             }
         }
         .frame(height: 18)
@@ -377,7 +412,7 @@ private struct CombinedHourBandCell: View {
                     let matchesFrost = type == .temperatur && rules.contains(where: {
                         $0.type == .frost && $0.isActive(at: hour.time) && $0.matches(hour, frostMargin: frostMargin)
                     })
-                    if offset < 8, matchesSunPreview || matchesTemperaturePreview || (type != .sol && rules.contains(where: {
+                    if offset < period.hours, matchesSunPreview || matchesTemperaturePreview || (type != .sol && rules.contains(where: {
                         $0.isActive(at: hour.time) && $0.matches(hour, frostMargin: frostMargin)
                     })) {
                         Rectangle()
@@ -386,15 +421,15 @@ private struct CombinedHourBandCell: View {
                                   : type == .temperatur && hour.temp <= 0
                                   ? Color.white.opacity(0.92)
                                   : type.color.opacity(type == .sol && hour.cloud > sunThreshold2 ? 0.35 : 0.78))
-                            .frame(width: proxy.size.width / 8 + 0.5)
-                            .offset(x: proxy.size.width * CGFloat(offset) / 8)
+                            .frame(width: proxy.size.width / CGFloat(period.hours) + 0.5)
+                            .offset(x: proxy.size.width * CGFloat(offset) / CGFloat(period.hours))
                         if matchesFrost {
                             Image(systemName: AlertType.frost.systemImage)
                                 .font(.system(size: 7, weight: .bold))
                                 .foregroundStyle(hour.temp <= 0 ? Color.blue : Color.white)
-                                .frame(width: proxy.size.width / 8, height: proxy.size.height)
-                                .position(
-                                    x: proxy.size.width * CGFloat(offset) / 8 + proxy.size.width / 16,
+                                    .frame(width: proxy.size.width / CGFloat(period.hours), height: proxy.size.height)
+                                    .position(
+                                    x: proxy.size.width * CGFloat(offset) / CGFloat(period.hours) + proxy.size.width / CGFloat(period.hours * 2),
                                     y: proxy.size.height / 2
                                 )
                         }
@@ -409,12 +444,22 @@ private struct CombinedHourBandCell: View {
 private struct MoistureBandTrack: View {
     let day: ForecastDay
     let rules: [Rule]
+    let includeEarlyMorning: Bool
 
     var body: some View {
-        HStack(spacing: 3) {
-            ForEach(WeatherBandPeriod.all) { period in
-                MoistureHourBandCell(hours: day.hours, rules: rules, period: period)
-                    .frame(maxWidth: .infinity)
+        GeometryReader { proxy in
+            let spacing: CGFloat = 3
+            let gapCount: CGFloat = includeEarlyMorning ? 3 : 2
+            let availableWidth = max(0, proxy.size.width - spacing * gapCount)
+            HStack(spacing: spacing) {
+                if includeEarlyMorning {
+                    MoistureHourBandCell(hours: day.hours, rules: rules, period: .earlyMorning)
+                        .frame(width: availableWidth * 2 / 26)
+                }
+                ForEach(WeatherBandPeriod.all) { period in
+                    MoistureHourBandCell(hours: day.hours, rules: rules, period: period)
+                        .frame(width: availableWidth * 8 / 26)
+                }
             }
         }
         .frame(height: 18)
@@ -460,25 +505,25 @@ private struct MoistureHourBandCell: View {
                 ForEach(hours) { hour in
                     let hourNumber = Calendar.current.component(.hour, from: hour.time)
                     let offset = hourOffset(hourNumber, from: period.startHour)
-                    if offset < 8 {
+                    if offset < period.hours {
                         let precipitationRule = matchingRule(of: .sno, for: hour) ?? matchingRule(of: .regn, for: hour)
                         let dewRule = matchingRule(of: .dugg, for: hour)
-                        let x = proxy.size.width * CGFloat(offset) / 8
+                        let x = proxy.size.width * CGFloat(offset) / CGFloat(period.hours)
 
                         if let precipitationRule {
                             Rectangle()
                                 .fill(fill(for: precipitationRule, at: hour))
-                                .frame(width: proxy.size.width / 8 + 0.5, height: proxy.size.height)
+                                .frame(width: proxy.size.width / CGFloat(period.hours) + 0.5, height: proxy.size.height)
                                 .offset(x: x)
                         } else if hour.precipitationRate >= 0.1 && hour.temp > 1 {
                             Rectangle()
                                 .fill(AlertType.regn.color.opacity(0.48))
-                                .frame(width: proxy.size.width / 8 + 0.5, height: proxy.size.height)
+                                .frame(width: proxy.size.width / CGFloat(period.hours) + 0.5, height: proxy.size.height)
                                 .offset(x: x)
                         } else if let dewRule, !hadRecentPrecipitation(before: hour) {
                             Rectangle()
                                 .fill(fill(for: dewRule, at: hour))
-                                .frame(width: proxy.size.width / 8 + 0.5, height: proxy.size.height)
+                                .frame(width: proxy.size.width / CGFloat(period.hours) + 0.5, height: proxy.size.height)
                                 .offset(x: x)
                         }
                     }
