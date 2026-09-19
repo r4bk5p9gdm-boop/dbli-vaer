@@ -34,10 +34,17 @@ struct ForecastVariantsView: View {
     private var visibleDays: [ForecastDay] {
         let calendar = Calendar.current
         let now = Date()
-        guard calendar.component(.hour, from: now) >= 5,
-              calendar.component(.hour, from: now) < 7 else { return days }
-        let today = calendar.startOfDay(for: now)
-        return days.filter { $0.date >= today }
+        let relevantDays: [ForecastDay]
+        if calendar.component(.hour, from: now) >= 5,
+           calendar.component(.hour, from: now) < 7 {
+            let today = calendar.startOfDay(for: now)
+            relevantDays = days.filter { $0.date >= today }
+        } else {
+            relevantDays = days
+        }
+        // Keep the Home and expanded-place forecasts visually stable: exactly
+        // the first three available calendar days, never a partial fourth.
+        return Array(relevantDays.prefix(3))
     }
 
     var body: some View {

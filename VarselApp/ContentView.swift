@@ -170,7 +170,10 @@ struct HomeView: View {
                     }
                     if let p = store.selected {
                         let fc = store.selectedForecast
-                        let visibleForecast = Array(fc.prefix(48))
+                        // The Home view is a three-day visual forecast. Its
+                        // range is intentionally independent of the shorter
+                        // 24-hour horizon used by the rotating alert text.
+                        let visibleForecast = Array(fc.prefix(72))
                         if !visibleForecast.isEmpty {
                             VStack(spacing: 0) {
                                 CurrentWeatherCard(

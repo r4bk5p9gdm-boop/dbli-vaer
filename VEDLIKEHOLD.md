@@ -54,6 +54,11 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-079 · FULLFØRT 2026-09-20** — Hjem viser nå alltid de tre første
+tilgjengelige kalenderdagene i værbåndet. Visningen bruker 72 timer med
+prognosedata, mens rullerende varsel fortsatt stopper på 24 timer. En eventuell
+delvis fjerde dag skjules, så de tre dagene får en stabil og ryddig form.
+
 **BRUKER-078 · FULLFØRT 2026-09-19** — Gjorde andrelinjen i rullerende
 nedbørvarsel valgfri. Den skjules når den bare ville gjentatt værtypen i
 førstelinjen, som «Mulig regn herre tima». Den vises fortsatt når den tilfører
