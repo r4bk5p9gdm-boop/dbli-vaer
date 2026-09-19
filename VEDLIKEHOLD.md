@@ -1495,6 +1495,10 @@ tredagersvisningen på Steder i en egen visningsfunksjon. Det reduserer
 SwiftUI-kompilatorens typearbeid og retter den rapporterte feilen i
 `ContentView.swift`.
 
+**BRUKER-093 · FULLFØRT 2026-09-19** — Posisjonsstatusen i hjemtittelen er
+nå språklig: posisjonspil + «her» står før stedets preposisjon, slik at det
+for eksempel leses «D bli Vær! her på Klinga». Engelsk bruker «here».
+
 46. **BRUKER · DELVIS IMPLEMENTERT** — Vindkastnivåer har navn og tall i
    regelvelgeren; kompakt værtekst viser bare kast. Små nedbørsmengder (fra
    0,1 mm/t) får blå markering selv uten aktiv regnregel. Radstripen viser

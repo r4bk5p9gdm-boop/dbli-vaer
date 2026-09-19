@@ -294,6 +294,20 @@ private struct CurrentWeatherCard: View {
             HStack(alignment: .center, spacing: 7) {
                 WeatherWordmark(languageStyle: languageStyle)
 
+                if isCurrentLocation {
+                    HStack(spacing: 3) {
+                        Image(systemName: "location.fill")
+                            .font(.caption2.weight(.bold))
+                        Text(languageStyle == .english ? "here" : "her")
+                            .font(.caption.weight(.bold))
+                    }
+                    .foregroundStyle(.indigo)
+                    .fixedSize()
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("Posisjonsbasert værvarsel her")
+                    .accessibilityHint("Dette stedet følger telefonens aktuelle posisjon.")
+                }
+
                 Text(place.resolvedPreposition.rawValue)
                     .font(.caption.weight(.bold).italic())
                     .foregroundStyle(.white)
@@ -309,15 +323,6 @@ private struct CurrentWeatherCard: View {
                         in: Capsule()
                     )
                     .rotationEffect(.degrees(-4))
-
-                if isCurrentLocation {
-                    Image(systemName: "location.fill")
-                        .font(.caption2.weight(.bold))
-                        .foregroundStyle(.indigo)
-                        .fixedSize()
-                        .accessibilityLabel("Posisjonsbasert værvarsel")
-                        .accessibilityHint("Dette stedet følger telefonens aktuelle posisjon.")
-                }
 
                 if showsPlaceMenu {
                     Menu {
