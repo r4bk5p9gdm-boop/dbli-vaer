@@ -1486,6 +1486,10 @@ kommende dager bruker tre litt smalere, høyrejusterte bånd slik at
 07–15–23–07 fortsatt ligger på samme loddrette linjer. Etter 07 fyller alle
 tre bånd hele raden igjen.
 
+**BRUKER-091 · FULLFØRT 2026-09-19** — Dagstittelen ligger nå oppå en tynn,
+avrundet ramme rundt hver dags værbånd. Tittelen skjærer ut øvre kantlinje,
+mens Yr-statusen beholder sin plass i høyre ende av dagens ramme.
+
 46. **BRUKER · DELVIS IMPLEMENTERT** — Vindkastnivåer har navn og tall i
    regelvelgeren; kompakt værtekst viser bare kast. Små nedbørsmengder (fra
    0,1 mm/t) får blå markering selv uten aktiv regnregel. Radstripen viser

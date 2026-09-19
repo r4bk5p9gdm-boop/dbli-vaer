@@ -25,6 +25,10 @@ struct ForecastVariantsView: View {
     let temperatureHighThreshold: Double
     let latitude: Double
     let longitude: Double
+    let todayTitle: String
+    let updatedAt: Date?
+    let isRefreshing: Bool
+    let isStale: Bool
 
     private var days: [ForecastDay] { ForecastDay.make(from: forecast) }
     private var visibleDays: [ForecastDay] {
@@ -37,12 +41,15 @@ struct ForecastVariantsView: View {
     }
 
     var body: some View {
-        VStack(spacing: 7) {
+        VStack(spacing: 10) {
             ForEach(visibleDays, id: \.id) { day in
-                VStack(alignment: .leading, spacing: 4) {
-                    if !Calendar.current.isDate(day.date, inSameDayAs: Calendar.current.startOfDay(for: Date())) {
-                        ForecastDayHeader(day: day)
-                    }
+                let isToday = Calendar.current.isDate(day.date, inSameDayAs: Calendar.current.startOfDay(for: Date()))
+                ForecastDayFrame(
+                    title: isToday ? todayTitle : forecastDayTitle(day.date),
+                    sourceText: isToday ? "Yr.no" + (updatedAt.map { " · \(timeLabel($0))" } ?? " · ikke hentet") : nil,
+                    sourceIsStale: isToday && isStale,
+                    isRefreshing: isToday && isRefreshing
+                ) {
                     switch mode {
                     case .timeCards:
                         TimeCardsForecast(day: day, allForecast: forecast, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold)
@@ -54,10 +61,7 @@ struct ForecastVariantsView: View {
                         WeatherEventsForecast(day: day, rules: rules, frostMargin: frostMargin)
                     }
                 }
-                .padding(9)
-                .background(.background, in: RoundedRectangle(cornerRadius: 14))
             }
-
         }
     }
 }
@@ -103,31 +107,61 @@ private func hourOffset(_ hour: Int, from startHour: Int) -> Int {
     (hour - startHour + 24) % 24
 }
 
-private struct ForecastDayHeader: View {
-    let day: ForecastDay
+private func forecastDayTitle(_ date: Date) -> String {
+    let today = Calendar.current.startOfDay(for: Date())
+    let calendar = Calendar.current
+    let dayNumber = calendar.component(.day, from: date)
+    let monthNames = ["", "jan", "feb", "mars", "apr", "mai", "juni", "juli", "aug", "sept", "okt", "nov", "des"]
+    let dateText = "\(dayNumber). \(monthNames[calendar.component(.month, from: date)])"
+    if let tomorrow = calendar.date(byAdding: .day, value: 1, to: today),
+       calendar.isDate(date, inSameDayAs: tomorrow) { return "I morgen, \(dateText)" }
+    let value = weekdayLabel(date)
+    let weekday = value.prefix(1).uppercased() + value.dropFirst()
+    return "\(weekday) \(dateText)"
+}
+
+private struct ForecastDayFrame<Content: View>: View {
+    let title: String
+    let sourceText: String?
+    let sourceIsStale: Bool
+    let isRefreshing: Bool
+    @ViewBuilder let content: () -> Content
 
     var body: some View {
-        Text(dayTitle(day.date))
-            .font(.subheadline.weight(.semibold))
-            .frame(maxWidth: .infinity, alignment: .leading)
-    }
+        ZStack(alignment: .topLeading) {
+            content()
+                .padding(.horizontal, 9)
+                .padding(.top, 15)
+                .padding(.bottom, 9)
+                .background(.background, in: RoundedRectangle(cornerRadius: 12))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(Color.secondary.opacity(0.32), lineWidth: 0.7)
+                }
 
-    private func dayTitle(_ date: Date) -> String {
-        let today = Calendar.current.startOfDay(for: Date())
-        let calendar = Calendar.current
-        let dayNumber = calendar.component(.day, from: date)
-        let monthNames = ["", "jan", "feb", "mars", "apr", "mai", "juni", "juli", "aug", "sept", "okt", "nov", "des"]
-        let dateText = "\(dayNumber). \(monthNames[calendar.component(.month, from: date)])"
-        if calendar.isDate(date, inSameDayAs: today) {
-            let value = weekdayLabel(date)
-            let weekday = value.prefix(1).uppercased() + value.dropFirst()
-            return "Resten av i dag, \(weekday) \(dateText)"
+            HStack(spacing: 8) {
+                Text(title)
+                    .font(.subheadline.weight(.semibold))
+                    .padding(.horizontal, 6)
+                    .background(Color(uiColor: .systemBackground))
+                Spacer(minLength: 4)
+                if let sourceText {
+                    HStack(spacing: 4) {
+                        Text(sourceText)
+                        if isRefreshing {
+                            ProgressView().controlSize(.mini)
+                        }
+                    }
+                    .font(.caption)
+                    .foregroundStyle(sourceIsStale ? Color.orange.opacity(0.72) : Color.secondary)
+                    .padding(.horizontal, 6)
+                    .background(Color(uiColor: .systemBackground))
+                }
+            }
+            .padding(.horizontal, 12)
+            .offset(y: -8)
         }
-        if let tomorrow = calendar.date(byAdding: .day, value: 1, to: today),
-           calendar.isDate(date, inSameDayAs: tomorrow) { return "I morgen, \(dateText)" }
-        let value = weekdayLabel(date)
-        let weekday = value.prefix(1).uppercased() + value.dropFirst()
-        return "\(weekday) \(dateText)"
+        .padding(.top, 8)
     }
 }
 

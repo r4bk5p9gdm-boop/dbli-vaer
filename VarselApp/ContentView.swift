@@ -197,23 +197,6 @@ struct HomeView: View {
                             .accessibilityLabel("Stedside \(activeIndexForSelectedPlace + 1) av \(pageCount)")
                         }
                         VStack(alignment: .leading, spacing: 10) {
-                            HStack {
-                                Text(forecastHeaderTitle).font(.subheadline.bold())
-                                Spacer()
-                                let updateDate = store.lastUpdate
-                                let isStale = Store.isForecastStale(updateDate)
-                                HStack(spacing: 4) {
-                                    Text("Yr.no" + (updateDate.map { " · \(timeLabel($0))" } ?? " · ikke hentet"))
-                                        .font(.caption)
-                                        .foregroundStyle(isStale ? .orange : .secondary)
-                                        .opacity(isStale ? 0.72 : 1)
-                                    if store.isRefreshing {
-                                        ProgressView().controlSize(.small)
-                                            .accessibilityLabel("Oppdaterer værdata")
-                                    }
-                                }
-                                .help(isStale ? "Siste prognose er eldre enn to timer. Oppdaterer …" : "Prognosen er oppdatert")
-                            }
                             if fc.isEmpty {
                                 Text(store.error ?? "Henter prognose …").font(.footnote).foregroundStyle(.secondary)
                             } else {
@@ -226,7 +209,11 @@ struct HomeView: View {
                                     temperatureLowThreshold: p.resolvedDisplayTemperatureThreshold,
                                     temperatureHighThreshold: p.resolvedDisplayTemperatureHighThreshold,
                                     latitude: p.lat,
-                                    longitude: p.lon
+                                    longitude: p.lon,
+                                    todayTitle: forecastHeaderTitle,
+                                    updatedAt: store.lastUpdate,
+                                    isRefreshing: store.isRefreshing,
+                                    isStale: Store.isForecastStale(store.lastUpdate)
                                 )
                             }
                         }.card()
