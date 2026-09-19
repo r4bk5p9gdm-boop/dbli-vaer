@@ -1507,6 +1507,10 @@ nederkant.
 slik at tittelen for dag to og tre får et tydeligere visuelt opphold før den
 neste bolken begynner.
 
+**BRUKER-096 · FULLFØRT 2026-09-19** — Slo sammen værstatus og
+tredagersvarsel til én hovedramme på Hjem. Sveipeprikkene er flyttet til under
+hele bolken, slik at de tydelig tilhører stedsnavigasjonen og ikke værstatusen.
+
 46. **BRUKER · DELVIS IMPLEMENTERT** — Vindkastnivåer har navn og tall i
    regelvelgeren; kompakt værtekst viser bare kast. Små nedbørsmengder (fra
    0,1 mm/t) får blå markering selv uten aktiv regnregel. Radstripen viser

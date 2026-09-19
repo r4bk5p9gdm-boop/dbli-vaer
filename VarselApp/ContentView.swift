@@ -172,34 +172,18 @@ struct HomeView: View {
                         let fc = store.selectedForecast
                         let visibleForecast = Array(fc.prefix(48))
                         if !visibleForecast.isEmpty {
-                            CurrentWeatherCard(
-                                place: p,
-                                places: store.places,
-                                forecast: visibleForecast,
-                                languageStyle: store.alertLanguageStyle,
-                                isCurrentLocation: store.selectionIsCurrentLocation,
-                                onSelect: { place in store.select(place) },
-                                onEdit: { showingSettings = true }
-                            )
-                            let pageCount = max(1, swipePlaces.count)
-                            HStack(spacing: 6) {
-                                let activeIndex = min(pageCount - 1, max(0, swipePlaces.firstIndex(where: { $0.id == p.id }) ?? 0))
-                                ForEach(0..<pageCount, id: \.self) { index in
-                                    Circle()
-                                        .fill(index == activeIndex ? Color.indigo : Color.secondary.opacity(0.25))
-                                        .frame(width: index == activeIndex ? 7 : 5, height: index == activeIndex ? 7 : 5)
-                                }
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.top, -3)
-                            .padding(.bottom, -2)
-                            .accessibilityElement(children: .ignore)
-                            .accessibilityLabel("Stedside \(activeIndexForSelectedPlace + 1) av \(pageCount)")
-                        }
-                        VStack(alignment: .leading, spacing: 10) {
-                            if fc.isEmpty {
-                                Text(store.error ?? "Henter prognose …").font(.footnote).foregroundStyle(.secondary)
-                            } else {
+                            VStack(spacing: 0) {
+                                CurrentWeatherCard(
+                                    place: p,
+                                    places: store.places,
+                                    forecast: visibleForecast,
+                                    languageStyle: store.alertLanguageStyle,
+                                    isCurrentLocation: store.selectionIsCurrentLocation,
+                                    onSelect: { place in store.select(place) },
+                                    onEdit: { showingSettings = true },
+                                    showsContainer: false
+                                )
+                                Divider().padding(.horizontal, 12)
                                 ForecastVariantsView(
                                     forecast: visibleForecast,
                                     rules: p.rulesForDisplay,
@@ -215,8 +199,40 @@ struct HomeView: View {
                                     isRefreshing: store.isRefreshing,
                                     isStale: Store.isForecastStale(store.lastUpdate)
                                 )
+                                .padding(.horizontal, 12)
                             }
-                        }.card()
+                            .background(
+                                LinearGradient(
+                                    colors: store.selectionIsCurrentLocation
+                                        ? [Color.indigo.opacity(0.12), Color.cyan.opacity(0.08)]
+                                        : [Color.white, Color(red: 0.96, green: 0.98, blue: 1.0)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                in: RoundedRectangle(cornerRadius: 18)
+                            )
+                            .overlay(RoundedRectangle(cornerRadius: 18).stroke(store.selectionIsCurrentLocation ? Color.indigo.opacity(0.28) : Color.blue.opacity(0.12)))
+
+                            let pageCount = max(1, swipePlaces.count)
+                            HStack(spacing: 6) {
+                                let activeIndex = min(pageCount - 1, max(0, swipePlaces.firstIndex(where: { $0.id == p.id }) ?? 0))
+                                ForEach(0..<pageCount, id: \.self) { index in
+                                    Circle()
+                                        .fill(index == activeIndex ? Color.indigo : Color.secondary.opacity(0.25))
+                                        .frame(width: index == activeIndex ? 7 : 5, height: index == activeIndex ? 7 : 5)
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.top, -3)
+                            .padding(.bottom, -2)
+                            .accessibilityElement(children: .ignore)
+                            .accessibilityLabel("Stedside \(activeIndexForSelectedPlace + 1) av \(pageCount)")
+                        } else {
+                            Text(store.error ?? "Henter prognose …")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                                .card()
+                        }
 
                     } else {
                         ContentUnavailableView(
@@ -275,6 +291,7 @@ private struct CurrentWeatherCard: View {
     let onSelect: (Place) -> Void
     var onEdit: (() -> Void)? = nil
     var showsPlaceMenu = true
+    var showsContainer = true
 
     private var current: ForecastHour { forecast[0] }
     private var precipitation: CurrentPrecipitationSummary {
@@ -424,17 +441,24 @@ private struct CurrentWeatherCard: View {
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            LinearGradient(
-                colors: isCurrentLocation
-                    ? [Color.indigo.opacity(0.12), Color.cyan.opacity(0.08)]
-                    : [Color.white, Color(red: 0.96, green: 0.98, blue: 1.0)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            ),
-            in: RoundedRectangle(cornerRadius: 18)
-        )
-        .overlay(RoundedRectangle(cornerRadius: 18).stroke(isCurrentLocation ? Color.indigo.opacity(0.28) : Color.blue.opacity(0.12)))
+        .background {
+            if showsContainer {
+                LinearGradient(
+                    colors: isCurrentLocation
+                        ? [Color.indigo.opacity(0.12), Color.cyan.opacity(0.08)]
+                        : [Color.white, Color(red: 0.96, green: 0.98, blue: 1.0)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 18))
+            }
+        }
+        .overlay {
+            if showsContainer {
+                RoundedRectangle(cornerRadius: 18)
+                    .stroke(isCurrentLocation ? Color.indigo.opacity(0.28) : Color.blue.opacity(0.12))
+            }
+        }
     }
 
     private var precipitationMetricValue: String {
