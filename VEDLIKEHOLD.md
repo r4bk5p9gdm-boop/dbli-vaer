@@ -1459,8 +1459,9 @@ stedsliste, med fersk hentetid og korrekt fallback ved manglende GPS.
 av `Sprak.json`: alle 90 nøkler har bokmål, inntrøndersk og engelsk, og alle
 plassholdere er samsvarende. Selvtesten bestod med 4 av 4 kontroller.
 
-**AUTO-153 · ÅPEN** — Lag en liten dokumentkontroll som avviser varselmaler
-med manglende språkkolonne eller ufullstendige første-/andrelinjefelt.
+**AUTO-153 · FULLFØRT 2026-09-19** — La til `validate_alert_templates.rb`,
+som avviser varselmaler med manglende språk-kolonne eller ufullstendige
+første-/andrelinjefelt. Kontrollen bestod sammen med språkvalideringen.
 
 **AUTO-154 · ÅPEN** — Sammenlign tekstnøkler som brukes av `NotificationCopy`
 med `Sprak.json`, slik at push- og Varsler-menyen ikke faller tilbake til
