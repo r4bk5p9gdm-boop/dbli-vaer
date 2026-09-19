@@ -670,7 +670,7 @@ private struct CurrentPrecipitationSummary {
             let kind = current.temp <= 1 ? "Snø" : "Regn"
             return CurrentPrecipitationSummary(
                 title: "\(kind) \(eventTimePhrase(upcoming.time, relativeTo: now))",
-                detail: "\(weatherDescription(upcoming.rate, temperature: current.temp)) i Nå-varselet.",
+                detail: "\(weatherDescription(upcoming.rate, temperature: current.temp)) snart.",
                 systemImage: current.temp <= 1 ? "cloud.snow.fill" : "cloud.rain.fill",
                 color: .blue,
                 isFallingNow: false
@@ -712,15 +712,11 @@ private struct CurrentPrecipitationSummary {
 
         return CurrentPrecipitationSummary(
             title: "Opphold nå",
-            detail: samples.isEmpty ? "0 mm neste time" : "Ingen nedbør i Nå-varselet",
+            detail: "Opphold neste time.",
             systemImage: "umbrella",
             color: .secondary,
             isFallingNow: false
         )
-    }
-
-    private static func rateLabel(_ value: Double) -> String {
-        value.formatted(.number.precision(.fractionLength(0...1)))
     }
 
     private static func weatherDescription(_ waterEquivalent: Double, temperature: Double) -> String {
@@ -741,17 +737,6 @@ private struct CurrentPrecipitationSummary {
         }
     }
 
-    private static func amountLabel(_ waterEquivalent: Double, temperature: Double, perHour: Bool = false) -> String {
-        let suffix = perHour ? "/t" : ""
-        if temperature <= 1 {
-            return "anslått \(rateLabel(estimatedFreshSnowMillimeters(waterEquivalent: waterEquivalent, temperature: temperature))) mm snø\(suffix)"
-        }
-        return "\(rateLabel(waterEquivalent)) mm\(suffix)"
-    }
-
-    private static func probabilitySuffix(_ probability: Double?) -> String {
-        probability.map { " · \(Int($0.rounded())) % sannsynlig" } ?? ""
-    }
 }
 
 struct RulesView: View {

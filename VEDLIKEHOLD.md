@@ -54,6 +54,12 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-076 · FULLFØRT 2026-09-19** — Renset nå-varslene i det rullerende
+feltet på Hjem. Alle nedbørtilstander bruker nå værord fra den felles
+teksttabellen, som «yr», «småregn», «regn», «striskur» eller «litt snø».
+Detaljlinjen sier for eksempel «Småregn snart.» eller «Opphold neste time.»
+og viser aldri rå millimeter, prosent eller uttrykket «Nå-varselet».
+
 **BRUKER-075 · FULLFØRT 2026-09-19** — Gjorde posisjonsmarkøren i Hjem-tittelen
 større og samlet: «her» ligger nå som en tydelig etikett oppå den større
 posisjonspilen, i stedet for som liten tekst ved siden av.
