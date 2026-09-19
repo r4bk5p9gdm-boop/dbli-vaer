@@ -771,22 +771,22 @@ final class PlannerTests: XCTestCase {
     func testSharedWeatherLanguageForHomeAndPush() {
         let source = "Mulig regn i morgen kl. 07."
         XCTAssertEqual(WeatherLanguage.text(source, style: .bokmal), source)
-        XCTAssertEqual(WeatherLanguage.text(source, style: .inntrondersk), "Regn i mårrå kl. 07, sjer d ut som.")
+        XCTAssertEqual(WeatherLanguage.text(source, style: .inntrondersk), "Mulig regn i mårrå kl. 07.")
         XCTAssertEqual(WeatherLanguage.text("I overmorgen kl. 09.", style: .inntrondersk), "I overmårrå kl. 09.")
         XCTAssertEqual(WeatherLanguage.text("Fra 2 til 4 mm", style: .inntrondersk), "Fra 2 te 4 mm")
         XCTAssertEqual(WeatherLanguage.text("Duggfall i natt kl. 02.", style: .inntrondersk), "Doggfall i natt kl. 02.")
     }
 
     func testDialectUsesNoEOnlyForCurrentDewStatus() {
-        XCTAssertEqual(WeatherLanguage.text("Fare for dugg nå.", style: .inntrondersk), "D e Duggfall!")
-        XCTAssertEqual(WeatherLanguage.text("Fare for dugg i natt kl. 01.", style: .inntrondersk), "Doggfall i natt kl. 01.")
+        XCTAssertEqual(WeatherLanguage.text("Fare for dugg nå.", style: .inntrondersk), "D e Doggfall!")
+        XCTAssertEqual(WeatherLanguage.text("Fare for dugg i natt kl. 01.", style: .inntrondersk), "Mulig doggfall i natt kl. 01.")
         XCTAssertEqual(WeatherLanguage.text("Duggfall i morgen kl. 07.", style: .inntrondersk), "Doggfall i mårrå kl. 07.")
     }
 
     func testDialectCurrentWeatherUsesShortSpokenMessages() {
         XCTAssertEqual(WeatherLanguage.text("Regn nå.", style: .inntrondersk), "D Regne!")
         XCTAssertEqual(WeatherLanguage.text("Mulig regn nå.", style: .inntrondersk), "D kan bli regn no.")
-        XCTAssertEqual(WeatherLanguage.text("Litt regn nå.", style: .inntrondersk), "D e Litt Regn!")
+        XCTAssertEqual(WeatherLanguage.text("Litt regn nå.", style: .inntrondersk), "Småregn no.")
         XCTAssertEqual(WeatherLanguage.text("Snø nå.", style: .inntrondersk), "Det Snør!")
         XCTAssertEqual(WeatherLanguage.text("Vindkast nå.", style: .inntrondersk), "D Blæs!")
         XCTAssertEqual(WeatherLanguage.text("Frost nå.", style: .inntrondersk), "D e Frost!")
@@ -1248,8 +1248,8 @@ final class PlannerTests: XCTestCase {
         extreme.threshold = 40
 
         XCTAssertEqual(NotificationCopy.title(for: standard), "D bli Vindkast!")
-        XCTAssertEqual(NotificationCopy.title(for: powerful), "D bli Kraftige vindkast!")
-        XCTAssertEqual(NotificationCopy.title(for: extreme), "D bli Ekstreme vindkast!")
+        XCTAssertEqual(NotificationCopy.title(for: powerful), "D bli Vindkast!")
+        XCTAssertEqual(NotificationCopy.title(for: extreme), "D bli Vindkast!")
         XCTAssertEqual(WindGustLevel.forSpeed(31), .veryPowerful)
     }
 
@@ -1287,8 +1287,8 @@ final class PlannerTests: XCTestCase {
             AppCopy.weatherHeadline(weatherName: "Regn", placeName: "nerri Namsos", possibility: "kan bli"),
             "D kan bli Regn! nerri Namsos"
         )
-        XCTAssertEqual(NotificationCopy.title(for: Rule(type: .regn), possible: true), "D kan bli Regn!")
-        XCTAssertEqual(NotificationCopy.title(for: Rule(type: .regn), placeName: "nerri Namsos", possible: true), "D kan bli Regn! nerri Namsos")
+        XCTAssertEqual(NotificationCopy.title(for: Rule(type: .regn), possible: true), "Det kan bli Regn!")
+        XCTAssertEqual(NotificationCopy.title(for: Rule(type: .regn), placeName: "nerri Namsos", possible: true), "Det kan bli Regn! nerri Namsos")
         XCTAssertEqual(
             NotificationCopy.title(
                 for: Rule(type: .regn),
@@ -1296,7 +1296,7 @@ final class PlannerTests: XCTestCase {
                 possible: true,
                 languageStyle: .inntrondersk
             ),
-            "D bli Regn! nerri Namsos, sjer d ut som"
+            "D kan bli Regn! nerri Namsos"
         )
         XCTAssertEqual(NotificationCopy.message(for: Rule(type: .regn), eventAt: reference.addingTimeInterval(30 * 60), referenceAt: reference), "Om en halvtime.")
         XCTAssertEqual(NotificationCopy.title(for: Rule(type: .sno)), "D bli Snø!")

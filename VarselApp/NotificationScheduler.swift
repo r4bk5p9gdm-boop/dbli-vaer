@@ -19,30 +19,45 @@ enum NotificationRoute {
 }
 
 enum NotificationCopy {
-    static func title(for rule: Rule, possible: Bool = false, languageStyle: AlertLanguageStyle = .bokmal) -> String {
+    private static func headline(
+        for rule: Rule,
+        placeName: String,
+        possible: Bool,
+        languageStyle: AlertLanguageStyle
+    ) -> String {
         let key = titleKey(for: rule, possible: possible, languageStyle: languageStyle)
-        let fallback = languageStyle == .english ? "It’s {vaertype}! {sted}" : (possible && languageStyle == .bokmal ? "D kan bli {vaertype}! {sted}" : "D bli {vaertype}! {sted}")
-        return LanguageCatalog.value(key, language: languageStyle.catalogCode, fallback: fallback, arguments: ["vaertype": localizedWeatherName(for: rule, languageStyle: languageStyle), "sted": "", "temperatur": rule.threshold.formatted(.number.precision(.fractionLength(0...1)))]).trimmingCharacters(in: .whitespaces)
+        let fallback: String
+        switch languageStyle {
+        case .english:
+            fallback = possible ? "Possible {vaertype}! {sted}" : "It’s {vaertype}! {sted}"
+        case .bokmal:
+            fallback = possible ? "Det kan bli {vaertype}! {sted}" : "D bli {vaertype}! {sted}"
+        case .inntrondersk:
+            fallback = possible ? "D kan bli {vaertype}! {sted}" : "D bli {vaertype}! {sted}"
+        }
+        return LanguageCatalog.value(
+            key,
+            language: languageStyle.catalogCode,
+            fallback: fallback,
+            arguments: [
+                "vaertype": localizedWeatherName(for: rule, languageStyle: languageStyle),
+                "sted": placeName,
+                "temperatur": rule.threshold.formatted(.number.precision(.fractionLength(0...1)))
+            ]
+        ).trimmingCharacters(in: .whitespaces)
+    }
+
+    static func title(for rule: Rule, possible: Bool = false, languageStyle: AlertLanguageStyle = .bokmal) -> String {
+        headline(for: rule, placeName: "", possible: possible, languageStyle: languageStyle)
     }
 
     static func title(for rule: Rule, placeName: String, possible: Bool = false, languageStyle: AlertLanguageStyle = .bokmal) -> String {
-        let key = titleKey(for: rule, possible: possible, languageStyle: languageStyle)
-        let fallback = languageStyle == .english ? "It’s {vaertype}! {sted}" : (possible && languageStyle == .inntrondersk ? "D bli {vaertype}! {sted}, sjer d ut som" : (possible ? "D kan bli {vaertype}! {sted}" : "D bli {vaertype}! {sted}"))
-        return LanguageCatalog.value(key, language: languageStyle.catalogCode, fallback: fallback, arguments: ["vaertype": localizedWeatherName(for: rule, languageStyle: languageStyle), "sted": placeName, "temperatur": rule.threshold.formatted(.number.precision(.fractionLength(0...1)))]).trimmingCharacters(in: .whitespaces)
+        headline(for: rule, placeName: placeName, possible: possible, languageStyle: languageStyle)
     }
 
     static func title(for rule: Rule, placeName: String, eventAt: Date, referenceAt: Date, possible: Bool = false, languageStyle: AlertLanguageStyle = .bokmal) -> String {
-        let weather = localizedWeatherName(for: rule, languageStyle: languageStyle)
-        let lowerWeather = weather.prefix(1).lowercased() + weather.dropFirst()
         let timing = shortNotificationTime(eventAt, relativeTo: referenceAt, languageStyle: languageStyle)
-        switch languageStyle {
-        case .english:
-            return "It will be \(lowerWeather) \(placeName) \(timing)."
-        case .inntrondersk:
-            return "D \(possible ? "kan bli" : "bli") \(weather) \(placeName) \(timing)."
-        case .bokmal:
-            return "Det \(possible ? "kan bli" : "blir") \(lowerWeather) \(placeName) \(timing)."
-        }
+        return "\(headline(for: rule, placeName: placeName, possible: possible, languageStyle: languageStyle)) \(timing)."
     }
 
     private static func shortNotificationTime(_ eventAt: Date, relativeTo reference: Date, languageStyle: AlertLanguageStyle) -> String {

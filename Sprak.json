@@ -1,6 +1,6 @@
 {
   "_les_meg": {
-    "status": "Delvis tilkoblet: appnavn, pushoverskrifter og inntrønderske tidsuttrykk/ukedager. Ikke en fullstendig eksport av alle tekster.",
+    "status": "Koblet for appnavn, pushoverskrifter, værord og inntrønderske tidsuttrykk/ukedager. Skjermtekster er fortsatt bare delvis koblet.",
     "redigering": "Endre kun tekstverdier, behold nøkler og plassholdere. Gyldig JSON tillater ikke kommentarer eller komma etter siste felt.",
     "sprak": "en = engelsk, nb = bokmål, tr = inntrøndersk. Engelsk og nye dialektord er forslag til gjennomlesing.",
     "plassholdere": "{sted} inkluderer brukerens valgte preposisjon og stedsnavn. Ikke oversett disse eller brukerens huskelapp. {tid} er ferdig tidsuttrykk; {varighet} inkluderer enhet.",
@@ -142,8 +142,8 @@
     },
     "push.title_possible": {
       "en": "Possible {vaertype}! {sted}",
-      "nb": "D kan bli {vaertype}! {sted}",
-      "tr": "D bli {vaertype}! {sted}, sjer d ut som"
+      "nb": "Det kan bli {vaertype}! {sted}",
+      "tr": "D kan bli {vaertype}! {sted}"
     },
     "push.title.rain": {
       "en": "It’s Raining! {sted}",
@@ -233,7 +233,7 @@
     "now.dew": {
       "en": "Dew now",
       "nb": "Fare for dugg nå",
-      "tr": "D e Duggfall!"
+      "tr": "D e Doggfall!"
     },
     "now.frost": {
       "en": "Frost now",
@@ -318,12 +318,12 @@
     "detail.rain_light": {
       "en": "Light rain {tid}.",
       "nb": "Litt regn {tid}.",
-      "tr": "Litt regn {tid}."
+      "tr": "Småregn {tid}."
     },
     "detail.rain_heavy": {
       "en": "Heavy rain {tid}.",
-      "nb": "Mye regn {tid}.",
-      "tr": "My regn {tid}."
+      "nb": "Kraftig regn {tid}.",
+      "tr": "Striskur {tid}."
     },
     "detail.drizzle": {
       "en": "Drizzle {tid}.",
@@ -368,7 +368,7 @@
     "detail.snow_light": {
       "en": "Light snowfall",
       "nb": "Lett snøfall",
-      "tr": "Lætt snøfall"
+      "tr": "Litt snø"
     },
     "detail.snow_heavy": {
       "en": "Heavy snowfall",
@@ -378,7 +378,7 @@
     "detail.wind_fresh_breeze": {
       "en": "Fresh breeze",
       "nb": "Frisk bris",
-      "tr": "Frisk bris"
+      "tr": "Fresk bris"
     },
     "detail.wind_strong": {
       "en": "Strong wind",

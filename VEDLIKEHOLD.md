@@ -54,6 +54,14 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-073 · FULLFØRT 2026-09-19** — Koblet de vedtatte varseltekstene til
+språkveien: sikre pushoverskrifter bruker «D bli», usikre bruker «Det kan bli»
+på bokmål og «D kan bli» på inntrøndersk. Vind heter konsekvent «Vindkast!»,
+og inntrønderske andrelinjeord følger styringstabellene, blant annet småregn,
+striskur, litt snø, fresk bris og uvær. Oppdaterte språkregresjoner og bygde
+iPhone-målet. Testmålet har eldre, urelaterte Swift-6-/MainActor-feil under
+Xcode 27 og kan derfor foreløpig ikke bygges som helhet.
+
 **AUTO-223 · FULLFØRT 2026-09-18** — Flyttet den automatiske stedsrekkefølgen
 til `PlaceOrdering.automatic` og la til regresjonstest for favoritt først og
 avstandssortering.

@@ -221,6 +221,16 @@ enum WeatherLanguage {
         guard style == .inntrondersk else { return separator.format(text) }
         var result = text
             .replacingOccurrences(of: "\\b([0-9]+) timer\\b", with: "$1 tima", options: .regularExpression)
+            // The second line follows the vocabulary approved in
+            // VARSELTEKSTER.md. Keep these replacements before generic
+            // substitutions so multiword weather descriptions stay intact.
+            .replacingOccurrences(of: "Litt regn", with: "Småregn")
+            .replacingOccurrences(of: "Kraftig regn", with: "Striskur")
+            .replacingOccurrences(of: "Regnbyger", with: "Regnbyga")
+            .replacingOccurrences(of: "Lett snøfall", with: "Litt snø")
+            .replacingOccurrences(of: "Snøbyger", with: "Snøbyga")
+            .replacingOccurrences(of: "Frisk bris", with: "Fresk bris")
+            .replacingOccurrences(of: "Full storm", with: "Uvær")
             // «No e d» describes only something happening right now. Keep
             // future dew forecasts as the plain weather name so a timestamp
             // is not accidentally phrased as a present status.
@@ -228,7 +238,7 @@ enum WeatherLanguage {
             .replacingOccurrences(of: "Duggfall nå", with: LanguageCatalog.value("now.dew", language: "tr", fallback: "D e Duggfall!"))
             .replacingOccurrences(of: "Frost nå", with: LanguageCatalog.value("now.frost", language: "tr", fallback: "D e Frost!"))
             .replacingOccurrences(of: "Sol i [0-9]+ timer nå\\.", with: LanguageCatalog.value("now.sun", language: "tr", fallback: "D e Sol!"), options: .regularExpression)
-            .replacingOccurrences(of: "Fare for dugg", with: "Doggfall")
+            .replacingOccurrences(of: "Fare for dugg", with: "Mulig doggfall")
             .replacingOccurrences(of: "Duggfall", with: "Doggfall")
             // Current-condition messages are short, spoken phrases. Keep
             // these replacements before the generic «nå» -> «no» mapping.
@@ -254,12 +264,6 @@ enum WeatherLanguage {
             let dialect = LanguageCatalog.value("weekday." + keys[index], language: "tr", fallback: dialectDays[index])
             result = result.replacingOccurrences(of: "\\b\(day)\\b", with: dialect, options: .regularExpression)
             result = result.replacingOccurrences(of: "\\b\(day.capitalized)\\b", with: dialect.prefix(1).uppercased() + dialect.dropFirst(), options: .regularExpression)
-        }
-        if result.hasPrefix("Mulig ") {
-            result = String(result.dropFirst(6))
-            result = result.prefix(1).uppercased() + result.dropFirst()
-            if result.hasSuffix(".") { result.removeLast() }
-            result = LanguageCatalog.value("status.possible", language: "tr", fallback: "{vaertype}{tid}, sjer d ut som.", arguments: ["vaertype": result, "tid": ""]).replacingOccurrences(of: " ,", with: ",")
         }
         result = result.replacingOccurrences(of: "(Under [0-9,.-]+)° no", with: "$1 no", options: .regularExpression)
         return separator.format(result)
@@ -1086,7 +1090,7 @@ func alertWeatherName(for rule: Rule) -> String {
     case .frost: "Frost"
     case .temperatur: "Under \(rule.threshold.formatted(.number.precision(.fractionLength(0...1))))°"
     case .sno: "Snø"
-    case .vind: rule.windGustLevel.notificationWeather
+    case .vind: "Vindkast"
     case .dugg: "Duggfall"
     case .sol: "Sol"
     }
