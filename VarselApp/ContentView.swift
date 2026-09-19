@@ -196,10 +196,6 @@ struct HomeView: View {
                                 .padding(.horizontal, 4)
                                 .padding(.top, 4)
 
-                                Divider()
-                                    .padding(.horizontal, 16)
-                                    .padding(.top, 6)
-
                                 ForecastVariantsView(
                                     forecast: visibleForecast,
                                     rules: p.rulesForDisplay,
@@ -1236,8 +1232,19 @@ struct PlacesView: View {
                                             languageStyle: store.alertLanguageStyle,
                                             isCurrentLocation: false,
                                             onSelect: { _ in },
-                                            showsPlaceMenu: false
+                                            showsPlaceMenu: false,
+                                            showsContainer: false
                                         )
+                                        .background(
+                                            LinearGradient(
+                                                colors: [Color.white, Color(red: 0.96, green: 0.98, blue: 1.0)],
+                                                startPoint: .topLeading,
+                                                endPoint: .bottomTrailing
+                                            ),
+                                            in: RoundedRectangle(cornerRadius: 18)
+                                        )
+                                        .padding(.horizontal, 4)
+                                        .padding(.top, 4)
                                         .contentShape(RoundedRectangle(cornerRadius: 18))
                                         .onTapGesture {
                                             withAnimation(.easeInOut(duration: 0.22)) {
@@ -1249,6 +1256,7 @@ struct PlacesView: View {
                                             expandedForecast(for: place, forecast: visibleForecast)
                                         }
                                     }
+                                    .background(Color(uiColor: .systemBackground), in: RoundedRectangle(cornerRadius: 18))
                                     .clipShape(RoundedRectangle(cornerRadius: 18))
                                     .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.blue.opacity(0.12)))
                                 } else {
@@ -1296,38 +1304,25 @@ struct PlacesView: View {
 
     @ViewBuilder
     private func expandedForecast(for place: Place, forecast: [ForecastHour]) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text("Neste 3 døgn")
-                    .font(.subheadline.weight(.semibold))
-                Spacer()
-                Image(systemName: "chevron.up")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.secondary)
-            }
-            ForecastVariantsView(
-                forecast: forecast,
-                rules: place.rulesForDisplay,
-                frostMargin: place.localFrostMargin,
-                mode: .weatherBands,
-                sunThreshold2: place.resolvedDisplaySunThreshold2,
-                temperatureLowThreshold: place.resolvedDisplayTemperatureThreshold,
-                temperatureHighThreshold: place.resolvedDisplayTemperatureHighThreshold,
-                latitude: place.lat,
-                longitude: place.lon,
-                todayTitle: "Resten av i dag",
-                updatedAt: store.lastUpdate,
-                isRefreshing: store.isRefreshing,
-                isStale: Store.isForecastStale(store.lastUpdate)
-            )
-        }
-        .padding(12)
+        ForecastVariantsView(
+            forecast: forecast,
+            rules: place.rulesForDisplay,
+            frostMargin: place.localFrostMargin,
+            mode: .weatherBands,
+            sunThreshold2: place.resolvedDisplaySunThreshold2,
+            temperatureLowThreshold: place.resolvedDisplayTemperatureThreshold,
+            temperatureHighThreshold: place.resolvedDisplayTemperatureHighThreshold,
+            latitude: place.lat,
+            longitude: place.lon,
+            todayTitle: "Resten av i dag",
+            updatedAt: store.lastUpdate,
+            isRefreshing: store.isRefreshing,
+            isStale: Store.isForecastStale(store.lastUpdate)
+        )
+        .padding(.horizontal, 12)
+        .padding(.top, 16)
+        .padding(.bottom, 4)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.background)
-        .clipShape(RoundedRectangle(cornerRadius: 18))
-        .overlay(alignment: .top) {
-            Divider().opacity(0.45)
-        }
         .transition(.opacity.combined(with: .scale(scale: 0.985, anchor: .top)))
     }
 

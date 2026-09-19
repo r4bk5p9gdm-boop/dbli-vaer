@@ -1,6 +1,6 @@
 {
   "lastScheduledStart": "2026-09-13T05:15:12.787Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-098 fullført: Gradient avsluttes ved statusblokken før tredagersvarselet.",
+  "lastProgress": "BRUKER-099 fullført: Steder bruker samme rolige overgang fra status til tredagersvarsel.",
   "stopReason": "Ingen meningsfull oppgave akkurat nå; planleggeren bruker 240 minutters intervall og forsøker arbeid igjen ved neste kjøring."
 }

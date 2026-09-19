@@ -1520,6 +1520,10 @@ selve gjennomgangsdokumentet; appens språkverdier er ikke endret.
 statusblokken. Tredagersvarselet bruker nå lys appbakgrunn i samme hovedramme,
 med mer luft mellom delingslinjen og første dagsramme.
 
+**BRUKER-099 · FULLFØRT 2026-09-19** — Fjernet den synlige delelinjen mellom
+status og tredagersvarsel. Ekspanderte stedskort bruker nå samme gradient-til-
+lys bakgrunn-overgang og samme felles ramme som Hjem.
+
 46. **BRUKER · DELVIS IMPLEMENTERT** — Vindkastnivåer har navn og tall i
    regelvelgeren; kompakt værtekst viser bare kast. Små nedbørsmengder (fra
    0,1 mm/t) får blå markering selv uten aktiv regnregel. Radstripen viser
