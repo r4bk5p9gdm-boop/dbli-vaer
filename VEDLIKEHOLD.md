@@ -59,8 +59,10 @@ språkveien: sikre pushoverskrifter bruker «D bli», usikre bruker «Det kan bl
 på bokmål og «D kan bli» på inntrøndersk. Vind heter konsekvent «Vindkast!»,
 og inntrønderske andrelinjeord følger styringstabellene, blant annet småregn,
 striskur, litt snø, fresk bris og uvær. Oppdaterte språkregresjoner og bygde
-iPhone-målet. Testmålet har eldre, urelaterte Swift-6-/MainActor-feil under
-Xcode 27 og kan derfor foreløpig ikke bygges som helhet.
+iPhone-målet. Andrelinjen bruker nå beskrivelse fra værordboken, passende
+klokkeslett og varighet i stedet for rå millimeter som hovedtekst. Testmålet
+har eldre, urelaterte Swift-6-/MainActor-feil under Xcode 27 og kan derfor
+foreløpig ikke bygges som helhet.
 
 **AUTO-223 · FULLFØRT 2026-09-18** — Flyttet den automatiske stedsrekkefølgen
 til `PlaceOrdering.automatic` og la til regresjonstest for favoritt først og

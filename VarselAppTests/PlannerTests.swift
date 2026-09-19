@@ -713,14 +713,13 @@ final class PlannerTests: XCTestCase {
         let rule = Rule(type: .vind)
         var hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 3, cloud: 20, dew: 4)
         hour.gust = 9
-        XCTAssertEqual(Planner.notificationEventDetail(rule: rule, hours: [hour], possible: false), "Vindkast opptil 9 m/s. Periode med vindkast: 1 time.")
+        XCTAssertEqual(Planner.notificationEventDetail(rule: rule, hours: [hour], possible: false), "Frisk bris — vindkast opptil 9 m/s {tid}.")
         hour.gust = nil
-        XCTAssertEqual(Planner.notificationEventDetail(rule: rule, hours: [hour], possible: false), "Vindkast ikke oppgitt. Varighet 1 time.")
+        XCTAssertEqual(Planner.notificationEventDetail(rule: rule, hours: [hour], possible: false), "Vindkast ikke oppgitt {tid}.")
         var strong = hour
         strong.gust = 20
         let text = try XCTUnwrap(Planner.notificationEventDetail(rule: rule, hours: [hour, strong], possible: false))
-        XCTAssertTrue(text.contains("Kast mangler for deler av perioden."))
-        XCTAssertTrue(text.contains(WindGustLevel.powerful.guidance))
+        XCTAssertEqual(text, "Sterk kuling — vindkast opptil 20 m/s {tid} — i 2 timer.")
     }
 
     func testWindStatusSeparatesWindAndGust() throws {
@@ -1403,7 +1402,7 @@ final class PlannerTests: XCTestCase {
         )
 
         XCTAssertEqual(result.hitIndices, [1, 2])
-        XCTAssertEqual(result.alerts.first?.eventDetail, "Ned mot 7° i 2 timer.")
+        XCTAssertEqual(result.alerts.first?.eventDetail, "Under 10° {tid} — i 2 timer.")
         XCTAssertEqual(NotificationCopy.title(for: rule, placeName: "på Klinga"), "D bli Under 10°! på Klinga")
     }
 

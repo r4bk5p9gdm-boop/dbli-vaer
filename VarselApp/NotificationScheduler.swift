@@ -120,11 +120,27 @@ enum NotificationCopy {
         }
         if !timing.hasSuffix(".") { timing += "." }
         if let eventDetail {
-            let styledDetail = WeatherLanguage.text(eventDetail, style: languageStyle)
+            let detailTime = detailedTime(eventAt, relativeTo: referenceAt)
+            let resolvedDetail = eventDetail
+                .replacingOccurrences(of: " {tid}", with: detailTime.map { " \($0)" } ?? "")
+            let styledDetail = WeatherLanguage.text(resolvedDetail, style: languageStyle)
             timing += "\n\(styledDetail)"
         }
         if let name = rule.cleanedCustomName { timing += "\n\(name)" }
         return timing
+    }
+
+    /// The headline carries a short horizon ("i morgen" / "i natt"). The
+    /// second line gets the exact clock only when it adds information.
+    private static func detailedTime(_ eventAt: Date, relativeTo reference: Date, calendar: Calendar = .current) -> String? {
+        guard eventAt.timeIntervalSince(reference) > 60 * 60 else { return nil }
+        let clock = shortClockLabel(eventAt, calendar: calendar)
+        if calendar.isDate(eventAt, inSameDayAs: reference) { return "kl. \(clock)" }
+        let tomorrow = calendar.date(byAdding: .day, value: 1, to: reference)
+        if let tomorrow, calendar.isDate(eventAt, inSameDayAs: tomorrow), calendar.component(.hour, from: eventAt) < 6 {
+            return "kl. \(clock)"
+        }
+        return "\(weekdayLabel(eventAt, calendar: calendar)) kl. \(clock)"
     }
 
     static func activationRequiredBody(languageStyle: AlertLanguageStyle = .bokmal) -> String {

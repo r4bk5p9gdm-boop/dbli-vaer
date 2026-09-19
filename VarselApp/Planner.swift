@@ -380,43 +380,56 @@ enum Planner {
         guard !hours.isEmpty else { return nil }
         let duration = hours.count
         let durationText = "\(duration) \(duration == 1 ? "time" : "timer")"
+        let durationSuffix = duration > 1 ? " — i \(durationText)" : ""
+        let withTime: (String) -> String = { "\($0) {tid}\(durationSuffix)." }
+        let number: (Double) -> String = { $0.formatted(.number.precision(.fractionLength(0...1))) }
+
+        func rainDescription(rate: Double) -> String {
+            switch rate {
+            case ..<0.1: "Yr"
+            case ..<0.5: "Litt regn"
+            case ..<1.5: "Regn"
+            default: "Kraftig regn"
+            }
+        }
+
+        func snowDescription(rate: Double) -> String {
+            switch rate {
+            case ..<0.2: "Snøfnugg"
+            case ..<1: "Lett snøfall"
+            case ..<3: "Snøfall"
+            default: "Kraftig snøfall"
+            }
+        }
+
         switch rule.type {
         case .regn:
             let amount = hours.reduce(0.0) { total, hour in
                 total + (possible ? hour.precipitationRiskRate : hour.precipitationRate)
             }
-            let value = amount.formatted(.number.precision(.fractionLength(0...1)))
-            return "\(possible ? "Opptil" : "Ca.") \(value) mm over \(durationText)."
+            return withTime(rainDescription(rate: amount / Double(duration)))
         case .sno:
             let amount = hours.reduce(0.0) { total, hour in
                 let water = possible ? hour.precipitationRiskRate : hour.precipitationRate
                 return total + estimatedFreshSnowMillimeters(waterEquivalent: water, temperature: hour.temp)
             }
-            let value = amount.formatted(.number.precision(.fractionLength(0...1)))
-            return "Anslått \(possible ? "opptil " : "")\(value) mm snø over \(durationText)."
+            return withTime(snowDescription(rate: amount / Double(duration)))
         case .vind:
             let gust = hours.compactMap(\.gust).max()
-            let number: (Double) -> String = { $0.formatted(.number.precision(.fractionLength(0...1))) }
-            guard let gust else { return "Vindkast ikke oppgitt. Varighet \(durationText)." }
-            let partial = hours.contains { $0.gust == nil } ? " Kast mangler for deler av perioden." : ""
-            let guidance = gust >= WindGustLevel.looseObjects.threshold
-                ? " \(WindGustLevel.forSpeed(gust).guidance)" : ""
-            return "Vindkast opptil \(number(gust)) m/s. Periode med vindkast: \(durationText).\(partial)\(guidance)"
+            guard let gust else { return withTime("Vindkast ikke oppgitt") }
+            return withTime(windStrengthLabel(for: gust).capitalized + " — vindkast opptil \(number(gust)) m/s")
         case .frost:
             let lowest = hours.map(\.temp).min() ?? 0
-            let label = hours.contains { $0.yrTemperature != nil } ? "Lokalt anslag ned mot" : "Yr melder ned mot"
-            if frostMargin > 0 {
-                return "\(label) \(lowest.formatted(.number.precision(.fractionLength(0...1))))°. Lokal frostmargin er +\(frostMargin.formatted(.number.precision(.fractionLength(0...1))))°."
-            }
-            return "Ned mot \(lowest.formatted(.number.precision(.fractionLength(0...1))))° i \(durationText)."
+            let description = possible || (frostMargin > 0 && lowest > 0) ? "Fare for frost" : "Frost"
+            return withTime("\(description) ved \(number(lowest))°")
         case .temperatur:
-            let lowest = hours.map(\.temp).min() ?? 0
-            return "Ned mot \(lowest.formatted(.number.precision(.fractionLength(0...1))))° i \(durationText)."
+            let relation = rule.temperatureDirection == .above ? "Over" : "Under"
+            return withTime("\(relation) \(number(rule.threshold))°")
         case .dugg:
-            let closest = hours.map { $0.temp - $0.dew }.min() ?? 0
-            return "Temperaturen kommer innen \(closest.formatted(.number.precision(.fractionLength(0...1))))° fra duggpunktet."
+            let temperature = hours.min { abs($0.temp - $0.dew) < abs($1.temp - $1.dew) }?.temp ?? 0
+            return withTime("\(possible ? "Mulig duggfall" : "Duggfall") ved \(number(temperature))°")
         case .sol:
-            return nil
+            return withTime("Sol")
         }
     }
 }
