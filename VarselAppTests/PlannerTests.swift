@@ -494,6 +494,17 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(LanguageCatalog.value("push.title", language: "nb", fallback: "MISSING", arguments: ["sted": "på {vaertype}", "vaertype": "Regn"]), "D bli Regn! på {vaertype}")
     }
 
+    func testNotificationCopyCatalogHasAllLanguagesForEveryUsedKey() {
+        for key in NotificationCopy.catalogKeys {
+            for language in ["nb", "tr", "en"] {
+                XCTAssertFalse(
+                    LanguageCatalog.entries[key]?[language]?.isEmpty ?? true,
+                    "Mangler \(language)-tekst for \(key)"
+                )
+            }
+        }
+    }
+
     func testEnglishLanguageStyleUsesCatalogForPushAndTimeText() {
         let rain = Rule(type: .regn)
         XCTAssertEqual(AlertLanguageStyle.persisted("en"), .english)

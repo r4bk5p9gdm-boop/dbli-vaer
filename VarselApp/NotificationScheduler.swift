@@ -19,6 +19,17 @@ enum NotificationRoute {
 }
 
 enum NotificationCopy {
+    /// Keep the push copy's catalog contract explicit. The regression test
+    /// checks every listed key in every supported language.
+    static let catalogKeys = [
+        "push.title", "push.title_possible", "push.title.rain",
+        "push.title.snow", "push.title.sun", "push.title.wind",
+        "push.title.frost", "push.title.dew", "push.title.temperature_below",
+        "weather.rain", "weather.snow", "weather.sun", "weather.wind",
+        "weather.gust", "weather.frost", "weather.dew", "weather.temperature_below",
+        "push.activation_required"
+    ]
+
     private static func headline(
         for rule: Rule,
         placeName: String,

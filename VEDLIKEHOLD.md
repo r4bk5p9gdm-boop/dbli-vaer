@@ -1474,9 +1474,10 @@ plassholdere er samsvarende. Selvtesten bestod med 4 av 4 kontroller.
 som avviser varselmaler med manglende språk-kolonne eller ufullstendige
 første-/andrelinjefelt. Kontrollen bestod sammen med språkvalideringen.
 
-**AUTO-154 · ÅPEN** — Sammenlign tekstnøkler som brukes av `NotificationCopy`
-med `Sprak.json`, slik at push- og Varsler-menyen ikke faller tilbake til
-hardkodet tekst uten at det oppdages.
+**AUTO-154 · FULLFØRT 2026-09-19** — La `NotificationCopy` erklære alle
+Sprak-nøklene den bruker, og la til regresjonstest som krever bokmål,
+inntrøndersk og engelsk for hver nøkkel. Manglende pushtekst oppdages dermed
+før den kan falle tilbake til hardkodet tekst.
 
 **AUTO-155 · ÅPEN** — Legg til regresjonstest for kort tidstekst og regelen om
 at andrelinjen går rett på klokkeslett ved «i dag», «i kveld» og «i natt».
