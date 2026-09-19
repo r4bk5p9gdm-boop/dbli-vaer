@@ -1205,35 +1205,7 @@ struct PlacesView: View {
                                         }
 
                                         if expandedPlaceID == place.id {
-                                            VStack(alignment: .leading, spacing: 8) {
-                                                HStack {
-                                                    Text("Neste 3 døgn")
-                                                        .font(.subheadline.weight(.semibold))
-                                                    Spacer()
-                                                    Image(systemName: "chevron.up")
-                                                        .font(.caption.weight(.semibold))
-                                                        .foregroundStyle(.secondary)
-                                                }
-                                                ForecastVariantsView(
-                                                    forecast: visibleForecast,
-                                                    rules: place.rulesForDisplay,
-                                                    frostMargin: place.localFrostMargin,
-                                                    mode: .weatherBands,
-                                                    sunThreshold2: place.resolvedDisplaySunThreshold2,
-                                                    temperatureLowThreshold: place.resolvedDisplayTemperatureThreshold,
-                                                    temperatureHighThreshold: place.resolvedDisplayTemperatureHighThreshold,
-                                                    latitude: place.lat,
-                                                    longitude: place.lon
-                                                )
-                                            }
-                                            .padding(12)
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                            .background(.background)
-                                            .clipShape(RoundedRectangle(cornerRadius: 18))
-                                            .overlay(alignment: .top) {
-                                                Divider().opacity(0.45)
-                                            }
-                                            .transition(.opacity.combined(with: .scale(scale: 0.985, anchor: .top)))
+                                            expandedForecast(for: place, forecast: visibleForecast)
                                         }
                                     }
                                     .clipShape(RoundedRectangle(cornerRadius: 18))
@@ -1279,6 +1251,43 @@ struct PlacesView: View {
                 defaultFilename: "D-bli-Vaer-oppsett"
             ) { _ in }
         }
+    }
+
+    @ViewBuilder
+    private func expandedForecast(for place: Place, forecast: [ForecastHour]) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text("Neste 3 døgn")
+                    .font(.subheadline.weight(.semibold))
+                Spacer()
+                Image(systemName: "chevron.up")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+            }
+            ForecastVariantsView(
+                forecast: forecast,
+                rules: place.rulesForDisplay,
+                frostMargin: place.localFrostMargin,
+                mode: .weatherBands,
+                sunThreshold2: place.resolvedDisplaySunThreshold2,
+                temperatureLowThreshold: place.resolvedDisplayTemperatureThreshold,
+                temperatureHighThreshold: place.resolvedDisplayTemperatureHighThreshold,
+                latitude: place.lat,
+                longitude: place.lon,
+                todayTitle: "Resten av i dag",
+                updatedAt: store.lastUpdate,
+                isRefreshing: store.isRefreshing,
+                isStale: Store.isForecastStale(store.lastUpdate)
+            )
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.background)
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .overlay(alignment: .top) {
+            Divider().opacity(0.45)
+        }
+        .transition(.opacity.combined(with: .scale(scale: 0.985, anchor: .top)))
     }
 
     private func remove(_ offsets: IndexSet, from places: [Place]) {

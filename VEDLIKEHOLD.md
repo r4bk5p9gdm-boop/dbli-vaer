@@ -1490,6 +1490,11 @@ tre bånd hele raden igjen.
 avrundet ramme rundt hver dags værbånd. Tittelen skjærer ut øvre kantlinje,
 mens Yr-statusen beholder sin plass i høyre ende av dagens ramme.
 
+**BRUKER-092 · FULLFØRT 2026-09-19** — Delte ut den ekspanderte
+tredagersvisningen på Steder i en egen visningsfunksjon. Det reduserer
+SwiftUI-kompilatorens typearbeid og retter den rapporterte feilen i
+`ContentView.swift`.
+
 46. **BRUKER · DELVIS IMPLEMENTERT** — Vindkastnivåer har navn og tall i
    regelvelgeren; kompakt værtekst viser bare kast. Små nedbørsmengder (fra
    0,1 mm/t) får blå markering selv uten aktiv regnregel. Radstripen viser
