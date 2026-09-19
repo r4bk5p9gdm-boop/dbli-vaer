@@ -749,6 +749,34 @@ func estimatedFreshSnowMillimeters(waterEquivalent: Double, temperature: Double)
     return max(0, waterEquivalent) * ratio
 }
 
+/// Shared precipitation wording used by push previews and the rotating Home status.
+/// Keep these thresholds in step with `VARSELTEKSTER.md`.
+enum PrecipitationCopy {
+    static func description(waterEquivalent: Double, temperature: Double) -> String {
+        temperature <= 1
+            ? snow(estimatedFreshSnowMillimeters(waterEquivalent: waterEquivalent, temperature: temperature))
+            : rain(waterEquivalent)
+    }
+
+    static func rain(_ amount: Double) -> String {
+        switch amount {
+        case ..<0.1: "Yr"
+        case ..<0.5: "Litt regn"
+        case ..<1.5: "Regn"
+        default: "Kraftig regn"
+        }
+    }
+
+    static func snow(_ amount: Double) -> String {
+        switch amount {
+        case ..<0.2: "Snøfnugg"
+        case ..<1: "Lett snøfall"
+        case ..<3: "Snøfall"
+        default: "Kraftig snøfall"
+        }
+    }
+}
+
 enum PlacePreposition: String, Codable, CaseIterable, Identifiable {
     case pa = "på"
     case i = "i"

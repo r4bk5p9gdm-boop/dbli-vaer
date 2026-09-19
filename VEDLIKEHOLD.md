@@ -54,6 +54,13 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-077 · FULLFØRT 2026-09-19** — Avgrenset rullerende varsel på Hjem til
+nå og neste 24 timer. Regn «om tre kvarter» får nå bare værbeskrivelsen
+«Småregn.» på andrelinjen, uten «snart» eller ny tidsangivelse. Samlet regn-
+og snøgrensene i én felles teksttabell i appen, slik at Hjem, push og status
+bruker samme ord: yr, småregn/litt regn, regn, striskur/kraftig regn samt
+tilsvarende snøord.
+
 **BRUKER-076 · FULLFØRT 2026-09-19** — Renset nå-varslene i det rullerende
 feltet på Hjem. Alle nedbørtilstander bruker nå værord fra den felles
 teksttabellen, som «yr», «småregn», «regn», «striskur» eller «litt snø».

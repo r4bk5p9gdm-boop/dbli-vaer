@@ -246,40 +246,20 @@ enum Planner {
         let number: (Double) -> String = {
             $0.formatted(.number.precision(.fractionLength(0...1)))
         }
-        func rainDescription(_ rate: Double) -> String {
-            switch rate {
-            case ..<0.1: "Yr"
-            case ..<0.5: "Litt regn"
-            case ..<1.5: "Regn"
-            default: "Kraftig regn"
-            }
-        }
-
-        func snowDescription(_ rate: Double) -> String {
-            switch rate {
-            case ..<0.2: "Snøfnugg"
-            case ..<1: "Lett snøfall"
-            case ..<3: "Snøfall"
-            default: "Kraftig snøfall"
-            }
-        }
-
-        let context = status.isNow ? "akkurat nå" : "neste time"
-
         switch status.type {
         case .regn:
             let amount = status.possible == true
                 ? (hour.precipMax ?? hour.precipitationRiskRate)
                 : hour.precipitationRate
             let prefix = status.possible == true ? "Mulig " : ""
-            return "\(prefix)\(rainDescription(amount)) \(context)."
+            return "\(prefix)\(PrecipitationCopy.rain(amount))."
         case .sno:
             let water = status.possible == true
                 ? (hour.precipMax ?? hour.precipitationRiskRate)
                 : hour.precipitationRate
             let snow = estimatedFreshSnowMillimeters(waterEquivalent: water, temperature: hour.temp)
             let prefix = status.possible == true ? "Mulig " : ""
-            return "\(prefix)\(snowDescription(snow)) \(context)."
+            return "\(prefix)\(PrecipitationCopy.snow(snow))."
         case .dugg:
             return "\(status.possible == true ? "Mulig duggfall" : "Duggfall") ved \(number(hour.temp))°."
         case .frost:
@@ -400,36 +380,18 @@ enum Planner {
         let withTime: (String) -> String = { "\($0) {tid}\(durationSuffix)." }
         let number: (Double) -> String = { $0.formatted(.number.precision(.fractionLength(0...1))) }
 
-        func rainDescription(rate: Double) -> String {
-            switch rate {
-            case ..<0.1: "Yr"
-            case ..<0.5: "Litt regn"
-            case ..<1.5: "Regn"
-            default: "Kraftig regn"
-            }
-        }
-
-        func snowDescription(rate: Double) -> String {
-            switch rate {
-            case ..<0.2: "Snøfnugg"
-            case ..<1: "Lett snøfall"
-            case ..<3: "Snøfall"
-            default: "Kraftig snøfall"
-            }
-        }
-
         switch rule.type {
         case .regn:
             let amount = hours.reduce(0.0) { total, hour in
                 total + (possible ? hour.precipitationRiskRate : hour.precipitationRate)
             }
-            return withTime(rainDescription(rate: amount / Double(duration)))
+            return withTime(PrecipitationCopy.rain(amount / Double(duration)))
         case .sno:
             let amount = hours.reduce(0.0) { total, hour in
                 let water = possible ? hour.precipitationRiskRate : hour.precipitationRate
                 return total + estimatedFreshSnowMillimeters(waterEquivalent: water, temperature: hour.temp)
             }
-            return withTime(snowDescription(rate: amount / Double(duration)))
+            return withTime(PrecipitationCopy.snow(amount / Double(duration)))
         case .vind:
             let gust = hours.compactMap(\.gust).max()
             guard let gust else { return withTime("Vindkast ikke oppgitt") }

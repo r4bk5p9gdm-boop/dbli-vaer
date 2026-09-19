@@ -306,9 +306,10 @@ private struct CurrentWeatherCard: View {
         CurrentPrecipitationSummary.make(from: forecast)
     }
     private var rotatingStatuses: [WeatherStatus] {
-        WeatherStatus.uniqueByType(
+        let horizon = Date().addingTimeInterval(24 * 60 * 60)
+        return WeatherStatus.uniqueByType(
             Planner.statuses(for: place, forecast: forecast)
-                .filter { $0.type != .regn && $0.type != .sno }
+                .filter { $0.type != .regn && $0.type != .sno && $0.eventAt <= horizon }
         )
             .prefix(4)
             .map { $0 }
@@ -653,24 +654,29 @@ private struct CurrentPrecipitationSummary {
 
     static func make(from forecast: [ForecastHour], now: Date = Date()) -> CurrentPrecipitationSummary {
         let current = forecast[0]
+        let horizon = now.addingTimeInterval(24 * 60 * 60)
         let samples = forecast.flatMap { $0.radarSamples ?? [] }.sorted { $0.time < $1.time }
         let latest = samples.last { $0.time <= now.addingTimeInterval(2 * 60) }
 
         if let latest, latest.time >= now.addingTimeInterval(-10 * 60), latest.rate >= 0.1 {
             return CurrentPrecipitationSummary(
                 title: current.temp <= 1 ? "Snø nå" : "Regn nå",
-                detail: "\(weatherDescription(latest.rate, temperature: current.temp)) akkurat nå.",
+                detail: "\(PrecipitationCopy.description(waterEquivalent: latest.rate, temperature: current.temp)).",
                 systemImage: current.temp <= 1 ? "cloud.snow.fill" : "cloud.rain.fill",
                 color: .blue,
                 isFallingNow: true
             )
         }
 
-        if let upcoming = samples.first(where: { $0.time > now.addingTimeInterval(2 * 60) && $0.rate >= 0.1 }) {
+        if let upcoming = samples.first(where: {
+            $0.time > now.addingTimeInterval(2 * 60)
+                && $0.time <= horizon
+                && $0.rate >= 0.1
+        }) {
             let kind = current.temp <= 1 ? "Snø" : "Regn"
             return CurrentPrecipitationSummary(
                 title: "\(kind) \(eventTimePhrase(upcoming.time, relativeTo: now))",
-                detail: "\(weatherDescription(upcoming.rate, temperature: current.temp)) snart.",
+                detail: "\(PrecipitationCopy.description(waterEquivalent: upcoming.rate, temperature: current.temp)).",
                 systemImage: current.temp <= 1 ? "cloud.snow.fill" : "cloud.rain.fill",
                 color: .blue,
                 isFallingNow: false
@@ -680,7 +686,7 @@ private struct CurrentPrecipitationSummary {
         if current.precip >= 0.1 {
             return CurrentPrecipitationSummary(
                 title: current.temp <= 1 ? "Snø denne timen" : "Regn denne timen",
-                detail: "\(weatherDescription(current.precip, temperature: current.temp)) neste time.",
+                detail: "\(PrecipitationCopy.description(waterEquivalent: current.precip, temperature: current.temp)).",
                 systemImage: current.temp <= 1 ? "cloud.snow.fill" : "cloud.rain.fill",
                 color: .blue,
                 isFallingNow: false
@@ -690,20 +696,22 @@ private struct CurrentPrecipitationSummary {
         if current.precipitationRiskRate >= 0.1 {
             return CurrentPrecipitationSummary(
                 title: current.temp <= 1 ? "Mulig snø denne timen" : "Mulig regn denne timen",
-                detail: "Mulig \(weatherDescription(current.precipMax ?? current.precipitationRiskRate, temperature: current.temp).lowercased()) neste time.",
+                detail: "Mulig \(PrecipitationCopy.description(waterEquivalent: current.precipMax ?? current.precipitationRiskRate, temperature: current.temp).lowercased()).",
                 systemImage: "umbrella.fill",
                 color: .blue.opacity(0.75),
                 isFallingNow: false
             )
         }
 
-        if let upcoming = forecast.dropFirst().first(where: { $0.precipitationRiskRate >= 0.1 }) {
+        if let upcoming = forecast.dropFirst().first(where: {
+            $0.time <= horizon && $0.precipitationRiskRate >= 0.1
+        }) {
             let possible = upcoming.precip < 0.1
             return CurrentPrecipitationSummary(
                 title: "\(precipitationHeadlineName(temperature: upcoming.temp, possible: possible)) \(eventTimePhrase(upcoming.time, relativeTo: now))",
                 detail: possible
-                    ? "Mulig \(weatherDescription(upcoming.precipMax ?? upcoming.precipitationRiskRate, temperature: upcoming.temp).lowercased()) neste time."
-                    : "\(weatherDescription(upcoming.precip, temperature: upcoming.temp)) neste time.",
+                    ? "Mulig \(PrecipitationCopy.description(waterEquivalent: upcoming.precipMax ?? upcoming.precipitationRiskRate, temperature: upcoming.temp).lowercased())."
+                    : "\(PrecipitationCopy.description(waterEquivalent: upcoming.precip, temperature: upcoming.temp)).",
                 systemImage: possible ? "umbrella.fill" : (upcoming.temp <= 1 ? "cloud.snow.fill" : "cloud.rain.fill"),
                 color: possible ? .blue.opacity(0.75) : .blue,
                 isFallingNow: false
@@ -717,24 +725,6 @@ private struct CurrentPrecipitationSummary {
             color: .secondary,
             isFallingNow: false
         )
-    }
-
-    private static func weatherDescription(_ waterEquivalent: Double, temperature: Double) -> String {
-        if temperature <= 1 {
-            let snow = estimatedFreshSnowMillimeters(waterEquivalent: waterEquivalent, temperature: temperature)
-            switch snow {
-            case ..<0.2: return "Snøfnugg"
-            case ..<1: return "Lett snøfall"
-            case ..<3: return "Snøfall"
-            default: return "Kraftig snøfall"
-            }
-        }
-        switch waterEquivalent {
-        case ..<0.1: return "Yr"
-        case ..<0.5: return "Litt regn"
-        case ..<1.5: return "Regn"
-        default: return "Kraftig regn"
-        }
     }
 
 }
