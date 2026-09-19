@@ -1475,6 +1475,11 @@ og 07: gårsdagen skjules, 05–07 får en smal nattdel foran dagens vanlige
 07–15–23–07-bånd, og nå-streken følger den nye dagsraden. Både Nedbør og de
 andre værtypene bruker samme adaptive inndeling.
 
+**BRUKER-088 · FULLFØRT 2026-09-19** — Samordnet toppstatus med
+temperatur-raden: temperatur under valgt kaldgrense vises kjølig blå, over
+varmgrensen varm rød-oransje, ellers nøytral. Solgløttikonet har dempet gull,
+klart vær sterkere solgull og overskyet beholder blågrå farge.
+
 46. **BRUKER · DELVIS IMPLEMENTERT** — Vindkastnivåer har navn og tall i
    regelvelgeren; kompakt værtekst viser bare kast. Små nedbørsmengder (fra
    0,1 mm/t) får blå markering selv uten aktiv regnregel. Radstripen viser

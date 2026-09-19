@@ -517,7 +517,10 @@ enum CurrentWeatherCondition: Equatable {
         case .rain: AlertType.regn.color
         case .fog: Color(red: 0.38, green: 0.45, blue: 0.52)
         case .clear: AlertType.sol.color
-        case .partlyCloudy, .cloudy: Color(red: 0.27, green: 0.45, blue: 0.62)
+        // A muted gold tells the user that the sun is actually visible behind
+        // the cloud. Fully cloudy keeps the quiet blue-grey treatment.
+        case .partlyCloudy: Color(red: 0.79, green: 0.61, blue: 0.22)
+        case .cloudy: Color(red: 0.27, green: 0.45, blue: 0.62)
         }
     }
 }

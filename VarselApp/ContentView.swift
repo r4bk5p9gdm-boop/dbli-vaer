@@ -363,6 +363,7 @@ private struct CurrentWeatherCard: View {
                         }
                         Text("\(Int(current.temp.rounded()))°")
                             .font(.system(size: 29, weight: .light, design: .rounded))
+                            .foregroundStyle(currentTemperatureColor)
                     }
                     Image(systemName: currentCondition.systemImage)
                         .font(.system(size: 27, weight: .semibold))
@@ -514,6 +515,18 @@ private struct CurrentWeatherCard: View {
 
     private var frostIsActiveNow: Bool {
         current.temp <= 1 + place.localFrostMargin
+    }
+
+    /// Keep the current temperature aligned with the blue/cold and warm/high
+    /// segments in the temperature band below.
+    private var currentTemperatureColor: Color {
+        if current.temp <= place.resolvedDisplayTemperatureThreshold {
+            return Color(red: 0.10, green: 0.43, blue: 0.72)
+        }
+        if current.temp >= place.resolvedDisplayTemperatureHighThreshold {
+            return Color(red: 0.82, green: 0.23, blue: 0.16)
+        }
+        return .primary
     }
 }
 
