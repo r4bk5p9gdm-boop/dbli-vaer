@@ -62,7 +62,8 @@ striskur, litt snø, fresk bris og uvær. Oppdaterte språkregresjoner og bygde
 iPhone-målet. Andrelinjen bruker nå beskrivelse fra værordboken, passende
 klokkeslett og varighet i stedet for rå millimeter som hovedtekst. Testmålet
 har eldre, urelaterte Swift-6-/MainActor-feil under Xcode 27 og kan derfor
-foreløpig ikke bygges som helhet.
+foreløpig ikke bygges som helhet. Når detaljlinjen finnes, gjentas ikke
+tidsuttrykket fra pushoverskriften i selve push-kroppen.
 
 **AUTO-223 · FULLFØRT 2026-09-18** — Flyttet den automatiske stedsrekkefølgen
 til `PlaceOrdering.automatic` og la til regresjonstest for favoritt først og

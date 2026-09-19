@@ -124,7 +124,7 @@ enum NotificationCopy {
             let resolvedDetail = eventDetail
                 .replacingOccurrences(of: " {tid}", with: detailTime.map { " \($0)" } ?? "")
             let styledDetail = WeatherLanguage.text(resolvedDetail, style: languageStyle)
-            timing += "\n\(styledDetail)"
+            timing = styledDetail
         }
         if let name = rule.cleanedCustomName { timing += "\n\(name)" }
         return timing

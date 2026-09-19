@@ -1348,7 +1348,7 @@ final class PlannerTests: XCTestCase {
         )
     }
 
-    func testNotificationCopyKeepsDetailSeparateFromTimingAndMemo() {
+    func testNotificationCopyUsesDetailInsteadOfRepeatingHeadlineTime() {
         var rule = Rule(type: .regn)
         rule.customName = "Vann plantene"
         let body = NotificationCopy.message(
@@ -1359,10 +1359,10 @@ final class PlannerTests: XCTestCase {
         )
 
         let lines = body.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
-        XCTAssertEqual(lines.count, 3)
-        XCTAssertEqual(lines[1], "Opptil 0,9 mm over 1 time.")
-        XCTAssertEqual(lines[2], "Vann plantene")
-        XCTAssertFalse(lines[1].contains("om to timer"))
+        XCTAssertEqual(lines.count, 2)
+        XCTAssertEqual(lines[0], "Opptil 0,9 mm over 1 time.")
+        XCTAssertEqual(lines[1], "Vann plantene")
+        XCTAssertFalse(lines[0].contains("om to timer"))
     }
 
     func testInntronderskKeepsMemoAsSeparateFinalLineForWeatherTypes() {
