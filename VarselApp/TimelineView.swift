@@ -41,7 +41,7 @@ struct ForecastVariantsView: View {
     }
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 16) {
             ForEach(visibleDays, id: \.id) { day in
                 let isToday = Calendar.current.isDate(day.date, inSameDayAs: Calendar.current.startOfDay(for: Date()))
                 ForecastDayFrame(

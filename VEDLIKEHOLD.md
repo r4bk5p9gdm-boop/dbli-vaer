@@ -1503,6 +1503,10 @@ for eksempel leses «D bli Vær! her på Klinga». Engelsk bruker «here».
 nederste værbånd. «nå»-teksten får dermed en egen, rolig plass før rammens
 nederkant.
 
+**BRUKER-095 · FULLFØRT 2026-09-19** — Økte avstanden mellom dagsrammene,
+slik at tittelen for dag to og tre får et tydeligere visuelt opphold før den
+neste bolken begynner.
+
 46. **BRUKER · DELVIS IMPLEMENTERT** — Vindkastnivåer har navn og tall i
    regelvelgeren; kompakt værtekst viser bare kast. Små nedbørsmengder (fra
    0,1 mm/t) får blå markering selv uten aktiv regnregel. Radstripen viser
