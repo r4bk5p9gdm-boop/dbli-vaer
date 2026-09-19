@@ -37,7 +37,7 @@ struct ForecastVariantsView: View {
     }
 
     var body: some View {
-        VStack(spacing: 7) {
+        VStack(spacing: 10) {
             ForEach(visibleDays, id: \.id) { day in
                 VStack(alignment: .leading, spacing: 4) {
                     if !Calendar.current.isDate(day.date, inSameDayAs: Calendar.current.startOfDay(for: Date())) {
@@ -107,9 +107,15 @@ private struct ForecastDayHeader: View {
     let day: ForecastDay
 
     var body: some View {
-        Text(dayTitle(day.date))
-            .font(.subheadline.weight(.semibold))
-            .frame(maxWidth: .infinity, alignment: .leading)
+        VStack(spacing: 5) {
+            Text(dayTitle(day.date))
+                .font(.subheadline.weight(.semibold))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 6)
+                .background(Color.primary.opacity(0.045), in: RoundedRectangle(cornerRadius: 8))
+            Divider().opacity(0.55)
+        }
     }
 
     private func dayTitle(_ date: Date) -> String {

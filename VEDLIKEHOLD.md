@@ -1480,6 +1480,11 @@ temperatur-raden: temperatur under valgt kaldgrense vises kjølig blå, over
 varmgrensen varm rød-oransje, ellers nøytral. Solgløttikonet har dempet gull,
 klart vær sterkere solgull og overskyet beholder blågrå farge.
 
+**BRUKER-089 · FULLFØRT 2026-09-19** — Tydeliggjorde dagsskiftene i
+tredagersvarselet med svakt tonede dagsetiketter, en hårfin skillelinje og
+litt mer luft mellom dagsbolkene. Dagens overskrift på Hjem bruker samme
+uttrykk som kommende dager.
+
 46. **BRUKER · DELVIS IMPLEMENTERT** — Vindkastnivåer har navn og tall i
    regelvelgeren; kompakt værtekst viser bare kast. Små nedbørsmengder (fra
    0,1 mm/t) får blå markering selv uten aktiv regnregel. Radstripen viser
