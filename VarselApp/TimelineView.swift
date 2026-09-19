@@ -213,24 +213,27 @@ private struct WeatherBandsForecast: View {
         Calendar.current.isDate(day.date, inSameDayAs: Calendar.current.startOfDay(for: now))
     }
 
-    /// Between 05 and 07 every displayed day reserves the same small 05–07
-    /// segment. This keeps the 07, 15, 23 and final 07 boundaries aligned
-    /// down the whole forecast instead of leaving later days short on the
-    /// right. The now-marker itself remains limited to today's bands.
-    private var usesEarlyMorningLayout: Bool {
+    private var isMorningCompression: Bool {
         (5...6).contains(Calendar.current.component(.hour, from: now))
+    }
+
+    /// Only today's row gets real 05–07 data. Later days use three slightly
+    /// narrower, trailing-aligned bands while this mode is active, preserving
+    /// the 07–15–23–07 column boundaries without inventing an extra cell.
+    private var includesEarlyMorningCell: Bool {
+        isToday && isMorningCompression
     }
 
     private var nowFraction: CGFloat {
         let calendar = Calendar.current
-        if usesEarlyMorningLayout {
+        if includesEarlyMorningCell {
             let startOfToday = calendar.startOfDay(for: now)
             let start = calendar.date(byAdding: .hour, value: 5, to: startOfToday) ?? startOfToday
             // 05–07 occupies two of the 26 visual hour cells.
             return min(max(now.timeIntervalSince(start) / (26 * 3_600), 0), 2.0 / 26.0)
         }
-        let logicalDay = usesEarlyMorningLayout ? calendar.startOfDay(for: now) : weatherDayDate(for: now, calendar: calendar)
-        let startHour = usesEarlyMorningLayout ? 5 : 7
+        let logicalDay = includesEarlyMorningCell ? calendar.startOfDay(for: now) : weatherDayDate(for: now, calendar: calendar)
+        let startHour = includesEarlyMorningCell ? 5 : 7
         let start = calendar.date(byAdding: .hour, value: startHour, to: logicalDay) ?? logicalDay
         let end = calendar.date(byAdding: .day, value: 1, to: start) ?? start.addingTimeInterval(86_400)
         return min(max(now.timeIntervalSince(start) / end.timeIntervalSince(start), 0), 1)
@@ -243,7 +246,7 @@ private struct WeatherBandsForecast: View {
                     let labelWidth: CGFloat = 78
                     let trackWidth = max(0, proxy.size.width - labelWidth)
                     ZStack(alignment: .topLeading) {
-                        let markers: [(hour: Int, fraction: CGFloat)] = usesEarlyMorningLayout
+                        let markers: [(hour: Int, fraction: CGFloat)] = isMorningCompression
                             ? [(7, 2.0 / 26.0), (15, 10.0 / 26.0), (23, 18.0 / 26.0), (7, 1)]
                             : [(7, 0), (15, 1.0 / 3.0), (23, 2.0 / 3.0), (7, 1)]
                         ForEach(Array(markers.enumerated()), id: \.offset) { _, marker in
@@ -274,7 +277,7 @@ private struct WeatherBandsForecast: View {
                                 color: AlertType.regn.color,
                                 showsNotification: moistureRules.contains(where: { !$0.isDisplayOnly })
                             )
-                            MoistureBandTrack(day: day, rules: moistureRules, includeEarlyMorning: usesEarlyMorningLayout)
+                            MoistureBandTrack(day: day, rules: moistureRules, includeEarlyMorning: includesEarlyMorningCell, compressForMorning: isMorningCompression && !isToday)
                         }
                     }
                     ForEach(displayedTypes) { type in
@@ -288,7 +291,7 @@ private struct WeatherBandsForecast: View {
                                 color: type.color,
                                 showsNotification: typeRules.contains(where: { !$0.isDisplayOnly })
                             )
-                            CombinedDayBandTrack(day: day, rules: typeRules, type: type, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, includeEarlyMorning: usesEarlyMorningLayout)
+                            CombinedDayBandTrack(day: day, rules: typeRules, type: type, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, includeEarlyMorning: includesEarlyMorningCell, compressForMorning: isMorningCompression && !isToday)
                         }
                     }
                 }
@@ -368,13 +371,14 @@ private struct CombinedDayBandTrack: View {
     let latitude: Double
     let longitude: Double
     let includeEarlyMorning: Bool
+    let compressForMorning: Bool
 
     var body: some View {
         GeometryReader { proxy in
             let spacing: CGFloat = 3
             let gapCount: CGFloat = includeEarlyMorning ? 3 : 2
             let availableWidth = max(0, proxy.size.width - spacing * gapCount)
-            let totalHours: CGFloat = includeEarlyMorning ? 26 : 24
+            let totalHours: CGFloat = (includeEarlyMorning || compressForMorning) ? 26 : 24
             HStack(spacing: spacing) {
                 if includeEarlyMorning {
                     CombinedHourBandCell(hours: day.hours, rules: rules, type: type, period: .earlyMorning, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude)
@@ -385,6 +389,7 @@ private struct CombinedDayBandTrack: View {
                         .frame(width: availableWidth * 8 / totalHours)
                 }
             }
+            .frame(maxWidth: .infinity, alignment: compressForMorning ? .trailing : .leading)
         }
         .frame(height: 18)
         .accessibilityElement(children: .ignore)
@@ -450,13 +455,14 @@ private struct MoistureBandTrack: View {
     let day: ForecastDay
     let rules: [Rule]
     let includeEarlyMorning: Bool
+    let compressForMorning: Bool
 
     var body: some View {
         GeometryReader { proxy in
             let spacing: CGFloat = 3
             let gapCount: CGFloat = includeEarlyMorning ? 3 : 2
             let availableWidth = max(0, proxy.size.width - spacing * gapCount)
-            let totalHours: CGFloat = includeEarlyMorning ? 26 : 24
+            let totalHours: CGFloat = (includeEarlyMorning || compressForMorning) ? 26 : 24
             HStack(spacing: spacing) {
                 if includeEarlyMorning {
                     MoistureHourBandCell(hours: day.hours, rules: rules, period: .earlyMorning)
@@ -467,6 +473,7 @@ private struct MoistureBandTrack: View {
                         .frame(width: availableWidth * 8 / totalHours)
                 }
             }
+            .frame(maxWidth: .infinity, alignment: compressForMorning ? .trailing : .leading)
         }
         .frame(height: 18)
         .accessibilityElement(children: .ignore)

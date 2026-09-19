@@ -1481,9 +1481,10 @@ varmgrensen varm rød-oransje, ellers nøytral. Solgløttikonet har dempet gull,
 klart vær sterkere solgull og overskyet beholder blågrå farge.
 
 **BRUKER-090 · FULLFØRT 2026-09-19** — Morgenvarianten viser ikke lenger
-«05» over værbåndene. Mellom 05 og 07 får alle viste dager samme smale
-05–07-del, slik at alle værbånd avsluttes på samme høyrekant. Etter 07 går
-alle tilbake til tre like brede bånd som fyller hele raden.
+«05» over værbåndene. Mellom 05 og 07 får bare dagens rad en ekte 05–07-del;
+kommende dager bruker tre litt smalere, høyrejusterte bånd slik at
+07–15–23–07 fortsatt ligger på samme loddrette linjer. Etter 07 fyller alle
+tre bånd hele raden igjen.
 
 46. **BRUKER · DELVIS IMPLEMENTERT** — Vindkastnivåer har navn og tall i
    regelvelgeren; kompakt værtekst viser bare kast. Små nedbørsmengder (fra
