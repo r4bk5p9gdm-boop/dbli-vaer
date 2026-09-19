@@ -2,12 +2,12 @@
 
 def validate_alert_templates(text)
   required = {
-    'first-line template' => 'Det blir [Værtype]! [sted] [tid]',
-    'second-line template' => '[Beskrivelse] [dag], kl. [TT] — [varighet]',
-    'language table' => '| Nøkkel | Bokmål | Inntrøndersk | English |',
-    'rain table' => '#### Regn',
-    'snow table' => '#### Snø',
-    'wind table' => '#### Vindkast (forenklet Beaufort-ordbok)'
+    'first-line template' => 'Det blir {Værtype}! {sted} {tid}.',
+    'second-line template' => '{Beskrivelse} {dag/klokkeslett} — {varighet}.',
+    'language table' => '| Del | Bokmål | Inntrøndersk |',
+    'rain table' => '### Regn',
+    'snow table' => '### Snø',
+    'wind table' => '### Vindkast'
   }
   required.each_with_object([]) do |(label, marker), errors|
     errors << "#{label}: mangler #{marker}" unless text.include?(marker)

@@ -1,259 +1,182 @@
-# Varseltekster
+# Varseltekster — første gjennomgang
 
-## Kodifisert varselmal — utkast til gjennomgang
+Dette er arbeidsdokumentet for pushvarsel, Varsler-siden, nåstatus, Apple
+Watch og CarPlay. Her gjennomgår vi **bokmål** og **inntrøndersk**. Engelsk er
+på vent og beholdes foreløpig uendret i `Sprak.json`.
 
-Dette er arbeidsstrukturen for alle værtyper. Måleverdier oversettes først
-til en kort tekst fra tabellene under. Råverdier kan legges til senere dersom
-de er nyttige, men skal ikke være hovedteksten.
+Målet er at første linje skal være umiddelbart forståelig, mens andre linje
+gir konkret værbeskrivelse, tidspunkt og ved behov varighet — uten gjentakelse.
 
-### Første linje
+## Fast oppbygning
 
-```text
-Det blir [Værtype]! [sted] [tid]
-```
+| Del | Bokmål | Inntrøndersk |
+|---|---|---|
+| Sikkert framtidsvarsel | `Det blir {Værtype}! {sted} {tid}.` | `D bli {Værtype}! {sted} {tid}.` |
+| Usikkert framtidsvarsel | `Det kan bli {Værtype}! {sted} {tid}.` | `D kan bli {Værtype}! {sted} {tid}.` |
+| Andre linje | `{Beskrivelse} {dag/klokkeslett} — {varighet}.` | `{Beskrivelse} {dag/klokkeslett} — {varighet}.` |
 
-Eksempler: `Det blir Regn! på Klinga om tre timer.` ·
-`Det blir Sol! oppi Selbu i morgen.`
+`{sted}` er brukerens valgte preposisjon + stedsnavn: «på Klinga», «inni
+Hornburu» eller «nerri Namsos». Preposisjonen oversettes aldri automatisk.
 
-`Værtype` har stor forbokstav og utropstegn. `tid` bruker kort språk:
-«om en halvtime», «om tre timer», «i dag», «i kveld», «i natt», «i morgen»
-eller «til helga». Stedet beholder valgt preposisjon.
+## Tid og varighet
 
-### Språkverdier for malen
+| Når hendelsen starter | Første linje | Andre linje |
+|---|---|---|
+| Under én time fram | `om et kvarter` / `om en halvtime` / `om 45 minutter` | Bare værdetalj; klokkeslett er normalt overflødig. |
+| Senere i dag eller kveld | `i dag` / `i kveld` | `kl. 16` / `kl. 21` |
+| Natt, før kl. 06 | `i natt` | `kl. 02` |
+| I morgen | `i morgen` / `i mårrå` | `lørdag kl. 10` / `lørda'n kl. 10` |
+| Overmorgen | `i overmorgen` / `i overmårrå` | `søndag kl. 14` / `sønda'n kl. 14` |
+| Helgevarsel | `til helga` / `te helga` | `lørdag kl. 10` / `lørda'n kl. 10` |
 
-| Nøkkel | Bokmål | Inntrøndersk | English |
+Andre linje gjentar aldri «i morgen», «i natt» eller «til helga». Den går rett
+på ukedag når hendelsen er en annen dag, og rett på klokkeslett når det er
+samme dag, kveld eller natt.
+
+| Forventet varighet | Bokmål | Inntrøndersk | Bruk |
 |---|---|---|---|
-| Første linje | Det blir {Værtype}! {sted} {tid}. | D bli {Værtype}! {sted} {tid}. | It will be {WeatherType}! {place} {time}. |
-| Sikker beskrivelse | Litt regn | Litt regn | Light rain |
-| Kraftig regn | Kraftig regn | Kraftig regn | Heavy rain |
-| Lett snø | Lett snøfall | Lætt snøfall | Light snowfall |
-| Kraftig snø | Kraftig snøfall | Kraftig snøfall | Heavy snowfall |
-| Frisk vind | Frisk bris | Frisk bris | Fresh breeze |
-| Sterk vind | Sterk vind | Sterk vind | Strong wind |
-| Kort varighet | en liten stund | ei lita stund | briefly |
-| Gjennom natta | gjennom natta | gjennom natta | through the night |
+| Under én time | utelates normalt | utelates normalt | Starttid + værtype holder. |
+| 1–4 timer | `i to timer` | `i to tima` | Ta med når varigheten hjelper. |
+| Mesteparten av natten | `gjennom natta` | `gjennom natta` | Bare når perioden dekker mesteparten av 23–07. |
+| Hele natten | `hele natta` | `hele natta` | Bare når perioden dekker omtrent hele 23–07. |
+| Lang dagperiode | `store deler av dagen` | `store dela av dagen` | Særlig for sol. |
 
-De samme språkverdiene ligger i `Sprak.json` under `template.*` og
-`detail.*`. Tabellen her er lesbar arbeidsreferanse; JSON-filen er kilden som
-senere skal kobles til alle visningene.
+«Gjennom natta» betyr altså ikke bare at været starter om natten. Det brukes
+først når modellen forventer vær over mesteparten av natta.
 
-### Andre linje
+## Ordbok for andre linje
 
-```text
-[Beskrivelse] [dag], kl. [TT] — [varighet]
-```
+### Regn
 
-Eksempler: `Kraftig regn lørdag, kl. 10 — i to timer.` ·
-`Lett snøfall kl. 02 — gjennom natta.` ·
-`Frisk bris søndag, kl. 14 — i tre timer.`
+| Grunnlag | Bokmål | Inntrøndersk |
+|---|---|---|
+| Svært lite / dråper | Yr | Yr |
+| Lite nedbør | Litt regn | Litt regn |
+| Jevn nedbør | Regn | Regn |
+| Mye eller langvarig nedbør | Kraftig regn | My regn |
+| Korte, avgrensede perioder | Regnbyger | Regnbyga |
 
-Ved nært varsel kan andre linje være kort: `Litt regn om en halvtime — i 20 minutter.`
+### Snø
 
-Når første linje allerede sier «i dag», «i kveld» eller «i natt», går andrelinjen
-rett på klokkeslettet: `Lett snøfall kl. 02 — gjennom natta.` Ukedag brukes når
-hendelsen ligger i morgen, senere eller til helga.
+| Grunnlag | Bokmål | Inntrøndersk |
+|---|---|---|
+| Enkelte fnugg | Enkelte snøfnugg | Nånn snøfnugg |
+| Lite snøfall | Lett snøfall | Lætt snøfall |
+| Jevnt snøfall | Snøfall | Snøfall |
+| Tett eller mye snø | Kraftig snøfall | Kraftig snøfall |
+| Korte perioder | Snøbyger | Snøbyga |
+| Regn og snø samtidig | Sludd | Sludd |
 
-Varigheten skal også være tekstbasert: «en liten stund», «i 20 minutter»,
-«i to timer», «gjennom natta» eller «store deler av dagen». Unngå rått
-timeantall når en naturlig formulering er bedre. Kortvarig betyr her forventet
-varighet under én time; da kan varighetsleddet sløyfes når det ikke tilfører
-ny informasjon.
+### Vindkast
 
-### Teksttabeller — første utkast
+Vindvarsler og vindraden bygger på **vindkast**. Midlere vind kan ligge i en
+presisering senere, men er ikke hovedordet i varselet.
 
-#### Regn
+| Vindkast | Bokmål | Inntrøndersk |
+|---:|---|---|
+| 8–12 m/s | Vindkast | Vindkasta |
+| 13–17 m/s | Frisk bris | Frisk bris |
+| 18–23 m/s | Sterke vindkast | Sterke vindkasta |
+| 24 m/s eller mer | Stormkast | Stormkasta |
 
-| Grunnlag i varselperioden | Tekst |
-|---|---|
-| Svært lite / spredte dråper | Yr eller litt regn |
-| Lite nedbør | Litt regn |
-| Jevnt moderat nedbør | Regn |
-| Stor mengde eller langvarig nedbør | Kraftig regn |
-| Korte, avgrensede perioder | Regnbyger |
+### Duggfall, frost, sol og temperatur
 
-#### Snø
+| Tilstand | Bokmål | Inntrøndersk |
+|---|---|---|
+| Duggpunkt innenfor lokal duggmargin | Fare for dugg | Fare for doggfall |
+| Duggfall forventes | Duggfall ved {temperatur}° | Doggfall ved {temperatur}° |
+| Lokal frostmargin slår til over 0° | Fare for frost | Fare for frost |
+| 0° eller kaldere | Frost | Frost |
+| Kort gløtt med lavt skydekke | Solgløtt | Solgløtt |
+| Sammenhengende solperiode | Sol | Sol |
+| Under valgt temperatur | Under {temperatur}° | Under {temperatur}° |
+| Over valgt temperatur | Over {temperatur}° | Over {temperatur}° |
 
-| Grunnlag i varselperioden | Tekst |
-|---|---|
-| Svært lite snø | Enkelte snøfnugg |
-| Lite snøfall | Lett snøfall |
-| Jevnt snøfall | Snøfall |
-| Stor mengde eller tett snø | Kraftig snøfall |
-| Korte, avgrensede perioder | Snøbyger |
-| Blanding av regn og snø | Sludd |
+`Sol om fire timer` betyr starttid. `Sol i fire timer` betyr varighet. De to
+uttrykkene kan derfor godt ha ulike tall.
 
-#### Vindkast (forenklet Beaufort-ordbok)
+## Fullstendige push-eksempler
 
-| Vindkast | Tekst |
-|---:|---|
-| Under 5 m/s | Lette vindkast |
-| 5–9 m/s | Frisk bris |
-| 10–16 m/s | Kraftige vindkast |
-| 17–23 m/s | Sterk vind |
-| 24 m/s eller mer | Stormkast |
+### Regn
 
-#### Dugg og frost
+| Situasjon | Bokmål | Inntrøndersk |
+|---|---|---|
+| Sikkert, i morgen | **Det blir Regn! nerri Namsos i morgen.**<br>Litt regn mandag kl. 06 — i to timer. | **D bli Regn! nerri Namsos i mårrå.**<br>Litt regn manda'n kl. 06 — i to tima. |
+| Usikkert, nært | **Det kan bli Regn! på Klinga om en halvtime.**<br>Yr. | **D kan bli Regn! på Klinga om en halvtime.**<br>Yr. |
+| Kraftig, i natt | **Det blir Regn! oppi Bangdalen i natt.**<br>Kraftig regn kl. 02 — gjennom natta. | **D bli Regn! oppi Bangdalen i natt.**<br>My regn kl. 02 — gjennom natta. |
+| Pågår nå | **Det regner!**<br>Litt regn den neste halvtimen. | **D regne!**<br>Litt regn den neste halvtimen. |
 
-| Tilstand | Tekst |
-|---|---|
-| Duggpunkt nær lufttemperaturen | Fare for dugg |
-| Duggfall er nært forestående | Duggfall |
-| Lokal frostmargin slår til | Fare for frost |
-| Temperatur faktisk 0 °C eller lavere | Frost |
+### Snø
 
-#### Sol og temperatur
+| Situasjon | Bokmål | Inntrøndersk |
+|---|---|---|
+| Sikkert, i natt | **Det blir Snø! oppi Bangdalen i natt.**<br>Lett snøfall kl. 02 — gjennom natta. | **D bli Snø! oppi Bangdalen i natt.**<br>Lætt snøfall kl. 02 — gjennom natta. |
+| Usikkert, i morgen | **Det kan bli Snø! oppi Selbu i morgen.**<br>Snøfall lørdag kl. 07 — i to timer. | **D kan bli Snø! oppi Selbu i mårrå.**<br>Snøfall lørda'n kl. 07 — i to tima. |
+| Pågår nå | **Det snør!**<br>Snø den neste halvtimen. | **Det snør!**<br>Snø den neste halvtimen. |
 
-| Tilstand | Tekst |
-|---|---|
-| Lavt skydekke i kortere gløtt | Solgløtt |
-| Lang periode med lite skydekke | Sol |
-| Temperatur under valgt grense | Under [X]° |
-| Temperatur over valgt grense | Over [X]° |
+### Duggfall
 
-Disse tabellene er et språk- og tekstutkast. Tersklene finjusteres etter at
-Mathias har gått gjennom formuleringene og sett dem i appen.
+| Situasjon | Bokmål | Inntrøndersk |
+|---|---|---|
+| Sikkert, i morgen | **Det blir Duggfall! på Klinga i morgen.**<br>Duggfall ved 8° onsdag kl. 05. | **D bli Doggfall! på Klinga i mårrå.**<br>Doggfall ved 8° onsda'n kl. 05. |
+| Usikkert, i natt | **Det kan bli Duggfall! på Klinga i natt.**<br>Fare for dugg kl. 23. | **D kan bli Doggfall! på Klinga i natt.**<br>Fare for doggfall kl. 23. |
+| Pågår nå | **Det er duggfall!**<br>Duggpunktet er nær lufttemperaturen. | **D e doggfall!**<br>Doggpunktet e nær lufttemperaturen. |
 
-Referanse for komplette tekster på tvers av iPhone, Apple Watch og CarPlay.
-Hver værtype har samme rekkefølge: app-push, nåstatus, Watch og CarPlay.
-CarPlay kan vise flere korte linjer: først stedene, deretter nærmeste
-hendelse og så neste hendelse.
+### Frost
 
-«Inline-komplikasjon», «rund komplikasjon» og «hjørnekomplikasjon» gjelder
-Apple Watch. CarPlay bruker i stedet en CarPlay-widget fra iPhone-widgeten,
-vanligvis den lille systemwidgeten.
+| Situasjon | Bokmål | Inntrøndersk |
+|---|---|---|
+| Sikkert, i natt | **Det blir Frost! på Klinga i natt.**<br>Frost kl. 04 — gjennom natta. | **D bli Frost! på Klinga i natt.**<br>Frost kl. 04 — gjennom natta. |
+| Marginbasert | **Det kan bli Frost! på Klinga i natt.**<br>Fare for frost kl. 04. | **D kan bli Frost! på Klinga i natt.**<br>Fare for frost kl. 04. |
+| Pågår nå | **Det er frost!**<br>Lokalt anslag er under frostgrensen. | **D e frost!**<br>Lokalt anslag e under frostgrensa. |
 
-## Duggfall
+### Vindkast
 
-| Situasjon | Full tekst |
-|---|---|
-| **App push-varsel** |  |
-| Sikkert pushvarsel | **Det blir Duggfall! på Klinga i morgen.**<br>Duggfall onsdag, kl. 05 — gjennom natta. |
-| Usikkert pushvarsel | **Det kan bli Duggfall! på Klinga i morgen.**<br>Mulig duggfall onsdag, kl. 05 — en liten stund. |
-| **Nåstatus i app** |  |
-| Pågår nå | **D e Duggfall!**<br>Duggpunktet er nær lufttemperaturen. |
-| **Apple Watch** |  |
-| Rund komplikasjon (klokkesirkel) | **Dogg!** · 45 m |
-| Inline-widget | **Dogg! 45m** |
-| Hjørnekomplikasjon | Værikon med «Dogg!» som hjelpetekst |
-| Stor/rektangulær widget | **Klinga 8°**<br>**Neste 12 timer**<br>Dogg! om 45 m |
-| **CarPlay-widget** |  |
-| CarPlay-widget | **D bli Vær! på Klinga**<br>Også oppå Hornburu.<br>Doggfall i natt.<br>Regn om 3 timer. |
+| Situasjon | Bokmål | Inntrøndersk |
+|---|---|---|
+| Frisk bris, i morgen | **Det blir Vind! bortpå Klinga i morgen.**<br>Frisk bris mandag kl. 10 — i tre timer. | **D bli Vind! bortpå Klinga i mårrå.**<br>Frisk bris manda'n kl. 10 — i tre tima. |
+| Sterkt, til helga | **Det blir Vind! oppå Hornburu til helga.**<br>Stormkast lørdag kl. 14 — i to timer. | **D bli Vind! oppå Hornburu te helga.**<br>Stormkasta lørda'n kl. 14 — i to tima. |
+| Pågår nå | **Det blåser!**<br>Vindkast opptil 14 m/s. | **D blæs!**<br>Vindkasta oppte 14 m/s. |
 
-## Regn
+### Sol
 
-| Situasjon | Full tekst |
-|---|---|
-| **App push-varsel** |  |
-| Sikkert pushvarsel | **Det blir Regn! nerri Namsos i morgen.**<br>Litt regn mandag, kl. 06 — en liten stund. |
-| Usikkert pushvarsel | **Det kan bli Regn! nerri Namsos i morgen.**<br>Mulig regn mandag, kl. 06 — en liten stund. |
-| **Nåstatus i app** |  |
-| Pågår nå | **D Regne!**<br>0,2 mm i Nå-varselet den neste halvtimen. |
-| **Apple Watch** |  |
-| Rund komplikasjon (klokkesirkel) | **Regn!** · 23 m |
-| Inline-widget | **Regn! 23m** |
-| Hjørnekomplikasjon | Regnikon med «Regn!» som hjelpetekst |
-| Stor/rektangulær widget | **Klinga 12°**<br>**Neste 12 timer**<br>Regn! om 23 m |
-| **CarPlay-widget** |  |
-| CarPlay-widget | **D bli Vær! på Klinga**<br>Også oppå Hornburu.<br>Regn om 23 m.<br>Doggfall i natt. |
+| Situasjon | Bokmål | Inntrøndersk |
+|---|---|---|
+| Sikkert, i morgen | **Det blir Sol! inni Hornburu i morgen.**<br>Sol fredag kl. 12 — i sju timer. | **D bli Sol! inni Hornburu i mårrå.**<br>Sol freda'n kl. 12 — i sju tima. |
+| Usikkert | **Det kan bli Sol! oppi Selbu til helga.**<br>Solgløtt lørdag kl. 11 — i fire timer. | **D kan bli Sol! oppi Selbu te helga.**<br>Solgløtt lørda'n kl. 11 — i fire tima. |
+| Pågår nå | **Det er sol!**<br>Lite skydekke akkurat nå. | **D e sol!**<br>Lite skydekke no. |
 
-## Snø
+### Temperatur
 
-| Situasjon | Full tekst |
-|---|---|
-| **App push-varsel** |  |
-| Sikkert pushvarsel | **Det blir Snø! oppi Bangdalen i natt.**<br>Lett snøfall kl. 02 — gjennom natta. |
-| Usikkert pushvarsel | **Det kan bli Snø! oppi Bangdalen i natt.**<br>Mulig snø kl. 02 — en liten stund. |
-| **Nåstatus i app** |  |
-| Pågår nå | **Det Snør!**<br>Snø i Nå-varselet den neste halvtimen. |
-| **Apple Watch** |  |
-| Rund komplikasjon (klokkesirkel) | **Snø!** · 2 t |
-| Inline-widget | **Snø! 2t** |
-| Hjørnekomplikasjon | Snøikon med «Snø!» som hjelpetekst |
-| Stor/rektangulær widget | **Bangdalen 3°**<br>**Neste 12 timer**<br>Snø! om 2 t |
-| **CarPlay-widget** |  |
-| CarPlay-widget | **D bli Vær! oppi Bangdalen**<br>Snø om 2 timer.<br>Regn senere i kveld. |
+| Situasjon | Bokmål | Inntrøndersk |
+|---|---|---|
+| Under grense, i natt | **Det blir Under 10°! nerri Namsos i natt.**<br>Under 10° kl. 02 — gjennom natta. | **D bli Under 10°! nerri Namsos i natt.**<br>Under 10° kl. 02 — gjennom natta. |
+| Over grense, i morgen | **Det blir Over 20°! på Klinga i morgen.**<br>Over 20° onsdag kl. 14 — i tre timer. | **D bli Over 20°! på Klinga i mårrå.**<br>Over 20° onsda'n kl. 14 — i tre tima. |
+| Pågår nå | **Det er under 10°!** | **D e under 10°!** |
 
-## Frost
+## Korte flater
 
-| Situasjon | Full tekst |
-|---|---|
-| **App push-varsel** |  |
-| Sikkert pushvarsel | **Det blir Frost! på Klinga i natt.**<br>Frost kl. 04 — gjennom natta. |
-| Usikkert pushvarsel | **Det kan bli Frost! på Klinga i natt.**<br>Fare for frost kl. 04 — en liten stund. |
-| **Nåstatus i app** |  |
-| Pågår nå | **D e Frost!**<br>Lokalt anslag er under frostgrensen. |
-| Temperaturgrense | **D bli Under 5°! på Klinga**<br>Temperaturen kan gå under 5° i natt — tirsdag kl. 03. |
-| **Apple Watch** |  |
-| Rund komplikasjon (klokkesirkel) | **Frost!** · 1 t |
-| Inline-widget | **Frost! 1t** |
-| Hjørnekomplikasjon | Frostikon med «Frost!» som hjelpetekst |
-| Stor/rektangulær widget | **Klinga 2°**<br>**Neste 12 timer**<br>Frost! om 1 t |
-| **CarPlay-widget** |  |
-| CarPlay-widget | **D bli Vær! på Klinga**<br>Frost om 1 time.<br>Regn i natt. |
+Push bruker de to linjene over. Watch og CarPlay komprimerer, men skal bruke
+samme værord og samme tidsbetydning.
 
-## Vindkast
+| Flate | Bokmål | Inntrøndersk |
+|---|---|---|
+| Apple Watch — rund komplikasjon | `Regn! · 23 m` | `Regn! · 23 m` |
+| Apple Watch — inline-komplikasjon | `Regn! 23m` | `Regn! 23m` |
+| Apple Watch — stor komplikasjon | `Klinga 8°`<br>`Regn! om 23 m` | `Klinga 8°`<br>`Regn! om 23 m` |
+| CarPlay-widget | `D bli Vær! på Klinga`<br>`Regn om 23 minutter.`<br>`Duggfall i natt.` | `D bli Vær! på Klinga`<br>`Regn om 23 minutt.`<br>`Doggfall i natt.` |
+| Rent appvarsel | `D bli Vær!`<br>`Appen må startes for å aktivere varsler.` | `D bli Vær!`<br>`Appen må startes for å aktivere varsler.` |
 
-| Situasjon | Full tekst |
-|---|---|
-| **App push-varsel** |  |
-| Sikkert pushvarsel | **Det blir Vind! bortpå Klinga i morgen.**<br>Frisk bris mandag, kl. 10 — i tre timer. |
-| Sterkere vind | **Det blir Vind! bortpå Klinga i kveld.**<br>Sterk vind mandag, kl. 19 — i tre timer. |
-| **Nåstatus i app** |  |
-| Pågår nå | **D Blæs!**<br>Vindkast 9 m/s akkurat nå. |
-| **Apple Watch** |  |
-| Rund komplikasjon (klokkesirkel) | **Vind!** · 23 m |
-| Inline-widget | **Vind! 23m** |
-| Hjørnekomplikasjon | Vindikon med «Vind!» som hjelpetekst |
-| Stor/rektangulær widget | **Klinga 12°**<br>**Neste 12 timer**<br>Vind! om 23 m |
-| **CarPlay-widget** |  |
-| CarPlay-widget | **D bli Vær! på Klinga**<br>Vindkast om 23 minutter.<br>Doggfall i natt. |
+## Åpne valg før kobling til appen
 
-## Sol
+1. Er «Regnbyga», «Snøbyga», «Nånn snøfnugg» og «Stormkasta» riktig nivå av
+   inntrøndersk, eller skal de være mer nøytrale?
+2. Skal bokmål ha «Det blir», mens inntrøndersk har «D bli» konsekvent, slik
+   dette utkastet foreslår?
+3. Skal «Fare for doggfall» heller være «Mulig doggfall» i alle usikre
+   tilfeller?
+4. Skal vind fortsatt hete «Vind!» i første linje, eller «Vindkast!» når
+   grunnlaget alltid er kast?
 
-I solvarsler betyr «om» når solperioden starter, mens «i» beskriver hvor
-lenge den varer. Derfor er «Sol om 4 timer» en startbeskjed, mens «Sol i fire
-timer» er varigheten.
-
-| Situasjon | Full tekst |
-|---|---|
-| **App push-varsel** |  |
-| Sikkert pushvarsel | **Det blir Sol! inni Hornburu i morgen.**<br>Sol fredag, kl. 12 — store deler av dagen. |
-| Usikkert pushvarsel | **Det kan bli Sol! inni Hornburu i morgen.**<br>Solgløtt fredag, kl. 12 — i fire timer. |
-| **Nåstatus i app** |  |
-| Pågår nå | **D e Sol!**<br>Solforholdene er gode nå. |
-| **Apple Watch** |  |
-| Rund komplikasjon (klokkesirkel) | **Sol!** · 4 t |
-| Inline-widget | **Sol! 4t** |
-| Hjørnekomplikasjon | Solikon med «Sol!» som hjelpetekst |
-| Stor/rektangulær widget | **Hornburu 14°**<br>**Neste 12 timer**<br>Sol! om 4 t |
-| **CarPlay-widget** |  |
-| CarPlay-widget | **D bli Vær! oppå Hornburu**<br>Sol om 4 timer.<br>Regn i natt. |
-
-## Temperatur
-
-| Situasjon | Full tekst |
-|---|---|
-| **App push-varsel** |  |
-| Under grense | **Det blir Under 10°! nerri Namsos i natt.**<br>Under 10° kl. 02 — gjennom natta. |
-| Over grense | **Det blir Over 20°! på Klinga i morgen.**<br>Over 20° onsdag, kl. 14 — i tre timer. |
-| **Nåstatus i app** |  |
-| Pågår nå | **D e Under 10°!**<br>Det er under 10° nå. |
-| **Apple Watch** |  |
-| Rund komplikasjon (klokkesirkel) | **<10°** · 1 t |
-| Inline-widget | **<10° 1t** |
-| Hjørnekomplikasjon | Temperaturikon med «<10°» som hjelpetekst |
-| Stor/rektangulær widget | **Namsos 8°**<br>**Neste 12 timer**<br><10° om 1 t |
-| **CarPlay-widget** |  |
-| CarPlay-widget | **D bli Vær! nerri Namsos**<br>Under 10° om 1 time.<br>Regn i morgen. |
-
-## Rene appvarsler
-
-| Situasjon | Full tekst |
-|---|---|
-| App push-varsel | **D bli Vær!**<br>Appen må startes for å aktivere varsler. |
-| Nåstatus i app | **D bli Vær!**<br>Ingen aktive værhendelser akkurat nå. |
-
-## Språkregel
-
-«D e [værtype]!» brukes når værtypen faktisk pågår. «D bli Regn!» brukes for
-et framtidig sikkert varsel. «D kan bli Regn!» brukes når varselet er usikkert.
+Når dette er gått gjennom, kan de vedtatte formuleringene kobles til
+`Sprak.json` og brukes likt i push, Varsler-siden, Watch og CarPlay.

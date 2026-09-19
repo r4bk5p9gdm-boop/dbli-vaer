@@ -1511,6 +1511,11 @@ neste bolken begynner.
 tredagersvarsel til én hovedramme på Hjem. Sveipeprikkene er flyttet til under
 hele bolken, slik at de tydelig tilhører stedsnavigasjonen og ikke værstatusen.
 
+**BRUKER-097 · FULLFØRT 2026-09-19** — Renskrevet førsteutkastet til
+varseltekstsystemet i bokmål- og inntrøndersk-kolonner. Det skiller konsekvent
+mellom framtid, usikkerhet, nåstatus, tid og varighet. Engelsk står på vent i
+selve gjennomgangsdokumentet; appens språkverdier er ikke endret.
+
 46. **BRUKER · DELVIS IMPLEMENTERT** — Vindkastnivåer har navn og tall i
    regelvelgeren; kompakt værtekst viser bare kast. Små nedbørsmengder (fra
    0,1 mm/t) får blå markering selv uten aktiv regnregel. Radstripen viser
