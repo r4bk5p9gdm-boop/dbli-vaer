@@ -54,6 +54,12 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-074 · FULLFØRT 2026-09-19** — Ga rullerende varsel på Hjem en egen
+to-linjers språkstruktur. Førstelinjen kan være direkte, som «Regn herre
+tima», mens detaljlinjen bruker samme værordbok som push uten å gjenta
+tidspunktet. Rullerende regn, snø, dugg, frost, vind, sol og temperatur bruker
+nå forklarende tekst i stedet for rå mengder/prosent som hovedtekst.
+
 **BRUKER-073 · FULLFØRT 2026-09-19** — Koblet de vedtatte varseltekstene til
 språkveien: sikre pushoverskrifter bruker «D bli», usikre bruker «Det kan bli»
 på bokmål og «D kan bli» på inntrøndersk. Vind heter konsekvent «Vindkast!»,

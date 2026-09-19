@@ -225,9 +225,12 @@ enum WeatherLanguage {
             // VARSELTEKSTER.md. Keep these replacements before generic
             // substitutions so multiword weather descriptions stay intact.
             .replacingOccurrences(of: "Litt regn", with: "Småregn")
+            .replacingOccurrences(of: "litt regn", with: "småregn")
             .replacingOccurrences(of: "Kraftig regn", with: "Striskur")
+            .replacingOccurrences(of: "kraftig regn", with: "striskur")
             .replacingOccurrences(of: "Regnbyger", with: "Regnbyga")
             .replacingOccurrences(of: "Lett snøfall", with: "Litt snø")
+            .replacingOccurrences(of: "lett snøfall", with: "litt snø")
             .replacingOccurrences(of: "Snøbyger", with: "Snøbyga")
             .replacingOccurrences(of: "Frisk bris", with: "Fresk bris")
             .replacingOccurrences(of: "Full storm", with: "Uvær")

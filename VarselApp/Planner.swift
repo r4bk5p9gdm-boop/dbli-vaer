@@ -246,38 +246,54 @@ enum Planner {
         let number: (Double) -> String = {
             $0.formatted(.number.precision(.fractionLength(0...1)))
         }
-        let probability = hour.precipProbability.map { " · \(Int($0.rounded())) % sannsynlig" } ?? ""
+        func rainDescription(_ rate: Double) -> String {
+            switch rate {
+            case ..<0.1: "Yr"
+            case ..<0.5: "Litt regn"
+            case ..<1.5: "Regn"
+            default: "Kraftig regn"
+            }
+        }
+
+        func snowDescription(_ rate: Double) -> String {
+            switch rate {
+            case ..<0.2: "Snøfnugg"
+            case ..<1: "Lett snøfall"
+            case ..<3: "Snøfall"
+            default: "Kraftig snøfall"
+            }
+        }
+
+        let context = status.isNow ? "akkurat nå" : "neste time"
 
         switch status.type {
         case .regn:
             let amount = status.possible == true
                 ? (hour.precipMax ?? hour.precipitationRiskRate)
                 : hour.precipitationRate
-            return "\(status.possible == true ? "Opptil " : "")\(number(amount)) mm\(probability)"
+            let prefix = status.possible == true ? "Mulig " : ""
+            return "\(prefix)\(rainDescription(amount)) \(context)."
         case .sno:
             let water = status.possible == true
                 ? (hour.precipMax ?? hour.precipitationRiskRate)
                 : hour.precipitationRate
             let snow = estimatedFreshSnowMillimeters(waterEquivalent: water, temperature: hour.temp)
-            return "Anslått \(status.possible == true ? "opptil " : "")\(number(snow)) mm snø\(probability)"
+            let prefix = status.possible == true ? "Mulig " : ""
+            return "\(prefix)\(snowDescription(snow)) \(context)."
         case .dugg:
-            let weekday = weekdayLabel(status.eventAt)
-            let when = eventTimePhrase(status.eventAt)
-                .replacingOccurrences(of: ", \(weekday)", with: "")
-            return "Duggfall ved \(number(hour.temp))° \(when) (\(weekday))."
+            return "\(status.possible == true ? "Mulig duggfall" : "Duggfall") ved \(number(hour.temp))°."
         case .frost:
-            let margin = place.localFrostMargin > 0 ? " · lokal margin +\(number(place.localFrostMargin))°" : ""
-            let label = hour.yrTemperature == nil ? "Yr melder" : "Lokalt anslag"
-            return "\(label) \(number(hour.temp))°\(margin)"
+            let label = status.possible == true || hour.temp > 0 ? "Fare for frost" : "Frost"
+            return "\(label) ved \(number(hour.temp))°."
         case .temperatur:
-            return "\(hour.yrTemperature == nil ? "Yr melder" : "Lokalt anslag") \(number(hour.temp))°"
+            return "\(hour.yrTemperature == nil ? "Yr melder" : "Lokalt anslag"): \(number(hour.temp))°."
         case .vind:
             if let gust = hour.gust {
-                return "Vindkast \(number(gust)) m/s"
+                return "\(windStrengthLabel(for: gust).capitalized) — vindkast opptil \(number(gust)) m/s."
             }
-            return "Vindkast ikke oppgitt"
+            return "Vindkast ikke oppgitt."
         case .sol:
-            return "Skydekke \(Int(hour.cloud.rounded())) %"
+            return hour.cloud <= 20 ? "Sol med lite skydekke." : "Solgløtt med noe skyer."
         }
     }
 
