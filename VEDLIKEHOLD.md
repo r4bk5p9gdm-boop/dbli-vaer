@@ -1455,6 +1455,20 @@ Watch og CarPlay og gjenopptas når enhetene kan kontrolleres. Kontrollrekkeføl
 posisjonstillatelse → valgt sted på Hjem → Watch-snapshot → widget/CarPlay-
 stedsliste, med fersk hentetid og korrekt fallback ved manglende GPS.
 
+**AUTO-152 · FULLFØRT 2026-09-19** — Kjørte språkvalideringen etter utvidelsen
+av `Sprak.json`: alle 90 nøkler har bokmål, inntrøndersk og engelsk, og alle
+plassholdere er samsvarende. Selvtesten bestod med 4 av 4 kontroller.
+
+**AUTO-153 · ÅPEN** — Lag en liten dokumentkontroll som avviser varselmaler
+med manglende språkkolonne eller ufullstendige første-/andrelinjefelt.
+
+**AUTO-154 · ÅPEN** — Sammenlign tekstnøkler som brukes av `NotificationCopy`
+med `Sprak.json`, slik at push- og Varsler-menyen ikke faller tilbake til
+hardkodet tekst uten at det oppdages.
+
+**AUTO-155 · ÅPEN** — Legg til regresjonstest for kort tidstekst og regelen om
+at andrelinjen går rett på klokkeslett ved «i dag», «i kveld» og «i natt».
+
 46. **BRUKER · DELVIS IMPLEMENTERT** — Vindkastnivåer har navn og tall i
    regelvelgeren; kompakt værtekst viser bare kast. Små nedbørsmengder (fra
    0,1 mm/t) får blå markering selv uten aktiv regnregel. Radstripen viser
