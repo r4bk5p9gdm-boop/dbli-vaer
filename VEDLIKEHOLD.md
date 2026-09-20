@@ -54,6 +54,15 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-085 · FULLFØRT 2026-09-20** — Renoverte `VARSELTEKSTER.md` til én
+redigerbar språkfasit. Dokumentet er nå sortert etter værtype, med
+styringstabell, push, rullerende Hjem-varsel samt Watch- og CarPlay-tekst under
+hver type. Tok med siste avklaringer: førstelinje med sted og tidskategori,
+andrelinje uten gjentatt dag, varighet først når den tilfører noe, «til» for
+pågående vær, dugg uten duggpunkt i korte flater, og komplett sammenslått
+Beaufort-tabell. Bokmål og inntrøndersk står side om side; engelsk er bevisst
+på vent.
+
 **BRUKER-084 · FULLFØRT 2026-09-20** — Endret den store/rektangulære
 Apple Watch-komplikasjonen fra 15-minutters veksling til en fast liste over de
 inntil tre neste, ulike værtypene. «Neste 12 timer» er fjernet; stedet og
