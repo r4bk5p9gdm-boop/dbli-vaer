@@ -161,6 +161,7 @@ final class ForecastRefreshQueue {
 
 @MainActor
 final class Store: ObservableObject {
+    typealias ForecastFetcher = @Sendable (_ latitude: Double, _ longitude: Double) async throws -> [ForecastHour]
     static func shouldApplyCurrentLocation(selectionAtRequestStart: UUID?, currentSelection: UUID?) -> Bool {
         selectionAtRequestStart == currentSelection
     }
@@ -262,7 +263,8 @@ final class Store: ObservableObject {
     private var lastReplanSignature: Int?
     private var lastReplanAt: Date?
 
-    private let key = "varsel.state"
+    private let key: String
+    private let forecastFetcher: ForecastFetcher
     private let languageStyleKey = "varsel.alertLanguageStyle"
     private let launchPlacesVersionKey = "varsel.launchPlacesVersion"
     private let launchPlacesVersion = 9
@@ -291,7 +293,17 @@ final class Store: ObservableObject {
         ]
     }
 
-    private init() {
+    /// The production store uses Yr directly. Keeping the fetch behind this
+    /// narrow seam lets refresh behaviour be tested with deterministic
+    /// successful and failing locations without changing the live request.
+    init(
+        forecastFetcher: @escaping ForecastFetcher = { latitude, longitude in
+            try await YrService.fetch(lat: latitude, lon: longitude)
+        },
+        persistenceKey: String = "varsel.state"
+    ) {
+        self.forecastFetcher = forecastFetcher
+        self.key = persistenceKey
         alertLanguageStyle = AlertLanguageStyle.persisted(
             UserDefaults.standard.string(forKey: "varsel.alertLanguageStyle") ?? ""
         ) ?? .bokmal
@@ -569,6 +581,7 @@ final class Store: ObservableObject {
         var failedNames: [String] = []
         var successfulPlaceCount = 0
         let locations = Self.forecastLocations(in: requestedPlaces)
+        let fetchForecast = forecastFetcher
         for batchStart in stride(from: 0, to: locations.count, by: Self.forecastRequestConcurrencyLimit) {
             guard !Task.isCancelled else { return false }
             let batchEnd = min(batchStart + Self.forecastRequestConcurrencyLimit, locations.count)
@@ -577,7 +590,7 @@ final class Store: ObservableObject {
                 for location in batch {
                     group.addTask {
                         do {
-                            let forecast = try await YrService.fetch(lat: location.latitude, lon: location.longitude)
+                            let forecast = try await fetchForecast(location.latitude, location.longitude)
                             guard Self.isUsableForecast(forecast) else {
                                 throw ForecastRefreshError.emptyForecast
                             }
@@ -723,7 +736,7 @@ final class Store: ObservableObject {
         selectionIsCurrentLocation = false
         proximityMonitor.configure(for: places)
         do {
-            let forecast = try await YrService.fetch(lat: place.lat, lon: place.lon)
+            let forecast = try await forecastFetcher(place.lat, place.lon)
             guard !Task.isCancelled,
                   Self.isUsableForecast(forecast),
                   !Self.currentRecipients(for: [place], in: places).isEmpty else { return }
