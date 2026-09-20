@@ -206,6 +206,10 @@ final class Store: ObservableObject {
     /// Last page representing the phone's current position. Retained while
     /// swiping to favorites so the position page remains reachable.
     @Published private(set) var currentLocationPlaceID: UUID?
+    /// Direction of travel from the last live position fix. It is intentionally
+    /// optional: a stationary or low-quality fix must not make the UI pretend
+    /// that it knows which way the phone is facing.
+    @Published private(set) var currentLocationCourse: CLLocationDirection?
     @Published var homeFavorites: HomeFavorites = {
         guard let data = UserDefaults.standard.data(forKey: "varsel.homeFavorites"),
               let value = try? JSONDecoder().decode(HomeFavorites.self, from: data) else { return HomeFavorites() }
@@ -423,10 +427,12 @@ final class Store: ObservableObject {
         // permission is denied or the request fails, the existing place remains
         // visible but is never presented as freshly position-based.
         selectionIsCurrentLocation = false
+        currentLocationCourse = nil
         // Location is an optional enhancement; manual selection and its
         // existing notifications remain fully usable when access is denied.
         let locationManager = LocationManager()
         guard let location = try? await locationManager.current() else { return }
+        currentLocationCourse = Self.usableCourse(from: location)
         guard Self.shouldApplyCurrentLocation(
             selectionAtRequestStart: selectionAtRequestStart,
             currentSelection: selectedID
@@ -701,8 +707,14 @@ final class Store: ObservableObject {
     func select(_ place: Place, fromCurrentLocation: Bool = false) {
         selectedID = place.id
         selectionIsCurrentLocation = fromCurrentLocation
+        if !fromCurrentLocation { currentLocationCourse = nil }
         if fromCurrentLocation { currentLocationPlaceID = place.id }
         updateWidget()
+    }
+
+    static func usableCourse(from location: CLLocation) -> CLLocationDirection? {
+        guard location.course >= 0, location.speed >= 0.5 else { return nil }
+        return location.course
     }
 
     func add(_ place: Place) async {

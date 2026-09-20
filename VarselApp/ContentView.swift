@@ -1,6 +1,43 @@
 import SwiftUI
 import CoreLocation
 
+private struct LocationPresenceBadge: View {
+    let label: String
+    let course: CLLocationDirection?
+    @State private var pulse = false
+
+    var body: some View {
+        ZStack {
+            // The rings read as a live position without adding another weather
+            // colour to the title row.
+            Circle()
+                .stroke(Color.indigo.opacity(pulse ? 0.08 : 0.34), lineWidth: 1.4)
+                .scaleEffect(pulse ? 1.16 : 0.72)
+            Circle()
+                .stroke(Color.indigo.opacity(pulse ? 0.22 : 0.46), lineWidth: 1.3)
+                .scaleEffect(pulse ? 0.86 : 0.58)
+
+            Image(systemName: "location.north.fill")
+                .font(.system(size: 34, weight: .black))
+                .foregroundStyle(.indigo.gradient)
+                .rotationEffect(.degrees(course ?? 0))
+                .animation(.easeInOut(duration: 0.35), value: course)
+
+            Text(label)
+                .font(.caption.weight(.black))
+                .foregroundStyle(.white)
+                .shadow(color: .indigo.opacity(0.70), radius: 1)
+                .offset(x: 3, y: 3)
+        }
+        .frame(width: label == "here" ? 46 : 40, height: 34)
+        .onAppear { pulse = true }
+        .animation(
+            .easeInOut(duration: 1.8).repeatForever(autoreverses: false),
+            value: pulse
+        )
+    }
+}
+
 struct LocalCalibrationView: View {
     @EnvironmentObject var store: Store
     let placeID: UUID
@@ -182,6 +219,7 @@ struct HomeView: View {
                                     forecast: visibleForecast,
                                     languageStyle: store.alertLanguageStyle,
                                     isCurrentLocation: store.selectionIsCurrentLocation,
+                                    locationCourse: store.selectionIsCurrentLocation ? store.currentLocationCourse : nil,
                                     onSelect: { place in store.select(place) },
                                     onEdit: { showingSettings = true },
                                     showsContainer: false
@@ -299,6 +337,7 @@ private struct CurrentWeatherCard: View {
     let forecast: [ForecastHour]
     let languageStyle: AlertLanguageStyle
     let isCurrentLocation: Bool
+    var locationCourse: CLLocationDirection? = nil
     let onSelect: (Place) -> Void
     var onEdit: (() -> Void)? = nil
     var showsPlaceMenu = true
@@ -324,20 +363,10 @@ private struct CurrentWeatherCard: View {
                 WeatherWordmark(languageStyle: languageStyle)
 
                 if isCurrentLocation {
-                    ZStack {
-                        // Keep the arrow visible behind «her»: the word is
-                        // deliberately drawn directly on the marker instead
-                        // of inside an opaque capsule.
-                        Image(systemName: "location.north.fill")
-                            .font(.system(size: 30, weight: .black))
-                            .foregroundStyle(.indigo.gradient)
-                        Text(languageStyle == .english ? "here" : "her")
-                            .font(.subheadline.weight(.heavy))
-                            .foregroundStyle(.white)
-                            .shadow(color: .indigo.opacity(0.45), radius: 0.8)
-                            .offset(x: 3, y: 2)
-                    }
-                    .frame(width: languageStyle == .english ? 42 : 36, height: 30)
+                    LocationPresenceBadge(
+                        label: languageStyle == .english ? "here" : "her",
+                        course: locationCourse
+                    )
                     .accessibilityElement(children: .combine)
                     .accessibilityLabel("Posisjonsbasert værvarsel her")
                     .accessibilityHint("Dette stedet følger telefonens aktuelle posisjon.")

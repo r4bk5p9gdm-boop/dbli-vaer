@@ -1603,6 +1603,11 @@ fremoverskuende liste med opptil tre neste, ulike værtyper for samme valgte
 sted som Apple Watch. Hver rad viser ikon, kort værtype og nedtelling; den
 rullerer ikke og bruker først aktuell NÅ-status når det ikke finnes noe neste.
 
+**BRUKER-101 · FULLFØRT 2026-09-20** — Posisjonsmerket «her» på Hjem har nå
+to diskrete, pulserende posisjonsringer. Pilen roterer etter siste pålitelige
+GPS-kurs ved bevegelse; uten et pålitelig kurs står den rolig slik at den ikke
+later som den kjenner retningen.
+
 46. **BRUKER · DELVIS IMPLEMENTERT** — Vindkastnivåer har navn og tall i
    regelvelgeren; kompakt værtekst viser bare kast. Små nedbørsmengder (fra
    0,1 mm/t) får blå markering selv uten aktiv regnregel. Radstripen viser
