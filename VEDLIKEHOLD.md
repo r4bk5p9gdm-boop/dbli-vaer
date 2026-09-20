@@ -54,6 +54,11 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-083 · FULLFØRT 2026-09-20** — Ga Live Activity tydeligere luft rundt
+hele tekstblokken. Låseskjermkortet har nå 16 punkter sideinnrykk og 12 punkter
+top/bunn, mens ekspandert Dynamic Island har egne innrykk. Detaljlinjen ligger
+dermed ikke mot kapselens nedre kant.
+
 **BRUKER-082 · FULLFØRT 2026-09-20** — Innførte fast tolinjers standard for
 rullerende varsel. Framtidige treff heter nå «D bli Regn! om 2 tima.» og
 forklares med styrke, faktisk varighet og startklokke, som «4 tima småregn fra

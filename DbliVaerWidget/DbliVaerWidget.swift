@@ -198,7 +198,7 @@ struct WeatherLiveActivity: Widget {
                         .font(.headline.monospacedDigit())
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    VStack(alignment: .leading, spacing: 3) {
+                    VStack(alignment: .leading, spacing: 5) {
                         Text(AppCopy.weatherHeadline(
                             weatherName: context.attributes.weatherName,
                             placeName: context.attributes.placeName
@@ -211,6 +211,8 @@ struct WeatherLiveActivity: Widget {
                             .lineLimit(1)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 8)
                 }
             } compactLeading: {
                 Image(systemName: symbol(for: context.attributes.alertType))
@@ -242,12 +244,12 @@ private struct WeatherLiveActivityView: View {
     private var type: AlertType { AlertType(rawValue: context.attributes.alertType) ?? .regn }
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 14) {
             Image(systemName: type.systemImage)
                 .font(.system(size: 32, weight: .semibold))
                 .foregroundStyle(type.color)
                 .frame(width: 40)
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text(AppCopy.weatherHeadline(
                     weatherName: context.attributes.weatherName,
                     placeName: context.attributes.placeName
@@ -268,7 +270,11 @@ private struct WeatherLiveActivityView: View {
             }
             Spacer(minLength: 0)
         }
-        .padding(.horizontal, 4)
+        // Live Activity content has no automatic breathing room at the
+        // bottom. Explicit insets keep the detail line clear of the capsule
+        // edge on the Lock Screen as well as in the expanded island.
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
     }
 }
 
