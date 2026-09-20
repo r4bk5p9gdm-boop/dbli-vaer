@@ -478,7 +478,7 @@ private struct CurrentWeatherCard: View {
                     let status = rotatingStatuses[index - 1]
                     headline(
                         title: WeatherLanguage.text(rotatingTitle(for: status), style: languageStyle),
-                        detail: Planner.statusDetail(for: status, place: place, forecast: forecast)
+                        detail: Planner.rotatingStatusDetail(for: status, place: place, forecast: forecast)
                             .map { WeatherLanguage.text($0, style: languageStyle) },
                         systemImage: status.type.systemImage,
                         color: status.type.color

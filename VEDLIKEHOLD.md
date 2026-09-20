@@ -1608,6 +1608,11 @@ to diskrete, pulserende posisjonsringer. Pilen roterer etter siste pålitelige
 GPS-kurs ved bevegelse; uten et pålitelig kurs står den rolig slik at den ikke
 later som den kjenner retningen.
 
+**BRUKER-102 · FULLFØRT 2026-09-20** — Samordnet den rullerende andrelinjen
+for dugg, frost, temperatur, vind og sol. Den bruker nå én form: beskrivelse,
+faktisk varighet når den er minst to timer, og startklokke for framtidige
+hendelser. NÅ-statuser får samme informasjon uten unødvendig startklokke.
+
 46. **BRUKER · DELVIS IMPLEMENTERT** — Vindkastnivåer har navn og tall i
    regelvelgeren; kompakt værtekst viser bare kast. Små nedbørsmengder (fra
    0,1 mm/t) får blå markering selv uten aktiv regnregel. Radstripen viser

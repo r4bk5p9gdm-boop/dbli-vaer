@@ -1294,6 +1294,28 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testRotatingFutureDetailUsesSharedDurationAndStartFormat() {
+        var rule = Rule(type: .vind)
+        rule.threshold = 9
+        var place = Place(name: "Klinga", lat: 64, lon: 11)
+        place.rules = [rule]
+        var first = ForecastHour(time: base, temp: 9, precip: 0, wind: 3, cloud: 50, dew: 4)
+        first.gust = 9
+        var second = ForecastHour(time: base.addingTimeInterval(3_600), temp: 9, precip: 0, wind: 3, cloud: 50, dew: 4)
+        second.gust = 10
+        let future = WeatherStatus(ruleID: rule.id, type: .vind, text: "", eventAt: base, isNow: false)
+        let current = WeatherStatus(ruleID: rule.id, type: .vind, text: "", eventAt: base, isNow: true)
+
+        XCTAssertEqual(
+            Planner.rotatingStatusDetail(for: future, place: place, forecast: [first, second]),
+            "Frisk bris i 2 timer fra kl. \(shortClockLabel(base))."
+        )
+        XCTAssertEqual(
+            Planner.rotatingStatusDetail(for: current, place: place, forecast: [first, second]),
+            "Frisk bris i 2 timer."
+        )
+    }
+
     func testWindStrengthUsesEverydayBeaufortNames() {
         XCTAssertEqual(windStrengthLabel(for: 0), "stille")
         XCTAssertEqual(windStrengthLabel(for: 4), "lett bris")

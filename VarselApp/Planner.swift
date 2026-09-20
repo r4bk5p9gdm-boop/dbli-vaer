@@ -281,6 +281,60 @@ enum Planner {
         }
     }
 
+    /// The rotating Home card is a compact two-line surface. Its second line
+    /// must have one temporal shape across weather types: description, actual
+    /// duration when it is meaningful, then the start clock for future events.
+    /// The regular status detail remains deliberately more verbose for rules
+    /// and accessibility summaries elsewhere in the app.
+    static func rotatingStatusDetail(for status: WeatherStatus, place: Place, forecast: [ForecastHour]) -> String? {
+        guard let hour = forecast.min(by: {
+            abs($0.time.timeIntervalSince(status.eventAt)) < abs($1.time.timeIntervalSince(status.eventAt))
+        }) else { return nil }
+
+        let number = hour.temp.formatted(.number.precision(.fractionLength(0...1)))
+        let duration = matchingDuration(for: status, place: place, forecast: forecast)
+        let base: String
+
+        switch status.type {
+        case .regn:
+            let amount = status.possible == true
+                ? (hour.precipMax ?? hour.precipitationRiskRate)
+                : hour.precipitationRate
+            base = "\(status.possible == true ? "Mulig " : "")\(PrecipitationCopy.rain(amount))"
+        case .sno:
+            let water = status.possible == true
+                ? (hour.precipMax ?? hour.precipitationRiskRate)
+                : hour.precipitationRate
+            let snow = estimatedFreshSnowMillimeters(waterEquivalent: water, temperature: hour.temp)
+            base = "\(status.possible == true ? "Mulig " : "")\(PrecipitationCopy.snow(snow))"
+        case .dugg:
+            base = "\(status.possible == true ? "Mulig duggfall" : "Duggfall") ved \(number)°"
+        case .frost:
+            base = "\(status.possible == true || hour.temp > 0 ? "Fare for frost" : "Frost") ved \(number)°"
+        case .temperatur:
+            base = "Lokalt anslag \(number)°"
+        case .vind:
+            guard let gust = hour.gust else { return "Vindkast ikke oppgitt." }
+            base = windStrengthLabel(for: gust).capitalized
+        case .sol:
+            base = hour.cloud <= 20 ? "Sol" : "Solgløtt"
+        }
+
+        let durationText: String?
+        if let duration, duration >= 2 {
+            durationText = "i \(duration) timer"
+        } else {
+            durationText = nil
+        }
+
+        if status.isNow {
+            return [base, durationText].compactMap { $0 }.joined(separator: " ") + "."
+        }
+
+        let start = "fra kl. \(shortClockLabel(hour.time))"
+        return [base, durationText, start].compactMap { $0 }.joined(separator: " ") + "."
+    }
+
     /// Consecutive hours that satisfy the same display rule. This is used by
     /// the compact Home copy, where «fresk bris i 3 timer» is easier to scan
     /// than another timestamp or a duplicated alert title.
