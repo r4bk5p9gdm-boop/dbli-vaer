@@ -492,8 +492,22 @@ cachealder og gammel-status selv når global Yr-status mangler.
 `shouldReplaceForecast`: bare svar med like nytt eller nyere hentetid kan
 skrive stedscache. Eldre bakgrunnssvar avvises, med regresjonstest.
 
-**AUTO-232 · ÅPEN** — Test at cache lagres etter delvis vellykket refresh før
-varslingsplanlegging avsluttes.
+**AUTO-232 · PÅ VENT 2026-09-21** — Test at cache lagres etter delvis
+vellykket refresh før varslingsplanlegging avsluttes. `performRefresh` har
+riktig rekkefølge (`save()` før `replan()`), men Yr-hentingen er foreløpig
+hardkoblet og kan ikke erstattes av en deterministisk testdobbelt. Dette må
+løses gjennom AUTO-233 før en ende-til-ende-test kan være troverdig.
+
+**AUTO-233 · ÅPEN** — Skill Yr-hentingen bak en liten, testbar protokoll eller
+innsprøytbar funksjon, uten å endre den faktiske nettverksflyten. Deretter kan
+delvis vellykket refresh testes ende-til-ende.
+
+**AUTO-234 · ÅPEN** — Legg til regresjonstest for at rullerende Hjem-varsel
+aldri velger hendelser mer enn 24 timer fram, mens værbåndet fortsatt har tre
+kalenderdager.
+
+**AUTO-235 · ÅPEN** — Verifiser serialisert Watch-/CarPlay-snapshot med tre
+ulike kommende værtyper og at samme valgte sted brukes på begge flater.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
