@@ -1312,7 +1312,7 @@ final class PlannerTests: XCTestCase {
         )
         XCTAssertEqual(
             Planner.rotatingStatusDetail(for: current, place: place, forecast: [first, second]),
-            "Frisk bris i 2 timer."
+            "Frisk bris i 2 timer til."
         )
     }
 

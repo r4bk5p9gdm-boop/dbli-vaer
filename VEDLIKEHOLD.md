@@ -1613,6 +1613,11 @@ for dugg, frost, temperatur, vind og sol. Den bruker nå én form: beskrivelse,
 faktisk varighet når den er minst to timer, og startklokke for framtidige
 hendelser. NÅ-statuser får samme informasjon uten unødvendig startklokke.
 
+**BRUKER-103 · FULLFØRT 2026-09-20** — Rullerende NÅ-detaljer bruker nå
+«til» når en varighet fortsetter, som «Fresk bris i 2 timer til.» Duggfall
+viser ikke lenger duggpunkt-/temperaturtallet; framtidig dugg leses dermed
+enkelt som «Doggfall i 3 tima fra kl. 05.» på inntrøndersk.
+
 46. **BRUKER · DELVIS IMPLEMENTERT** — Vindkastnivåer har navn og tall i
    regelvelgeren; kompakt værtekst viser bare kast. Små nedbørsmengder (fra
    0,1 mm/t) får blå markering selv uten aktiv regnregel. Radstripen viser

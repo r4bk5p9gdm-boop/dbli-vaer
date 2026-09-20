@@ -308,7 +308,7 @@ enum Planner {
             let snow = estimatedFreshSnowMillimeters(waterEquivalent: water, temperature: hour.temp)
             base = "\(status.possible == true ? "Mulig " : "")\(PrecipitationCopy.snow(snow))"
         case .dugg:
-            base = "\(status.possible == true ? "Mulig duggfall" : "Duggfall") ved \(number)°"
+            base = status.possible == true ? "Mulig duggfall" : "Duggfall"
         case .frost:
             base = "\(status.possible == true || hour.temp > 0 ? "Fare for frost" : "Frost") ved \(number)°"
         case .temperatur:
@@ -328,7 +328,8 @@ enum Planner {
         }
 
         if status.isNow {
-            return [base, durationText].compactMap { $0 }.joined(separator: " ") + "."
+            let continuingDuration = durationText.map { "\($0) til" }
+            return [base, continuingDuration].compactMap { $0 }.joined(separator: " ") + "."
         }
 
         let start = "fra kl. \(shortClockLabel(hour.time))"
