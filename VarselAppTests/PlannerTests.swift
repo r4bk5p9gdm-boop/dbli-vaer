@@ -746,6 +746,20 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(weatherAlertText(for: rule, eventAt: base.addingTimeInterval(3600), referenceAt: base).hasPrefix("Vindkast "))
     }
 
+    func testRotatingWindDetailUsesStrengthAndActualDuration() {
+        var rule = Rule(type: .vind)
+        rule.threshold = 9
+        var place = Place(name: "Test", lat: 64, lon: 11)
+        place.rules = [rule]
+        var first = ForecastHour(time: base, temp: 10, precip: 0, wind: 3, cloud: 20, dew: 4)
+        first.gust = 9
+        var second = ForecastHour(time: base.addingTimeInterval(3600), temp: 10, precip: 0, wind: 3, cloud: 20, dew: 4)
+        second.gust = 10
+        let status = WeatherStatus(ruleID: rule.id, type: .vind, text: "", eventAt: base, isNow: true)
+
+        XCTAssertEqual(Planner.statusDetail(for: status, place: place, forecast: [first, second]), "Frisk bris i 2 timer.")
+    }
+
     func testCustomNineMeterGustThresholdSurvivesSaving() throws {
         var rule = Rule(type: .vind)
         rule.threshold = 9
@@ -1266,16 +1280,17 @@ final class PlannerTests: XCTestCase {
     func testRotatingStatusUsesDirectHeadlineAndDictionaryDetail() {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let hour = ForecastHour(time: base, temp: 9, precip: 0.2, wind: 2, cloud: 70, dew: 4)
-        let status = WeatherStatus(ruleID: UUID(), type: .regn, text: "Regn denne timen", eventAt: base, isNow: false)
+        let status = WeatherStatus(ruleID: UUID(), type: .regn, text: "D bli Regn! denne timen.", eventAt: base, isNow: false)
 
-        XCTAssertEqual(WeatherLanguage.text(status.text, style: .inntrondersk), "Regn herre tima")
-        XCTAssertEqual(Planner.statusDetail(for: status, place: place, forecast: [hour]), "Litt regn neste time.")
+        XCTAssertEqual(WeatherLanguage.text(status.text, style: .inntrondersk), "D bli Regn! herre tima.")
+        XCTAssertEqual(WeatherLanguage.text("Det blåser!", style: .inntrondersk), "D blæs!")
+        XCTAssertEqual(Planner.statusDetail(for: status, place: place, forecast: [hour]), "Litt regn.")
         XCTAssertEqual(
             WeatherLanguage.text(
                 Planner.statusDetail(for: status, place: place, forecast: [hour]) ?? "",
                 style: .inntrondersk
             ),
-            "Småregn neste time."
+            "Småregn."
         )
     }
 

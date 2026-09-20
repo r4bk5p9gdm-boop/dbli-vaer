@@ -448,7 +448,7 @@ private struct CurrentWeatherCard: View {
                 } else {
                     let status = rotatingStatuses[index - 1]
                     headline(
-                        title: WeatherLanguage.text(status.text, style: languageStyle),
+                        title: WeatherLanguage.text(rotatingTitle(for: status), style: languageStyle),
                         detail: Planner.statusDetail(for: status, place: place, forecast: forecast)
                             .map { WeatherLanguage.text($0, style: languageStyle) },
                         systemImage: status.type.systemImage,
@@ -562,6 +562,24 @@ private struct CurrentWeatherCard: View {
         }
         return .primary
     }
+
+    private func rotatingTitle(for status: WeatherStatus) -> String {
+        let rule = place.rulesForDisplay.first { $0.id == status.ruleID }
+        if status.isNow {
+            switch status.type {
+            case .regn: return "D e Regn!"
+            case .sno: return "Det Snør!"
+            case .vind: return "Det blåser!"
+            case .dugg: return "D e Duggfall!"
+            case .frost: return "D e Frost!"
+            case .sol: return "D e Sol!"
+            case .temperatur: return status.text
+            }
+        }
+        let weather = rule.map(alertWeatherName(for:)) ?? status.type.label
+        let prefix = status.possible == true ? "D kan bli" : "D bli"
+        return "\(prefix) \(weather)! \(eventTimePhrase(status.eventAt))."
+    }
 }
 
 private struct PlaceTitle: View {
@@ -664,8 +682,8 @@ private struct CurrentPrecipitationSummary {
 
         if let latest, latest.time >= now.addingTimeInterval(-10 * 60), latest.rate >= 0.1 {
             return CurrentPrecipitationSummary(
-                title: current.temp <= 1 ? "Snø nå" : "Regn nå",
-                detail: precipitationDetail(waterEquivalent: latest.rate, temperature: current.temp),
+                title: current.temp <= 1 ? "Det Snør!" : "D e Regn!",
+                detail: radarDetail(samples: samples, startingAt: latest, temperature: current.temp),
                 systemImage: current.temp <= 1 ? "cloud.snow.fill" : "cloud.rain.fill",
                 color: .blue,
                 isFallingNow: true
@@ -679,8 +697,8 @@ private struct CurrentPrecipitationSummary {
         }) {
             let kind = current.temp <= 1 ? "Snø" : "Regn"
             return CurrentPrecipitationSummary(
-                title: "\(kind) \(eventTimePhrase(upcoming.time, relativeTo: now))",
-                detail: precipitationDetail(waterEquivalent: upcoming.rate, temperature: current.temp),
+                title: "D bli \(kind)! \(eventTimePhrase(upcoming.time, relativeTo: now)).",
+                detail: radarDetail(samples: samples, startingAt: upcoming, temperature: current.temp),
                 systemImage: current.temp <= 1 ? "cloud.snow.fill" : "cloud.rain.fill",
                 color: .blue,
                 isFallingNow: false
@@ -689,8 +707,8 @@ private struct CurrentPrecipitationSummary {
 
         if current.precip >= 0.1 {
             return CurrentPrecipitationSummary(
-                title: current.temp <= 1 ? "Snø denne timen" : "Regn denne timen",
-                detail: precipitationDetail(waterEquivalent: current.precip, temperature: current.temp),
+                title: "D bli \(current.temp <= 1 ? "Snø" : "Regn")! denne timen.",
+                detail: forecastDetail(forecast: forecast, startingAt: current.time, waterEquivalent: current.precip, temperature: current.temp),
                 systemImage: current.temp <= 1 ? "cloud.snow.fill" : "cloud.rain.fill",
                 color: .blue,
                 isFallingNow: false
@@ -699,8 +717,10 @@ private struct CurrentPrecipitationSummary {
 
         if current.precipitationRiskRate >= 0.1 {
             return CurrentPrecipitationSummary(
-                title: current.temp <= 1 ? "Mulig snø denne timen" : "Mulig regn denne timen",
-                detail: precipitationDetail(
+                title: "D kan bli \(current.temp <= 1 ? "Snø" : "Regn")! denne timen.",
+                detail: forecastDetail(
+                    forecast: forecast,
+                    startingAt: current.time,
                     waterEquivalent: current.precipMax ?? current.precipitationRiskRate,
                     temperature: current.temp,
                     possible: true
@@ -716,8 +736,10 @@ private struct CurrentPrecipitationSummary {
         }) {
             let possible = upcoming.precip < 0.1
             return CurrentPrecipitationSummary(
-                title: "\(precipitationHeadlineName(temperature: upcoming.temp, possible: possible)) \(eventTimePhrase(upcoming.time, relativeTo: now))",
-                detail: precipitationDetail(
+                title: "\(possible ? "D kan bli" : "D bli") \(upcoming.temp <= 1 ? "Snø" : "Regn")! \(eventTimePhrase(upcoming.time, relativeTo: now)).",
+                detail: forecastDetail(
+                    forecast: forecast,
+                    startingAt: upcoming.time,
                     waterEquivalent: possible ? (upcoming.precipMax ?? upcoming.precipitationRiskRate) : upcoming.precip,
                     temperature: upcoming.temp,
                     possible: possible
@@ -737,14 +759,51 @@ private struct CurrentPrecipitationSummary {
         )
     }
 
-    /// A second line is only useful when it says more than the weather type
-    /// already named in the headline. A generic rain/snow classification is
-    /// therefore deliberately omitted.
-    private static func precipitationDetail(waterEquivalent: Double, temperature: Double, possible: Bool = false) -> String? {
+    /// The second line always adds intensity and, when forecast data allows,
+    /// a contiguous duration and exact start clock. It never repeats the
+    /// relative phrase already carried by the headline.
+    private static func forecastDetail(
+        forecast: [ForecastHour], startingAt date: Date, waterEquivalent: Double,
+        temperature: Double, possible: Bool = false
+    ) -> String? {
         let description = PrecipitationCopy.description(
             waterEquivalent: waterEquivalent,
             temperature: temperature
         )
+        guard let start = forecast.firstIndex(where: { $0.time >= date.addingTimeInterval(-30 * 60) }) else {
+            return precipitationDescription(description, temperature: temperature, possible: possible)
+        }
+        var duration = 0
+        for hour in forecast[start...] {
+            let rate = possible ? hour.precipitationRiskRate : hour.precipitationRate
+            guard rate >= 0.1 else { break }
+            duration += 1
+        }
+        guard duration > 0 else {
+            return precipitationDescription(description, temperature: temperature, possible: possible)
+        }
+        let durationText = duration == 1 ? "1 time" : "\(duration) timer"
+        let prefix = possible ? "Mulig " : ""
+        return "\(durationText) \(prefix)\(description.lowercased()) fra kl. \(shortClockLabel(forecast[start].time))."
+    }
+
+    private static func radarDetail(samples: [PrecipitationSample], startingAt sample: PrecipitationSample, temperature: Double) -> String? {
+        let description = PrecipitationCopy.description(waterEquivalent: sample.rate, temperature: temperature)
+        guard let start = samples.firstIndex(of: sample) else {
+            return precipitationDescription(description, temperature: temperature)
+        }
+        let interval = samples.dropFirst().first.map { max(1, Int($0.time.timeIntervalSince(samples[0].time) / 60)) } ?? 5
+        var count = 0
+        for value in samples[start...] {
+            guard value.rate >= 0.1 else { break }
+            count += 1
+        }
+        let minutes = count * interval
+        guard minutes >= 15 else { return precipitationDescription(description, temperature: temperature) }
+        return "\(minutes) min \(description.lowercased()) fra kl. \(shortClockLabel(sample.time))."
+    }
+
+    private static func precipitationDescription(_ description: String, temperature: Double, possible: Bool = false) -> String? {
         let generic = temperature <= 1 ? description == "Snøfall" : description == "Regn"
         guard !generic else { return nil }
         return "\(possible ? "Mulig " : "")\(description.lowercased())."

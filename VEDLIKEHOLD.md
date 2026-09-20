@@ -54,6 +54,13 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-082 · FULLFØRT 2026-09-20** — Innførte fast tolinjers standard for
+rullerende varsel. Framtidige treff heter nå «D bli Regn! om 2 tima.» og
+forklares med styrke, faktisk varighet og startklokke, som «4 tima småregn fra
+kl. 14.». Nåstatus bruker egne korte overskrifter, blant annet «D blæs!», med
+vindstyrke og beregnet varighet på andrelinjen, for eksempel «Fresk bris i 2
+tima.». La til regresjonsdekning for vindvarighet og inntrøndersk ordlyd.
+
 **BRUKER-081 · FULLFØRT 2026-09-20** — Samkjørte CarPlay og Apple Watch til
 én felles datakilde. Valget «Aktuell posisjon» eller «Fast sted» under Apple
 Watch gjelder nå også CarPlay-widgeten. Hjems tre swipe-steder påvirker ikke

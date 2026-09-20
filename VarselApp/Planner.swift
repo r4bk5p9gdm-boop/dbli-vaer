@@ -269,12 +269,33 @@ enum Planner {
             return "\(hour.yrTemperature == nil ? "Yr melder" : "Lokalt anslag"): \(number(hour.temp))°."
         case .vind:
             if let gust = hour.gust {
+                if let duration = matchingDuration(for: status, place: place, forecast: forecast) {
+                    let unit = duration == 1 ? "time" : "timer"
+                    return "\(windStrengthLabel(for: gust).capitalized) i \(duration) \(unit)."
+                }
                 return "\(windStrengthLabel(for: gust).capitalized) — vindkast opptil \(number(gust)) m/s."
             }
             return "Vindkast ikke oppgitt."
         case .sol:
             return hour.cloud <= 20 ? "Sol med lite skydekke." : "Solgløtt med noe skyer."
         }
+    }
+
+    /// Consecutive hours that satisfy the same display rule. This is used by
+    /// the compact Home copy, where «fresk bris i 3 timer» is easier to scan
+    /// than another timestamp or a duplicated alert title.
+    private static func matchingDuration(for status: WeatherStatus, place: Place, forecast: [ForecastHour]) -> Int? {
+        guard let rule = place.rulesForDisplay.first(where: { $0.id == status.ruleID }),
+              let start = forecast.indices.min(by: {
+                  abs(forecast[$0].time.timeIntervalSince(status.eventAt))
+                      < abs(forecast[$1].time.timeIntervalSince(status.eventAt))
+              }) else { return nil }
+        var duration = 0
+        for index in start..<forecast.endIndex {
+            guard matches(rule, at: index, in: forecast, frostMargin: place.localFrostMargin) else { break }
+            duration += 1
+        }
+        return duration == 0 ? nil : duration
     }
 
     static func status(for rule: Rule, forecast: [ForecastHour], frostMargin: Double = 0, now: Date = Date()) -> WeatherStatus? {

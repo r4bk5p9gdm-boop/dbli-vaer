@@ -245,6 +245,8 @@ enum WeatherLanguage {
             .replacingOccurrences(of: "Duggfall", with: "Doggfall")
             // Current-condition messages are short, spoken phrases. Keep
             // these replacements before the generic «nå» -> «no» mapping.
+            .replacingOccurrences(of: "Det blåser!", with: "D blæs!")
+            .replacingOccurrences(of: "Det regner!", with: "D regne!")
             .replacingOccurrences(of: "Litt regn nå", with: LanguageCatalog.value("now.rain_light", language: "tr", fallback: "D e Litt Regn!"))
             .replacingOccurrences(of: "Mulig regn nå", with: LanguageCatalog.value("now.rain_possible", language: "tr", fallback: "D kan bli regn no"))
             .replacingOccurrences(of: "Regn nå", with: LanguageCatalog.value("now.rain", language: "tr", fallback: "D Regne!"))
