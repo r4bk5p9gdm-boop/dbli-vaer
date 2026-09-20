@@ -2910,6 +2910,11 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(Store.shouldDebounceReplan(lastSignature: 7, currentSignature: 7, lastAt: base, now: base.addingTimeInterval(5)))
     }
 
+    func testRotatingHomeHorizonStopsAtTwentyFourHours() {
+        XCTAssertTrue(Planner.isWithinRotatingHomeHorizon(base.addingTimeInterval(24 * 60 * 60), now: base))
+        XCTAssertFalse(Planner.isWithinRotatingHomeHorizon(base.addingTimeInterval(24 * 60 * 60 + 1), now: base))
+    }
+
     @MainActor
     func testForecastRecipientsExcludeRemovedAndRelocatedPlaces() {
         let removed = Place(name: "Slettet", lat: 64, lon: 11)

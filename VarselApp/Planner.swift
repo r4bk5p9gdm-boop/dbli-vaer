@@ -1,6 +1,12 @@
 import Foundation
 
 enum Planner {
+    /// Hjemmets rullerende varsel skal være nært og handlingsrettet. Selve
+    /// værbåndet har en lengre horisont, men denne flaten stopper ved 24 timer.
+    static func isWithinRotatingHomeHorizon(_ eventAt: Date, now: Date = Date()) -> Bool {
+        eventAt <= now.addingTimeInterval(24 * 60 * 60)
+    }
+
     private static let rainAlertCooldown: TimeInterval = 6 * 3_600
     private static let dewDryBuffer: TimeInterval = 3 * 3_600
 

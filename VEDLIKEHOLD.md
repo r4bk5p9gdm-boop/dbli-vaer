@@ -502,12 +502,17 @@ sendbare `ForecastFetcher`-funksjonen i `Store`. Produksjon bruker fortsatt
 `YrService.fetch`, mens testkode kan levere et kontrollert svar per koordinat
 og bruke egen persistensnøkkel uten å berøre brukerens lagrede værdata.
 
-**AUTO-234 · ÅPEN** — Legg til regresjonstest for at rullerende Hjem-varsel
-aldri velger hendelser mer enn 24 timer fram, mens værbåndet fortsatt har tre
-kalenderdager.
+**AUTO-234 · FULLFØRT 2026-09-21** — Gjorde 24-timersgrensen for rullerende
+Hjem-varsel til en navngitt plannerregel og la til eksakt grense-test: treff
+akkurat 24 timer fram er med, mens ett sekund senere er ute. Værbåndets
+trekalenderdagsvisning påvirkes ikke.
 
 **AUTO-235 · ÅPEN** — Verifiser serialisert Watch-/CarPlay-snapshot med tre
 ulike kommende værtyper og at samme valgte sted brukes på begge flater.
+
+**AUTO-236 · ÅPEN** — Finn fram en liten, UI-uavhengig hjelpefunksjon for
+trekalenderdagsutvalget i værbåndet og legg til regresjonstest for at den ikke
+arver rullerende varslers 24-timersgrense.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

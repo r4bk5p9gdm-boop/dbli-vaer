@@ -348,10 +348,12 @@ private struct CurrentWeatherCard: View {
         CurrentPrecipitationSummary.make(from: forecast)
     }
     private var rotatingStatuses: [WeatherStatus] {
-        let horizon = Date().addingTimeInterval(24 * 60 * 60)
         return WeatherStatus.uniqueByType(
             Planner.statuses(for: place, forecast: forecast)
-                .filter { $0.type != .regn && $0.type != .sno && $0.eventAt <= horizon }
+                .filter {
+                    $0.type != .regn && $0.type != .sno
+                        && Planner.isWithinRotatingHomeHorizon($0.eventAt)
+                }
         )
             .prefix(4)
             .map { $0 }
