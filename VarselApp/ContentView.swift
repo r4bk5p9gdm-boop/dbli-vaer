@@ -325,18 +325,19 @@ private struct CurrentWeatherCard: View {
 
                 if isCurrentLocation {
                     ZStack {
-                        Image(systemName: "location.fill")
-                            .font(.title3.weight(.bold))
-                            .foregroundStyle(.indigo)
+                        // Keep the arrow visible behind «her»: the word is
+                        // deliberately drawn directly on the marker instead
+                        // of inside an opaque capsule.
+                        Image(systemName: "location.north.fill")
+                            .font(.system(size: 30, weight: .black))
+                            .foregroundStyle(.indigo.gradient)
                         Text(languageStyle == .english ? "here" : "her")
                             .font(.subheadline.weight(.heavy))
-                            .foregroundStyle(.indigo)
-                            .padding(.horizontal, 4)
-                            .padding(.vertical, 1)
-                            .background(.thinMaterial, in: Capsule())
-                            .offset(x: 8, y: 1)
+                            .foregroundStyle(.white)
+                            .shadow(color: .indigo.opacity(0.45), radius: 0.8)
+                            .offset(x: 3, y: 2)
                     }
-                    .frame(width: languageStyle == .english ? 42 : 34, height: 26)
+                    .frame(width: languageStyle == .english ? 42 : 36, height: 30)
                     .accessibilityElement(children: .combine)
                     .accessibilityLabel("Posisjonsbasert værvarsel her")
                     .accessibilityHint("Dette stedet følger telefonens aktuelle posisjon.")

@@ -54,6 +54,10 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-080 · FULLFØRT 2026-09-20** — Gjorde «her»-markøren i Hjem-tittelen
+mer lesbar. Den bruker nå en større, fylt posisjonspil som er synlig bak den
+hvite teksten «her»; den tidligere materialkapselen som dekket pilen er fjernet.
+
 **BRUKER-079 · FULLFØRT 2026-09-20** — Hjem viser nå alltid de tre første
 tilgjengelige kalenderdagene i værbåndet. Visningen bruker 72 timer med
 prognosedata, mens rullerende varsel fortsatt stopper på 24 timer. En eventuell
