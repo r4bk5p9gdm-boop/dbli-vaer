@@ -54,6 +54,12 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-084 · FULLFØRT 2026-09-20** — Endret den store/rektangulære
+Apple Watch-komplikasjonen fra 15-minutters veksling til en fast liste over de
+inntil tre neste, ulike værtypene. «Neste 12 timer» er fjernet; stedet og
+temperaturen står øverst, etterfulgt av korte rader som «Regn! 23m», «Dogg!
+2t» og «Vind! 5t». Små komplikasjoner beholder kun nærmeste hendelse.
+
 **BRUKER-083 · FULLFØRT 2026-09-20** — Ga Live Activity tydeligere luft rundt
 hele tekstblokken. Låseskjermkortet har nå 16 punkter sideinnrykk og 12 punkter
 top/bunn, mens ekspandert Dynamic Island har egne innrykk. Detaljlinjen ligger

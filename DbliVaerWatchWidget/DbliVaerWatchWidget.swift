@@ -69,18 +69,15 @@ struct WatchWeatherWidgetView: View {
     private func localized(_ text: String) -> String { entry.snapshot?.localized(text) ?? text }
 
     private var current: ForecastHour? { entry.snapshot?.forecast.first }
-    private var status: WeatherStatus? {
-        guard let snapshot = entry.snapshot else { return nil }
-        let upcoming = WeatherGlance.nextEvents(
+    private var nextStatuses: [WeatherStatus] {
+        guard let snapshot = entry.snapshot else { return [] }
+        return Array(WeatherGlance.nextEvents(
             Planner.statuses(for: snapshot.place, forecast: snapshot.forecast, now: entry.date),
             now: entry.date
-        )
-        guard !upcoming.isEmpty else { return nil }
-        // The small complications always retain the nearest event. Only the
-        // rectangular widget rotates, using the existing 15-minute timeline.
-        guard family == .accessoryRectangular else { return upcoming.first }
-        let slot = Int(entry.date.timeIntervalSince1970 / (15 * 60))
-        return upcoming[((slot % upcoming.count) + upcoming.count) % upcoming.count]
+        ).prefix(3))
+    }
+    private var status: WeatherStatus? {
+        nextStatuses.first
     }
     private var icon: String {
         if let status { return status.type.systemImage }
@@ -140,13 +137,32 @@ struct WatchWeatherWidgetView: View {
                 Text(temperature).font(.caption.bold())
             }
             if entry.snapshot != nil {
-                Text("Neste 12 timer")
-                    .font(.caption2.weight(.semibold))
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                Text(localized(status?.text ?? "Ingen aktuelle varsler"))
-                    .font(.caption)
-                    .lineLimit(2)
+                if nextStatuses.isEmpty {
+                    Text("Ingen aktuelle varsler")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                } else {
+                    VStack(alignment: .leading, spacing: 2) {
+                        ForEach(nextStatuses) { next in
+                            HStack(spacing: 4) {
+                                Image(systemName: next.type.systemImage)
+                                    .font(.caption2)
+                                    .foregroundStyle(next.type.color)
+                                    .frame(width: 12)
+                                Text(localized(WeatherGlance.compactEventLabel(
+                                    for: next,
+                                    languageStyle: entry.snapshot?.languageStyle ?? .bokmal
+                                )))
+                                    .lineLimit(1)
+                                Spacer(minLength: 0)
+                                Text(compactEventTime(next.eventAt))
+                                    .monospacedDigit()
+                                    .foregroundStyle(.secondary)
+                            }
+                            .font(.caption2.weight(.medium))
+                        }
+                    }
+                }
             } else {
                 Text("Åpne appen på iPhone")
                     .font(.caption)
