@@ -1598,6 +1598,11 @@ med mer luft mellom delingslinjen og første dagsramme.
 status og tredagersvarsel. Ekspanderte stedskort bruker nå samme gradient-til-
 lys bakgrunn-overgang og samme felles ramme som Hjem.
 
+**BRUKER-100 · FULLFØRT 2026-09-20** — CarPlay-widgeten viser nå en fast,
+fremoverskuende liste med opptil tre neste, ulike værtyper for samme valgte
+sted som Apple Watch. Hver rad viser ikon, kort værtype og nedtelling; den
+rullerer ikke og bruker først aktuell NÅ-status når det ikke finnes noe neste.
+
 46. **BRUKER · DELVIS IMPLEMENTERT** — Vindkastnivåer har navn og tall i
    regelvelgeren; kompakt værtekst viser bare kast. Små nedbørsmengder (fra
    0,1 mm/t) får blå markering selv uten aktiv regnregel. Radstripen viser

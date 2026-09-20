@@ -57,6 +57,13 @@ struct WeatherWidgetView: View {
     @Environment(\.widgetFamily) private var family
     let entry: WeatherWidgetEntry
 
+    /// CarPlay has room for a small, stable queue. Keep it forward-looking so
+    /// it agrees with the rectangular Watch complication rather than spending
+    /// a row on an already active NÅ-status.
+    private var nextStatuses: [WeatherStatus] {
+        Array(WeatherGlance.nextEvents(entry.statuses, now: entry.date).prefix(3))
+    }
+
     var body: some View {
         Group {
             if family == .systemSmall {
@@ -93,49 +100,73 @@ struct WeatherWidgetView: View {
     }
 
     private var carReadySmallView: some View {
-        VStack(alignment: .leading, spacing: 7) {
+        VStack(alignment: .leading, spacing: 6) {
             heading
 
-            if let first = entry.statuses.first {
-                Spacer(minLength: 1)
-                HStack(alignment: .top, spacing: 8) {
-                    Image(systemName: first.type.systemImage)
-                        .font(.system(size: 28, weight: .semibold))
-                        .symbolRenderingMode(.hierarchical)
-                        .foregroundStyle(first.type.color)
-                        .widgetAccentable()
-                        .frame(width: 32)
-                    Text(WeatherLanguage.text(first.text, style: entry.languageStyle))
-                        .font(.headline)
-                        .fontWeight(first.isNow ? .bold : .semibold)
-                        .lineLimit(3)
-                        .minimumScaleFactor(0.78)
-                }
-                Spacer(minLength: 1)
-                if let next = entry.statuses.dropFirst().first {
-                    HStack(spacing: 5) {
-                        Image(systemName: next.type.systemImage)
-                            .foregroundStyle(next.type.color)
+            if nextStatuses.isEmpty {
+                if let current = entry.statuses.first(where: \.isNow) {
+                    Spacer(minLength: 1)
+                    HStack(alignment: .top, spacing: 8) {
+                        Image(systemName: current.type.systemImage)
+                            .font(.system(size: 28, weight: .semibold))
+                            .symbolRenderingMode(.hierarchical)
+                            .foregroundStyle(current.type.color)
                             .widgetAccentable()
-                        Text("Neste: \(WeatherLanguage.text(next.text, style: entry.languageStyle))")
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.72)
+                            .frame(width: 32)
+                        Text(WeatherLanguage.text(current.text, style: entry.languageStyle))
+                            .font(.headline.weight(.semibold))
+                            .lineLimit(3)
+                            .minimumScaleFactor(0.78)
                     }
-                    .font(.caption.weight(.medium))
-                    .foregroundStyle(.secondary)
+                    Spacer(minLength: 1)
+                } else if entry.updatedAt == nil {
+                    Spacer()
+                    Image(systemName: "iphone.and.arrow.forward")
+                        .font(.title2)
+                        .foregroundStyle(Color.orange)
+                        .widgetAccentable()
+                    Text("Åpne appen for å hente vær.")
+                        .font(.subheadline.weight(.semibold))
+                        .lineLimit(2)
+                    Spacer()
+                } else {
+                    Spacer()
+                    Text("Ingen neste varsler.")
+                        .font(.subheadline.weight(.semibold))
+                        .lineLimit(2)
+                    Spacer()
                 }
             } else {
-                Spacer()
-                Image(systemName: entry.updatedAt == nil ? "iphone.and.arrow.forward" : "checkmark.circle.fill")
-                    .font(.title2)
-                    .foregroundStyle(entry.updatedAt == nil ? Color.orange : Color.green)
-                    .widgetAccentable()
-                Text(entry.updatedAt == nil ? "Åpne appen for å hente vær." : "Ingen aktuelle varsler.")
-                    .font(.subheadline.weight(.semibold))
-                    .lineLimit(2)
-                Spacer()
+                VStack(alignment: .leading, spacing: 5) {
+                    ForEach(nextStatuses) { status in
+                        HStack(spacing: 6) {
+                            Image(systemName: status.type.systemImage)
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(status.type.color)
+                                .widgetAccentable()
+                                .frame(width: 14)
+                            Text(WeatherGlance.compactEventLabel(
+                                for: status,
+                                languageStyle: entry.languageStyle
+                            ))
+                                .lineLimit(1)
+                            Spacer(minLength: 0)
+                            Text(compactEventTime(status.eventAt))
+                                .monospacedDigit()
+                                .foregroundStyle(.secondary)
+                        }
+                        .font(.caption.weight(.semibold))
+                    }
+                }
+                Spacer(minLength: 0)
             }
         }
+    }
+
+    private func compactEventTime(_ date: Date) -> String {
+        let minutes = max(0, Int(date.timeIntervalSince(entry.date) / 60))
+        if minutes < 60 { return "\(max(1, minutes))m" }
+        return "\(minutes / 60)t"
     }
 
     private var detailedView: some View {
