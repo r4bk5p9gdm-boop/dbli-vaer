@@ -2874,6 +2874,36 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(Store.shouldFinalizeRefresh(successfulPlaceCount: 0, failedPlaceCount: 1))
     }
 
+    @MainActor
+    func testPartialRefreshPersistsSuccessfulForecastBeforeReplanningCompletes() async throws {
+        let persistenceKey = "varsel.test.partial-refresh.\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
+
+        let successful = Place(name: "Svarer", lat: 64.0, lon: 11.0)
+        let failing = Place(name: "Feiler", lat: 65.0, lon: 11.0)
+        let fetchedHour = ForecastHour(time: base, temp: 8, precip: 0, wind: 2, cloud: 40, dew: 4)
+        let store = Store(
+            forecastFetcher: { latitude, _ in
+                if latitude < 64.5 { return [fetchedHour] }
+                throw URLError(.notConnectedToInternet)
+            },
+            persistenceKey: persistenceKey
+        )
+        store.places = [successful, failing]
+        store.selectedID = successful.id
+
+        // A failed sibling still makes the overall result false, but the
+        // successful cache must survive the subsequent notification replan.
+        XCTAssertFalse(await store.refreshAll())
+        XCTAssertEqual(store.forecasts[successful.id], [fetchedHour])
+        XCTAssertNil(store.forecasts[failing.id])
+
+        let data = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
+        let persisted = try JSONDecoder().decode(PersistedStoreState.self, from: data)
+        XCTAssertEqual(persisted.forecasts[successful.id], [fetchedHour])
+        XCTAssertNil(persisted.forecasts[failing.id])
+    }
+
     func testReplanDebounceRequiresSameStateAndShortInterval() {
         XCTAssertTrue(Store.shouldDebounceReplan(lastSignature: 7, currentSignature: 7, lastAt: base, now: base.addingTimeInterval(4)))
         XCTAssertFalse(Store.shouldDebounceReplan(lastSignature: 7, currentSignature: 8, lastAt: base, now: base.addingTimeInterval(1)))
