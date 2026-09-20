@@ -144,8 +144,8 @@ struct HomeView: View {
     }
 
     private var swipePlaces: [Place] {
-        // Use the same source as widgets/CarPlay so dots and swipe direction
-        // cannot drift from the shared-device place order.
+        // Hjem har sin egen tre-steders hurtignavigering. Den styrer ikke
+        // Watch eller CarPlay, som begge følger den felles datakilden der.
         return store.homeSwipePlaceIDs.compactMap { id in
             store.places.first { $0.id == id }
         }
@@ -1414,9 +1414,9 @@ private struct GlobalSettingsView: View {
                 }
 
                 Section("CarPlay") {
-                    Text("Steder i CarPlay")
+                    Text("Samme sted som Apple Watch")
                         .font(.subheadline.weight(.semibold))
-                    Text("CarPlay følger nå hjemmesveipingen: posisjon, Stjerne 1 og Stjerne 2. Velg stjernene på Steder-siden.")
+                    Text("CarPlay og Apple Watch bruker én felles datakilde. Velg aktuell posisjon eller fast sted under Apple Watch nedenfor.")
                         .font(.caption).foregroundStyle(.secondary)
                     Label("CarPlay-widgeten er klar", systemImage: "car.fill")
                     Text("Krever iOS 26 eller nyere. Legg til D bli Vær! fra widgetinnstillingene for bilen under Innstillinger › Generelt › CarPlay.")

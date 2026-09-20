@@ -96,13 +96,6 @@ struct WeatherWidgetView: View {
         VStack(alignment: .leading, spacing: 7) {
             heading
 
-            if entry.sharedPlaces.count > 1 {
-                Text("Også: " + entry.sharedPlaces.dropFirst().map(\.label).joined(separator: " · "))
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                    .accessibilityLabel("Flere valgte steder: " + entry.sharedPlaces.dropFirst().map(\.label).joined(separator: ", "))
-            }
             if let first = entry.statuses.first {
                 Spacer(minLength: 1)
                 HStack(alignment: .top, spacing: 8) {
@@ -181,7 +174,7 @@ struct DbliVaerWidget: Widget {
             WeatherWidgetView(entry: entry)
         }
         .configurationDisplayName("D bli Vær!")
-        .description("Aktuelle værvarsler for primærstedet og opptil to andre valgte steder på iPhone og i CarPlay.")
+        .description("Aktuelt vær og varsler for samme sted som Apple Watch og CarPlay.")
         .supportedFamilies([.systemSmall, .systemMedium])
         .containerBackgroundRemovable(true)
     }

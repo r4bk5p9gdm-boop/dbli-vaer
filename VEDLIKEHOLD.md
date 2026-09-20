@@ -54,6 +54,11 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-081 · FULLFØRT 2026-09-20** — Samkjørte CarPlay og Apple Watch til
+én felles datakilde. Valget «Aktuell posisjon» eller «Fast sted» under Apple
+Watch gjelder nå også CarPlay-widgeten. Hjems tre swipe-steder påvirker ikke
+lenger bil eller klokke, og widgeten viser ikke lenger ekstra steder.
+
 **BRUKER-080 · FULLFØRT 2026-09-20** — Gjorde «her»-markøren i Hjem-tittelen
 mer lesbar. Den bruker nå en større, fylt posisjonspil som er synlig bak den
 hvite teksten «her»; den tidligere materialkapselen som dekket pilen er fjernet.

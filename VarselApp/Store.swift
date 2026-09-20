@@ -231,13 +231,6 @@ final class Store: ObservableObject {
         let available = Set(places.map(\.id))
         return ids.filter { available.contains($0) }
     }
-    @Published var sharedPlaceSelection: SharedPlaceSelection = {
-        guard let data = UserDefaults.standard.data(forKey: "varsel.sharedPlaces"), let value = try? JSONDecoder().decode(SharedPlaceSelection.self, from: data) else { return SharedPlaceSelection() }
-        return value
-    }() {
-        didSet { if let data = try? JSONEncoder().encode(sharedPlaceSelection) { UserDefaults.standard.set(data, forKey: "varsel.sharedPlaces") } }
-    }
-    var resolvedSharedPlaceIDs: [UUID] { sharedPlaceSelection.resolved(available: places) }
     @Published private var rawForecasts: [UUID: [ForecastHour]] = [:]
     var forecasts: [UUID: [ForecastHour]] {
         get {
@@ -807,12 +800,21 @@ final class Store: ObservableObject {
     private func updateWidget() {
         // `forecasts` is populated per location only after a complete Yr
         // response, so this snapshot cannot contain an in-flight partial list.
-        let homeSharedIDs = homeSwipePlaceIDs
-        let sharedPrimary = homeSharedIDs.first.flatMap { id in places.first { $0.id == id } }
-        let widgetPlace = sharedPrimary ?? selected
+        let watchSource = WatchPlaceSource(rawValue: UserDefaults.standard.string(forKey: WatchPlaceSettings.sourceKey) ?? "position") ?? .position
+        let watchPlaceID = UserDefaults.standard.string(forKey: WatchPlaceSettings.fixedPlaceIDKey).flatMap(UUID.init(uuidString:))
+        let watchPlaceIDToUse = WatchPlaceSettings.resolvedPlaceID(
+            source: watchSource,
+            fixedPlaceID: watchPlaceID,
+            selectedID: selected?.id,
+            currentLocationID: currentLocationPlaceID,
+            availableIDs: Set(places.map(\.id))
+        )
+        // Watch and CarPlay deliberately share one source. This prevents a
+        // glance in the car from showing a different place than the Watch.
+        let companionPlace = watchPlaceIDToUse.flatMap { id in places.first { $0.id == id } }
         let snapshot = Self.widgetSnapshot(
-            place: widgetPlace, forecast: widgetPlace.flatMap { forecasts[$0.id] } ?? [],
-            updatedAt: widgetPlace.flatMap { forecastUpdatedAt[$0.id] }, cached: SharedWidgetData.load()
+            place: companionPlace, forecast: companionPlace.flatMap { forecasts[$0.id] } ?? [],
+            updatedAt: companionPlace.flatMap { forecastUpdatedAt[$0.id] }, cached: SharedWidgetData.load()
         )
         guard let snapshot else {
             // Removing the selected place (or moving it) must clear both the
@@ -829,24 +831,11 @@ final class Store: ObservableObject {
             place: snapshot.place, forecast: snapshot.forecast, updatedAt: snapshot.updatedAt,
             languageStyle: alertLanguageStyle, textSeparator: WeatherTextSeparator.current
         )
-        let sharedPlaces = homeSharedIDs.compactMap { id in places.first { $0.id == id } }
-        let sharedPlacesChanged = SharedWidgetData.saveSharedPlaces(sharedPlaces)
-        let watchSource = WatchPlaceSource(rawValue: UserDefaults.standard.string(forKey: WatchPlaceSettings.sourceKey) ?? "position") ?? .position
-        let watchPlaceID = UserDefaults.standard.string(forKey: WatchPlaceSettings.fixedPlaceIDKey).flatMap(UUID.init(uuidString:))
-        let watchPlaceIDToUse = WatchPlaceSettings.resolvedPlaceID(
-            source: watchSource,
-            fixedPlaceID: watchPlaceID,
-            selectedID: selected?.id,
-            currentLocationID: currentLocationPlaceID,
-            availableIDs: Set(places.map(\.id))
+        let sharedPlacesChanged = SharedWidgetData.saveSharedPlaces([snapshot.place])
+        WatchSyncManager.shared.send(
+            place: snapshot.place, forecast: snapshot.forecast, updatedAt: snapshot.updatedAt,
+            languageStyle: alertLanguageStyle, textSeparator: WeatherTextSeparator.current
         )
-        let watchPlace = watchPlaceIDToUse.flatMap { id in places.first { $0.id == id } }
-        if let watchSnapshot = Self.widgetSnapshot(
-            place: watchPlace, forecast: watchPlace.flatMap { forecasts[$0.id] } ?? [],
-            updatedAt: watchPlace.flatMap { forecastUpdatedAt[$0.id] }, cached: snapshot
-        ) {
-            WatchSyncManager.shared.send(place: watchSnapshot.place, forecast: watchSnapshot.forecast, updatedAt: watchSnapshot.updatedAt, languageStyle: alertLanguageStyle, textSeparator: WeatherTextSeparator.current)
-        }
         if snapshotChanged || sharedPlacesChanged {
             WidgetCenter.shared.reloadAllTimelines()
         }

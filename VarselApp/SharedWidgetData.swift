@@ -188,7 +188,7 @@ enum SharedWidgetData {
     @discardableResult
     static func saveSharedPlaces(_ places: [Place]) -> Bool {
         let summaries = places.reduce(into: [WidgetPlaceSummary]()) { result, place in
-            guard result.count < 3, !result.contains(where: { $0.id == place.id }) else { return }
+            guard result.isEmpty else { return }
             result.append(WidgetPlaceSummary(id: place.id, name: place.displayName, preposition: place.preposition))
         }
         if let data = try? JSONEncoder().encode(summaries), shouldWrite(existing: defaults.data(forKey: placesKey), new: data) {
