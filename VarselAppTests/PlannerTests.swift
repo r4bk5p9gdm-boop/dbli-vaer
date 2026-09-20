@@ -844,6 +844,29 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(WeatherGlance.nextEvents([current, next], now: now).map(\.type), [.sno])
     }
 
+    func testWatchAndCarPlaySharePlaceAndThreeUpcomingEventTypes() throws {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let forecast = [ForecastHour(time: base, temp: 8, precip: 0, wind: 2, cloud: 40, dew: 4)]
+        let statuses = [
+            WeatherStatus(ruleID: UUID(), type: .regn, text: "Regn", eventAt: base.addingTimeInterval(30 * 60), isNow: false),
+            WeatherStatus(ruleID: UUID(), type: .vind, text: "Vind", eventAt: base.addingTimeInterval(60 * 60), isNow: false),
+            WeatherStatus(ruleID: UUID(), type: .dugg, text: "Duggfall", eventAt: base.addingTimeInterval(2 * 60 * 60), isNow: false),
+            WeatherStatus(ruleID: UUID(), type: .sol, text: "Sol", eventAt: base.addingTimeInterval(3 * 60 * 60), isNow: false),
+        ]
+        XCTAssertEqual(WeatherGlance.nextEvents(statuses, now: base).prefix(3).map(\.type), [.regn, .vind, .dugg])
+
+        SharedWidgetData.clear()
+        defer { SharedWidgetData.clear() }
+        XCTAssertTrue(SharedWidgetData.save(place: place, forecast: forecast, updatedAt: base))
+        XCTAssertTrue(SharedWidgetData.saveSharedPlaces([place]))
+        let transferred = try JSONDecoder().decode(
+            WatchWeatherTransfer.self,
+            from: JSONEncoder().encode(WatchWeatherTransfer(snapshot: SharedWidgetData.load(), sentAt: base))
+        )
+        XCTAssertEqual(SharedWidgetData.loadSharedPlaces().map(\.id), [place.id])
+        XCTAssertEqual(transferred.snapshot?.place.id, place.id)
+    }
+
     func testCompactEventLabelUsesConfiguredTemperatureDirection() {
         let under = WeatherStatus(ruleID: UUID(), type: .temperatur, text: "Under 10° i morgen.", eventAt: base, isNow: false)
         let over = WeatherStatus(ruleID: UUID(), type: .temperatur, text: "Over 20° i morgen.", eventAt: base, isNow: false)

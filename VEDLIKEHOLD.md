@@ -507,8 +507,10 @@ Hjem-varsel til en navngitt plannerregel og la til eksakt grense-test: treff
 akkurat 24 timer fram er med, mens ett sekund senere er ute. Værbåndets
 trekalenderdagsvisning påvirkes ikke.
 
-**AUTO-235 · ÅPEN** — Verifiser serialisert Watch-/CarPlay-snapshot med tre
-ulike kommende værtyper og at samme valgte sted brukes på begge flater.
+**AUTO-235 · FULLFØRT 2026-09-21** — La til regresjonstest med regn, vind,
+dugg og sol i hendelseslisten. Den låser at Watch/CarPlay beholder de tre
+nærmeste ulike typene, og at den serialiserte Watch-overføringen og
+CarPlay-fellesstedet peker til samme ene sted.
 
 **AUTO-236 · ÅPEN** — Finn fram en liten, UI-uavhengig hjelpefunksjon for
 trekalenderdagsutvalget i værbåndet og legg til regresjonstest for at den ikke
