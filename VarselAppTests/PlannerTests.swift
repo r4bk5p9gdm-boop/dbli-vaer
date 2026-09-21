@@ -1977,6 +1977,21 @@ final class PlannerTests: XCTestCase {
         ))
     }
 
+    func testLiveActivityPrefersNearestQualifiedEventAcrossPlaces() {
+        XCTAssertTrue(LiveWeatherActivityPolicy.prefers(
+            firstEventAt: base.addingTimeInterval(15 * 60), firstType: .regn,
+            over: base.addingTimeInterval(30 * 60), secondType: .sno
+        ))
+        XCTAssertFalse(LiveWeatherActivityPolicy.prefers(
+            firstEventAt: base.addingTimeInterval(30 * 60), firstType: .regn,
+            over: base.addingTimeInterval(15 * 60), secondType: .sno
+        ))
+        XCTAssertTrue(LiveWeatherActivityPolicy.prefers(
+            firstEventAt: base.addingTimeInterval(30 * 60), firstType: .sno,
+            over: base.addingTimeInterval(30 * 60), secondType: .regn
+        ))
+    }
+
     @MainActor
     func testWidgetFreshSnapshotAppliesLocalTemperatureOffsetLikeFallback() throws {
         var place = Place(name: "Klinga", lat: 64, lon: 11)

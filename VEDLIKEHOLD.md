@@ -576,14 +576,18 @@ endret.
 inntrønderske Watch-/CarPlay-etikettene for alle varseltyper. Manglende
 spesialform faller dermed tilbake til en ikke-tom sikker etikett.
 
-**AUTO-249 · ÅPEN** — Test at Live Activity velger nærmeste kvalifiserte
-regn- eller snøvarsel når flere steder har oppdaterte prognoser samtidig.
+**AUTO-249 · FULLFØRT 2026-09-21** — Gjorde prioriteringen av samtidige
+Live Activity-kandidater eksplisitt og testbar. Nærmeste kvalifiserte hendelse
+vinner mellom steder; bare lik starttid bruker snø som prioritering.
 
 **AUTO-250 · ÅPEN** — Test at en delvis vellykket refresh ikke lar et
 mislykket sted endre widgetens valgte sted eller siste gyldige snapshot.
 
 **AUTO-251 · ÅPEN** — Test at en slettet varslingsregel ikke blir liggende
 som foreldet neste hendelse i Watch-/CarPlay-listen etter ny planlegging.
+
+**AUTO-252 · ÅPEN** — Test at Live Activity ikke fortsetter når den aktive
+regelen blir slått av, selv om den gamle prognosen fortsatt ligger i cache.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

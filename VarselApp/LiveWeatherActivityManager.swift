@@ -42,6 +42,18 @@ enum LiveWeatherActivityPolicy {
         guard let fetchedAt else { return false }
         return forecastIsFresh(fetchedAt: fetchedAt, now: now, maxAge: maxAge)
     }
+
+    /// The nearest usable event wins across places. Snow is preferred only
+    /// when two candidates start at the exact same time.
+    static func prefers(
+        firstEventAt: Date, firstType: AlertType,
+        over secondEventAt: Date, secondType: AlertType
+    ) -> Bool {
+        if firstEventAt != secondEventAt { return firstEventAt < secondEventAt }
+        return activitySeverity(firstType) > activitySeverity(secondType)
+    }
+
+    private static func activitySeverity(_ type: AlertType) -> Int { type == .sno ? 2 : 1 }
 }
 
 @MainActor
@@ -241,8 +253,10 @@ enum LiveWeatherActivityManager {
     private static func sortedCandidates(_ candidates: [Candidate]) -> [Candidate] {
         candidates.sorted {
             if $0.status.isNow != $1.status.isNow { return $0.status.isNow }
-            if $0.status.eventAt != $1.status.eventAt { return $0.status.eventAt < $1.status.eventAt }
-            return severity($0.rule.type) > severity($1.rule.type)
+            return LiveWeatherActivityPolicy.prefers(
+                firstEventAt: $0.status.eventAt, firstType: $0.rule.type,
+                over: $1.status.eventAt, secondType: $1.rule.type
+            )
         }
     }
 
@@ -281,6 +295,5 @@ enum LiveWeatherActivityManager {
         return ("\(prefix) \(amount.formatted(.number.precision(.fractionLength(0...1)))) mm · \(durationText)", endAt)
     }
 
-    private static func severity(_ type: AlertType) -> Int { type == .sno ? 2 : 1 }
     private static func relevanceScore(for type: AlertType) -> Double { type == .sno ? 100 : 90 }
 }
