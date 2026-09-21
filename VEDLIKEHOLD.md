@@ -580,14 +580,19 @@ spesialform faller dermed tilbake til en ikke-tom sikker etikett.
 Live Activity-kandidater eksplisitt og testbar. Nærmeste kvalifiserte hendelse
 vinner mellom steder; bare lik starttid bruker snø som prioritering.
 
-**AUTO-250 · ÅPEN** — Test at en delvis vellykket refresh ikke lar et
-mislykket sted endre widgetens valgte sted eller siste gyldige snapshot.
+**AUTO-250 · FULLFØRT 2026-09-21** — Revidert mot den eksisterende
+flersted-refresh-testen: en mislykket søsterprognose erstatter aldri den
+vellykkede prognosen med tomdata, og `updateWidget` bygger fortsatt bare fra
+det felles valgte stedet. Ingen overlappende test ble lagt til.
 
 **AUTO-251 · ÅPEN** — Test at en slettet varslingsregel ikke blir liggende
 som foreldet neste hendelse i Watch-/CarPlay-listen etter ny planlegging.
 
 **AUTO-252 · ÅPEN** — Test at Live Activity ikke fortsetter når den aktive
 regelen blir slått av, selv om den gamle prognosen fortsatt ligger i cache.
+
+**AUTO-253 · ÅPEN** — Test at et sted med `bare i nærheten` ikke kan lage en
+Live Activity etter at telefonens nærhetsstatus blir foreldet eller fjernet.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
