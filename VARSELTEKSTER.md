@@ -233,15 +233,15 @@ og CarPlay brukes ikke duggpunktstall: varighet og starttid er nyttigere.
 
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
-| Sikkert, neste dag | **D bli Duggfall! på Klinga i morgen.** ↳ Duggfall ved 8° onsdag kl. 05. | **D bli Duggfall! på Klinga i mårrå.** ↳ Doggfall ved 8° onsda'n kl. 05. |
-| Usikkert, natt | **Det kan bli Duggfall! på Klinga i natt.** ↳ Mulig duggfall kl. 02. | **D kan bli Duggfall! på Klinga i natt.** ↳ Mulig doggfall kl. 02. |
+| Sikkert, neste dag | **D bli Duggfall! på Klinga i morgen kl. 05.** ↳ Duggfall ved 8° | **D bli Dogg! på Klinga i mårrå kl. 05.** ↳ Doggfall ved 8°. |
+| Usikkert, natt | **Det kan bli Duggfall! på Klinga i natt.** ↳ Mulig duggfall ved 7°. | **D kan bli Doggfall! på Klinga i natt.** ↳ Mulig doggfall ved 7°. |
 
 ## Hjem — rullerende varsel
 
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
-| Framtidig | **D bli Duggfall! om 3 timer.** ↳ Duggfall i 3 timer fra kl. 05. | **D bli Duggfall! om 3 tima.** ↳ Doggfall i 3 tima fra kl. 05. |
-| Pågår nå | **Det er duggfall!** ↳ Duggfall i 2 timer til. | **D Dogge!** ↳ Doggfall i 2 tima til. |
+| Framtidig | **D bli Duggfall! om 3 timer.** ↳ Duggfall i 3 timer fra kl. 05. | **D bli Dogg! om 3 tima.** ↳ Doggfall i 3 tima fra kl. 05. |
+| Pågår nå | **Det er Duggfall!** ↳ Temperaturen er 7°. | **D Dogge!** ↳ Temperaturen er 7°. |
 
 ## Watch og CarPlay-widget
 
