@@ -2619,6 +2619,16 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(SharedWidgetData.load()?.forecast, [hour])
     }
 
+    func testUnchangedWeatherBandDoesNotRewriteWidgetSnapshot() {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 20, dew: 5)
+        SharedWidgetData.clear()
+        defer { SharedWidgetData.clear() }
+
+        XCTAssertTrue(SharedWidgetData.save(place: place, forecast: [hour], updatedAt: base))
+        XCTAssertFalse(SharedWidgetData.save(place: place, forecast: [hour], updatedAt: base))
+    }
+
     func testIncompleteWidgetRefreshWithoutTimestampKeepsCachedSnapshot() throws {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let cachedHour = ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 20, dew: 5)

@@ -567,14 +567,19 @@ endre cachet Yr-tidspunkt eller prognosedata.
 seks timer gammel prognosetid. Udatert eller utløpt lokal cache beholdes i
 appen for offline visning, men kan ikke starte en misvisende nedtelling.
 
-**AUTO-247 · ÅPEN** — Test at et nytt værbånd med samme oppdateringstid ikke
-utløser unødvendig widgetreload når selve snapshotinnholdet er uendret.
+**AUTO-247 · FULLFØRT 2026-09-21** — La til regresjonstest som låser at
+identisk værbånd med samme oppdateringstid ikke skrives om i widgetcachen.
+Dermed blir widgetreload bare utløst når snapshot eller delt sted faktisk er
+endret.
 
 **AUTO-248 · ÅPEN** — Test at et nytt inntrøndersk uttrykk i språkfasiten
 ikke kan gi tom Watch-/CarPlay-etikett når det mangler en spesifikk kortform.
 
 **AUTO-249 · ÅPEN** — Test at Live Activity velger nærmeste kvalifiserte
 regn- eller snøvarsel når flere steder har oppdaterte prognoser samtidig.
+
+**AUTO-250 · ÅPEN** — Test at en delvis vellykket refresh ikke lar et
+mislykket sted endre widgetens valgte sted eller siste gyldige snapshot.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
