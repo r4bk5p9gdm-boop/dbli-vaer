@@ -844,6 +844,19 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(WeatherGlance.nextEvents([current, next], now: now).map(\.type), [.sno])
     }
 
+    func testWatchAndCarPlayNextEventsIgnoreExpiredNowStatus() {
+        let expiredNow = WeatherStatus(
+            ruleID: UUID(), type: .regn, text: "Regn nå.",
+            eventAt: base.addingTimeInterval(-91 * 60), isNow: true
+        )
+        let next = WeatherStatus(
+            ruleID: UUID(), type: .vind, text: "Vind om en time.",
+            eventAt: base.addingTimeInterval(3_600), isNow: false
+        )
+
+        XCTAssertEqual(WeatherGlance.nextEvents([expiredNow, next], now: base).map(\.type), [.vind])
+    }
+
     func testWatchAndCarPlaySharePlaceAndThreeUpcomingEventTypes() throws {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let forecast = [ForecastHour(time: base, temp: 8, precip: 0, wind: 2, cloud: 40, dew: 4)]

@@ -555,9 +555,9 @@ regresjonstester: foreldelsesgrensen er 2 timer i appen, siste værbånd og
 stedsnavn beholdes ved offline oppstart, og Widget/Watch-cache bruker egen
 6-timers gyldighetsgrense. Ingen overlappende test ble lagt til.
 
-**AUTO-244 · ÅPEN** — Revider grensen mellom nåværende vær og kommende
-værhendelser i delte Watch-/CarPlay-data, slik at en utløpt NÅ-status ikke
-fortrenger nærmeste planlagte varsling.
+**AUTO-244 · FULLFØRT 2026-09-21** — La til regresjonstest for den delte
+Watch-/CarPlay-listen: en NÅ-status eldre enn 90 minutter blir ignorert, og
+nærmeste kommende hendelse beholder plassen sin.
 
 **AUTO-245 · ÅPEN** — Test at en ren endring av språk eller skilletegn
 oppdaterer Watch- og CarPlay-snapshot uten å forlenge eller endre tidspunktet
@@ -565,6 +565,9 @@ for den cachede Yr-prognosen.
 
 **AUTO-246 · ÅPEN** — Test at gammel lokal cache ikke kan gi en Live Activity
 for en allerede passert værhendelse når appen kommer tilbake på nett.
+
+**AUTO-247 · ÅPEN** — Test at et nytt værbånd med samme oppdateringstid ikke
+utløser unødvendig widgetreload når selve snapshotinnholdet er uendret.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
