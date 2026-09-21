@@ -728,6 +728,24 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(Planner.planAll(places: [place], forecasts: [place.id: hours]).isEmpty)
     }
 
+    func testHiddenDisplayTypeCannotReappearInRotatingHomeAfterCacheRestore() throws {
+        var place = Place(name: "Klinga", lat: 64, lon: 11)
+        place.hiddenAlertTypes = [.regn]
+        let hour = ForecastHour(time: base, temp: 6, precip: 1, wind: 1, cloud: 100, dew: 4)
+        let state = PersistedStoreState(
+            places: [place], selectedID: place.id, log: [],
+            forecasts: [place.id: [hour]], forecastUpdatedAt: [place.id: base], lastUpdate: base
+        )
+        let restored = try JSONDecoder().decode(
+            PersistedStoreState.self, from: JSONEncoder().encode(state)
+        )
+        let restoredPlace = try XCTUnwrap(restored.places.first)
+
+        XCTAssertFalse(restoredPlace.rulesForDisplay.contains { $0.type == .regn })
+        XCTAssertFalse(Planner.statuses(for: restoredPlace, forecast: restored.forecasts[restoredPlace.id] ?? [], now: base)
+            .contains { $0.type == .regn })
+    }
+
     func testHomeFavoritesPreserveIdentityAndRejectDuplicatesOrDeletedPlaces() throws {
         let a = UUID(), b = UUID()
         let favorites = HomeFavorites(left: a, right: b)
