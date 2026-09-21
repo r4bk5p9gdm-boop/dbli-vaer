@@ -601,6 +601,9 @@ Live Activity etter at telefonens nærhetsstatus blir foreldet eller fjernet.
 **AUTO-254 · ÅPEN** — Test at en deaktivert visningsrad ikke kan dukke opp i
 den rullerende Hjem-oversikten etter at appen gjenopprettes fra cache.
 
+**AUTO-255 · ÅPEN** — Test at en kun-visningsrad aldri kan starte eller holde
+liv i en Live Activity, selv når raden fortsatt er synlig i værbåndet.
+
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
 
