@@ -572,14 +572,18 @@ identisk værbånd med samme oppdateringstid ikke skrives om i widgetcachen.
 Dermed blir widgetreload bare utløst når snapshot eller delt sted faktisk er
 endret.
 
-**AUTO-248 · ÅPEN** — Test at et nytt inntrøndersk uttrykk i språkfasiten
-ikke kan gi tom Watch-/CarPlay-etikett når det mangler en spesifikk kortform.
+**AUTO-248 · FULLFØRT 2026-09-21** — La til komplett test av de korte
+inntrønderske Watch-/CarPlay-etikettene for alle varseltyper. Manglende
+spesialform faller dermed tilbake til en ikke-tom sikker etikett.
 
 **AUTO-249 · ÅPEN** — Test at Live Activity velger nærmeste kvalifiserte
 regn- eller snøvarsel når flere steder har oppdaterte prognoser samtidig.
 
 **AUTO-250 · ÅPEN** — Test at en delvis vellykket refresh ikke lar et
 mislykket sted endre widgetens valgte sted eller siste gyldige snapshot.
+
+**AUTO-251 · ÅPEN** — Test at en slettet varslingsregel ikke blir liggende
+som foreldet neste hendelse i Watch-/CarPlay-listen etter ny planlegging.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

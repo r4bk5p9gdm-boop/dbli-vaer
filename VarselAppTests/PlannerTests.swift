@@ -916,6 +916,18 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(WeatherGlance.compactEventLabel(for: dew, languageStyle: .inntrondersk), "Dogg!")
     }
 
+    func testInntronderskCompactLabelsArePresentForEveryAlertType() {
+        for type in AlertType.allCases {
+            let status = WeatherStatus(
+                ruleID: UUID(), type: type, text: "Test", eventAt: base, isNow: false
+            )
+            XCTAssertFalse(
+                WeatherGlance.compactEventLabel(for: status, languageStyle: .inntrondersk).isEmpty,
+                "Mangler kortetikett for \(type)"
+            )
+        }
+    }
+
     func testLocalAdjustmentPreservesYrAndDoesNotAccumulate() throws {
         let hour = ForecastHour(time: base, temp: 4, precip: 0, wind: 1, cloud: 0, dew: 1)
         let local = hour.locallyAdjusted(by: -2)
