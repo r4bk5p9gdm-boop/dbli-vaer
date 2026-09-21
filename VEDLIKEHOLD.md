@@ -518,9 +518,11 @@ Regresjonstesten dekker morgen 05–07: gårsdagen skjules, mens i dag og to hel
 kommende kalenderdager fortsatt vises uavhengig av rullerende varsels
 24-timersgrense.
 
-**AUTO-237 · ÅPEN** — Sjekk at språkfasitens tidsord for i natt, i morgen og
-ukedag har regresjonstester i varslingsformatteringen, slik at push og Hjem
-ikke driver fra `VARSELTEKSTER.md`.
+**AUTO-237 · PÅ VENT 2026-09-21** — Språkfasitens tidsord for i natt, i
+morgen og ukedag skal få samlede formatteringstester når appen kobles til den
+nylig godkjente `VARSELTEKSTER.md`-standarden. Mathias har eksplisitt utsatt
+den kodekoblingen til senere; eksisterende tester beholdes fram til da for å
+unngå at ny fasit og gammel produksjonstekst blandes.
 
 **AUTO-238 · FULLFØRT 2026-09-21** — Reviderte eksisterende lagringstester.
 De dekker allerede ulesbar prognose for ett sted, fjerning av cache for slettede
