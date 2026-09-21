@@ -541,8 +541,10 @@ at et NÅ-treff eldre enn 90 minutter fjernes før Watch-/CarPlay-listen bygges,
 mens et ferskt NÅ-treff og neste framtidige type beholdes. Ingen duplisering
 av samme regresjonstest er nødvendig.
 
-**AUTO-241 · ÅPEN** — Test at endret lokalt temperaturavvik går gjennom til
-cachet widgetdata uten å endre rå Yr-prognose for andre lagrede steder.
+**AUTO-241 · FULLFØRT 2026-09-21** — Cachet widgetdata følger nå en endret
+lokal temperaturjustering også uten nett. Bare forskjellen fra justeringen da
+snapshottet ble lagret blir brukt, så rå Yr-data og andre lagrede steder ikke
+endres. Regresjonstesten dekker både endret 1° → 3°, cachet verdi og rådata.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

@@ -804,12 +804,15 @@ final class Store: ObservableObject {
         guard let cached, cached.place.id == place.id,
               ForecastLocation(place: cached.place) == ForecastLocation(place: place),
               !cached.forecast.isEmpty, cached.updatedAt >= cutoff else { return nil }
-        // Cached snapshots already contain the local temperature adjustment
-        // applied when they were written; applying it again would drift the
-        // displayed value after a refresh failure.
+        // Snapshots contain the adjustment that was active when they were
+        // written.  If the user changes the local offset while offline, move
+        // the cached value by just that delta — never the whole new offset.
+        // This keeps a widget in sync with its place setting without mutating
+        // the raw Yr cache used by any other saved place.
+        let offsetDelta = place.localTemperatureOffset - cached.place.localTemperatureOffset
         return WidgetWeatherSnapshot(
             place: place,
-            forecast: cached.forecast,
+            forecast: cached.forecast.map { $0.locallyAdjusted(by: offsetDelta) },
             updatedAt: cached.updatedAt,
             languageStyle: cached.languageStyle,
             textSeparator: cached.textSeparator

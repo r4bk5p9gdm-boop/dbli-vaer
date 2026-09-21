@@ -1928,6 +1928,25 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(fallback.forecast.first?.temp, 12)
     }
 
+    @MainActor
+    func testWidgetFallbackAppliesOnlyChangedLocalTemperatureOffset() throws {
+        var place = Place(name: "Klinga", lat: 64, lon: 11)
+        place.localTemperatureOffset = 1
+        let raw = ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 20, dew: 5)
+        let cached = try XCTUnwrap(Store.widgetSnapshot(
+            place: place, forecast: [raw], updatedAt: base, cached: nil
+        ))
+        XCTAssertEqual(cached.forecast.first?.temp, 11)
+
+        place.localTemperatureOffset = 3
+        let fallback = try XCTUnwrap(Store.widgetSnapshot(
+            place: place, forecast: [], updatedAt: nil, cached: cached
+        ))
+        XCTAssertEqual(fallback.forecast.first?.temp, 13)
+        XCTAssertEqual(cached.forecast.first?.temp, 11)
+        XCTAssertEqual(raw.temp, 10)
+    }
+
     func testSeparatorChangeChangesReplanConfigurationSignature() {
         XCTAssertNotEqual(Store.configurationSignature(languageStyle: .bokmal, separator: .space), Store.configurationSignature(languageStyle: .bokmal, separator: .dash))
         XCTAssertNotEqual(Store.configurationSignature(languageStyle: .bokmal, separator: .dash), Store.configurationSignature(languageStyle: .english, separator: .dash))
