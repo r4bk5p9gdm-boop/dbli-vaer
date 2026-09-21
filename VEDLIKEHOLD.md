@@ -528,9 +528,10 @@ steder og Widget-fallback etter feilrefresh. Dermed beholdes gyldige
 stedscacher og siste værbånd når en annen lagret prognose er korrupt; ingen
 ny, overlappende test ble lagt til.
 
-**AUTO-239 · ÅPEN** — Gå gjennom duplikatdempingen for planlagte varsler med
-to regler av samme værtype, og legg til regresjonstest for at én hendelse bare
-gir ett push når reglene treffer samme tidsvindu.
+**AUTO-239 · FULLFØRT 2026-09-21** — Reviderte eksisterende
+duplikatdempingstester. De dekker to regnregler med samme hendelse og ulik
+varslingsmargin, og låser at deduplisering skjer på selve værhendelsen, ikke
+bare utsendelsestidspunktet. Én nær regnhendelse gir derfor ett push.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
