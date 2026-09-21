@@ -518,6 +518,18 @@ Regresjonstesten dekker morgen 05–07: gårsdagen skjules, mens i dag og to hel
 kommende kalenderdager fortsatt vises uavhengig av rullerende varsels
 24-timersgrense.
 
+**AUTO-237 · ÅPEN** — Sjekk at språkfasitens tidsord for i natt, i morgen og
+ukedag har regresjonstester i varslingsformatteringen, slik at push og Hjem
+ikke driver fra `VARSELTEKSTER.md`.
+
+**AUTO-238 · ÅPEN** — Test at korrupt eller delvis ulesbar lagret prognose
+faller tilbake til gyldige steder og cachedata uten at appstart eller widget
+mister siste brukbare værbånd.
+
+**AUTO-239 · ÅPEN** — Gå gjennom duplikatdempingen for planlagte varsler med
+to regler av samme værtype, og legg til regresjonstest for at én hendelse bare
+gir ett push når reglene treffer samme tidsvindu.
+
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
 
