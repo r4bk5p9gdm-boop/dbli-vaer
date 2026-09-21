@@ -535,8 +535,11 @@ duplikatdempingstester. De dekker to regnregler med samme hendelse og ulik
 varslingsmargin, og låser at deduplisering skjer på selve værhendelsen, ikke
 bare utsendelsestidspunktet. Én nær regnhendelse gir derfor ett push.
 
-**AUTO-240 · ÅPEN** — Legg til regresjonstest for at et foreldet NÅ-treff ikke
-kan fylle Watch-/CarPlay-listen etter at 90-minuttersvinduet er utløpt.
+**AUTO-240 · FULLFØRT 2026-09-21** — Reviderte eksisterende
+`testWeatherGlanceDropsStaleNowStatusAndKeepsOnePerType`. Den dekker allerede
+at et NÅ-treff eldre enn 90 minutter fjernes før Watch-/CarPlay-listen bygges,
+mens et ferskt NÅ-treff og neste framtidige type beholdes. Ingen duplisering
+av samme regresjonstest er nødvendig.
 
 **AUTO-241 · ÅPEN** — Test at endret lokalt temperaturavvik går gjennom til
 cachet widgetdata uten å endre rå Yr-prognose for andre lagrede steder.
