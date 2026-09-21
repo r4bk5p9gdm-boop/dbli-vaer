@@ -87,6 +87,10 @@ Hvis en NÅ-status bare er prognoseusikker, kan den ikke påstå at været skjer
 allerede. Da brukes den usikre formen, som **Det kan bli Regn!** / **D kan bli
 Regn!**, i stedet for **D e Regn!**.
 
+Sol og solgløtt er bare gyldige mellom lokal soloppgang og solnedgang. Etter
+solnedgang viser NÅ-kortet **sola er nede** med måneikon, solraden får ingen
+gul markering, og det planlegges ikke solvarsel eller solpush.
+
 For en lang, usikker regnperiode brukes en roligere, ikke-dupliserende detalj:
 **D kan bli Regn! i mårrå, kl. 09.** ↳ **Oppte 10 tima regnbyga på tirsda'n.**
 Førstelinjen har dermed tidskategori og klokkeslett; detaljlinjen har varighet

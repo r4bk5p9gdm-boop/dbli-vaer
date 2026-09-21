@@ -468,7 +468,7 @@ private struct CombinedHourBandCell: View {
                 ForEach(hours) { hour in
                     let hourNumber = Calendar.current.component(.hour, from: hour.time)
                     let offset = hourOffset(hourNumber, from: period.startHour)
-                    let matchesSunPreview = type == .sol && !SolarCycle.isAfterSunset(hour.time, latitude: latitude, longitude: longitude) && hour.cloud <= sunThreshold2
+                    let matchesSunPreview = type == .sol && SolarCycle.isDaylight(hour.time, latitude: latitude, longitude: longitude) && hour.cloud <= sunThreshold2
                     let matchesTemperaturePreview = type == .temperatur && (hour.temp <= temperatureLowThreshold || hour.temp >= temperatureHighThreshold)
                     let matchesFrost = type == .temperatur && rules.contains(where: {
                         $0.type == .frost && $0.isActive(at: hour.time) && $0.matches(hour, frostMargin: frostMargin)

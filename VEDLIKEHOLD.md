@@ -54,6 +54,12 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-104 · FULLFØRT 2026-09-21** — Solgløtt og sol er nå bundet til lokal
+soloppgang og solnedgang i NÅ-kortet, solraden og varselplanleggeren. Etter
+solnedgang viser kortet måneikon og «sola er nede», solraden er uten gul
+markering, og ingen solpush kan planlegges. Regresjonstest dekker mørk
+desemberkveld på Klinga.
+
 **BRUKER-103 · FULLFØRT 2026-09-21** — Rullerende vinddetalj gjentar ikke
 lenger startklokkeslettet som allerede står i overskriften. Den sier nå for
 eksempel «Lett bris i fire timer.» Regresjonstesten er oppdatert.

@@ -972,9 +972,42 @@ enum PlaceOrdering {
 }
 
 enum SolarCycle {
+    /// Daylight has a lower boundary as well as a sunset boundary. Treating
+    /// every pre-sunset hour as daylight made a 02:00 cloud forecast look
+    /// like «solgløtt» in the Home card and the sun row.
+    static func isDaylight(_ date: Date, latitude: Double, longitude: Double) -> Bool {
+        switch state(for: date, latitude: latitude, longitude: longitude) {
+        case let .normal(sunrise, sunset):
+            return date >= sunrise && date < sunset
+        case .polarDay:
+            return true
+        case .polarNight, .unavailable:
+            return false
+        }
+    }
+
     static func isAfterSunset(_ date: Date, latitude: Double, longitude: Double) -> Bool {
+        switch state(for: date, latitude: latitude, longitude: longitude) {
+        case let .normal(_, sunset):
+            return date >= sunset
+        case .polarNight:
+            return true
+        case .polarDay, .unavailable:
+            // Keep the former safe fallback for invalid coordinates.
+            return false
+        }
+    }
+
+    private enum State {
+        case normal(sunrise: Date, sunset: Date)
+        case polarDay
+        case polarNight
+        case unavailable
+    }
+
+    private static func state(for date: Date, latitude: Double, longitude: Double) -> State {
         guard latitude.isFinite, longitude.isFinite,
-              (-90...90).contains(latitude), (-180...180).contains(longitude) else { return false }
+              (-90...90).contains(latitude), (-180...180).contains(longitude) else { return .unavailable }
         var calendar = Calendar.current
         calendar.timeZone = .current
         let day = calendar.ordinality(of: .day, in: .year, for: date) ?? 1
@@ -983,15 +1016,18 @@ enum SolarCycle {
         let lat = latitude * radians
         let dec = declination * radians
         let cosine = (cos(90.833 * radians) - sin(lat) * sin(dec)) / (cos(lat) * cos(dec))
-        guard cosine < 1 else { return true }
-        guard cosine > -1 else { return false }
+        if cosine >= 1 { return .polarNight }
+        if cosine <= -1 { return .polarDay }
         let hourAngle = acos(cosine) / radians
         let offsetHours = Double(calendar.timeZone.secondsFromGMT(for: date)) / 3600
         let solarNoon = 12 - longitude / 15 + offsetHours
+        let sunrise = solarNoon - hourAngle / 15
         let sunset = solarNoon + hourAngle / 15
         let start = calendar.startOfDay(for: date)
-        let sunsetDate = start.addingTimeInterval(sunset * 3600)
-        return date >= sunsetDate
+        return .normal(
+            sunrise: start.addingTimeInterval(sunrise * 3600),
+            sunset: start.addingTimeInterval(sunset * 3600)
+        )
     }
 }
 

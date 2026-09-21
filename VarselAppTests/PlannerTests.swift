@@ -56,6 +56,32 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(SolarCycle.isAfterSunset(evening, latitude: 64, longitude: 11))
     }
 
+    func testSunRulesRequireLocalDaylightForRowsAndAlerts() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let evening = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 12, day: 21, hour: 20)))
+        let hour = ForecastHour(time: evening, temp: 2, precip: 0, wind: 1, cloud: 5, dew: 0)
+        var rule = Rule(type: .sol)
+        rule.durationHours = 1
+        rule.activeFromHour = 0
+        rule.activeToHour = 0
+
+        let plan = Planner.plan(
+            rule: rule, forecast: [hour], placeName: "Klinga",
+            latitude: 64.46, longitude: 11.50,
+            now: evening.addingTimeInterval(-3_600), calendar: calendar
+        )
+        let status = Planner.status(
+            for: rule, forecast: [hour], latitude: 64.46, longitude: 11.50,
+            now: evening, calendar: calendar
+        )
+
+        XCTAssertFalse(SolarCycle.isDaylight(evening, latitude: 64.46, longitude: 11.50))
+        XCTAssertTrue(plan.hitIndices.isEmpty)
+        XCTAssertTrue(plan.alerts.isEmpty)
+        XCTAssertNil(status)
+    }
+
     func testPersistedStoreStateRoundTripsForecastCacheAndTimestamp() throws {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 20, dew: 5)

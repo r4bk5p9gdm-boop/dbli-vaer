@@ -18,12 +18,32 @@ enum Planner {
         var possible = false
     }
 
-    private static func matches(_ rule: Rule, hour: ForecastHour, frostMargin: Double = 0, calendar: Calendar = .current) -> Bool {
-        rule.isActive(at: hour.time, calendar: calendar) && rule.matches(hour, frostMargin: frostMargin)
+    private static func matches(
+        _ rule: Rule,
+        hour: ForecastHour,
+        frostMargin: Double = 0,
+        latitude: Double? = nil,
+        longitude: Double? = nil,
+        calendar: Calendar = .current
+    ) -> Bool {
+        guard rule.isActive(at: hour.time, calendar: calendar), rule.matches(hour, frostMargin: frostMargin) else { return false }
+        guard rule.type == .sol, let latitude, let longitude else { return true }
+        return SolarCycle.isDaylight(hour.time, latitude: latitude, longitude: longitude)
     }
 
-    private static func matches(_ rule: Rule, at index: Int, in forecast: [ForecastHour], frostMargin: Double = 0, calendar: Calendar = .current) -> Bool {
-        guard forecast.indices.contains(index), matches(rule, hour: forecast[index], frostMargin: frostMargin, calendar: calendar) else { return false }
+    private static func matches(
+        _ rule: Rule,
+        at index: Int,
+        in forecast: [ForecastHour],
+        frostMargin: Double = 0,
+        latitude: Double? = nil,
+        longitude: Double? = nil,
+        calendar: Calendar = .current
+    ) -> Bool {
+        guard forecast.indices.contains(index), matches(
+            rule, hour: forecast[index], frostMargin: frostMargin,
+            latitude: latitude, longitude: longitude, calendar: calendar
+        ) else { return false }
         guard rule.type == .dugg else { return true }
 
         let eventAt = forecast[index].time
@@ -83,11 +103,21 @@ enum Planner {
         return nil
     }
 
-    private static func matchingRuns(rule: Rule, forecast: [ForecastHour], frostMargin: Double = 0, calendar: Calendar = .current) -> [Range<Int>] {
+    private static func matchingRuns(
+        rule: Rule,
+        forecast: [ForecastHour],
+        frostMargin: Double = 0,
+        latitude: Double? = nil,
+        longitude: Double? = nil,
+        calendar: Calendar = .current
+    ) -> [Range<Int>] {
         var runs: [Range<Int>] = []
         var start: Int?
         for index in 0...forecast.count {
-            let isMatch = index < forecast.count && matches(rule, at: index, in: forecast, frostMargin: frostMargin, calendar: calendar)
+            let isMatch = index < forecast.count && matches(
+                rule, at: index, in: forecast, frostMargin: frostMargin,
+                latitude: latitude, longitude: longitude, calendar: calendar
+            )
             if isMatch, start == nil { start = index }
             if !isMatch, let first = start {
                 runs.append(first..<index)
@@ -139,13 +169,29 @@ enum Planner {
         )
     }
 
-    static func plan(rule: Rule, forecast: [ForecastHour], placeName: String, placeID: UUID? = nil, frostMargin: Double = 0, now: Date = Date(), calendar: Calendar = .current) -> Result {
+    static func plan(
+        rule: Rule,
+        forecast: [ForecastHour],
+        placeName: String,
+        placeID: UUID? = nil,
+        frostMargin: Double = 0,
+        latitude: Double? = nil,
+        longitude: Double? = nil,
+        now: Date = Date(),
+        calendar: Calendar = .current
+    ) -> Result {
         var res = Result()
         res.hitIndices = Set(forecast.indices.filter {
-            matches(rule, at: $0, in: forecast, frostMargin: frostMargin, calendar: calendar)
+            matches(
+                rule, at: $0, in: forecast, frostMargin: frostMargin,
+                latitude: latitude, longitude: longitude, calendar: calendar
+            )
         })
 
-        let runs = matchingRuns(rule: rule, forecast: forecast, frostMargin: frostMargin, calendar: calendar)
+        let runs = matchingRuns(
+            rule: rule, forecast: forecast, frostMargin: frostMargin,
+            latitude: latitude, longitude: longitude, calendar: calendar
+        )
         if rule.previousDayNotificationHour != nil {
             var seenFireDates: Set<Date> = []
             let scheduledRuns: [(run: Range<Int>, fireAt: Date)] = runs.compactMap { run in
@@ -237,7 +283,14 @@ enum Planner {
 
     static func statuses(for place: Place, forecast: [ForecastHour], now: Date = Date()) -> [WeatherStatus] {
         place.rulesForDisplay.compactMap { rule in
-            status(for: rule, forecast: forecast, frostMargin: place.localFrostMargin, now: now)
+            status(
+                for: rule,
+                forecast: forecast,
+                frostMargin: place.localFrostMargin,
+                latitude: place.lat,
+                longitude: place.lon,
+                now: now
+            )
         }.sorted {
             if $0.isNow != $1.isNow { return $0.isNow }
             return $0.eventAt < $1.eventAt
@@ -389,13 +442,23 @@ enum Planner {
               }) else { return nil }
         var duration = 0
         for index in start..<forecast.endIndex {
-            guard matches(rule, at: index, in: forecast, frostMargin: place.localFrostMargin) else { break }
+            guard matches(
+                rule, at: index, in: forecast, frostMargin: place.localFrostMargin,
+                latitude: place.lat, longitude: place.lon
+            ) else { break }
             duration += 1
         }
         return duration == 0 ? nil : duration
     }
 
-    static func status(for rule: Rule, forecast: [ForecastHour], frostMargin: Double = 0, now: Date = Date()) -> WeatherStatus? {
+    static func status(
+        for rule: Rule,
+        forecast: [ForecastHour],
+        frostMargin: Double = 0,
+        latitude: Double? = nil,
+        longitude: Double? = nil,
+        now: Date = Date()
+    ) -> WeatherStatus? {
         guard !forecast.isEmpty else { return nil }
         let radar = radarEvent(rule: rule, forecast: forecast, now: now)
         if let radar, radar.isNow {
@@ -405,10 +468,16 @@ enum Planner {
         let currentFloor = now.addingTimeInterval(-3_600)
         let currentIndex = forecast.firstIndex { $0.time >= currentFloor } ?? forecast.startIndex
         let currentIsNearNow = forecast[currentIndex].time <= now.addingTimeInterval(10 * 60)
-        if currentIsNearNow, matches(rule, at: currentIndex, in: forecast, frostMargin: frostMargin) {
+        if currentIsNearNow, matches(
+            rule, at: currentIndex, in: forecast, frostMargin: frostMargin,
+            latitude: latitude, longitude: longitude
+        ) {
             var duration = 0
             for index in currentIndex..<forecast.endIndex {
-                guard matches(rule, at: index, in: forecast, frostMargin: frostMargin) else { break }
+                guard matches(
+                    rule, at: index, in: forecast, frostMargin: frostMargin,
+                    latitude: latitude, longitude: longitude
+                ) else { break }
                 duration += 1
             }
             if !rule.type.needsDuration || duration >= rule.durationHours {
@@ -438,7 +507,10 @@ enum Planner {
             }
         }
 
-        guard let nextRun = matchingRuns(rule: rule, forecast: forecast, frostMargin: frostMargin)
+        guard let nextRun = matchingRuns(
+            rule: rule, forecast: forecast, frostMargin: frostMargin,
+            latitude: latitude, longitude: longitude
+        )
             .first(where: { forecast[$0.lowerBound].time > now }) else { return nil }
         let start = nextRun.lowerBound
         let nextRadar = radarEvent(rule: rule, forecast: forecast, run: nextRun, now: now)
@@ -466,7 +538,15 @@ enum Planner {
                 rule.enabled && !rule.isDisplayOnly
                     && (!rule.onlyWhenNearby || nearbyPlaceIDs.contains(p.id))
             }.flatMap { r in
-                plan(rule: r, forecast: forecasts[p.id] ?? [], placeName: p.nameWithPreposition, placeID: p.id, frostMargin: p.localFrostMargin).alerts
+                plan(
+                    rule: r,
+                    forecast: forecasts[p.id] ?? [],
+                    placeName: p.nameWithPreposition,
+                    placeID: p.id,
+                    frostMargin: p.localFrostMargin,
+                    latitude: p.lat,
+                    longitude: p.lon
+                ).alerts
             }
             return removingDuplicateRainAlerts(placeAlerts)
         }.sorted { $0.fireAt < $1.fireAt }

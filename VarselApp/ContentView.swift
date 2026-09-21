@@ -423,12 +423,12 @@ private struct CurrentWeatherCard: View {
                             .font(.system(size: 29, weight: .light, design: .rounded))
                             .foregroundStyle(currentTemperatureColor)
                     }
-                    Image(systemName: currentCondition.systemImage)
+                    Image(systemName: currentWeatherIcon.systemImage)
                         .font(.system(size: 27, weight: .semibold))
                         .symbolRenderingMode(.hierarchical)
-                        .foregroundStyle(currentCondition.color)
+                        .foregroundStyle(currentWeatherIcon.color)
                         .frame(width: 36, height: 36)
-                        .accessibilityLabel(currentCondition.label)
+                        .accessibilityLabel(currentWeatherIcon.label)
                 }
                 .fixedSize()
                 .layoutPriority(3)
@@ -462,7 +462,7 @@ private struct CurrentWeatherCard: View {
                     label: skyMetric.label,
                     value: skyMetric.value,
                     color: skyMetric.color,
-                    isActive: current.cloud <= 65
+                    isActive: isDaylightNow && current.cloud <= 65
                 )
             }
 
@@ -532,6 +532,9 @@ private struct CurrentWeatherCard: View {
     }
 
     private var skyMetric: (icon: String, label: String, value: String, color: Color) {
+        guard isDaylightNow else {
+            return ("moon.stars.fill", "Sol", "sola er nede", Color.indigo)
+        }
         let condition = CurrentWeatherCondition.resolve(current, precipitationIsFalling: false)
         let value = switch condition {
         case .clear: "klart"
@@ -576,6 +579,22 @@ private struct CurrentWeatherCard: View {
 
     private var currentCondition: CurrentWeatherCondition {
         CurrentWeatherCondition.resolve(current, precipitationIsFalling: precipitation.isFallingNow)
+    }
+
+    private var isDaylightNow: Bool {
+        SolarCycle.isDaylight(current.time, latitude: place.lat, longitude: place.lon)
+    }
+
+    private var currentWeatherIcon: (systemImage: String, color: Color, label: String) {
+        if !isDaylightNow {
+            switch currentCondition {
+            case .clear, .partlyCloudy:
+                return ("moon.stars.fill", Color.indigo, "Natt")
+            default:
+                break
+            }
+        }
+        return (currentCondition.systemImage, currentCondition.color, currentCondition.label)
     }
 
     private var frostIsActiveNow: Bool {
@@ -1189,7 +1208,9 @@ struct AlertQueueView: View {
             rule: item.rule,
             forecast: forecast,
             placeName: item.place.nameWithPreposition,
-            frostMargin: item.place.localFrostMargin
+            frostMargin: item.place.localFrostMargin,
+            latitude: item.place.lat,
+            longitude: item.place.lon
         )
         if let eventAt = result.eventAt {
             if result.alerts.isEmpty { return "Treff \(eventTimePhrase(eventAt)), men forvarseltidspunktet er passert" }

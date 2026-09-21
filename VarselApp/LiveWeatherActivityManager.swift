@@ -232,6 +232,8 @@ enum LiveWeatherActivityManager {
                 for: rule,
                 forecast: forecast,
                 frostMargin: place.localFrostMargin,
+                latitude: place.lat,
+                longitude: place.lon,
                 now: now
               ) else { return nil }
         let notificationAt = Planner.plan(
@@ -240,6 +242,8 @@ enum LiveWeatherActivityManager {
             placeName: place.nameWithPreposition,
             placeID: place.id,
             frostMargin: place.localFrostMargin,
+            latitude: place.lat,
+            longitude: place.lon,
             now: now
         ).alerts.first?.fireAt
         if isContinuation {

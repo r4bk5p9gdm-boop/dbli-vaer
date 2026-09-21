@@ -201,7 +201,9 @@ struct RuleEditorView: View {
                         rule: rule,
                         forecast: fc,
                         placeName: store.selected?.displayName ?? "",
-                        frostMargin: store.selected?.localFrostMargin ?? 0
+                        frostMargin: store.selected?.localFrostMargin ?? 0,
+                        latitude: store.selected?.lat,
+                        longitude: store.selected?.lon
                     )
                     if let e = plan.eventAt {
                         Text("Neste hendelse \(eventTimePhrase(e)). " + (plan.alerts.isEmpty ? "Ingen varsler rekker å gå ut." : "Varsel " + plan.alerts.map { eventTimePhrase($0.fireAt) }.joined(separator: ", ") + "."))
