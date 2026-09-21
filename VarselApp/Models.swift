@@ -972,6 +972,18 @@ enum PlaceOrdering {
 }
 
 enum SolarCycle {
+    enum Transition: Equatable {
+        case sunrise
+        case sunset
+
+        var systemImage: String {
+            switch self {
+            case .sunrise: "sunrise.fill"
+            case .sunset: "sunset.fill"
+            }
+        }
+    }
+
     /// Daylight has a lower boundary as well as a sunset boundary. Treating
     /// every pre-sunset hour as daylight made a 02:00 cloud forecast look
     /// like «solgløtt» in the Home card and the sun row.
@@ -996,6 +1008,25 @@ enum SolarCycle {
             // Keep the former safe fallback for invalid coordinates.
             return false
         }
+    }
+
+    /// Finds the closest solar boundary for an hourly weather cell. A small
+    /// tolerance lets a 07-cell show a sunrise that happened shortly before
+    /// it, instead of losing the marker at a day-band boundary.
+    static func transition(
+        near date: Date,
+        latitude: Double,
+        longitude: Double,
+        tolerance: TimeInterval = 90 * 60
+    ) -> Transition? {
+        guard case let .normal(sunrise, sunset) = state(for: date, latitude: latitude, longitude: longitude) else {
+            return nil
+        }
+        let candidates: [(Transition, Date)] = [(.sunrise, sunrise), (.sunset, sunset)]
+        guard let nearest = candidates.min(by: {
+            abs($0.1.timeIntervalSince(date)) < abs($1.1.timeIntervalSince(date))
+        }), abs(nearest.1.timeIntervalSince(date)) <= tolerance else { return nil }
+        return nearest.0
     }
 
     private enum State {

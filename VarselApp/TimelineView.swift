@@ -469,6 +469,9 @@ private struct CombinedHourBandCell: View {
                     let hourNumber = Calendar.current.component(.hour, from: hour.time)
                     let offset = hourOffset(hourNumber, from: period.startHour)
                     let matchesSunPreview = type == .sol && SolarCycle.isDaylight(hour.time, latitude: latitude, longitude: longitude) && hour.cloud <= sunThreshold2
+                    let solarTransition = type == .sol
+                        ? SolarCycle.transition(near: hour.time, latitude: latitude, longitude: longitude)
+                        : nil
                     let matchesTemperaturePreview = type == .temperatur && (hour.temp <= temperatureLowThreshold || hour.temp >= temperatureHighThreshold)
                     let matchesFrost = type == .temperatur && rules.contains(where: {
                         $0.type == .frost && $0.isActive(at: hour.time) && $0.matches(hour, frostMargin: frostMargin)
@@ -494,6 +497,18 @@ private struct CombinedHourBandCell: View {
                                     y: proxy.size.height / 2
                                 )
                         }
+                    }
+                    if offset < period.hours, let solarTransition {
+                        Image(systemName: solarTransition.systemImage)
+                            .font(.system(size: 8, weight: .bold))
+                            .foregroundStyle(Color.orange)
+                            .frame(width: proxy.size.width / CGFloat(period.hours), height: proxy.size.height)
+                            .background(Color.white.opacity(0.72), in: Circle())
+                            .position(
+                                x: proxy.size.width * CGFloat(offset) / CGFloat(period.hours) + proxy.size.width / CGFloat(period.hours * 2),
+                                y: proxy.size.height / 2
+                            )
+                            .accessibilityLabel(solarTransition == .sunrise ? "Soloppgang" : "Solnedgang")
                     }
                 }
             }

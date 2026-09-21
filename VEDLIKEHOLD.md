@@ -54,6 +54,11 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-105 · FULLFØRT 2026-09-21** — Solraden viser nå et lite
+soloppgangssymbol og solnedgangssymbol i den relevante timecellen. Markørene
+er synlige også ved overskyet vær, slik at de forklarer dagslyset uten å være
+et varsel. Regresjonstest dekker begge markørene på Klinga.
+
 **BRUKER-104 · FULLFØRT 2026-09-21** — Solgløtt og sol er nå bundet til lokal
 soloppgang og solnedgang i NÅ-kortet, solraden og varselplanleggeren. Etter
 solnedgang viser kortet måneikon og «sola er nede», solraden er uten gul

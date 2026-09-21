@@ -82,6 +82,16 @@ final class PlannerTests: XCTestCase {
         XCTAssertNil(status)
     }
 
+    func testSolarCycleProvidesSunriseAndSunsetMarkersForHourlyRow() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let morning = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 12, day: 21, hour: 10)))
+        let afternoon = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 12, day: 21, hour: 14)))
+
+        XCTAssertEqual(SolarCycle.transition(near: morning, latitude: 64.46, longitude: 11.50), .sunrise)
+        XCTAssertEqual(SolarCycle.transition(near: afternoon, latitude: 64.46, longitude: 11.50), .sunset)
+    }
+
     func testPersistedStoreStateRoundTripsForecastCacheAndTimestamp() throws {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 20, dew: 5)
