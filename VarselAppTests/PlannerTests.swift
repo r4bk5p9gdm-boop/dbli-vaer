@@ -1098,6 +1098,18 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(status.first?.isNow == true)
     }
 
+    func testDeletedRuleImmediatelyDisappearsFromWidgetEventSource() {
+        var place = Place(name: "Klinga", lat: 64, lon: 11)
+        var rule = Rule(type: .regn)
+        rule.threshold = 0.1
+        place.rules = [rule]
+        let hours = forecast(values: [(8, 1, 1, 90, 6)])
+        XCTAssertEqual(Planner.statuses(for: place, forecast: hours, now: base).map(\.type), [.regn])
+
+        place.rules = []
+        XCTAssertTrue(Planner.statuses(for: place, forecast: hours, now: base).isEmpty)
+    }
+
     func testSunAlertTextUsesLongerMatchedDurationThanMinimum() {
         var rule = Rule(type: .sol)
         rule.durationHours = 4

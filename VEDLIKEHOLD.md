@@ -585,14 +585,18 @@ flersted-refresh-testen: en mislykket søsterprognose erstatter aldri den
 vellykkede prognosen med tomdata, og `updateWidget` bygger fortsatt bare fra
 det felles valgte stedet. Ingen overlappende test ble lagt til.
 
-**AUTO-251 · ÅPEN** — Test at en slettet varslingsregel ikke blir liggende
-som foreldet neste hendelse i Watch-/CarPlay-listen etter ny planlegging.
+**AUTO-251 · FULLFØRT 2026-09-21** — La til regresjonstest som låser at en
+slettet regel umiddelbart forsvinner fra hendelseskilden som Watch og CarPlay
+bygger sine neste-varsler fra.
 
 **AUTO-252 · ÅPEN** — Test at Live Activity ikke fortsetter når den aktive
 regelen blir slått av, selv om den gamle prognosen fortsatt ligger i cache.
 
 **AUTO-253 · ÅPEN** — Test at et sted med `bare i nærheten` ikke kan lage en
 Live Activity etter at telefonens nærhetsstatus blir foreldet eller fjernet.
+
+**AUTO-254 · ÅPEN** — Test at en deaktivert visningsrad ikke kan dukke opp i
+den rullerende Hjem-oversikten etter at appen gjenopprettes fra cache.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
