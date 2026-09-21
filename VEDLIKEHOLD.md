@@ -550,9 +550,10 @@ endres. Regresjonstesten dekker både endret 1° → 3°, cachet verdi og rådat
 Watch-overføring etter at lokal temperaturjustering endres. Klokka mottar den
 oppdaterte temperaturen og gjeldende justering, uten en ny Yr-henting.
 
-**AUTO-243 · ÅPEN** — Revider og test at lagret værbånd alltid beholder en
-trygg, tydelig foreldet-status når appen åpnes uten dekning, uten å fjerne
-siste kjente sted eller tre dagers bånd.
+**AUTO-243 · FULLFØRT 2026-09-21** — Revidert mot eksisterende
+regresjonstester: foreldelsesgrensen er 2 timer i appen, siste værbånd og
+stedsnavn beholdes ved offline oppstart, og Widget/Watch-cache bruker egen
+6-timers gyldighetsgrense. Ingen overlappende test ble lagt til.
 
 **AUTO-244 · ÅPEN** — Revider grensen mellom nåværende vær og kommende
 værhendelser i delte Watch-/CarPlay-data, slik at en utløpt NÅ-status ikke
@@ -561,6 +562,9 @@ fortrenger nærmeste planlagte varsling.
 **AUTO-245 · ÅPEN** — Test at en ren endring av språk eller skilletegn
 oppdaterer Watch- og CarPlay-snapshot uten å forlenge eller endre tidspunktet
 for den cachede Yr-prognosen.
+
+**AUTO-246 · ÅPEN** — Test at gammel lokal cache ikke kan gi en Live Activity
+for en allerede passert værhendelse når appen kommer tilbake på nett.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
