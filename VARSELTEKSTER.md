@@ -123,10 +123,10 @@ hører ikke hjemme i sirkelen.
 
 ## Watch og CarPlay-widget
 
-| Språk | Rund | Inline | Stor Watch / CarPlay-rad |
-| --- | --- | --- | --- |
-| Bokmål | Regn! · 23 m | Regn! 23m | Regn! 23m |
-| Inntrøndersk | Regn! · 23 m | Regn! 23m | Regn! 23m |
+| Situasjon | Språk | Rund | Inline | Stor Watch / CarPlay-rad |
+| --- | --- | --- | --- | --- |
+| Neste hendelse | Bokmål | Regn! · 23 m | Regn! 23m | Regn! 23m |
+| Neste hendelse | Inntrøndersk | Regn! · 23 m | Regn! 23m | Regn! 23m |
 
 ---
 
@@ -158,10 +158,10 @@ hører ikke hjemme i sirkelen.
 
 ## Watch og CarPlay-widget
 
-| Språk | Rund | Inline | Stor Watch / CarPlay-rad |
-| --- | --- | --- | --- |
-| Bokmål | Snø! · 2 t | Snø! 2t | Snø! 2t |
-| Inntrøndersk | Snø! · 2 t | Snø! 2t | Snø! 2t |
+| Situasjon | Språk | Rund | Inline | Stor Watch / CarPlay-rad |
+| --- | --- | --- | --- | --- |
+| Neste hendelse | Bokmål | Snø! · 2 t | Snø! 2t | Snø! 2t |
+| Neste hendelse | Inntrøndersk | Snø! · 2 t | Snø! 2t | Snø! 2t |
 
 ---
 
@@ -204,10 +204,10 @@ begge slik Yr gjør.
 
 ## Watch og CarPlay-widget
 
-| Språk | Rund | Inline | Stor Watch / CarPlay-rad |
-| --- | --- | --- | --- |
-| Bokmål | Vind! · 45 m | Vind! 45m | Vind! 45m |
-| Inntrøndersk | Vind! · 45 m | Vind! 45m | Vind! 45m |
+| Situasjon | Språk | Rund | Inline | Stor Watch / CarPlay-rad |
+| --- | --- | --- | --- | --- |
+| Neste hendelse | Bokmål | Vind! · 45 m | Vind! 45m | Vind! 45m |
+| Neste hendelse | Inntrøndersk | Vind! · 45 m | Vind! 45m | Vind! 45m |
 
 ---
 
@@ -240,10 +240,10 @@ og CarPlay brukes ikke duggpunktstall: varighet og starttid er nyttigere.
 
 ## Watch og CarPlay-widget
 
-| Språk | Rund | Inline | Stor Watch / CarPlay-rad |
-| --- | --- | --- | --- |
-| Bokmål | Dugg! · 45 m | Dugg! 45m | Dugg! 45m |
-| Inntrøndersk | Dogg! · 45 m | Dogg! 45m | Dogg! 45m |
+| Situasjon | Språk | Rund | Inline | Stor Watch / CarPlay-rad |
+| --- | --- | --- | --- | --- |
+| Neste hendelse | Bokmål | Dugg! · 45 m | Dugg! 45m | Dugg! 45m |
+| Neste hendelse | Inntrøndersk | Dogg! · 45 m | Dogg! 45m | Dogg! 45m |
 
 ---
 
@@ -276,10 +276,10 @@ frostmarkør betyr marginbasert frostfare over 0°.
 
 ## Watch og CarPlay-widget
 
-| Språk | Rund | Inline | Stor Watch / CarPlay-rad |
-| --- | --- | --- | --- |
-| Bokmål | Frost! · 2 t | Frost! 2t | Frost! 2t |
-| Inntrøndersk | Frost! · 2 t | Frost! 2t | Frost! 2t |
+| Situasjon | Språk | Rund | Inline | Stor Watch / CarPlay-rad |
+| --- | --- | --- | --- | --- |
+| Neste hendelse | Bokmål | Frost! · 2 t | Frost! 2t | Frost! 2t |
+| Neste hendelse | Inntrøndersk | Frost! · 2 t | Frost! 2t | Frost! 2t |
 
 ---
 
@@ -312,10 +312,10 @@ varighet.
 
 ## Watch og CarPlay-widget
 
-| Språk | Rund | Inline | Stor Watch / CarPlay-rad |
-| --- | --- | --- | --- |
-| Bokmål | Sol! · 4 t | Sol! 4t | Sol! 4t |
-| Inntrøndersk | Sol! · 4 t | Sol! 4t | Sol! 4t |
+| Situasjon | Språk | Rund | Inline | Stor Watch / CarPlay-rad |
+| --- | --- | --- | --- | --- |
+| Neste hendelse | Bokmål | Sol! · 4 t | Sol! 4t | Sol! 4t |
+| Neste hendelse | Inntrøndersk | Sol! · 4 t | Sol! 4t | Sol! 4t |
 
 ---
 
@@ -341,10 +341,10 @@ markering og varm temperatur rød-oransje markering på Hjem.
 
 ## Watch og CarPlay-widget
 
-| Språk | Rund | Inline | Stor Watch / CarPlay-rad |
-| --- | --- | --- | --- |
-| Bokmål | <10° · 2 t | <10° 2t | <10° 2t |
-| Inntrøndersk | <10° · 2 t | <10° 2t | <10° 2t |
+| Situasjon | Språk | Rund | Inline | Stor Watch / CarPlay-rad |
+| --- | --- | --- | --- | --- |
+| Neste hendelse | Bokmål | <10° · 2 t | <10° 2t | <10° 2t |
+| Neste hendelse | Inntrøndersk | <10° · 2 t | <10° 2t | <10° 2t |
 
 ---
 
