@@ -2938,6 +2938,27 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(Planner.isWithinRotatingHomeHorizon(base.addingTimeInterval(24 * 60 * 60 + 1), now: base))
     }
 
+    func testMorningBandsKeepThreeCalendarDaysWithoutRotatingHorizon() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let now = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 5, day: 10, hour: 6)))
+        let hours = [
+            ForecastHour(time: now.addingTimeInterval(-7 * 3_600), temp: 8, precip: 0, wind: 1, cloud: 30, dew: 4),
+            ForecastHour(time: now, temp: 8, precip: 0, wind: 1, cloud: 30, dew: 4),
+            ForecastHour(time: now.addingTimeInterval(24 * 3_600), temp: 9, precip: 0, wind: 1, cloud: 30, dew: 4),
+            ForecastHour(time: now.addingTimeInterval(48 * 3_600), temp: 10, precip: 0, wind: 1, cloud: 30, dew: 4),
+            ForecastHour(time: now.addingTimeInterval(72 * 3_600), temp: 11, precip: 0, wind: 1, cloud: 30, dew: 4),
+        ]
+        let visible = ForecastDaySelection.visibleDays(
+            from: ForecastDay.make(from: hours, calendar: calendar), now: now, calendar: calendar
+        )
+        XCTAssertEqual(visible.map(\.date), [
+            calendar.startOfDay(for: now),
+            calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: now)),
+            calendar.date(byAdding: .day, value: 2, to: calendar.startOfDay(for: now)),
+        ])
+    }
+
     @MainActor
     func testForecastRecipientsExcludeRemovedAndRelocatedPlaces() {
         let removed = Place(name: "Slettet", lat: 64, lon: 11)

@@ -512,9 +512,11 @@ dugg og sol i hendelseslisten. Den låser at Watch/CarPlay beholder de tre
 nærmeste ulike typene, og at den serialiserte Watch-overføringen og
 CarPlay-fellesstedet peker til samme ene sted.
 
-**AUTO-236 · ÅPEN** — Finn fram en liten, UI-uavhengig hjelpefunksjon for
-trekalenderdagsutvalget i værbåndet og legg til regresjonstest for at den ikke
-arver rullerende varslers 24-timersgrense.
+**AUTO-236 · FULLFØRT 2026-09-21** — Flyttet trekalenderdagsutvalget for
+værbåndet til den lille, UI-uavhengige `ForecastDaySelection`-hjelperen.
+Regresjonstesten dekker morgen 05–07: gårsdagen skjules, mens i dag og to hele
+kommende kalenderdager fortsatt vises uavhengig av rullerende varsels
+24-timersgrense.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

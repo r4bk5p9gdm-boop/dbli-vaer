@@ -32,19 +32,7 @@ struct ForecastVariantsView: View {
 
     private var days: [ForecastDay] { ForecastDay.make(from: forecast) }
     private var visibleDays: [ForecastDay] {
-        let calendar = Calendar.current
-        let now = Date()
-        let relevantDays: [ForecastDay]
-        if calendar.component(.hour, from: now) >= 5,
-           calendar.component(.hour, from: now) < 7 {
-            let today = calendar.startOfDay(for: now)
-            relevantDays = days.filter { $0.date >= today }
-        } else {
-            relevantDays = days
-        }
-        // Keep the Home and expanded-place forecasts visually stable: exactly
-        // the first three available calendar days, never a partial fourth.
-        return Array(relevantDays.prefix(3))
+        ForecastDaySelection.visibleDays(from: days, now: Date())
     }
 
     var body: some View {
@@ -73,7 +61,7 @@ struct ForecastVariantsView: View {
     }
 }
 
-private struct ForecastDay: Identifiable {
+struct ForecastDay: Identifiable {
     let date: Date
     let hours: [ForecastHour]
     var id: Date { date }
@@ -85,6 +73,26 @@ private struct ForecastDay: Identifiable {
         return grouped.keys.sorted().map { date in
             ForecastDay(date: date, hours: grouped[date, default: []].sorted { $0.time < $1.time })
         }
+    }
+}
+
+/// Keeps the three-calendar-day weather band independent from the shorter
+/// 24-hour rotating-alert horizon on Home.
+enum ForecastDaySelection {
+    static func visibleDays(
+        from days: [ForecastDay], now: Date, calendar: Calendar = .current
+    ) -> [ForecastDay] {
+        let relevantDays: [ForecastDay]
+        if calendar.component(.hour, from: now) >= 5,
+           calendar.component(.hour, from: now) < 7 {
+            let today = calendar.startOfDay(for: now)
+            relevantDays = days.filter { $0.date >= today }
+        } else {
+            relevantDays = days
+        }
+        // Keep Home and expanded places visually stable: exactly the first
+        // three available calendar days, never a partial fourth.
+        return Array(relevantDays.prefix(3))
     }
 }
 
