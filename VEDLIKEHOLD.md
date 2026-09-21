@@ -563,14 +563,18 @@ nærmeste kommende hendelse beholder plassen sin.
 språk- eller skilletegnbytte kan oppdatere Watch-/CarPlay-snapshot uten å
 endre cachet Yr-tidspunkt eller prognosedata.
 
-**AUTO-246 · ÅPEN** — Test at gammel lokal cache ikke kan gi en Live Activity
-for en allerede passert værhendelse når appen kommer tilbake på nett.
+**AUTO-246 · FULLFØRT 2026-09-21** — Live Activity krever nå kjent og maksimalt
+seks timer gammel prognosetid. Udatert eller utløpt lokal cache beholdes i
+appen for offline visning, men kan ikke starte en misvisende nedtelling.
 
 **AUTO-247 · ÅPEN** — Test at et nytt værbånd med samme oppdateringstid ikke
 utløser unødvendig widgetreload når selve snapshotinnholdet er uendret.
 
 **AUTO-248 · ÅPEN** — Test at et nytt inntrøndersk uttrykk i språkfasiten
 ikke kan gi tom Watch-/CarPlay-etikett når det mangler en spesifikk kortform.
+
+**AUTO-249 · ÅPEN** — Test at Live Activity velger nærmeste kvalifiserte
+regn- eller snøvarsel når flere steder har oppdaterte prognoser samtidig.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

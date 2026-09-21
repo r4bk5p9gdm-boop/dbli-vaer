@@ -1955,6 +1955,16 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(LiveWeatherActivityPolicy.forecastIsFresh(fetchedAt: base, now: base.addingTimeInterval(6 * 3_600 + 1)))
     }
 
+    func testLiveActivityRejectsUnknownOrExpiredForecastCache() {
+        XCTAssertFalse(LiveWeatherActivityPolicy.forecastIsUsable(fetchedAt: nil, now: base))
+        XCTAssertFalse(LiveWeatherActivityPolicy.forecastIsUsable(
+            fetchedAt: base.addingTimeInterval(-6 * 3_600 - 1), now: base
+        ))
+        XCTAssertTrue(LiveWeatherActivityPolicy.forecastIsUsable(
+            fetchedAt: base.addingTimeInterval(-6 * 3_600), now: base
+        ))
+    }
+
     @MainActor
     func testWidgetFreshSnapshotAppliesLocalTemperatureOffsetLikeFallback() throws {
         var place = Place(name: "Klinga", lat: 64, lon: 11)

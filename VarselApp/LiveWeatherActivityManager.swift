@@ -34,6 +34,14 @@ enum LiveWeatherActivityPolicy {
         let age = now.timeIntervalSince(fetchedAt)
         return age >= 0 && age <= maxAge
     }
+
+    /// Live Activities must never be started from weather data whose age is
+    /// unknown. The normal forecast UI may keep that cache for offline use,
+    /// but a countdown is only useful when its underlying event is fresh.
+    static func forecastIsUsable(fetchedAt: Date?, now: Date, maxAge: TimeInterval = 6 * 3_600) -> Bool {
+        guard let fetchedAt else { return false }
+        return forecastIsFresh(fetchedAt: fetchedAt, now: now, maxAge: maxAge)
+    }
 }
 
 @MainActor
@@ -192,7 +200,9 @@ enum LiveWeatherActivityManager {
               rule.type == .regn || rule.type == .sno,
               !rule.onlyWhenNearby || nearbyPlaceIDs.contains(place.id),
               let forecast,
-              (forecastFetchedAt == nil || LiveWeatherActivityPolicy.forecastIsFresh(fetchedAt: forecastFetchedAt!, now: now, maxAge: forecastFreshness)),
+              LiveWeatherActivityPolicy.forecastIsUsable(
+                fetchedAt: forecastFetchedAt, now: now, maxAge: forecastFreshness
+              ),
               let status = Planner.status(
                 for: rule,
                 forecast: forecast,
