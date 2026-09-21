@@ -56,7 +56,7 @@ beholdes, som på Klinga, nerri Namsos eller oppi Hornburu.
 | --- | --- | --- |
 | Samme dag eller natt | **{Værbeskrivelse} kl. {HH}.** | **{Værbeskrivelse} kl. {HH}.** |
 | I morgen, ukedag eller helg | **{Værbeskrivelse} {ukedag} kl. {HH} — {varighet}.** | **{Værbeskrivelse} {ukedag-trønder} kl. {HH} — {varighet}.** |
-| Kortere enn én time | Varighet utelates normalt. | Varighet utelates normalt. |
+| Kortere enn én time | Varighet er alltid med, avrundet til 15, 30 eller 45 min. | Varighet er alltid med, avrundet til 15, 30 eller 45 min. |
 | 1–4 timer | i 2 timer | i 2 tima |
 | Mesteparten av natta | hele natta | heile natta |
 | Mesteparten av dagen | store deler av dagen | store dela av da'n |
@@ -74,8 +74,9 @@ Den går rett på dag og klokkeslett når dette gir ny informasjon.
 
 Eksempel: **D bli Regn! om 2 tima.** / **4 tima småregn fra kl. 14.**
 Nåstatus bruker aldri «fra kl.»: **D blæs!** / **Fresk bris i 2 tima til.**
-For en hendelse under én time holder andre linje seg til værbeskrivelsen,
-som **Småregn.**
+Varighet er alltid med: under én time avrundes til 15, 30 eller 45 min;
+deretter brukes hele timer. Eksempel: **D bli Regn! om en halvtime.** /
+**30 min småregn fra kl. 14.**
 
 ### Apple Watch og CarPlay-widget
 
@@ -103,14 +104,18 @@ hører ikke hjemme i sirkelen.
 | Lite | Litt regn | Småregn |
 | Vanlig | Regn | Regn |
 | Mye | Kraftig regn | Striskur |
-| Byger | Regnbyger | Regnbyga |
+| Byger i samme periode | Spredte regnbyger | Regnbyga |
+
+Regnbyger brukes når det kommer og går, men uten et tørt opphold på minst én
+time. Varigheten er hele bygeperioden, ikke hvert enkelt regnskyll. Et opphold
+på én time eller mer starter en ny nedbørhendelse.
 
 ## Push-varsel
 
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
 | Sikkert, neste dag | **D bli Regn! nerri Namsos i morgen.** ↳ Litt regn mandag kl. 06 — i to timer. | **D bli Regn! nerri Namsos i mårrå.** ↳ Småregn manda'n kl. 06 — i to tima. |
-| Usikkert, nært | **Det kan bli Regn! på Klinga om en halvtime.** ↳ Yr kl. 14. | **D kan bli Regn! på Klinga om en halvtime.** ↳ Yr kl. 14. |
+| Usikkert, nært | **Det kan bli Regn! på Klinga om en halvtime.** ↳ Yr kl. 14 — i 30 min. | **D kan bli Regn! på Klinga om en halvtime.** ↳ Yr kl. 14 — i 30 min. |
 | Kraftig i natt | **D bli Regn! oppi Hornburu i natt.** ↳ Kraftig regn kl. 02 — hele natta. | **D bli Regn! oppi Hornburu i natt.** ↳ Striskur kl. 02 — heile natta. |
 
 ## Hjem — rullerende varsel
@@ -118,7 +123,7 @@ hører ikke hjemme i sirkelen.
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
 | Framtidig | **D bli Regn! om 2 timer.** ↳ 4 timer med litt regn fra kl. 14. | **D bli Regn! om 2 tima.** ↳ 4 tima med småregn fra kl. 14. |
-| Nært | **D bli Regn! om en halvtime.** ↳ Litt regn. | **D bli Regn! om en halvtime.** ↳ Småregn. |
+| Nært | **D bli Regn! om en halvtime.** ↳ 30 min litt regn fra kl. 14. | **D bli Regn! om en halvtime.** ↳ 30 min småregn fra kl. 14. |
 | Pågår nå | **D e Regn!** ↳ Litt regn i 45 min til. | **D e Regn!** ↳ Småregn i 45 min til. |
 
 ## Watch og CarPlay-widget
