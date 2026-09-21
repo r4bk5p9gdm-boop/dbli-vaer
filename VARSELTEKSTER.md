@@ -21,11 +21,22 @@ Engelsk venter til den norske teksten er godkjent.
 | --- | --- | --- |
 | Sikkert | **D bli {Værtype}! {preposisjon} {sted} {tid}.** | **D bli {Værtype}! {preposisjon} {sted} {tid}.** |
 | Usikkert | **Det kan bli {Værtype}! {preposisjon} {sted} {tid}.** | **D kan bli {Værtype}! {preposisjon} {sted} {tid}.** |
-| Pågår nå | **Det er {værtype}!** | **D e {værtype}!** |
+| Pågår nå | Se værtypens egen nå-tekst nedenfor. | Se værtypens egen nå-tekst nedenfor. |
 
-{Værtype} har stor forbokstav: Regn, Snø, Vindkast, Duggfall, Frost, Sol og
-Under 10°. Stedets egen preposisjon beholdes, som på Klinga, nerri Namsos
-eller oppi Hornburu.
+### Værtypenavn og nå-tekst
+
+Første linje bruker stor forbokstav i værtypen. Stedets egen preposisjon
+beholdes, som på Klinga, nerri Namsos eller oppi Hornburu.
+
+| Type | Bokmål i første linje | Inntrøndersk i første linje | Nå-tekst bokmål | Nå-tekst inntrøndersk |
+| --- | --- | --- | --- | --- |
+| Regn | Regn | Regn | D e Regn! | D e Regn! |
+| Snø | Snø | Snø | Det Snør! | Det Snør! |
+| Vind | Vindkast | Vindkast | Det blåser! | D blæs! |
+| Dugg | Duggfall | Doggfall | Det er duggfall! | D Dogge! |
+| Frost | Frost | Frost | Det er frost! | D e Frost! |
+| Sol | Sol | Sol | Det er sol! | D e Sol! |
+| Temperatur | Under {grense}° / Over {grense}° | Under {grense}° / Over {grense}° | Det er under {grense}°! | D e Under {grense}°! |
 
 ### Tid i første linje
 
@@ -63,6 +74,8 @@ Den går rett på dag og klokkeslett når dette gir ny informasjon.
 
 Eksempel: **D bli Regn! om 2 tima.** / **4 tima småregn fra kl. 14.**
 Nåstatus bruker aldri «fra kl.»: **D blæs!** / **Fresk bris i 2 tima til.**
+For en hendelse under én time holder andre linje seg til værbeskrivelsen,
+som **Småregn.**
 
 ### Apple Watch og CarPlay-widget
 
@@ -80,7 +93,7 @@ hører ikke hjemme i sirkelen.
 
 ---
 
-## Regn
+# Regn
 
 ### Styringstabell
 
@@ -92,7 +105,7 @@ hører ikke hjemme i sirkelen.
 | Mye | Kraftig regn | Striskur |
 | Byger | Regnbyger | Regnbyga |
 
-### Push-varsel
+## Push-varsel
 
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
@@ -100,15 +113,15 @@ hører ikke hjemme i sirkelen.
 | Usikkert, nært | **Det kan bli Regn! på Klinga om en halvtime.** ↳ Yr kl. 14. | **D kan bli Regn! på Klinga om en halvtime.** ↳ Yr kl. 14. |
 | Kraftig i natt | **D bli Regn! oppi Hornburu i natt.** ↳ Kraftig regn kl. 02 — hele natta. | **D bli Regn! oppi Hornburu i natt.** ↳ Striskur kl. 02 — heile natta. |
 
-### Hjem — rullerende varsel
+## Hjem — rullerende varsel
 
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
-| Framtidig | **D bli Regn! om 2 timer.** ↳ 4 timer litt regn fra kl. 14. | **D bli Regn! om 2 tima.** ↳ 4 tima småregn fra kl. 14. |
+| Framtidig | **D bli Regn! om 2 timer.** ↳ 4 timer med litt regn fra kl. 14. | **D bli Regn! om 2 tima.** ↳ 4 tima med småregn fra kl. 14. |
 | Nært | **D bli Regn! om en halvtime.** ↳ Litt regn. | **D bli Regn! om en halvtime.** ↳ Småregn. |
 | Pågår nå | **D e Regn!** ↳ Litt regn i 45 min til. | **D e Regn!** ↳ Småregn i 45 min til. |
 
-### Watch og CarPlay-widget
+## Watch og CarPlay-widget
 
 | Språk | Rund | Inline | Stor Watch / CarPlay-rad |
 | --- | --- | --- | --- |
@@ -117,7 +130,7 @@ hører ikke hjemme i sirkelen.
 
 ---
 
-## Snø
+# Snø
 
 ### Styringstabell
 
@@ -129,21 +142,21 @@ hører ikke hjemme i sirkelen.
 | Mye | Kraftig snøfall | Mye snø |
 | Byger | Snøbyger | Snøbyga |
 
-### Push-varsel
+## Push-varsel
 
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
 | Sikkert, i natt | **D bli Snø! oppi Selbu i natt.** ↳ Lett snøfall kl. 02 — hele natta. | **D bli Snø! oppi Selbu i natt.** ↳ Litt snø kl. 02 — heile natta. |
 | Usikkert, neste dag | **Det kan bli Snø! på Klinga i morgen.** ↳ Snøfnugg tirsdag kl. 07. | **D kan bli Snø! på Klinga i mårrå.** ↳ Snøfnugg tirsda'n kl. 07. |
 
-### Hjem — rullerende varsel
+## Hjem — rullerende varsel
 
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
 | Framtidig | **D bli Snø! om 3 timer.** ↳ 2 timer lett snøfall fra kl. 17. | **D bli Snø! om 3 tima.** ↳ 2 tima litt snø fra kl. 17. |
 | Pågår nå | **Det Snør!** ↳ Snøfall i 2 timer til. | **Det Snør!** ↳ Snøfall i 2 tima til. |
 
-### Watch og CarPlay-widget
+## Watch og CarPlay-widget
 
 | Språk | Rund | Inline | Stor Watch / CarPlay-rad |
 | --- | --- | --- | --- |
@@ -152,44 +165,44 @@ hører ikke hjemme i sirkelen.
 
 ---
 
-## Vindkast
+# Vindkast
 
 ### Styringstabell — forenklet Beaufort
 
 | Vindkast m/s | Bokmål | Inntrøndersk |
 | --- | --- | --- |
 | 0 | Still | Blikkstilla |
-| 1 | Flau vind | Gufsing |
+| 1 | Flau vind | Liten gufs |
 | 2–3 | Svak vind | Trekk |
 | 4–5 | Lett bris | Lett bris |
-| 6–7 | Laber bris | Freskt |
+| 6–7 | Laber bris | Blæs freskt |
 | 8–10 | Frisk bris | Fresk bris |
 | 11–13 | Liten kuling | Liten kuling |
 | 14–17 | Stiv kuling | Stiv kuling |
 | 18–20 | Sterk kuling | Sterk kuling |
-| 21–24 | Liten storm | Hatta og høy |
-| 25–28 | Full storm | Uvær |
+| 21–24 | Liten storm | Blæs hatta og høy |
+| 25–28 | Full storm | Blæs opp t uvær |
 | 29–32 | Sterk storm | Sterk storm |
 | 33+ | Orkan | Orkan |
 
 Vindvarsel følger **vindkast**, ikke middelvind. Værdata kan fortsatt vise
 begge slik Yr gjør.
 
-### Push-varsel
+## Push-varsel
 
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
 | Sikkert, neste dag | **D bli Vindkast! på Klinga i morgen.** ↳ Frisk bris mandag kl. 14 — i tre timer. | **D bli Vindkast! på Klinga i mårrå.** ↳ Fresk bris manda'n kl. 14 — i tre tima. |
 | Usikkert, helg | **Det kan bli Vindkast! oppi Selbu til helga.** ↳ Liten kuling søndag kl. 14 — i to timer. | **D kan bli Vindkast! oppi Selbu te helga.** ↳ Liten kuling sønda'n kl. 14 — i to tima. |
 
-### Hjem — rullerende varsel
+## Hjem — rullerende varsel
 
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
 | Framtidig | **D bli Vindkast! om 3 timer.** ↳ Frisk bris i 4 timer fra kl. 14. | **D bli Vindkast! om 3 tima.** ↳ Fresk bris i 4 tima fra kl. 14. |
 | Pågår nå | **Det blåser!** ↳ Frisk bris i 2 timer til. | **D blæs!** ↳ Fresk bris i 2 tima til. |
 
-### Watch og CarPlay-widget
+## Watch og CarPlay-widget
 
 | Språk | Rund | Inline | Stor Watch / CarPlay-rad |
 | --- | --- | --- | --- |
@@ -198,7 +211,7 @@ begge slik Yr gjør.
 
 ---
 
-## Duggfall
+# Duggfall
 
 ### Styringstabell
 
@@ -211,21 +224,21 @@ begge slik Yr gjør.
 I pushvarsler kan beregnet lokal temperatur forklare grunnlaget. I Hjem, Watch
 og CarPlay brukes ikke duggpunktstall: varighet og starttid er nyttigere.
 
-### Push-varsel
+## Push-varsel
 
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
 | Sikkert, neste dag | **D bli Duggfall! på Klinga i morgen.** ↳ Duggfall ved 8° onsdag kl. 05. | **D bli Duggfall! på Klinga i mårrå.** ↳ Doggfall ved 8° onsda'n kl. 05. |
 | Usikkert, natt | **Det kan bli Duggfall! på Klinga i natt.** ↳ Mulig duggfall kl. 02. | **D kan bli Duggfall! på Klinga i natt.** ↳ Mulig doggfall kl. 02. |
 
-### Hjem — rullerende varsel
+## Hjem — rullerende varsel
 
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
 | Framtidig | **D bli Duggfall! om 3 timer.** ↳ Duggfall i 3 timer fra kl. 05. | **D bli Duggfall! om 3 tima.** ↳ Doggfall i 3 tima fra kl. 05. |
 | Pågår nå | **Det er duggfall!** ↳ Duggfall i 2 timer til. | **D Dogge!** ↳ Doggfall i 2 tima til. |
 
-### Watch og CarPlay-widget
+## Watch og CarPlay-widget
 
 | Språk | Rund | Inline | Stor Watch / CarPlay-rad |
 | --- | --- | --- | --- |
@@ -234,7 +247,7 @@ og CarPlay brukes ikke duggpunktstall: varighet og starttid er nyttigere.
 
 ---
 
-## Frost
+# Frost
 
 ### Styringstabell
 
@@ -247,21 +260,21 @@ og CarPlay brukes ikke duggpunktstall: varighet og starttid er nyttigere.
 Hvit markering i temperatur-raden betyr faktisk 0° eller kaldere. Blå
 frostmarkør betyr marginbasert frostfare over 0°.
 
-### Push-varsel
+## Push-varsel
 
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
 | Sikkert | **D bli Frost! på Klinga i natt.** ↳ Frost ved −1° kl. 03 — i fire timer. | **D bli Frost! på Klinga i natt.** ↳ Frost ved −1° kl. 03 — i fire tima. |
 | Marginbasert | **Det kan bli Frost! på Klinga i morgen.** ↳ Fare for frost ved 2° tirsdag kl. 05. | **D kan bli Frost! på Klinga i mårrå.** ↳ Fare for frost ved 2° tirsda'n kl. 05. |
 
-### Hjem — rullerende varsel
+## Hjem — rullerende varsel
 
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
 | Framtidig | **D bli Frost! i natt.** ↳ Frost ved −1° fra kl. 03. | **D bli Frost! i natt.** ↳ Frost ved −1° fra kl. 03. |
 | Pågår nå | **Det er frost!** | **D e Frost!** |
 
-### Watch og CarPlay-widget
+## Watch og CarPlay-widget
 
 | Språk | Rund | Inline | Stor Watch / CarPlay-rad |
 | --- | --- | --- | --- |
@@ -270,7 +283,7 @@ frostmarkør betyr marginbasert frostfare over 0°.
 
 ---
 
-## Sol
+# Sol
 
 ### Styringstabell
 
@@ -283,21 +296,21 @@ Sol er en valgt regel, ikke standard push. Den vises heller ikke etter lokal
 solnedgang. «Sol om 4 timer» beskriver start; «sol i 4 timer» beskriver
 varighet.
 
-### Push-varsel
+## Push-varsel
 
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
 | Sikkert | **D bli Sol! i Bergen i morgen.** ↳ Sol fredag kl. 12 — i sju timer. | **D bli Sol! i Bergen i mårrå.** ↳ Sol fredag kl. 12 — i sju tima. |
 | Usikkert | **Det kan bli Sol! på Klinga i morgen.** ↳ Solgløtt tirsdag kl. 10 — i to timer. | **D kan bli Sol! på Klinga i mårrå.** ↳ Solgløtt tirsda'n kl. 10 — i to tima. |
 
-### Hjem — rullerende varsel
+## Hjem — rullerende varsel
 
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
 | Framtidig | **D bli Sol! om 4 timer.** ↳ Sol i 7 timer fra kl. 12. | **D bli Sol! om 4 tima.** ↳ Sol i 7 tima fra kl. 12. |
 | Pågår nå | **Det er sol!** ↳ Sol i 2 timer til. | **D e Sol!** ↳ Sol i 2 tima til. |
 
-### Watch og CarPlay-widget
+## Watch og CarPlay-widget
 
 | Språk | Rund | Inline | Stor Watch / CarPlay-rad |
 | --- | --- | --- | --- |
@@ -306,19 +319,19 @@ varighet.
 
 ---
 
-## Temperatur
+# Temperatur
 
 Temperaturvarsel kan ha både under- og overgrense. Kald temperatur bruker blå
 markering og varm temperatur rød-oransje markering på Hjem.
 
-### Push-varsel
+## Push-varsel
 
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
 | Undergrense | **D bli Under 10°! på Klinga i morgen.** ↳ 8° mandag kl. 06 — i tre timer. | **D bli Under 10°! på Klinga i mårrå.** ↳ 8° manda'n kl. 06 — i tre tima. |
 | Overgrense | **D bli Over 20°! på Klinga i morgen.** ↳ 22° mandag kl. 14 — i fire timer. | **D bli Over 20°! på Klinga i mårrå.** ↳ 22° manda'n kl. 14 — i fire tima. |
 
-### Hjem — rullerende varsel
+## Hjem — rullerende varsel
 
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
@@ -326,7 +339,7 @@ markering og varm temperatur rød-oransje markering på Hjem.
 | Overgrense, framtidig | **D bli Over 20°! om 3 timer.** ↳ 22° fra kl. 14. | **D bli Over 20°! om 3 tima.** ↳ 22° fra kl. 14. |
 | Pågår nå | **Det er under 10°!** | **D e Under 10°!** |
 
-### Watch og CarPlay-widget
+## Watch og CarPlay-widget
 
 | Språk | Rund | Inline | Stor Watch / CarPlay-rad |
 | --- | --- | --- | --- |
