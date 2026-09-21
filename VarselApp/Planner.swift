@@ -341,6 +341,21 @@ enum Planner {
             if status.type == .dugg {
                 return "Duggpunkt ved \(number)°C."
             }
+            if status.type == .temperatur,
+               let rule = place.rulesForDisplay.first(where: { $0.id == status.ruleID }) {
+                let calendar = Calendar.current
+                let restOfDay = forecast.filter {
+                    calendar.isDate($0.time, inSameDayAs: hour.time) && $0.time >= hour.time
+                }
+                let dayHours = restOfDay.isEmpty ? [hour] : restOfDay
+                let extreme = rule.temperatureDirection == .above
+                    ? dayHours.map(\.temp).max()
+                    : dayHours.map(\.temp).min()
+                if let extreme {
+                    let label = rule.temperatureDirection == .above ? "Maksimumstemp" : "Minimumstemp"
+                    return "\(label) i dag blir \(extreme.formatted(.number.precision(.fractionLength(0...1))))°C."
+                }
+            }
             let continuingDuration = durationText.map { "\($0) til" }
             return [base, continuingDuration].compactMap { $0 }.joined(separator: " ") + "."
         }

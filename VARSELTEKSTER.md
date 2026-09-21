@@ -359,8 +359,8 @@ markering og varm temperatur rød-oransje markering på Hjem.
 | --- | --- | --- |
 | Undergrense, framtidig | **D bli Under 10°! om 2 timer.** ↳ Lokalt anslag 8° i tre timer fra kl. 06. | **D bli Under 10°! om 2 tima.** ↳ Lokalt anslag 8° i tre tima fra kl. 06. |
 | Overgrense, framtidig | **D bli Over 20°! om 3 timer.** ↳ Lokalt anslag 22° i fire timer fra kl. 14. | **D bli Over 20°! om 3 tima.** ↳ Lokalt anslag 22° i fire tima fra kl. 14. |
-| Pågår nå, undergrense | **Det er under 10°!** ↳ Lokalt anslag 8° i tre timer til. | **D e Under 10°!** ↳ Lokalt anslag 8° i tre tima til. |
-| Pågår nå, overgrense | **Det er over 20°!** ↳ Lokalt anslag 22° i fire timer til. | **D e Over 20°!** ↳ Lokalt anslag 22° i fire tima til. |
+| Pågår nå, undergrense | **Det er under 10°!** ↳ Minimumstemp i dag blir 5°C. | **D e Under 10°!** ↳ Minimumstemp i dag blir 5°C. |
+| Pågår nå, overgrense | **Det er over 20°!** ↳ Maksimumstemp i dag blir 22°C. | **D e Over 20°!** ↳ Maksimumstemp i dag blir 22°C. |
 
 ## Watch og CarPlay-widget
 

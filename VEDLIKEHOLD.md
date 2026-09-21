@@ -54,6 +54,11 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-102 · FULLFØRT 2026-09-21** — Temperatur-NÅ på Hjem forklarer nå
+dagens relevante ekstrem i stedet for et øyeblikksanslag: «Minimumstemp i dag
+blir 5°C» for undergrense og «Maksimumstemp i dag blir 22°C» for overgrense.
+Regresjonstest dekker begge retninger.
+
 **BRUKER-101 · FULLFØRT 2026-09-21** — Ryddet den rullerende
 regn-/duggteksten: neste dags overskrift sier nå «i mårrå, kl. 09» uten
 ukedagsduplikat, og lange usikre regnperioder uttrykkes som «Oppte 10 tima

@@ -1465,6 +1465,32 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testRotatingCurrentTemperatureUsesTodaysRelevantExtreme() {
+        var below = Rule(type: .temperatur)
+        below.threshold = 10
+        var above = Rule(type: .temperatur)
+        above.threshold = 20
+        above.temperatureDirection = .above
+        var place = Place(name: "Klinga", lat: 64, lon: 11)
+        place.rules = [below, above]
+        let hours = [
+            ForecastHour(time: base, temp: 7.6, precip: 0, wind: 1, cloud: 40, dew: 3),
+            ForecastHour(time: base.addingTimeInterval(3_600), temp: 5, precip: 0, wind: 1, cloud: 40, dew: 2),
+            ForecastHour(time: base.addingTimeInterval(6 * 3_600), temp: 22, precip: 0, wind: 1, cloud: 40, dew: 6),
+        ]
+
+        let currentBelow = WeatherStatus(ruleID: below.id, type: .temperatur, text: "", eventAt: base, isNow: true)
+        let currentAbove = WeatherStatus(ruleID: above.id, type: .temperatur, text: "", eventAt: base, isNow: true)
+        XCTAssertEqual(
+            Planner.rotatingStatusDetail(for: currentBelow, place: place, forecast: hours),
+            "Minimumstemp i dag blir 5°C."
+        )
+        XCTAssertEqual(
+            Planner.rotatingStatusDetail(for: currentAbove, place: place, forecast: hours),
+            "Maksimumstemp i dag blir 22°C."
+        )
+    }
+
     func testWindStrengthUsesEverydayBeaufortNames() {
         XCTAssertEqual(windStrengthLabel(for: 0), "stille")
         XCTAssertEqual(windStrengthLabel(for: 4), "lett bris")
