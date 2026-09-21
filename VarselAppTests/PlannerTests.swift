@@ -133,6 +133,32 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(restored.snapshot?.place.id, snapshot.place.id)
     }
 
+    @MainActor
+    func testChangingWidgetLanguageKeepsCachedForecastTimestamp() throws {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let hour = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 30, dew: 4)
+        let cached = WidgetWeatherSnapshot(
+            place: place, forecast: [hour], updatedAt: base,
+            languageStyle: .bokmal, textSeparator: .space
+        )
+        let fallback = try XCTUnwrap(Store.widgetSnapshot(
+            place: place, forecast: [], updatedAt: nil, cached: cached
+        ))
+
+        let sent = WidgetWeatherSnapshot(
+            place: fallback.place, forecast: fallback.forecast, updatedAt: fallback.updatedAt,
+            languageStyle: .inntrondersk, textSeparator: .dash
+        )
+        let transferred = try JSONDecoder().decode(
+            WatchWeatherTransfer.self,
+            from: JSONEncoder().encode(WatchWeatherTransfer(snapshot: sent, sentAt: base.addingTimeInterval(1)))
+        )
+        XCTAssertEqual(transferred.snapshot?.updatedAt, base)
+        XCTAssertEqual(transferred.snapshot?.forecast, [hour])
+        XCTAssertEqual(transferred.snapshot?.languageStyle, .inntrondersk)
+        XCTAssertEqual(transferred.snapshot?.textSeparator, .dash)
+    }
+
     func testFailedRefreshKeepsOriginalCacheTimestamp() throws {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let hour = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 30, dew: 4)
