@@ -1947,6 +1947,27 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(raw.temp, 10)
     }
 
+    @MainActor
+    func testWatchTransferKeepsUpdatedOfflineLocalTemperatureOffset() throws {
+        var place = Place(name: "Klinga", lat: 64, lon: 11)
+        place.localTemperatureOffset = 1
+        let raw = ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 20, dew: 5)
+        let cached = try XCTUnwrap(Store.widgetSnapshot(
+            place: place, forecast: [raw], updatedAt: base, cached: nil
+        ))
+        place.localTemperatureOffset = 3
+        let offline = try XCTUnwrap(Store.widgetSnapshot(
+            place: place, forecast: [], updatedAt: nil, cached: cached
+        ))
+
+        let received = try JSONDecoder().decode(
+            WatchWeatherTransfer.self,
+            from: JSONEncoder().encode(WatchWeatherTransfer(snapshot: offline, sentAt: base))
+        )
+        XCTAssertEqual(received.snapshot?.forecast.first?.temp, 13)
+        XCTAssertEqual(received.snapshot?.place.localTemperatureOffset, 3)
+    }
+
     func testSeparatorChangeChangesReplanConfigurationSignature() {
         XCTAssertNotEqual(Store.configurationSignature(languageStyle: .bokmal, separator: .space), Store.configurationSignature(languageStyle: .bokmal, separator: .dash))
         XCTAssertNotEqual(Store.configurationSignature(languageStyle: .bokmal, separator: .dash), Store.configurationSignature(languageStyle: .english, separator: .dash))

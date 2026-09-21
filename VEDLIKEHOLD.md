@@ -546,9 +546,9 @@ lokal temperaturjustering også uten nett. Bare forskjellen fra justeringen da
 snapshottet ble lagret blir brukt, så rå Yr-data og andre lagrede steder ikke
 endres. Regresjonstesten dekker både endret 1° → 3°, cachet verdi og rådata.
 
-**AUTO-242 · ÅPEN** — Test at Watch-overføringen bruker den oppdaterte,
-lokaljusterte widgettemperaturen etter at temperaturjusteringen for det valgte
-stedet er endret uten ny Yr-henting.
+**AUTO-242 · FULLFØRT 2026-09-21** — La til regresjonstest for offline
+Watch-overføring etter at lokal temperaturjustering endres. Klokka mottar den
+oppdaterte temperaturen og gjeldende justering, uten en ny Yr-henting.
 
 **AUTO-243 · ÅPEN** — Revider og test at lagret værbånd alltid beholder en
 trygg, tydelig foreldet-status når appen åpnes uten dekning, uten å fjerne
@@ -557,6 +557,10 @@ siste kjente sted eller tre dagers bånd.
 **AUTO-244 · ÅPEN** — Revider grensen mellom nåværende vær og kommende
 værhendelser i delte Watch-/CarPlay-data, slik at en utløpt NÅ-status ikke
 fortrenger nærmeste planlagte varsling.
+
+**AUTO-245 · ÅPEN** — Test at en ren endring av språk eller skilletegn
+oppdaterer Watch- og CarPlay-snapshot uten å forlenge eller endre tidspunktet
+for den cachede Yr-prognosen.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
