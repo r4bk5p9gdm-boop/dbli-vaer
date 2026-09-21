@@ -306,7 +306,7 @@ enum Planner {
             let amount = status.possible == true
                 ? (hour.precipMax ?? hour.precipitationRiskRate)
                 : hour.precipitationRate
-            base = "\(status.possible == true ? "Mulig " : "")\(PrecipitationCopy.rain(amount))"
+            base = PrecipitationCopy.rain(amount)
         case .sno:
             let water = status.possible == true
                 ? (hour.precipMax ?? hour.precipitationRiskRate)
@@ -339,10 +339,18 @@ enum Planner {
             // This also avoids repeating "Duggfall" immediately below the
             // already explicit current-state headline.
             if status.type == .dugg {
-                return "Temperaturen er \(number)°."
+                return "Duggpunkt ved \(number)°C."
             }
             let continuingDuration = durationText.map { "\($0) til" }
             return [base, continuingDuration].compactMap { $0 }.joined(separator: " ") + "."
+        }
+
+        // A long, uncertain rain period is easier to understand as a bounded
+        // shower window. The headline already says «kan bli», so the detail
+        // does not repeat «mulig», nor does it repeat the start clock.
+        if status.type == .regn, status.possible == true, let duration, duration >= 4 {
+            let weekday = weekdayLabel(hour.time)
+            return "Opptil \(duration) \(duration == 1 ? "time" : "timer") regnbyger på \(weekday)."
         }
 
         let start = "fra kl. \(shortClockLabel(hour.time))"

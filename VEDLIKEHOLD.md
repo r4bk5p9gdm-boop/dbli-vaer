@@ -54,6 +54,12 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-101 · FULLFØRT 2026-09-21** — Ryddet den rullerende
+regn-/duggteksten: neste dags overskrift sier nå «i mårrå, kl. 09» uten
+ukedagsduplikat, og lange usikre regnperioder uttrykkes som «Oppte 10 tima
+regnbyga på tirsda'n». NÅ-dugg sier «Doggpunkt ved 7°C» i stedet for å gjenta
+«Doggfall». Regresjonstester dekker begge språk og den lange regnvarianten.
+
 **BRUKER-100 · FULLFØRT 2026-09-21** — Samkjørte varseltekstfasiten for alle
 sju værtyper, sikker/usikker tilstand, NÅ/framtid og begge
 temperaturretninger. Temperatur sier nå alltid **Under/Over {grense}°**, aldri

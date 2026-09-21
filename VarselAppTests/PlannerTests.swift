@@ -1412,7 +1412,7 @@ final class PlannerTests: XCTestCase {
         )
         XCTAssertEqual(
             Planner.rotatingStatusDetail(for: currentDew, place: place, forecast: [dewHour]),
-            "Temperaturen er 7°."
+            "Duggpunkt ved 7°C."
         )
 
         var windRule = Rule(type: .vind)
@@ -1426,6 +1426,42 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(
             Planner.rotatingStatusDetail(for: currentWind, place: place, forecast: [windyHour]),
             "Frisk bris i en time til."
+        )
+    }
+
+    func testRotatingTomorrowHeadlineAndLongPossibleRainAvoidDuplication() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "Europe/Oslo")!
+        let reference = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 9, day: 16, hour: 20)))
+        let tomorrowAtNine = try XCTUnwrap(calendar.date(byAdding: .day, value: 1, to: reference))
+        let event = try XCTUnwrap(calendar.date(bySettingHour: 9, minute: 0, second: 0, of: tomorrowAtNine))
+        let rule = Rule(type: .regn)
+        let status = WeatherStatus(ruleID: rule.id, type: .regn, text: "", eventAt: event, isNow: false, possible: true)
+
+        XCTAssertEqual(
+            RotatingAlertCopy.headline(for: status, rule: rule, languageStyle: .bokmal, now: reference),
+            "Det kan bli Regn! i morgen, kl. 09."
+        )
+        XCTAssertEqual(
+            WeatherLanguage.text(
+                RotatingAlertCopy.headline(for: status, rule: rule, languageStyle: .inntrondersk, now: reference),
+                style: .inntrondersk
+            ),
+            "D kan bli Regn! i mårrå, kl. 09."
+        )
+
+        var place = Place(name: "Klinga", lat: 64, lon: 11)
+        place.rules = [rule]
+        let rainHours = (0..<10).map { offset in
+            ForecastHour(time: event.addingTimeInterval(Double(offset) * 3_600), temp: 8, precip: 0.6, wind: 1, cloud: 90, dew: 5)
+        }
+        XCTAssertEqual(
+            Planner.rotatingStatusDetail(for: status, place: place, forecast: rainHours),
+            "Opptil 10 timer regnbyger på tirsdag."
+        )
+        XCTAssertEqual(
+            WeatherLanguage.text("Opptil 10 timer regnbyger på tirsdag.", style: .inntrondersk),
+            "Oppte 10 tima regnbyga på tirsda'n."
         )
     }
 

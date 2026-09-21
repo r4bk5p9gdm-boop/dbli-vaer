@@ -229,6 +229,7 @@ enum WeatherLanguage {
             .replacingOccurrences(of: "Kraftig regn", with: "Striskur")
             .replacingOccurrences(of: "kraftig regn", with: "striskur")
             .replacingOccurrences(of: "Regnbyger", with: "Regnbyga")
+            .replacingOccurrences(of: "regnbyger", with: "regnbyga")
             .replacingOccurrences(of: "Lett snøfall", with: "Litt snø")
             .replacingOccurrences(of: "lett snøfall", with: "litt snø")
             .replacingOccurrences(of: "Snøbyger", with: "Snøbyga")
@@ -243,6 +244,7 @@ enum WeatherLanguage {
             .replacingOccurrences(of: "Sol i [0-9]+ timer nå\\.", with: LanguageCatalog.value("now.sun", language: "tr", fallback: "D e Sol!"), options: .regularExpression)
             .replacingOccurrences(of: "Fare for dugg", with: "Mulig doggfall")
             .replacingOccurrences(of: "Duggfall", with: "Doggfall")
+            .replacingOccurrences(of: "Duggpunkt", with: "Doggpunkt")
             // Current-condition messages are short, spoken phrases. Keep
             // these replacements before the generic «nå» -> «no» mapping.
             .replacingOccurrences(of: "Det blåser!", with: "D blæs!")
@@ -256,6 +258,7 @@ enum WeatherLanguage {
             .replacingOccurrences(of: "Under ([0-9,.-]+)° nå\\.?", with: "D e Under $1°!", options: .regularExpression)
             .replacingOccurrences(of: "!.", with: "!")
             .replacingOccurrences(of: "\\bnå\\b", with: LanguageCatalog.value("time.now", language: "tr", fallback: "no"), options: .regularExpression)
+            .replacingOccurrences(of: "Opptil", with: "Oppte")
             .replacingOccurrences(of: "opptil", with: "oppte")
             .replacingOccurrences(of: "denne timen", with: LanguageCatalog.value("time.this_hour", language: "tr", fallback: "herre tima"))
             .replacingOccurrences(of: "i overmorgen", with: LanguageCatalog.value("time.day_after_phrase", language: "tr", fallback: "i overmårrå"))
@@ -1200,6 +1203,14 @@ enum RotatingAlertCopy {
     private static func shortFutureTime(_ eventAt: Date, relativeTo now: Date) -> String {
         let minutes = max(0, Int((eventAt.timeIntervalSince(now) / 60).rounded()))
         if minutes <= 209 { return eventTimePhrase(eventAt, relativeTo: now) }
+        let calendar = Calendar.current
+        if let tomorrow = calendar.date(byAdding: .day, value: 1, to: now),
+           calendar.isDate(eventAt, inSameDayAs: tomorrow),
+           calendar.component(.hour, from: eventAt) >= 6 {
+            // Hjem trenger bare den korte dagkategorien her. Ukedagen
+            // tilhører detaljlinjen, slik at første linje ikke blir tung.
+            return "i morgen, kl. \(shortClockLabel(eventAt, calendar: calendar))"
+        }
         guard minutes <= 24 * 60 else { return eventTimePhrase(eventAt, relativeTo: now) }
         let hours = max(1, Int((Double(minutes) / 60).rounded()))
         return hours == 1 ? "om en time" : "om \(hours) timer"

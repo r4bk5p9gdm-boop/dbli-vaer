@@ -87,6 +87,11 @@ Hvis en NÅ-status bare er prognoseusikker, kan den ikke påstå at været skjer
 allerede. Da brukes den usikre formen, som **Det kan bli Regn!** / **D kan bli
 Regn!**, i stedet for **D e Regn!**.
 
+For en lang, usikker regnperiode brukes en roligere, ikke-dupliserende detalj:
+**D kan bli Regn! i mårrå, kl. 09.** ↳ **Oppte 10 tima regnbyga på tirsda'n.**
+Førstelinjen har dermed tidskategori og klokkeslett; detaljlinjen har varighet
+og dag, men gjentar ikke klokkeslettet eller ordet «mulig».
+
 ### Apple Watch og CarPlay-widget
 
 Korte flater bruker samme prioriterte hendelsesliste og rullerer ikke selv.
@@ -252,7 +257,7 @@ beholder det forklarende **mulig doggfall**.
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
 | Framtidig | **D bli Duggfall! om 3 timer.** ↳ Duggfall i 3 timer fra kl. 05. | **D bli Dogg! om 3 tima.** ↳ Doggfall i 3 tima fra kl. 05. |
-| Pågår nå | **Det er Duggfall!** ↳ Temperaturen er 7°. | **D Dogge!** ↳ Temperaturen er 7°. |
+| Pågår nå | **Det er Duggfall!** ↳ Duggpunkt ved 7°C. | **D Dogge!** ↳ Doggpunkt ved 7°C. |
 
 ## Watch og CarPlay-widget
 
