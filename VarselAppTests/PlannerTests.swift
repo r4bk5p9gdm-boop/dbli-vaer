@@ -1989,6 +1989,20 @@ final class PlannerTests: XCTestCase {
         ))
     }
 
+    func testLiveActivityStopsUsingCachedForecastWhenRuleIsDisabled() {
+        var rule = Rule(type: .regn)
+        let place = Place(name: "Klinga", lat: 64, lon: 11, rules: [rule])
+
+        XCTAssertTrue(LiveWeatherActivityPolicy.canUseRule(
+            rule, for: place, nearbyPlaceIDs: []
+        ))
+
+        rule.enabled = false
+        XCTAssertFalse(LiveWeatherActivityPolicy.canUseRule(
+            rule, for: place, nearbyPlaceIDs: [place.id]
+        ))
+    }
+
     func testLiveActivityPrefersNearestQualifiedEventAcrossPlaces() {
         XCTAssertTrue(LiveWeatherActivityPolicy.prefers(
             firstEventAt: base.addingTimeInterval(15 * 60), firstType: .regn,

@@ -589,8 +589,11 @@ det felles valgte stedet. Ingen overlappende test ble lagt til.
 slettet regel umiddelbart forsvinner fra hendelseskilden som Watch og CarPlay
 bygger sine neste-varsler fra.
 
-**AUTO-252 · ÅPEN** — Test at Live Activity ikke fortsetter når den aktive
-regelen blir slått av, selv om den gamle prognosen fortsatt ligger i cache.
+**AUTO-252 · FULLFØRT 2026-09-21** — Gjorde Live Activity-regelkvalifisering
+til en liten, testbar policy. Både oppstart og videreføring vurderer nå alltid
+gjeldende regeltilstand, ikke bare cachet prognose. Regresjonstesten låser at
+en slått-av regnregel ikke kan holde liv i aktiviteten, selv når stedet fortsatt
+er nær og gammel prognose finnes.
 
 **AUTO-253 · ÅPEN** — Test at et sted med `bare i nærheten` ikke kan lage en
 Live Activity etter at telefonens nærhetsstatus blir foreldet eller fjernet.

@@ -43,6 +43,19 @@ enum LiveWeatherActivityPolicy {
         return forecastIsFresh(fetchedAt: fetchedAt, now: now, maxAge: maxAge)
     }
 
+    /// A continued Live Activity must be re-authorised from the current rule
+    /// state. Cached forecast data alone is never enough to keep it alive.
+    static func canUseRule(
+        _ rule: Rule,
+        for place: Place,
+        nearbyPlaceIDs: Set<UUID>
+    ) -> Bool {
+        rule.enabled
+            && !rule.isDisplayOnly
+            && (rule.type == .regn || rule.type == .sno)
+            && (!rule.onlyWhenNearby || nearbyPlaceIDs.contains(place.id))
+    }
+
     /// The nearest usable event wins across places. Snow is preferred only
     /// when two candidates start at the exact same time.
     static func prefers(
@@ -208,9 +221,9 @@ enum LiveWeatherActivityManager {
         now: Date,
         isContinuation: Bool
     ) -> Candidate? {
-        guard rule.enabled, !rule.isDisplayOnly,
-              rule.type == .regn || rule.type == .sno,
-              !rule.onlyWhenNearby || nearbyPlaceIDs.contains(place.id),
+        guard LiveWeatherActivityPolicy.canUseRule(
+                rule, for: place, nearbyPlaceIDs: nearbyPlaceIDs
+              ),
               let forecast,
               LiveWeatherActivityPolicy.forecastIsUsable(
                 fetchedAt: forecastFetchedAt, now: now, maxAge: forecastFreshness
