@@ -522,9 +522,11 @@ kommende kalenderdager fortsatt vises uavhengig av rullerende varsels
 ukedag har regresjonstester i varslingsformatteringen, slik at push og Hjem
 ikke driver fra `VARSELTEKSTER.md`.
 
-**AUTO-238 · ÅPEN** — Test at korrupt eller delvis ulesbar lagret prognose
-faller tilbake til gyldige steder og cachedata uten at appstart eller widget
-mister siste brukbare værbånd.
+**AUTO-238 · FULLFØRT 2026-09-21** — Reviderte eksisterende lagringstester.
+De dekker allerede ulesbar prognose for ett sted, fjerning av cache for slettede
+steder og Widget-fallback etter feilrefresh. Dermed beholdes gyldige
+stedscacher og siste værbånd når en annen lagret prognose er korrupt; ingen
+ny, overlappende test ble lagt til.
 
 **AUTO-239 · ÅPEN** — Gå gjennom duplikatdempingen for planlagte varsler med
 to regler av samme værtype, og legg til regresjonstest for at én hendelse bare
