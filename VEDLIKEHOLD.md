@@ -54,6 +54,10 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-103 · FULLFØRT 2026-09-21** — Rullerende vinddetalj gjentar ikke
+lenger startklokkeslettet som allerede står i overskriften. Den sier nå for
+eksempel «Lett bris i fire timer.» Regresjonstesten er oppdatert.
+
 **BRUKER-102 · FULLFØRT 2026-09-21** — Temperatur-NÅ på Hjem forklarer nå
 dagens relevante ekstrem i stedet for et øyeblikksanslag: «Minimumstemp i dag
 blir 5°C» for undergrense og «Maksimumstemp i dag blir 22°C» for overgrense.

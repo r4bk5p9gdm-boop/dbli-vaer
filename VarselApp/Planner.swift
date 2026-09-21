@@ -368,6 +368,12 @@ enum Planner {
             return "Opptil \(duration) \(duration == 1 ? "time" : "timer") regnbyger på \(weekday)."
         }
 
+        // The wind headline already carries the time of night/day. Repeating
+        // the same start clock under the gust strength adds no information.
+        if status.type == .vind {
+            return [base, durationText].compactMap { $0 }.joined(separator: " ") + "."
+        }
+
         let start = "fra kl. \(shortClockLabel(hour.time))"
         return [base, durationText, start].compactMap { $0 }.joined(separator: " ") + "."
     }

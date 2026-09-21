@@ -218,7 +218,7 @@ begge slik Yr gjør.
 
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
-| Framtidig | **D bli Vindkast! om 3 timer.** ↳ Frisk bris i 4 timer fra kl. 14. | **D bli Vindkast! om 3 tima.** ↳ Fresk bris i 4 tima fra kl. 14. |
+| Framtidig | **D bli Vindkast! om 3 timer.** ↳ Frisk bris i fire timer. | **D bli Vindkast! om 3 tima.** ↳ Fresk bris i fire tima. |
 | Pågår nå | **Det blåser!** ↳ Frisk bris i 2 timer til. | **D blæs!** ↳ Fresk bris i 2 tima til. |
 
 ## Watch og CarPlay-widget
@@ -397,6 +397,8 @@ med varsler om regn, snø, vind, dugg, frost, sol eller temperatur.
 6. Temperatur bruker alltid under- eller overgrense i tekst og symbol. Aldri
    det generelle ordet «Temperatur» som selve varseltypen.
 7. En usikker NÅ-prognose bruker «kan bli», aldri en påstand om at været pågår.
+8. Rullerende vind gjentar ikke startklokkeslettet under en overskrift som
+   allerede sier når det blåser; detaljen er bare styrke og varighet.
 
 ## Koblingsstatus
 
