@@ -38,6 +38,11 @@ beholdes, som på Klinga, nerri Namsos eller oppi Hornburu.
 | Sol | Sol | Sol | Det er sol! | D e Sol! |
 | Temperatur | Under {grense}° / Over {grense}° | Under {grense}° / Over {grense}° | Det er under {grense}°! | D e Under {grense}°! |
 
+Temperatur er et unntak fra det generelle værtypenavnet: appen skal aldri
+skrive «D bli Temperatur!». Den må alltid si hva som skjer, for eksempel
+**D bli Under 10°!** eller **D bli Over 20°!**. På bokmål brukes små bokstaver
+i nåsetningen: **Det er under 10°!** / **Det er over 20°!**.
+
 ### Tid i første linje
 
 | Når hendelsen starter | Bokmål | Inntrøndersk | Merknad |
@@ -54,7 +59,7 @@ beholdes, som på Klinga, nerri Namsos eller oppi Hornburu.
 
 | Regel | Bokmål | Inntrøndersk |
 | --- | --- | --- |
-| Samme dag eller natt | **{Værbeskrivelse} kl. {HH}.** | **{Værbeskrivelse} kl. {HH}.** |
+| Samme dag eller natt | **{Værbeskrivelse} kl. {HH} — {varighet}.** | **{Værbeskrivelse} kl. {HH} — {varighet}.** |
 | I morgen, ukedag eller helg | **{Værbeskrivelse} {ukedag} kl. {HH} — {varighet}.** | **{Værbeskrivelse} {ukedag-trønder} kl. {HH} — {varighet}.** |
 | Kortere enn én time | Varighet er alltid med, avrundet til 15, 30 eller 45 min. | Varighet er alltid med, avrundet til 15, 30 eller 45 min. |
 | 1–4 timer | i 2 timer | i 2 tima |
@@ -77,6 +82,10 @@ Nåstatus bruker aldri «fra kl.»: **D blæs!** / **Fresk bris i 2 tima til.**
 Varighet er alltid med: under én time avrundes til 15, 30 eller 45 min;
 deretter brukes hele timer. Eksempel: **D bli Regn! om en halvtime.** /
 **30 min småregn fra kl. 14.**
+
+Hvis en NÅ-status bare er prognoseusikker, kan den ikke påstå at været skjer
+allerede. Da brukes den usikre formen, som **Det kan bli Regn!** / **D kan bli
+Regn!**, i stedet for **D e Regn!**.
 
 ### Apple Watch og CarPlay-widget
 
@@ -152,7 +161,7 @@ på én time eller mer starter en ny nedbørhendelse.
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
 | Sikkert, i natt | **D bli Snø! oppi Selbu i natt.** ↳ Lett snøfall kl. 02 — hele natta. | **D bli Snø! oppi Selbu i natt.** ↳ Litt snø kl. 02 — heile natta. |
-| Usikkert, neste dag | **Det kan bli Snø! på Klinga i morgen.** ↳ Snøfnugg tirsdag kl. 07. | **D kan bli Snø! på Klinga i mårrå.** ↳ Snøfnugg tirsda'n kl. 07. |
+| Usikkert, neste dag | **Det kan bli Snø! på Klinga i morgen.** ↳ Snøfnugg tirsdag kl. 07 — i en time. | **D kan bli Snø! på Klinga i mårrå.** ↳ Snøfnugg tirsda'n kl. 07 — i en time. |
 
 ## Hjem — rullerende varsel
 
@@ -228,13 +237,15 @@ begge slik Yr gjør.
 
 I pushvarsler kan beregnet lokal temperatur forklare grunnlaget. I Hjem, Watch
 og CarPlay brukes ikke duggpunktstall: varighet og starttid er nyttigere.
+Den korte, sikre inntrønderske overskriften bruker **Dogg!**; usikker push
+beholder det forklarende **mulig doggfall**.
 
 ## Push-varsel
 
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
-| Sikkert, neste dag | **D bli Duggfall! på Klinga i morgen kl. 05.** ↳ Duggfall ved 8° | **D bli Dogg! på Klinga i mårrå kl. 05.** ↳ Doggfall ved 8°. |
-| Usikkert, natt | **Det kan bli Duggfall! på Klinga i natt.** ↳ Mulig duggfall ved 7°. | **D kan bli Doggfall! på Klinga i natt.** ↳ Mulig doggfall ved 7°. |
+| Sikkert, neste dag | **D bli Duggfall! på Klinga i morgen.** ↳ Duggfall ved 8° tirsdag kl. 05 — i tre timer. | **D bli Dogg! på Klinga i mårrå.** ↳ Doggfall ved 8° tirsda'n kl. 05 — i tre tima. |
+| Usikkert, natt | **Det kan bli Duggfall! på Klinga i natt.** ↳ Mulig duggfall ved 7° kl. 02 — i tre timer. | **D kan bli Doggfall! på Klinga i natt.** ↳ Mulig doggfall ved 7° kl. 02 — i tre tima. |
 
 ## Hjem — rullerende varsel
 
@@ -270,14 +281,15 @@ frostmarkør betyr marginbasert frostfare over 0°.
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
 | Sikkert | **D bli Frost! på Klinga i natt.** ↳ Frost ved −1° kl. 03 — i fire timer. | **D bli Frost! på Klinga i natt.** ↳ Frost ved −1° kl. 03 — i fire tima. |
-| Marginbasert | **Det kan bli Frost! på Klinga i morgen.** ↳ Fare for frost ved 2° tirsdag kl. 05. | **D kan bli Frost! på Klinga i mårrå.** ↳ Fare for frost ved 2° tirsda'n kl. 05. |
+| Marginbasert | **Det kan bli Frost! på Klinga i morgen.** ↳ Fare for frost ved 2° tirsdag kl. 05 — i to timer. | **D kan bli Frost! på Klinga i mårrå.** ↳ Fare for frost ved 2° tirsda'n kl. 05 — i to tima. |
 
 ## Hjem — rullerende varsel
 
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
-| Framtidig | **D bli Frost! i natt.** ↳ Frost ved −1° fra kl. 03. | **D bli Frost! i natt.** ↳ Frost ved −1° fra kl. 03. |
-| Pågår nå | **Det er frost!** | **D e Frost!** |
+| Framtidig | **D bli Frost! i natt.** ↳ Frost ved −1° i fire timer fra kl. 03. | **D bli Frost! i natt.** ↳ Frost ved −1° i fire tima fra kl. 03. |
+| Pågår nå, sikkert | **Det er frost!** ↳ Frost i to timer til. | **D e Frost!** ↳ Frost i 2 tima til. |
+| Pågår nå, marginbasert | **Det kan bli Frost!** ↳ Fare for frost i to timer til. | **D kan bli Frost!** ↳ Fare for frost i 2 tima til. |
 
 ## Watch og CarPlay-widget
 
@@ -340,16 +352,19 @@ markering og varm temperatur rød-oransje markering på Hjem.
 
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
-| Undergrense, framtidig | **D bli Under 10°! om 2 timer.** ↳ 8° fra kl. 06. | **D bli Under 10°! om 2 tima.** ↳ 8° fra kl. 06. |
-| Overgrense, framtidig | **D bli Over 20°! om 3 timer.** ↳ 22° fra kl. 14. | **D bli Over 20°! om 3 tima.** ↳ 22° fra kl. 14. |
-| Pågår nå | **Det er under 10°!** | **D e Under 10°!** |
+| Undergrense, framtidig | **D bli Under 10°! om 2 timer.** ↳ Lokalt anslag 8° i tre timer fra kl. 06. | **D bli Under 10°! om 2 tima.** ↳ Lokalt anslag 8° i tre tima fra kl. 06. |
+| Overgrense, framtidig | **D bli Over 20°! om 3 timer.** ↳ Lokalt anslag 22° i fire timer fra kl. 14. | **D bli Over 20°! om 3 tima.** ↳ Lokalt anslag 22° i fire tima fra kl. 14. |
+| Pågår nå, undergrense | **Det er under 10°!** ↳ Lokalt anslag 8° i tre timer til. | **D e Under 10°!** ↳ Lokalt anslag 8° i tre tima til. |
+| Pågår nå, overgrense | **Det er over 20°!** ↳ Lokalt anslag 22° i fire timer til. | **D e Over 20°!** ↳ Lokalt anslag 22° i fire tima til. |
 
 ## Watch og CarPlay-widget
 
 | Situasjon | Språk | Rund | Inline | Stor Watch / CarPlay-rad |
 | --- | --- | --- | --- | --- |
-| Neste hendelse | Bokmål | <10° · 2 t | <10° 2t | <10° 2t |
-| Neste hendelse | Inntrøndersk | <10° · 2 t | <10° 2t | <10° 2t |
+| Neste hendelse, under | Bokmål | <10° · 2 t | <10° 2t | <10° 2t |
+| Neste hendelse, under | Inntrøndersk | <10° · 2 t | <10° 2t | <10° 2t |
+| Neste hendelse, over | Bokmål | >20° · 2 t | >20° 2t | >20° 2t |
+| Neste hendelse, over | Inntrøndersk | >20° · 2 t | >20° 2t | >20° 2t |
 
 ---
 
@@ -374,10 +389,24 @@ med varsler om regn, snø, vind, dugg, frost, sol eller temperatur.
    noe faktisk pågår nå.
 5. Nærmeste hendelse prioriteres på Watch og CarPlay; korte flater viser maks
    tre ulike værtyper.
+6. Temperatur bruker alltid under- eller overgrense i tekst og symbol. Aldri
+   det generelle ordet «Temperatur» som selve varseltypen.
+7. En usikker NÅ-prognose bruker «kan bli», aldri en påstand om at været pågår.
 
 ## Koblingsstatus
 
-Dokumentet er språkfasit. Appen har allerede felles værordbok for nedbør, snø
-og vind, og rullerende varsel har tolinjers struktur. Neste kodeoppdatering
-skal samkjøre alle formuleringene mot denne fasiten, slik at forhåndsvisning,
-push, Watch og CarPlay ikke får små variasjoner over tid.
+Dokumentet er språkfasit. Push og rullerende Hjem-varsel bruker nå samme
+retning for temperatur under/over, samme tidskategori i førstelinjen og
+varighet i andrelinjen — også når perioden bare er én time. Rullerende Hjem
+har en testbar generator for alle værtyper, sikker/usikker NÅ-status og begge
+temperaturretninger. Watch og CarPlay bruker den samme statuslisten og korte
+etiketter per type.
+
+Regresjonsmatrisen ligger i `PlannerTests`: alle værtyper testes i bokmål og
+inntrøndersk, med sikker/usikker push og under/over for temperatur. Full
+testkjøring er foreløpig sperret av eldre, urelaterte Swift 6-/MainActor-feil i
+testmålet; iPhone-, Watch- og widgetmålene bygger.
+
+> Språkfunn til gjennomgang: «D bli» er appens bevisste, korte stil også i
+> bokmålskolonnen. Det er ikke vanlig bokmål; hvis bokmål skal være strengt,
+> bør førsteordet i alle bokmålseksempler og `push.title` endres til «Det blir».

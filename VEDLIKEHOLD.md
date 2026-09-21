@@ -54,6 +54,18 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-100 · FULLFØRT 2026-09-21** — Samkjørte varseltekstfasiten for alle
+sju værtyper, sikker/usikker tilstand, NÅ/framtid og begge
+temperaturretninger. Temperatur sier nå alltid **Under/Over {grense}°**, aldri
+«Temperatur». Push- og Hjem-detaljer oppgir alltid varighet, også én time
+(«i en time»), og dugg i Hjem-NÅ forklares med lokal temperatur i stedet for
+å gjenta «Duggfall». `VARSELTEKSTER.md` dekker variantene og peker på den ene
+bevisste språkavgjørelsen: den korte bokmålsformen «D bli» er ikke normalt
+bokmål. Regresjonstester dekker alle typer, begge norske språk, mulighet,
+temperaturretning, varighet og Watch/CarPlay-kortetiketter. iPhone, Watch og
+widgeter bygger; full testkjøring er fortsatt blokkert før teststart av eldre,
+urelaterte Swift-6-/MainActor-feil i testmålet.
+
 **BRUKER-085 · FULLFØRT 2026-09-20** — Renoverte `VARSELTEKSTER.md` til én
 redigerbar språkfasit. Dokumentet er nå sortert etter værtype, med
 styringstabell, push, rullerende Hjem-varsel samt Watch- og CarPlay-tekst under

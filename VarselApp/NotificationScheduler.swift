@@ -67,40 +67,63 @@ enum NotificationCopy {
     }
 
     static func title(for rule: Rule, placeName: String, eventAt: Date, referenceAt: Date, possible: Bool = false, languageStyle: AlertLanguageStyle = .bokmal) -> String {
-        let timing = shortNotificationTime(eventAt, relativeTo: referenceAt, languageStyle: languageStyle)
+        let timing = shortNotificationTime(
+            eventAt, relativeTo: referenceAt, rule: rule, languageStyle: languageStyle
+        )
         return "\(headline(for: rule, placeName: placeName, possible: possible, languageStyle: languageStyle)) \(timing)."
     }
 
-    private static func shortNotificationTime(_ eventAt: Date, relativeTo reference: Date, languageStyle: AlertLanguageStyle) -> String {
+    private static func shortNotificationTime(
+        _ eventAt: Date,
+        relativeTo reference: Date,
+        rule: Rule,
+        languageStyle: AlertLanguageStyle
+    ) -> String {
+        func localized(_ text: String) -> String {
+            WeatherLanguage.text(text, style: languageStyle)
+        }
         let minutes = max(0, Int((eventAt.timeIntervalSince(reference) / 60).rounded()))
         if minutes <= 180 {
-            return WeatherLanguage.text(eventTimePhrase(eventAt, relativeTo: reference), style: languageStyle)
+            return localized(eventTimePhrase(eventAt, relativeTo: reference))
         }
         let calendar = Calendar.current
         let hour = calendar.component(.hour, from: eventAt)
         if calendar.isDate(eventAt, inSameDayAs: reference) {
-            if hour < 6 { return "i natt" }
-            if hour >= 15 { return "i kveld" }
-            return "i dag"
+            if hour < 6 { return localized("i natt") }
+            if hour >= 15 { return localized("i kveld") }
+            return localized("i dag")
         }
         if let tomorrow = calendar.date(byAdding: .day, value: 1, to: reference), calendar.isDate(eventAt, inSameDayAs: tomorrow) {
-            return hour < 6 ? "i natt" : "i morgen"
+            return hour < 6 ? localized("i natt") : localized("i morgen")
         }
-        return "til helga"
+        if rule.notificationWeekday != nil { return localized("til helga") }
+        return localized("på \(weekdayLabel(eventAt, calendar: calendar))")
     }
 
     private static func localizedWeatherName(for rule: Rule, languageStyle: AlertLanguageStyle) -> String {
-        guard languageStyle == .english else { return alertWeatherName(for: rule) }
+        if rule.type == .temperatur {
+            let key = rule.temperatureDirection == .above
+                ? "weather.temperature_above"
+                : "weather.temperature_below"
+            let fallback = "\(rule.temperatureDirection == .above ? "Over" : "Under") {temperatur}°"
+            return LanguageCatalog.value(
+                key,
+                language: languageStyle.catalogCode,
+                fallback: fallback,
+                arguments: ["temperatur": rule.threshold.formatted(.number.precision(.fractionLength(0...1)))]
+            )
+        }
+        guard languageStyle == .english else {
+            return languageStyle == .inntrondersk
+                ? WeatherLanguage.text(alertWeatherName(for: rule), style: .inntrondersk)
+                : alertWeatherName(for: rule)
+        }
         switch rule.type {
         case .regn: return LanguageCatalog.value("weather.rain", language: "en", fallback: "Rain")
         case .sno: return LanguageCatalog.value("weather.snow", language: "en", fallback: "Snow")
         case .dugg: return LanguageCatalog.value("weather.dew", language: "en", fallback: "Dew")
         case .frost: return LanguageCatalog.value("weather.frost", language: "en", fallback: "Frost")
-        case .temperatur:
-            return LanguageCatalog.value(
-                "weather.temperature_below", language: "en", fallback: "Below {temperatur}°",
-                arguments: ["temperatur": rule.threshold.formatted(.number.precision(.fractionLength(0...1)))]
-            )
+        case .temperatur: fatalError("Handled above")
         case .vind: return LanguageCatalog.value("weather.wind", language: "en", fallback: "Wind")
         case .sol: return LanguageCatalog.value("weather.sun", language: "en", fallback: "Sun")
         }
@@ -115,7 +138,7 @@ enum NotificationCopy {
         case .vind: return "push.title.wind"
         case .frost: return "push.title.frost"
         case .dugg: return "push.title.dew"
-        case .temperatur: return "push.title.temperature_below"
+        case .temperatur: return "push.title"
         }
     }
 

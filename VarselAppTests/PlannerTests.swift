@@ -1402,6 +1402,33 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testRotatingDewNowUsesTemperatureAndSingularDurationsAreGrammatical() {
+        let dewRule = Rule(type: .dugg)
+        var place = Place(name: "Klinga", lat: 64, lon: 11)
+        place.rules = [dewRule]
+        let dewHour = ForecastHour(time: base, temp: 7, precip: 0, wind: 1, cloud: 70, dew: 6.8)
+        let currentDew = WeatherStatus(
+            ruleID: dewRule.id, type: .dugg, text: "", eventAt: base, isNow: true
+        )
+        XCTAssertEqual(
+            Planner.rotatingStatusDetail(for: currentDew, place: place, forecast: [dewHour]),
+            "Temperaturen er 7°."
+        )
+
+        var windRule = Rule(type: .vind)
+        windRule.threshold = 8
+        place.rules = [windRule]
+        var windyHour = dewHour
+        windyHour.gust = 9
+        let currentWind = WeatherStatus(
+            ruleID: windRule.id, type: .vind, text: "", eventAt: base, isNow: true
+        )
+        XCTAssertEqual(
+            Planner.rotatingStatusDetail(for: currentWind, place: place, forecast: [windyHour]),
+            "Frisk bris i en time til."
+        )
+    }
+
     func testWindStrengthUsesEverydayBeaufortNames() {
         XCTAssertEqual(windStrengthLabel(for: 0), "stille")
         XCTAssertEqual(windStrengthLabel(for: 4), "lett bris")
@@ -1470,6 +1497,176 @@ final class PlannerTests: XCTestCase {
             languageStyle: .inntrondersk
         )
         XCTAssertTrue(dialectMessage.contains("I mårrå"), dialectMessage)
+    }
+
+    func testTemperatureAlertCopyAlwaysUsesConfiguredDirection() {
+        var below = Rule(type: .temperatur)
+        below.threshold = 10
+        var above = below
+        above.threshold = 20
+        above.temperatureDirection = .above
+
+        XCTAssertEqual(alertWeatherName(for: below), "Under 10°")
+        XCTAssertEqual(alertWeatherName(for: above), "Over 20°")
+        XCTAssertEqual(
+            NotificationCopy.title(for: below, placeName: "på Klinga", languageStyle: .bokmal),
+            "D bli Under 10°! på Klinga"
+        )
+        XCTAssertEqual(
+            NotificationCopy.title(for: above, placeName: "på Klinga", languageStyle: .bokmal),
+            "D bli Over 20°! på Klinga"
+        )
+        XCTAssertEqual(
+            NotificationCopy.title(for: above, placeName: "på Klinga", languageStyle: .inntrondersk),
+            "D bli Over 20°! på Klinga"
+        )
+        XCTAssertEqual(
+            NotificationCopy.title(for: above, placeName: "in Oslo", languageStyle: .english),
+            "It’s Above 20°! in Oslo"
+        )
+
+        let nowStatus = WeatherStatus(
+            ruleID: above.id, type: .temperatur, text: "", eventAt: base, isNow: true
+        )
+        let futureStatus = WeatherStatus(
+            ruleID: above.id, type: .temperatur, text: "", eventAt: base.addingTimeInterval(3 * 3_600), isNow: false
+        )
+        XCTAssertEqual(
+            RotatingAlertCopy.headline(for: nowStatus, rule: above, languageStyle: .bokmal, now: base),
+            "Det er over 20°!"
+        )
+        XCTAssertEqual(
+            RotatingAlertCopy.headline(for: nowStatus, rule: above, languageStyle: .inntrondersk, now: base),
+            "D e Over 20°!"
+        )
+        XCTAssertEqual(
+            RotatingAlertCopy.headline(for: futureStatus, rule: above, languageStyle: .bokmal, now: base),
+            "D bli Over 20°! om tre timer."
+        )
+    }
+
+    func testRotatingAlertCopyCoversEveryWeatherTypeAndPossibleNowStatus() {
+        let expectedBokmal: [AlertType: String] = [
+            .regn: "D e Regn!", .sno: "Det Snør!", .vind: "Det blåser!",
+            .dugg: "Det er Duggfall!", .frost: "Det er frost!", .sol: "Det er sol!"
+        ]
+        let expectedInntrondersk: [AlertType: String] = [
+            .regn: "D e Regn!", .sno: "Det Snør!", .vind: "D blæs!",
+            .dugg: "D Dogge!", .frost: "D e Frost!", .sol: "D e Sol!"
+        ]
+
+        for type in [AlertType.regn, .sno, .vind, .dugg, .frost, .sol] {
+            let rule = Rule(type: type)
+            let status = WeatherStatus(ruleID: rule.id, type: type, text: "", eventAt: base, isNow: true)
+            XCTAssertEqual(RotatingAlertCopy.headline(for: status, rule: rule, languageStyle: .bokmal, now: base), expectedBokmal[type])
+            XCTAssertEqual(RotatingAlertCopy.headline(for: status, rule: rule, languageStyle: .inntrondersk, now: base), expectedInntrondersk[type])
+
+            let possible = WeatherStatus(ruleID: rule.id, type: type, text: "", eventAt: base, isNow: true, possible: true)
+            XCTAssertTrue(
+                RotatingAlertCopy.headline(for: possible, rule: rule, languageStyle: .bokmal, now: base).hasPrefix("Det kan bli "),
+                "\(type)"
+            )
+        }
+    }
+
+    func testDewUsesCompactDialectHeadlineButFullPossiblePushWording() {
+        let rule = Rule(type: .dugg)
+        let future = WeatherStatus(
+            ruleID: rule.id, type: .dugg, text: "", eventAt: base.addingTimeInterval(3 * 3_600), isNow: false
+        )
+        let headline = RotatingAlertCopy.headline(
+            for: future, rule: rule, languageStyle: .inntrondersk, now: base
+        )
+        XCTAssertEqual(WeatherLanguage.text(headline, style: .inntrondersk), "D bli Dogg! om tre tima.")
+        XCTAssertEqual(
+            NotificationCopy.title(for: rule, placeName: "på Klinga", languageStyle: .inntrondersk),
+            "D bli Dogg! på Klinga"
+        )
+        XCTAssertEqual(
+            NotificationCopy.title(for: rule, placeName: "på Klinga", possible: true, languageStyle: .inntrondersk),
+            "D kan bli Doggfall! på Klinga"
+        )
+    }
+
+    func testPushDetailAlwaysIncludesSingleHourDuration() {
+        let rule = Rule(type: .regn)
+        let hour = ForecastHour(time: base, temp: 8, precip: 0.2, wind: 1, cloud: 80, dew: 5)
+        XCTAssertEqual(
+            Planner.notificationEventDetail(rule: rule, hours: [hour], possible: false),
+            "Litt regn {tid} — i en time."
+        )
+    }
+
+    func testEveryWeatherTypeKeepsTheRequiredDurationInPushDetail() {
+        var hour = ForecastHour(time: base, temp: 8, precip: 0.2, wind: 1, cloud: 20, dew: 7.8)
+        hour.gust = 9
+
+        for type in AlertType.allCases {
+            var rule = Rule(type: type)
+            if type == .temperatur { rule.temperatureDirection = .above }
+            let detail = Planner.notificationEventDetail(
+                rule: rule, hours: [hour], possible: false
+            )
+            XCTAssertTrue(
+                detail?.hasSuffix("— i en time.") == true,
+                "Mangler varighet i pushdetalj for \(type): \(detail ?? "nil")"
+            )
+        }
+    }
+
+    func testEveryAlertTypeHasAUsablePushTitleInBothActiveNorwegianStyles() {
+        for language in [AlertLanguageStyle.bokmal, .inntrondersk] {
+            for type in AlertType.allCases {
+                var rule = Rule(type: type)
+                for direction in type == .temperatur ? [Rule.TemperatureDirection.below, .above] : [.below] {
+                    rule.temperatureDirection = direction
+                    let certain = NotificationCopy.title(
+                        for: rule, placeName: "på Klinga", eventAt: base.addingTimeInterval(2 * 3_600),
+                        referenceAt: base, languageStyle: language
+                    )
+                    let possible = NotificationCopy.title(
+                        for: rule, placeName: "på Klinga", eventAt: base.addingTimeInterval(2 * 3_600),
+                        referenceAt: base, possible: true, languageStyle: language
+                    )
+                    XCTAssertFalse(certain.isEmpty, "\(language) / \(type) / \(direction)")
+                    XCTAssertFalse(possible.isEmpty, "\(language) / \(type) / \(direction)")
+                    XCTAssertTrue(certain.contains("på Klinga"), "\(certain)")
+                    XCTAssertTrue(possible.contains("på Klinga"), "\(possible)")
+                    if type == .temperatur {
+                        XCTAssertFalse(certain.contains("Temperatur"), "\(certain)")
+                        XCTAssertTrue(certain.contains(direction == .above ? "Over" : "Under"), "\(certain)")
+                    }
+                }
+            }
+        }
+    }
+
+    func testPushTitleUsesDialectTomorrowAndReservesWeekendForWeekendRules() {
+        let calendar = Calendar.current
+        let reference = base
+        let tomorrow = calendar.date(byAdding: .day, value: 1, to: reference)!
+        let dayAfterTomorrow = calendar.date(byAdding: .day, value: 2, to: reference)!
+        let rule = Rule(type: .regn)
+
+        let dialectTomorrow = NotificationCopy.title(
+            for: rule, placeName: "på Klinga", eventAt: tomorrow,
+            referenceAt: reference, languageStyle: .inntrondersk
+        )
+        let ordinaryLaterDay = NotificationCopy.title(
+            for: rule, placeName: "på Klinga", eventAt: dayAfterTomorrow,
+            referenceAt: reference, languageStyle: .bokmal
+        )
+        var weekendRule = rule
+        weekendRule.notificationWeekday = 5
+        let weekend = NotificationCopy.title(
+            for: weekendRule, placeName: "på Klinga", eventAt: dayAfterTomorrow,
+            referenceAt: reference, languageStyle: .inntrondersk
+        )
+
+        XCTAssertTrue(dialectTomorrow.contains("i mårrå"), dialectTomorrow)
+        XCTAssertTrue(ordinaryLaterDay.contains("på "), ordinaryLaterDay)
+        XCTAssertFalse(ordinaryLaterDay.contains("til helga"), ordinaryLaterDay)
+        XCTAssertTrue(weekend.contains("te helga"), weekend)
     }
 
     func testMemoSuggestionIsNotSentUntilActivated() {

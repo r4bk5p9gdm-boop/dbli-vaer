@@ -135,6 +135,11 @@
       "nb": "Under {temperatur}°",
       "tr": "Under {temperatur}°"
     },
+    "weather.temperature_above": {
+      "en": "Above {temperatur}°",
+      "nb": "Over {temperatur}°",
+      "tr": "Over {temperatur}°"
+    },
     "push.title": {
       "en": "It’s {vaertype}! {sted}",
       "nb": "D bli {vaertype}! {sted}",
@@ -173,7 +178,7 @@
     "push.title.dew": {
       "en": "It’s Dewy! {sted}",
       "nb": "D bli Duggfall! {sted}",
-      "tr": "D bli Doggfall! {sted}"
+      "tr": "D bli Dogg! {sted}"
     },
     "push.title.temperature_below": {
       "en": "It’s Below {temperatur}°! {sted}",

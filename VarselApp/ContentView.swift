@@ -596,20 +596,9 @@ private struct CurrentWeatherCard: View {
 
     private func rotatingTitle(for status: WeatherStatus) -> String {
         let rule = place.rulesForDisplay.first { $0.id == status.ruleID }
-        if status.isNow {
-            switch status.type {
-            case .regn: return "D e Regn!"
-            case .sno: return "Det Snør!"
-            case .vind: return "Det blåser!"
-            case .dugg: return "D e Duggfall!"
-            case .frost: return "D e Frost!"
-            case .sol: return "D e Sol!"
-            case .temperatur: return status.text
-            }
-        }
-        let weather = rule.map(alertWeatherName(for:)) ?? status.type.label
-        let prefix = status.possible == true ? "D kan bli" : "D bli"
-        return "\(prefix) \(weather)! \(eventTimePhrase(status.eventAt))."
+        return RotatingAlertCopy.headline(
+            for: status, rule: rule, languageStyle: languageStyle
+        )
     }
 }
 

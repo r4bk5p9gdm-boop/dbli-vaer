@@ -327,13 +327,20 @@ enum Planner {
         }
 
         let durationText: String?
-        if let duration, duration >= 2 {
-            durationText = "i \(duration) timer"
+        if let duration, duration >= 1 {
+            durationText = duration == 1 ? "i en time" : "i \(duration) timer"
         } else {
             durationText = nil
         }
 
         if status.isNow {
+            // Dew point is useful when explaining a scheduled push, but the
+            // compact Home card is clearer with the local air temperature.
+            // This also avoids repeating "Duggfall" immediately below the
+            // already explicit current-state headline.
+            if status.type == .dugg {
+                return "Temperaturen er \(number)°."
+            }
             let continuingDuration = durationText.map { "\($0) til" }
             return [base, continuingDuration].compactMap { $0 }.joined(separator: " ") + "."
         }
@@ -382,7 +389,8 @@ enum Planner {
                 case .regn: text = possible ? "Mulig regn nå." : "Regn nå."
                 case .frost: text = possible ? "Mulig frost nå." : "Frost nå."
                 case .temperatur:
-                    text = "Under \(rule.threshold.formatted(.number.precision(.fractionLength(0...1))))° nå."
+                    let relation = rule.temperatureDirection == .above ? "Over" : "Under"
+                    text = "\(relation) \(rule.threshold.formatted(.number.precision(.fractionLength(0...1))))° nå."
                 case .sno: text = possible ? "Mulig snø nå." : "Snø nå."
                 case .vind:
                     text = forecast[currentIndex].gust == nil ? "Vind nå." : "Vindkast nå."
@@ -457,8 +465,9 @@ enum Planner {
     static func notificationEventDetail(rule: Rule, hours: [ForecastHour], possible: Bool, frostMargin: Double = 0) -> String? {
         guard !hours.isEmpty else { return nil }
         let duration = hours.count
-        let durationText = "\(duration) \(duration == 1 ? "time" : "timer")"
-        let durationSuffix = duration > 1 ? " — i \(durationText)" : ""
+        let durationText = duration == 1 ? "en time" : "\(duration) timer"
+        // The language standard always states duration, including a single hour.
+        let durationSuffix = " — i \(durationText)"
         let withTime: (String) -> String = { "\($0) {tid}\(durationSuffix)." }
         let number: (Double) -> String = { $0.formatted(.number.precision(.fractionLength(0...1))) }
 

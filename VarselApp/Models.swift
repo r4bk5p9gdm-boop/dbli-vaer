@@ -1119,13 +1119,90 @@ func eventTimePhrase(_ eventAt: Date, relativeTo reference: Date = Date(), calen
 
 func alertWeatherName(for rule: Rule) -> String {
     switch rule.type {
-    case .regn: "Regn"
-    case .frost: "Frost"
-    case .temperatur: "Under \(rule.threshold.formatted(.number.precision(.fractionLength(0...1))))°"
-    case .sno: "Snø"
-    case .vind: "Vindkast"
-    case .dugg: "Duggfall"
-    case .sol: "Sol"
+    case .regn: return "Regn"
+    case .frost: return "Frost"
+    case .temperatur:
+        let relation = rule.temperatureDirection == .above ? "Over" : "Under"
+        return "\(relation) \(rule.threshold.formatted(.number.precision(.fractionLength(0...1))))°"
+    case .sno: return "Snø"
+    case .vind: return "Vindkast"
+    case .dugg: return "Duggfall"
+    case .sol: return "Sol"
+    }
+}
+
+/// Compact two-line copy for the rotating Home alert. Keeping this outside the
+/// SwiftUI view makes all type/direction/now variants regression-testable.
+enum RotatingAlertCopy {
+    static func headline(
+        for status: WeatherStatus,
+        rule: Rule?,
+        languageStyle: AlertLanguageStyle,
+        now: Date = Date()
+    ) -> String {
+        if status.isNow { return currentHeadline(for: status, rule: rule, languageStyle: languageStyle) }
+
+        let standardWeather = rule.map(alertWeatherName(for:)) ?? status.type.label
+        // The compact dialect headline uses the short «Dogg!» form. Push can
+        // still use the fuller «Doggfall» form in its explanatory context.
+        let weather = languageStyle == .inntrondersk && status.type == .dugg
+            ? "Dogg"
+            : standardWeather
+        let prefix: String
+        switch languageStyle {
+        case .inntrondersk: prefix = status.possible == true ? "D kan bli" : "D bli"
+        case .bokmal: prefix = status.possible == true ? "Det kan bli" : "D bli"
+        case .english: prefix = status.possible == true ? "Possible" : "It’s"
+        }
+        return "\(prefix) \(weather)! \(shortFutureTime(status.eventAt, relativeTo: now))."
+    }
+
+    private static func currentHeadline(
+        for status: WeatherStatus,
+        rule: Rule?,
+        languageStyle: AlertLanguageStyle
+    ) -> String {
+        if status.possible == true {
+            let weather = rule.map(alertWeatherName(for:)) ?? status.type.label
+            switch languageStyle {
+            case .inntrondersk: return "D kan bli \(weather)!"
+            case .bokmal: return "Det kan bli \(weather)!"
+            case .english: return "Possible \(weather)!"
+            }
+        }
+
+        let threshold = rule?.threshold ?? 0
+        let direction = rule?.temperatureDirection ?? .below
+        switch (status.type, languageStyle) {
+        case (.regn, _): return "D e Regn!"
+        case (.sno, _): return "Det Snør!"
+        case (.vind, .inntrondersk): return "D blæs!"
+        case (.vind, .bokmal): return "Det blåser!"
+        case (.vind, .english): return "It’s windy!"
+        case (.dugg, .inntrondersk): return "D Dogge!"
+        case (.dugg, .bokmal): return "Det er Duggfall!"
+        case (.dugg, .english): return "It’s dewy!"
+        case (.frost, .inntrondersk): return "D e Frost!"
+        case (.frost, .bokmal): return "Det er frost!"
+        case (.frost, .english): return "It’s frosty!"
+        case (.sol, .inntrondersk): return "D e Sol!"
+        case (.sol, .bokmal): return "Det er sol!"
+        case (.sol, .english): return "It’s sunny!"
+        case (.temperatur, .inntrondersk):
+            return "D e \(direction == .above ? "Over" : "Under") \(threshold.formatted(.number.precision(.fractionLength(0...1))))°!"
+        case (.temperatur, .bokmal):
+            return "Det er \(direction == .above ? "over" : "under") \(threshold.formatted(.number.precision(.fractionLength(0...1))))°!"
+        case (.temperatur, .english):
+            return "It’s \(direction == .above ? "above" : "below") \(threshold.formatted(.number.precision(.fractionLength(0...1))))°!"
+        }
+    }
+
+    private static func shortFutureTime(_ eventAt: Date, relativeTo now: Date) -> String {
+        let minutes = max(0, Int((eventAt.timeIntervalSince(now) / 60).rounded()))
+        if minutes <= 209 { return eventTimePhrase(eventAt, relativeTo: now) }
+        guard minutes <= 24 * 60 else { return eventTimePhrase(eventAt, relativeTo: now) }
+        let hours = max(1, Int((Double(minutes) / 60).rounded()))
+        return hours == 1 ? "om en time" : "om \(hours) timer"
     }
 }
 
