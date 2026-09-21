@@ -2200,6 +2200,21 @@ final class PlannerTests: XCTestCase {
         ))
     }
 
+    func testNearbyOnlyLiveActivityStopsWhenNearnessIsRemoved() {
+        var rule = Rule(type: .regn)
+        rule.onlyWhenNearby = true
+        let place = Place(name: "Hytta", lat: 64.5, lon: 11.5, rules: [rule])
+
+        XCTAssertTrue(LiveWeatherActivityPolicy.canUseRule(
+            rule, for: place, nearbyPlaceIDs: [place.id]
+        ))
+        // A new location update can empty the nearby set. A cached forecast
+        // must not keep a place-bound activity alive after that transition.
+        XCTAssertFalse(LiveWeatherActivityPolicy.canUseRule(
+            rule, for: place, nearbyPlaceIDs: []
+        ))
+    }
+
     func testLiveActivityPrefersNearestQualifiedEventAcrossPlaces() {
         XCTAssertTrue(LiveWeatherActivityPolicy.prefers(
             firstEventAt: base.addingTimeInterval(15 * 60), firstType: .regn,

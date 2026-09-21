@@ -607,14 +607,19 @@ gjeldende regeltilstand, ikke bare cachet prognose. Regresjonstesten låser at
 en slått-av regnregel ikke kan holde liv i aktiviteten, selv når stedet fortsatt
 er nær og gammel prognose finnes.
 
-**AUTO-253 · ÅPEN** — Test at et sted med `bare i nærheten` ikke kan lage en
-Live Activity etter at telefonens nærhetsstatus blir foreldet eller fjernet.
+**AUTO-253 · FULLFØRT 2026-09-21** — La til regresjonstest som låser at en
+Live Activity med «bare i nærheten» umiddelbart mister autorisasjon når den
+gjeldende nærhetsmengden tømmes. Gammel prognose alene kan dermed ikke holde
+liv i stedets aktivitet.
 
 **AUTO-254 · ÅPEN** — Test at en deaktivert visningsrad ikke kan dukke opp i
 den rullerende Hjem-oversikten etter at appen gjenopprettes fra cache.
 
 **AUTO-255 · ÅPEN** — Test at en kun-visningsrad aldri kan starte eller holde
 liv i en Live Activity, selv når raden fortsatt er synlig i værbåndet.
+
+**AUTO-256 · ÅPEN** — Test at en Live Activity ikke bruker en prognose cachet
+for et annet sted når det valgte Watch-/CarPlay-stedet endres.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
