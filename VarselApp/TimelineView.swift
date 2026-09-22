@@ -529,13 +529,18 @@ private struct CombinedHourBandCell: View {
                         }
                     }
                     if offset < period.hours, let solarTransition {
+                        let cellWidth = proxy.size.width / CGFloat(period.hours)
+                        let cellStart = cellWidth * CGFloat(offset)
+                        let transitionEdge = solarTransition == .sunrise
+                            ? cellStart - 1
+                            : cellStart + cellWidth + 1
                         Image(systemName: solarTransition.systemImage)
                             .font(.system(size: 8, weight: .bold))
                             .foregroundStyle(Color.orange)
-                            .frame(width: proxy.size.width / CGFloat(period.hours), height: proxy.size.height)
+                            .frame(width: 14, height: 14)
                             .background(Color.white.opacity(0.72), in: Circle())
                             .position(
-                                x: proxy.size.width * CGFloat(offset) / CGFloat(period.hours) + proxy.size.width / CGFloat(period.hours * 2),
+                                x: min(proxy.size.width - 7, max(7, transitionEdge)),
                                 y: proxy.size.height / 2
                             )
                             .accessibilityLabel(solarTransition == .sunrise ? "Soloppgang" : "Solnedgang")

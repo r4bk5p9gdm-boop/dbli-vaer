@@ -54,6 +54,10 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-109 · FULLFØRT 2026-09-22** — Flyttet soloppgang/-nedgangsikonet
+ut til kanten av den aktuelle timecellen i solraden: soloppgang like før,
+solnedgang like etter. Ikonet ligger dermed ikke oppå en gul solmarkering.
+
 **BRUKER-108 · FULLFØRT 2026-09-22** — Værbåndet bruker nå et faktisk
 vær-døgn fra 07 til 07. Nattfeltet 23–07 henter derfor 00–06 fra neste
 kalenderdag; duggfall kl. 05 får grønn markering i Nedbør-raden når den samme
