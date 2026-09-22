@@ -3567,6 +3567,28 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(band.contains { $0.time == times[0].time || $0.time == times[6].time })
     }
 
+    func testNowCardTracksTheWeatherBandHourAcrossAnHourBoundary() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let day = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 9, day: 22)))
+        let eleven = try XCTUnwrap(calendar.date(bySettingHour: 11, minute: 0, second: 0, of: day))
+        let noon = try XCTUnwrap(calendar.date(bySettingHour: 12, minute: 0, second: 0, of: day))
+        let hours = [
+            ForecastHour(time: eleven, temp: 8, precip: 0.2, wind: 1, cloud: 60, dew: 7),
+            ForecastHour(time: noon, temp: 9, precip: 0, wind: 1, cloud: 60, dew: 7),
+        ]
+        let band = WeatherBandHours.make(for: day, from: hours, calendar: calendar)
+        let before = try XCTUnwrap(ForecastHourSelection.current(in: hours, at: noon.addingTimeInterval(-1)))
+        let after = try XCTUnwrap(ForecastHourSelection.current(in: hours, at: noon.addingTimeInterval(1)))
+
+        XCTAssertEqual(before.time, eleven)
+        XCTAssertEqual(after.time, noon)
+        XCTAssertTrue(band.contains(before))
+        XCTAssertTrue(band.contains(after))
+        XCTAssertEqual(before.precip, 0.2)
+        XCTAssertEqual(after.precip, 0)
+    }
+
     @MainActor
     func testForecastRecipientsExcludeRemovedAndRelocatedPlaces() {
         let removed = Place(name: "Slettet", lat: 64, lon: 11)

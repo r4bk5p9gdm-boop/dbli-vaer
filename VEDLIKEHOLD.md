@@ -689,8 +689,10 @@ bevarer siste gyldige GPS-kurs når brukeren blar til en favoritt og tilbake.
 Regresjonstest låser at ny kurs ikke endrer valgt sted eller prognosen i
 værbåndet.
 
-**AUTO-260 · ÅPEN** — Kontroller at NÅ-kortets nedbørstatus og den første
-værbåndcellen bruker samme prognosetime rundt timeskiftet.
+**AUTO-260 · FULLFØRT 2026-09-23** — NÅ-kortet og det rullerende nedbørvarselet
+velger nå seneste prognosetime fram til gjeldende tid fra samme datasett som
+værbåndene. En eldre første time i cache kan dermed ikke bli hengende som
+«nå» etter timeskiftet. Regresjonstest dekker 11:59 og 12:01.
 
 **AUTO-261 · ÅPEN** — Sikre at utdaterte Yr-data ikke får et nytt tidsstempel
 ved delvis mislykket oppdatering av flere steder.

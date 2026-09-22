@@ -345,9 +345,11 @@ private struct CurrentWeatherCard: View {
     var showsPlaceMenu = true
     var showsContainer = true
 
-    private var current: ForecastHour { forecast[0] }
+    private var current: ForecastHour {
+        ForecastHourSelection.current(in: forecast, at: Date()) ?? forecast[0]
+    }
     private var precipitation: CurrentPrecipitationSummary {
-        CurrentPrecipitationSummary.make(from: forecast)
+        CurrentPrecipitationSummary.make(from: forecast, current: current)
     }
     private var rotatingStatuses: [WeatherStatus] {
         return WeatherStatus.uniqueByType(
@@ -715,8 +717,9 @@ private struct CurrentPrecipitationSummary {
     let color: Color
     let isFallingNow: Bool
 
-    static func make(from forecast: [ForecastHour], now: Date = Date()) -> CurrentPrecipitationSummary {
-        let current = forecast[0]
+    static func make(
+        from forecast: [ForecastHour], current: ForecastHour, now: Date = Date()
+    ) -> CurrentPrecipitationSummary {
         let horizon = now.addingTimeInterval(24 * 60 * 60)
         let samples = forecast.flatMap { $0.radarSamples ?? [] }.sorted { $0.time < $1.time }
         let latest = samples.last { $0.time <= now.addingTimeInterval(2 * 60) }

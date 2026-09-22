@@ -746,6 +746,16 @@ struct ForecastHour: Codable, Identifiable, Hashable {
     }
 }
 
+enum ForecastHourSelection {
+    /// The NÅ card uses the same hourly sample that the weather band paints
+    /// beneath the current time. Cached forecasts may still contain earlier
+    /// hours after the clock moves on.
+    static func current(in forecast: [ForecastHour], at now: Date) -> ForecastHour? {
+        forecast.filter { $0.time <= now }.max { $0.time < $1.time }
+            ?? forecast.min { $0.time < $1.time }
+    }
+}
+
 /// Converts liquid-water equivalent from Yr to a rough depth of fresh snow.
 /// The temperature-dependent ratio is deliberately capped at 4:1–13:1.
 func estimatedFreshSnowMillimeters(waterEquivalent: Double, temperature: Double) -> Double {
