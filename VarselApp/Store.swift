@@ -444,7 +444,7 @@ final class Store: ObservableObject {
         // existing notifications remain fully usable when access is denied.
         let locationManager = LocationManager()
         guard let location = try? await locationManager.current() else { return }
-        currentLocationCourse = Self.usableCourse(from: location)
+        updateCurrentLocationCourse(from: location)
         guard Self.shouldApplyCurrentLocation(
             selectionAtRequestStart: selectionAtRequestStart,
             currentSelection: selectedID
@@ -720,9 +720,16 @@ final class Store: ObservableObject {
     func select(_ place: Place, fromCurrentLocation: Bool = false) {
         selectedID = place.id
         selectionIsCurrentLocation = fromCurrentLocation
-        if !fromCurrentLocation { currentLocationCourse = nil }
+        // Keep the last GPS course while browsing favorites. Returning to the
+        // position page should restore its arrow without changing the place.
         if fromCurrentLocation { currentLocationPlaceID = place.id }
         updateWidget()
+    }
+
+    func updateCurrentLocationCourse(from location: CLLocation) {
+        // A newer location fix may rotate the position badge, but it must not
+        // change the selected place or the forecast shown in the weather bands.
+        currentLocationCourse = Self.usableCourse(from: location)
     }
 
     static func usableCourse(from location: CLLocation) -> CLLocationDirection? {

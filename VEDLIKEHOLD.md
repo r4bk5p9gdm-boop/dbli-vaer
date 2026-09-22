@@ -684,8 +684,19 @@ polar natt. Begge mangler soloppgang/-nedgangsmarkør; polarnatt har heller
 ikke dagslys eller solvarsel. Polar dag beholder dagslys som en reell
 soltilstand, men får ingen falsk overgangsmarkør.
 
-**AUTO-259 · ÅPEN** — Test at et oppdatert posisjonskurs bare roterer
-markøren og ikke endrer valgt sted eller værbånd.
+**AUTO-259 · FULLFØRT 2026-09-22** — Skilte kursoppdatering fra stedsvalg og
+bevarer siste gyldige GPS-kurs når brukeren blar til en favoritt og tilbake.
+Regresjonstest låser at ny kurs ikke endrer valgt sted eller prognosen i
+værbåndet.
+
+**AUTO-260 · ÅPEN** — Kontroller at NÅ-kortets nedbørstatus og den første
+værbåndcellen bruker samme prognosetime rundt timeskiftet.
+
+**AUTO-261 · ÅPEN** — Sikre at utdaterte Yr-data ikke får et nytt tidsstempel
+ved delvis mislykket oppdatering av flere steder.
+
+**AUTO-262 · ÅPEN** — Kontroller at soloppgang/-nedgang fortsatt plasseres i
+riktig timecelle over skifte mellom sommer- og vintertid.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

@@ -442,6 +442,34 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(Store.shouldApplyCurrentLocation(selectionAtRequestStart: nil, currentSelection: initial))
     }
 
+    @MainActor
+    func testNewLocationCourseDoesNotChangeSelectedPlaceOrForecast() {
+        let persistenceKey = "varsel.test.location-course.\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
+        let position = Place(name: "Klinga", lat: 64.4094, lon: 11.4779)
+        let favorite = Place(name: "Hornburu", lat: 64.1991, lon: 11.4036)
+        let hour = ForecastHour(time: base, temp: 8, precip: 0, wind: 2, cloud: 40, dew: 4)
+        let store = Store(persistenceKey: persistenceKey)
+        store.places = [position, favorite]
+        store.forecasts = [position.id: [hour]]
+        store.select(position, fromCurrentLocation: true)
+
+        let fix = CLLocation(
+            coordinate: CLLocationCoordinate2D(latitude: position.lat, longitude: position.lon),
+            altitude: 0, horizontalAccuracy: 5, verticalAccuracy: 5,
+            course: 95, speed: 2, timestamp: Date()
+        )
+        store.updateCurrentLocationCourse(from: fix)
+
+        XCTAssertEqual(store.currentLocationCourse, 95)
+        XCTAssertEqual(store.selectedID, position.id)
+        XCTAssertEqual(store.selectedForecast, [hour])
+        store.select(favorite)
+        store.select(position, fromCurrentLocation: true)
+        XCTAssertEqual(store.currentLocationCourse, 95)
+        XCTAssertEqual(store.selectedForecast, [hour])
+    }
+
     func testCurrentLocationReusesNearbySavedPlaceInsteadOfCreatingDuplicate() {
         let klinga = Place(name: "Klinga", lat: 64.4094, lon: 11.4779)
         let far = Place(name: "Oslo", lat: 59.9139, lon: 10.7522)
