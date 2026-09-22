@@ -1010,14 +1010,14 @@ enum SolarCycle {
         }
     }
 
-    /// Finds the closest solar boundary for an hourly weather cell. A small
-    /// tolerance lets a 07-cell show a sunrise that happened shortly before
-    /// it, instead of losing the marker at a day-band boundary.
+    /// Snaps a solar boundary to exactly one nearest hourly weather cell.
+    /// The half-hour interval is deliberately exclusive at its upper edge so
+    /// neighbouring cells can never draw the same solar marker twice.
     static func transition(
         near date: Date,
         latitude: Double,
         longitude: Double,
-        tolerance: TimeInterval = 90 * 60
+        tolerance: TimeInterval = 30 * 60
     ) -> Transition? {
         guard case let .normal(sunrise, sunset) = state(for: date, latitude: latitude, longitude: longitude) else {
             return nil
@@ -1025,7 +1025,7 @@ enum SolarCycle {
         let candidates: [(Transition, Date)] = [(.sunrise, sunrise), (.sunset, sunset)]
         guard let nearest = candidates.min(by: {
             abs($0.1.timeIntervalSince(date)) < abs($1.1.timeIntervalSince(date))
-        }), abs(nearest.1.timeIntervalSince(date)) <= tolerance else { return nil }
+        }), abs(nearest.1.timeIntervalSince(date)) < tolerance else { return nil }
         return nearest.0
     }
 

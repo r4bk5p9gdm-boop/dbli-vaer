@@ -90,6 +90,16 @@ final class PlannerTests: XCTestCase {
 
         XCTAssertEqual(SolarCycle.transition(near: morning, latitude: 64.46, longitude: 11.50), .sunrise)
         XCTAssertEqual(SolarCycle.transition(near: afternoon, latitude: 64.46, longitude: 11.50), .sunset)
+
+        let hourlyMarkers = (0..<24).compactMap { hour in
+            SolarCycle.transition(
+                near: calendar.date(bySettingHour: hour, minute: 0, second: 0, of: morning)!,
+                latitude: 64.46,
+                longitude: 11.50
+            )
+        }
+        XCTAssertEqual(hourlyMarkers.filter { $0 == .sunrise }.count, 1)
+        XCTAssertEqual(hourlyMarkers.filter { $0 == .sunset }.count, 1)
     }
 
     func testPersistedStoreStateRoundTripsForecastCacheAndTimestamp() throws {

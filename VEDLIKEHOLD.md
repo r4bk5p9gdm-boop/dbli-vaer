@@ -54,6 +54,11 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-106 · FULLFØRT 2026-09-22** — Soloppgang og solnedgang festes nå
+til én nærmeste timecelle med halvåpent 30-minuttersvindu. Solraden kan derfor
+aldri vise samme opp-/ned-symbol i to naboceller. Regresjonstest teller
+eksakt én av hver markør gjennom et døgn.
+
 **BRUKER-105 · FULLFØRT 2026-09-21** — Solraden viser nå et lite
 soloppgangssymbol og solnedgangssymbol i den relevante timecellen. Markørene
 er synlige også ved overskyet vær, slik at de forklarer dagslyset uten å være
