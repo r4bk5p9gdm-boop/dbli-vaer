@@ -123,6 +123,33 @@ final class PlannerTests: XCTestCase {
         XCTAssertNotEqual(klinga.map(\.0), oslo.map(\.0))
     }
 
+    func testPolarSolarStatesHaveNoFalseTransitionOrNightSunAlert() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let polarNight = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 12, day: 21, hour: 12)))
+        let polarDay = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 6, day: 21, hour: 12)))
+        let longyearbyenLatitude = 78.22
+        let longyearbyenLongitude = 15.65
+
+        XCTAssertFalse(SolarCycle.isDaylight(polarNight, latitude: longyearbyenLatitude, longitude: longyearbyenLongitude))
+        XCTAssertNil(SolarCycle.transition(near: polarNight, latitude: longyearbyenLatitude, longitude: longyearbyenLongitude))
+        XCTAssertTrue(SolarCycle.isDaylight(polarDay, latitude: longyearbyenLatitude, longitude: longyearbyenLongitude))
+        XCTAssertNil(SolarCycle.transition(near: polarDay, latitude: longyearbyenLatitude, longitude: longyearbyenLongitude))
+
+        var sunRule = Rule(type: .sol)
+        sunRule.durationHours = 1
+        sunRule.activeFromHour = 0
+        sunRule.activeToHour = 0
+        let nightForecast = [ForecastHour(time: polarNight, temp: -8, precip: 0, wind: 1, cloud: 0, dew: -9)]
+        let plan = Planner.plan(
+            rule: sunRule, forecast: nightForecast, placeName: "Longyearbyen",
+            latitude: longyearbyenLatitude, longitude: longyearbyenLongitude,
+            now: polarNight.addingTimeInterval(-3_600), calendar: calendar
+        )
+        XCTAssertTrue(plan.hitIndices.isEmpty)
+        XCTAssertTrue(plan.alerts.isEmpty)
+    }
+
     func testPersistedStoreStateRoundTripsForecastCacheAndTimestamp() throws {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 20, dew: 5)

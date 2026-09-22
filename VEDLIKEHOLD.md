@@ -679,8 +679,10 @@ solmarkørene for Klinga og Oslo samme vinterdag. Begge får én soloppgang og �
 solnedgang, men i ulike timeceller. Det låser at hver værbåndvisning bruker
 stedets egne koordinater, ikke markører fra forrige swipe-sted.
 
-**AUTO-258 · ÅPEN** — Test at solsyklusens polar-dag- og polar-natt-grenser
-ikke kan gi falsk solmarkering eller solvarsel.
+**AUTO-258 · FULLFØRT 2026-09-22** — La til regresjonstest for polar dag og
+polar natt. Begge mangler soloppgang/-nedgangsmarkør; polarnatt har heller
+ikke dagslys eller solvarsel. Polar dag beholder dagslys som en reell
+soltilstand, men får ingen falsk overgangsmarkør.
 
 **AUTO-259 · ÅPEN** — Test at et oppdatert posisjonskurs bare roterer
 markøren og ikke endrer valgt sted eller værbånd.
