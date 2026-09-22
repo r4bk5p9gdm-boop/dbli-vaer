@@ -2367,6 +2367,20 @@ final class PlannerTests: XCTestCase {
         ))
     }
 
+    func testLiveActivityReadsOnlyCandidatePlaceForecastCache() {
+        let klinga = Place(name: "Klinga", lat: 64, lon: 11)
+        let hornburu = Place(name: "Hornburu", lat: 64.2, lon: 11.2)
+        let klingaForecast = [ForecastHour(time: base, temp: 3, precip: 1, wind: 1, cloud: 90, dew: 1)]
+        let hornburuForecast = [ForecastHour(time: base, temp: -2, precip: 1, wind: 1, cloud: 90, dew: -2)]
+        let caches = [klinga.id: klingaForecast, hornburu.id: hornburuForecast]
+
+        XCTAssertEqual(LiveWeatherActivityPolicy.forecast(for: klinga, in: caches), klingaForecast)
+        XCTAssertEqual(LiveWeatherActivityPolicy.forecast(for: hornburu, in: caches), hornburuForecast)
+        XCTAssertNil(LiveWeatherActivityPolicy.forecast(
+            for: Place(name: "Selbu", lat: 63.2, lon: 11.0), in: caches
+        ))
+    }
+
     @MainActor
     func testWidgetFreshSnapshotAppliesLocalTemperatureOffsetLikeFallback() throws {
         var place = Place(name: "Klinga", lat: 64, lon: 11)

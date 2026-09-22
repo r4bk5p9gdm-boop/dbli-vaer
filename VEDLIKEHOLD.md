@@ -655,14 +655,19 @@ den fortsatt ute av både visningsreglene og rullerende Hjem-status.
 kun-visningsrad fortsatt kan være synlig i værbåndet, men aldri kvalifiserer
 til å starte eller videreføre Live Activity.
 
-**AUTO-256 · ÅPEN** — Test at en Live Activity ikke bruker en prognose cachet
-for et annet sted når det valgte Watch-/CarPlay-stedet endres.
+**AUTO-256 · FULLFØRT 2026-09-22** — Gjorde Live Activitys cacheoppslag
+eksplisitt per kandidatsted og la til regresjonstest med to ulike steds-
+prognoser. Watch-/CarPlay-valget styrer ikke Live Activity, men en kandidat kan
+aldri lese cache fra et annet sted.
 
 **AUTO-257 · ÅPEN** — Kontroller at soloppgang-/solnedgangsmarkørene følger
 stedets koordinater og ikke kan bli stående fra forrige swipe-sted.
 
 **AUTO-258 · ÅPEN** — Test at solsyklusens polar-dag- og polar-natt-grenser
 ikke kan gi falsk solmarkering eller solvarsel.
+
+**AUTO-259 · ÅPEN** — Test at et oppdatert posisjonskurs bare roterer
+markøren og ikke endrer valgt sted eller værbånd.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

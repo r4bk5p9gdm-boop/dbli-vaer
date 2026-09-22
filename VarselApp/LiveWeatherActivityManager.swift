@@ -43,6 +43,12 @@ enum LiveWeatherActivityPolicy {
         return forecastIsFresh(fetchedAt: fetchedAt, now: now, maxAge: maxAge)
     }
 
+    /// Live Activity is independent of the Watch/CarPlay selection, but every
+    /// candidate must still read the cache belonging to its own place ID.
+    static func forecast(for place: Place, in forecasts: [UUID: [ForecastHour]]) -> [ForecastHour]? {
+        forecasts[place.id]
+    }
+
     /// A continued Live Activity must be re-authorised from the current rule
     /// state. Cached forecast data alone is never enough to keep it alive.
     static func canUseRule(
@@ -175,7 +181,7 @@ enum LiveWeatherActivityManager {
                     makeCandidate(
                         place: place,
                         rule: rule,
-                        forecast: forecasts[place.id],
+                        forecast: LiveWeatherActivityPolicy.forecast(for: place, in: forecasts),
                         forecastFetchedAt: forecastUpdatedAt[place.id],
                         nearbyPlaceIDs: nearbyPlaceIDs,
                         now: now,
@@ -203,7 +209,7 @@ enum LiveWeatherActivityManager {
             return makeCandidate(
                 place: place,
                 rule: rule,
-                forecast: forecasts[place.id],
+                forecast: LiveWeatherActivityPolicy.forecast(for: place, in: forecasts),
                 forecastFetchedAt: forecastUpdatedAt[place.id],
                 nearbyPlaceIDs: nearbyPlaceIDs,
                 now: now,
