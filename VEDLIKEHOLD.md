@@ -642,14 +642,18 @@ liv i stedets aktivitet.
 gjenoppretter en skjult nedbørsrad sammen med prognosecache. Etter oppstart er
 den fortsatt ute av både visningsreglene og rullerende Hjem-status.
 
-**AUTO-255 · ÅPEN** — Test at en kun-visningsrad aldri kan starte eller holde
-liv i en Live Activity, selv når raden fortsatt er synlig i værbåndet.
+**AUTO-255 · FULLFØRT 2026-09-22** — La til regresjonstest som viser at en
+kun-visningsrad fortsatt kan være synlig i værbåndet, men aldri kvalifiserer
+til å starte eller videreføre Live Activity.
 
 **AUTO-256 · ÅPEN** — Test at en Live Activity ikke bruker en prognose cachet
 for et annet sted når det valgte Watch-/CarPlay-stedet endres.
 
 **AUTO-257 · ÅPEN** — Kontroller at soloppgang-/solnedgangsmarkørene følger
 stedets koordinater og ikke kan bli stående fra forrige swipe-sted.
+
+**AUTO-258 · ÅPEN** — Test at solsyklusens polar-dag- og polar-natt-grenser
+ikke kan gi falsk solmarkering eller solvarsel.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

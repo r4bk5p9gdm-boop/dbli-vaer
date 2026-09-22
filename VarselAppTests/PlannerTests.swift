@@ -720,6 +720,17 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(Planner.planAll(places: [place], forecasts: [place.id: hours]).isEmpty)
     }
 
+    func testDisplayOnlyRowCannotStartOrContinueLiveActivity() {
+        var rule = Rule(type: .regn)
+        rule.isDisplayOnly = true
+        let place = Place(name: "Klinga", lat: 64, lon: 11, rules: [rule])
+
+        XCTAssertTrue(place.rulesForDisplay.contains { $0.id == rule.id })
+        XCTAssertFalse(LiveWeatherActivityPolicy.canUseRule(
+            rule, for: place, nearbyPlaceIDs: [place.id]
+        ))
+    }
+
     func testDisabledRuleNeverCreatesPushAlert() {
         var rule = Rule(type: .regn)
         rule.enabled = false
