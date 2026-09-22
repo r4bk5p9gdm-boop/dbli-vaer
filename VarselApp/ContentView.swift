@@ -18,9 +18,11 @@ private struct LocationPresenceBadge: View {
                 .scaleEffect(pulse ? 0.86 : 0.58)
 
             Image(systemName: "location.north.fill")
-                .font(.system(size: 34, weight: .black))
+                .font(.system(size: 31, weight: .black))
                 .foregroundStyle(.indigo.gradient)
-                .rotationEffect(.degrees(course ?? 0))
+                // The compact iOS location-arrow posture points right at rest.
+                // Keep a live course relative to that resting orientation.
+                .rotationEffect(.degrees(90 + (course ?? 0)))
                 .animation(.easeInOut(duration: 0.35), value: course)
 
             Text(label)

@@ -54,6 +54,10 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-107 · FULLFØRT 2026-09-22** — Posisjonspilen på Hjem er litt mindre
+og har nå iOS-orientert hvileposisjon mot høyre. Ved gyldig kurs roterer den
+fortsatt mykt rundt egen akse fra denne orienteringen.
+
 **BRUKER-106 · FULLFØRT 2026-09-22** — Soloppgang og solnedgang festes nå
 til én nærmeste timecelle med halvåpent 30-minuttersvindu. Solraden kan derfor
 aldri vise samme opp-/ned-symbol i to naboceller. Regresjonstest teller
