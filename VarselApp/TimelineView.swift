@@ -50,7 +50,7 @@ struct ForecastVariantsView: View {
                         TimeCardsForecast(day: day, allForecast: forecast, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold)
                     case .weatherBands:
                         SwiftUI.TimelineView(.periodic(from: .now, by: 60)) { timeline in
-                            WeatherBandsForecast(day: day, rules: rules, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, now: timeline.date)
+                            WeatherBandsForecast(day: day, allForecast: forecast, rules: rules, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, now: timeline.date)
                         }
                     case .events:
                         WeatherEventsForecast(day: day, rules: rules, frostMargin: frostMargin)
@@ -73,6 +73,27 @@ struct ForecastDay: Identifiable {
         return grouped.keys.sorted().map { date in
             ForecastDay(date: date, hours: grouped[date, default: []].sorted { $0.time < $1.time })
         }
+    }
+}
+
+/// A visual weather day runs from 07 to 07, not from midnight to midnight.
+/// This keeps the final night cell honest: 23–07 contains the following
+/// morning's 00–06 values, including dew events around 05.
+enum WeatherBandHours {
+    static func make(
+        for day: Date,
+        from forecast: [ForecastHour],
+        includeEarlyMorning: Bool = false,
+        calendar: Calendar = .current
+    ) -> [ForecastHour] {
+        let dayStart = calendar.startOfDay(for: day)
+        let startHour = includeEarlyMorning ? 5 : 7
+        guard let start = calendar.date(bySettingHour: startHour, minute: 0, second: 0, of: dayStart),
+              let nextDay = calendar.date(byAdding: .day, value: 1, to: dayStart),
+              let end = calendar.date(bySettingHour: 7, minute: 0, second: 0, of: nextDay) else {
+            return []
+        }
+        return forecast.filter { $0.time >= start && $0.time < end }.sorted { $0.time < $1.time }
     }
 }
 
@@ -231,6 +252,7 @@ private struct TimeCardsForecast: View {
 
 private struct WeatherBandsForecast: View {
     let day: ForecastDay
+    let allForecast: [ForecastHour]
     let rules: [Rule]
     let frostMargin: Double
     let sunThreshold2: Double
@@ -273,6 +295,14 @@ private struct WeatherBandsForecast: View {
     /// the 07–15–23–07 column boundaries without inventing an extra cell.
     private var includesEarlyMorningCell: Bool {
         isToday && isMorningCompression
+    }
+
+    private var bandHours: [ForecastHour] {
+        WeatherBandHours.make(
+            for: day.date,
+            from: allForecast,
+            includeEarlyMorning: includesEarlyMorningCell
+        )
     }
 
     private var nowFraction: CGFloat {
@@ -328,7 +358,7 @@ private struct WeatherBandsForecast: View {
                                 color: AlertType.regn.color,
                                 showsNotification: moistureRules.contains(where: { !$0.isDisplayOnly })
                             )
-                            MoistureBandTrack(day: day, rules: moistureRules, includeEarlyMorning: includesEarlyMorningCell, compressForMorning: isMorningCompression && !isToday)
+                            MoistureBandTrack(hours: bandHours, rules: moistureRules, includeEarlyMorning: includesEarlyMorningCell, compressForMorning: isMorningCompression && !isToday)
                         }
                     }
                     ForEach(displayedTypes) { type in
@@ -342,7 +372,7 @@ private struct WeatherBandsForecast: View {
                                 color: type.color,
                                 showsNotification: typeRules.contains(where: { !$0.isDisplayOnly })
                             )
-                            CombinedDayBandTrack(day: day, rules: typeRules, type: type, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, includeEarlyMorning: includesEarlyMorningCell, compressForMorning: isMorningCompression && !isToday)
+                            CombinedDayBandTrack(hours: bandHours, rules: typeRules, type: type, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, includeEarlyMorning: includesEarlyMorningCell, compressForMorning: isMorningCompression && !isToday)
                         }
                     }
                 }
@@ -412,7 +442,7 @@ private struct WeatherBandLabel: View {
 }
 
 private struct CombinedDayBandTrack: View {
-    let day: ForecastDay
+    let hours: [ForecastHour]
     let rules: [Rule]
     let type: AlertType
     let frostMargin: Double
@@ -432,11 +462,11 @@ private struct CombinedDayBandTrack: View {
             let totalHours: CGFloat = (includeEarlyMorning || compressForMorning) ? 26 : 24
             HStack(spacing: spacing) {
                 if includeEarlyMorning {
-                    CombinedHourBandCell(hours: day.hours, rules: rules, type: type, period: .earlyMorning, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude)
+                    CombinedHourBandCell(hours: hours, rules: rules, type: type, period: .earlyMorning, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude)
                         .frame(width: availableWidth * 2 / 26)
                 }
                 ForEach(WeatherBandPeriod.all) { period in
-                    CombinedHourBandCell(hours: day.hours, rules: rules, type: type, period: period, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude)
+                    CombinedHourBandCell(hours: hours, rules: rules, type: type, period: period, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude)
                         .frame(width: availableWidth * 8 / totalHours)
                 }
             }
@@ -518,7 +548,7 @@ private struct CombinedHourBandCell: View {
 }
 
 private struct MoistureBandTrack: View {
-    let day: ForecastDay
+    let hours: [ForecastHour]
     let rules: [Rule]
     let includeEarlyMorning: Bool
     let compressForMorning: Bool
@@ -531,11 +561,11 @@ private struct MoistureBandTrack: View {
             let totalHours: CGFloat = (includeEarlyMorning || compressForMorning) ? 26 : 24
             HStack(spacing: spacing) {
                 if includeEarlyMorning {
-                    MoistureHourBandCell(hours: day.hours, rules: rules, period: .earlyMorning)
+                    MoistureHourBandCell(hours: hours, rules: rules, period: .earlyMorning)
                         .frame(width: availableWidth * 2 / 26)
                 }
                 ForEach(WeatherBandPeriod.all) { period in
-                    MoistureHourBandCell(hours: day.hours, rules: rules, period: period)
+                    MoistureHourBandCell(hours: hours, rules: rules, period: period)
                         .frame(width: availableWidth * 8 / totalHours)
                 }
             }

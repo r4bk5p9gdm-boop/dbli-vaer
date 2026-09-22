@@ -3474,6 +3474,23 @@ final class PlannerTests: XCTestCase {
         ])
     }
 
+    func testWeatherBandIncludesFollowingMorningInIts23To07Cell() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let day = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 9, day: 22)))
+        let times = [6, 7, 23, 1, 5, 6, 7].enumerated().map { index, hour in
+            let date = index < 3
+                ? calendar.date(bySettingHour: hour, minute: 0, second: 0, of: day)!
+                : calendar.date(bySettingHour: hour, minute: 0, second: 0, of: calendar.date(byAdding: .day, value: 1, to: day)!)!
+            return ForecastHour(time: date, temp: 8, precip: 0, wind: 1, cloud: 60, dew: 7)
+        }
+
+        let band = WeatherBandHours.make(for: day, from: times, calendar: calendar)
+        XCTAssertEqual(band.map(\.time), [times[1].time, times[2].time, times[3].time, times[4].time, times[5].time])
+        XCTAssertTrue(band.contains { calendar.component(.hour, from: $0.time) == 5 })
+        XCTAssertFalse(band.contains { $0.time == times[0].time || $0.time == times[6].time })
+    }
+
     @MainActor
     func testForecastRecipientsExcludeRemovedAndRelocatedPlaces() {
         let removed = Place(name: "Slettet", lat: 64, lon: 11)

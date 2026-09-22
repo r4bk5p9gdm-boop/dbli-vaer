@@ -54,6 +54,12 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-108 · FULLFØRT 2026-09-22** — Værbåndet bruker nå et faktisk
+vær-døgn fra 07 til 07. Nattfeltet 23–07 henter derfor 00–06 fra neste
+kalenderdag; duggfall kl. 05 får grønn markering i Nedbør-raden når den samme
+tørreperioden som planleggeren krever er oppfylt. Regresjonstest dekker
+grensen ved 07 og neste dags kl. 05.
+
 **BRUKER-107 · FULLFØRT 2026-09-22** — Posisjonspilen på Hjem er litt mindre
 og har nå iOS-orientert hvileposisjon mot høyre. Ved gyldig kurs roterer den
 fortsatt mykt rundt egen akse fra denne orienteringen.
