@@ -54,6 +54,10 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-110 · FULLFØRT 2026-09-22** — Soloppgang/-nedgang ligger igjen i
+sin faktiske timecelle. Overgangsceller undertrykker nå gul solmarkering, så
+ikonet forklarer overgangen mot en nøytral bakgrunn.
+
 **BRUKER-109 · FULLFØRT 2026-09-22** — Flyttet soloppgang/-nedgangsikonet
 ut til kanten av den aktuelle timecellen i solraden: soloppgang like før,
 solnedgang like etter. Ikonet ligger dermed ikke oppå en gul solmarkering.
