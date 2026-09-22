@@ -102,6 +102,27 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(hourlyMarkers.filter { $0 == .sunset }.count, 1)
     }
 
+    func testSolarRowMarkersFollowTheDisplayedPlaceCoordinates() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let winterDay = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 12, day: 21)))
+
+        func markers(latitude: Double, longitude: Double) -> [(Int, SolarCycle.Transition)] {
+            (0..<24).compactMap { hour in
+                let date = calendar.date(bySettingHour: hour, minute: 0, second: 0, of: winterDay)!
+                return SolarCycle.transition(near: date, latitude: latitude, longitude: longitude)
+                    .map { (hour, $0) }
+            }
+        }
+
+        let klinga = markers(latitude: 64.46, longitude: 11.50)
+        let oslo = markers(latitude: 59.91, longitude: 10.75)
+
+        XCTAssertEqual(klinga.map(\.1), [.sunrise, .sunset])
+        XCTAssertEqual(oslo.map(\.1), [.sunrise, .sunset])
+        XCTAssertNotEqual(klinga.map(\.0), oslo.map(\.0))
+    }
+
     func testPersistedStoreStateRoundTripsForecastCacheAndTimestamp() throws {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 20, dew: 5)

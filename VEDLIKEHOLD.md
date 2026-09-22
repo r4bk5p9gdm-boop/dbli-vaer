@@ -666,8 +666,10 @@ eksplisitt per kandidatsted og la til regresjonstest med to ulike steds-
 prognoser. Watch-/CarPlay-valget styrer ikke Live Activity, men en kandidat kan
 aldri lese cache fra et annet sted.
 
-**AUTO-257 · ÅPEN** — Kontroller at soloppgang-/solnedgangsmarkørene følger
-stedets koordinater og ikke kan bli stående fra forrige swipe-sted.
+**AUTO-257 · FULLFØRT 2026-09-22** — La til regresjonstest som sammenligner
+solmarkørene for Klinga og Oslo samme vinterdag. Begge får én soloppgang og én
+solnedgang, men i ulike timeceller. Det låser at hver værbåndvisning bruker
+stedets egne koordinater, ikke markører fra forrige swipe-sted.
 
 **AUTO-258 · ÅPEN** — Test at solsyklusens polar-dag- og polar-natt-grenser
 ikke kan gi falsk solmarkering eller solvarsel.
