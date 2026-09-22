@@ -700,6 +700,9 @@ ved delvis mislykket oppdatering av flere steder.
 **AUTO-262 · ÅPEN** — Kontroller at soloppgang/-nedgang fortsatt plasseres i
 riktig timecelle over skifte mellom sommer- og vintertid.
 
+**AUTO-263 · ÅPEN** — Kontroller at Hjem viser de tre relevante vær-dagene
+etter oppstart med en eldre, men fortsatt framtidsdekkende prognosecache.
+
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
 
