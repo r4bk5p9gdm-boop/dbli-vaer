@@ -1566,6 +1566,29 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(snowSummary.detail, "1 time med litt regn.")
     }
 
+    func testFutureSnowDetailUsesTheSnowTemplateWithoutRainConnector() {
+        let now = base.addingTimeInterval(5 * 60)
+        let dry = ForecastHour(time: base, temp: 0, precip: 0, wind: 1, cloud: 90, dew: -2)
+        let first = ForecastHour(
+            time: base.addingTimeInterval(3 * 3_600), temp: 0, precip: 0.2,
+            wind: 1, cloud: 90, dew: -2
+        )
+        let second = ForecastHour(
+            time: first.time.addingTimeInterval(3_600), temp: 0, precip: 0.2,
+            wind: 1, cloud: 90, dew: -2
+        )
+
+        let summary = CurrentPrecipitationSummary.make(
+            from: [dry, first, second], current: dry, now: now
+        )
+
+        XCTAssertTrue(summary.title.hasPrefix("D bli Snø!"))
+        XCTAssertEqual(
+            summary.detail,
+            "2 timer lett snøfall fra kl. \(shortClockLabel(first.time))."
+        )
+    }
+
     func testFutureRadarMinuteDoesNotClaimRainIsFallingNow() {
         let now = base.addingTimeInterval(5 * 60)
         var current = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 90, dew: 5)

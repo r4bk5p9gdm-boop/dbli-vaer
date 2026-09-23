@@ -896,9 +896,10 @@ struct CurrentPrecipitationSummary {
             durationText = hours == 1 ? "1 time" : "\(hours) timer"
         }
         let intensity = description.lowercased()
+        let connector = temperature <= 1 ? " " : " med "
         let summary = possible
-            ? "Opptil \(durationText) med \(intensity)"
-            : "\(durationText) med \(intensity)"
+            ? "Opptil \(durationText)\(connector)\(intensity)"
+            : "\(durationText)\(connector)\(intensity)"
         let startClock = includeStartClock ? " fra kl. \(shortClockLabel(forecast[start].time))" : ""
         return "\(summary)\(startClock)."
     }
@@ -931,7 +932,8 @@ struct CurrentPrecipitationSummary {
         }
         if now != nil { return "\(description) i \(duration) til." }
         let startClock = startTimeAlreadyInHeadline ? "" : " fra kl. \(shortClockLabel(sample.time))"
-        return "\(duration) \(description.lowercased())\(startClock)."
+        let connector = temperature <= 1 ? " " : " med "
+        return "\(duration)\(connector)\(description.lowercased())\(startClock)."
     }
 
     private static func precipitationDescription(_ description: String, temperature: Double) -> String? {

@@ -126,6 +126,9 @@ allerede inneholder klokkeslettet.
 Også nedbør som starter i den pågående prognosetimen bruker nå en delt
 `currentHourHeadline`-mal for sikkert/usikkert regn og snø. Det fjerner den
 siste lokale kopien av «D bli»/«D kan bli» fra rullerende Hjem-kort.
+Nedbørsdetaljen er samtidig gjort typebevisst: regn beholder «med» i
+andrelinjen, mens snø nå følger fasiten «2 timer lett snøfall» uten regn-
+konnektor. Begge datakilder (prognose og radar) bruker samme skille.
 
 **BRUKER-111 · FULLFØRT 2026-09-23** — Nedbørsmeldingen på Hjem gjentar ikke
 lenger «Mulig» eller klokkeslett i andrelinjen. Usikker varighet merkes
