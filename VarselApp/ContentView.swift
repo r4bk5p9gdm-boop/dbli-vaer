@@ -729,7 +729,6 @@ struct CurrentPrecipitationSummary {
         languageStyle: AlertLanguageStyle = .inntrondersk, now: Date = Date()
     ) -> CurrentPrecipitationSummary {
         let horizon = now.addingTimeInterval(24 * 60 * 60)
-        let possiblePrefix = languageStyle == .bokmal ? "Det kan bli" : "D kan bli"
         let samples = forecast.flatMap { $0.radarSamples ?? [] }.sorted { $0.time < $1.time }
         let radarInterval = PrecipitationSample.nominalInterval(in: samples)
         let latest = samples.last { $0.time <= now }
@@ -780,8 +779,11 @@ struct CurrentPrecipitationSummary {
 
         let currentHourIsFresh = current.time <= now && now.timeIntervalSince(current.time) < 3_600
         if currentHourIsFresh && current.precip >= 0.1 {
+            let type: AlertType = current.temp <= 1 ? .sno : .regn
             return CurrentPrecipitationSummary(
-                title: "D bli \(current.temp <= 1 ? "Snø" : "Regn")! denne timen.",
+                title: RotatingAlertCopy.currentHourHeadline(
+                    for: type, possible: false, languageStyle: languageStyle
+                ),
                 detail: forecastDetail(
                     forecast: forecast, startingAt: current.time,
                     waterEquivalent: current.precip, temperature: current.temp,
@@ -797,8 +799,11 @@ struct CurrentPrecipitationSummary {
             ? max(current.precip, current.precipMax ?? 0)
             : current.precip
         if currentHourIsFresh && currentForecastRisk >= 0.1 {
+            let type: AlertType = current.temp <= 1 ? .sno : .regn
             return CurrentPrecipitationSummary(
-                title: "\(possiblePrefix) \(current.temp <= 1 ? "Snø" : "Regn")! denne timen.",
+                title: RotatingAlertCopy.currentHourHeadline(
+                    for: type, possible: true, languageStyle: languageStyle
+                ),
                 detail: forecastDetail(
                     forecast: forecast,
                     startingAt: current.time,

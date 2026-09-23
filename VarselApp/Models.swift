@@ -1328,6 +1328,24 @@ enum RotatingAlertCopy {
         return currentHeadline(for: status, rule: nil, languageStyle: languageStyle)
     }
 
+    /// Headline for precipitation forecast that starts in the current
+    /// forecast hour. It is not a NÅ observation, so it must retain the
+    /// «denne timen» qualifier instead of using the current-condition table.
+    static func currentHourHeadline(
+        for type: AlertType,
+        possible: Bool,
+        languageStyle: AlertLanguageStyle
+    ) -> String {
+        let weather = type == .sno ? "Snø" : "Regn"
+        let prefix: String
+        switch languageStyle {
+        case .inntrondersk: prefix = possible ? "D kan bli" : "D bli"
+        case .bokmal: prefix = possible ? "Det kan bli" : "D bli"
+        case .english: prefix = possible ? "Possible" : "It’s"
+        }
+        return "\(prefix) \(weather)! denne timen."
+    }
+
     private static func shortFutureTime(_ eventAt: Date, relativeTo now: Date) -> String {
         let minutes = max(0, Int((eventAt.timeIntervalSince(now) / 60).rounded()))
         if minutes <= 209 { return eventTimePhrase(eventAt, relativeTo: now) }

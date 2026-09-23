@@ -2090,6 +2090,24 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testRotatingCurrentHourHeadlineUsesSharedLanguagePrefix() {
+        XCTAssertEqual(
+            RotatingAlertCopy.currentHourHeadline(
+                for: .regn, possible: false, languageStyle: .bokmal
+            ),
+            "D bli Regn! denne timen."
+        )
+        XCTAssertEqual(
+            WeatherLanguage.text(
+                RotatingAlertCopy.currentHourHeadline(
+                    for: .sno, possible: true, languageStyle: .inntrondersk
+                ),
+                style: .inntrondersk
+            ),
+            "D kan bli Snø! herre tima."
+        )
+    }
+
     func testDewUsesCompactDialectHeadlineButFullPossiblePushWording() {
         let rule = Rule(type: .dugg)
         let future = WeatherStatus(
