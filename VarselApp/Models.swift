@@ -243,7 +243,7 @@ enum WeatherLanguage {
             // is not accidentally phrased as a present status.
             .replacingOccurrences(of: "Fare for dugg nå", with: LanguageCatalog.value("now.dew", language: "tr", fallback: "D e Duggfall!"))
             .replacingOccurrences(of: "Duggfall nå", with: LanguageCatalog.value("now.dew", language: "tr", fallback: "D e Duggfall!"))
-            .replacingOccurrences(of: "Frost nå", with: LanguageCatalog.value("now.frost", language: "tr", fallback: "D e Frost!"))
+            .replacingOccurrences(of: "Frost nå", with: LanguageCatalog.value("now.frost", language: "tr", fallback: "D Rime!"))
             .replacingOccurrences(of: "Fare for dugg", with: "Mulig doggfall")
             .replacingOccurrences(of: "Duggfall", with: "Doggfall")
             .replacingOccurrences(of: "Duggpunkt", with: "Doggpunkt")
@@ -1264,7 +1264,9 @@ enum RotatingAlertCopy {
         let threshold = rule?.threshold ?? 0
         let direction = rule?.temperatureDirection ?? .below
         switch (status.type, languageStyle) {
-        case (.regn, _): return "D e Regn!"
+        case (.regn, .inntrondersk): return "D e Regn!"
+        case (.regn, .bokmal): return "Det Regner!"
+        case (.regn, .english): return "It’s raining!"
         case (.sno, _): return "Det Snør!"
         case (.vind, .inntrondersk): return "D blæs!"
         case (.vind, .bokmal): return "Det Blåser!"
@@ -1272,7 +1274,7 @@ enum RotatingAlertCopy {
         case (.dugg, .inntrondersk): return "D Dogge!"
         case (.dugg, .bokmal): return "Det er Duggfall!"
         case (.dugg, .english): return "It’s dewy!"
-        case (.frost, .inntrondersk): return "D e Frost!"
+        case (.frost, .inntrondersk): return "D Rime!"
         case (.frost, .bokmal): return "Det er frost!"
         case (.frost, .english): return "It’s frosty!"
         case (.sol, .inntrondersk): return "D e Sol!"

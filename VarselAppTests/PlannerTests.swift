@@ -992,8 +992,23 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(WeatherLanguage.text("Litt regn nå.", style: .inntrondersk), "Småregn no.")
         XCTAssertEqual(WeatherLanguage.text("Snø nå.", style: .inntrondersk), "Det Snør!")
         XCTAssertEqual(WeatherLanguage.text("Vindkast nå.", style: .inntrondersk), "D Blæs!")
-        XCTAssertEqual(WeatherLanguage.text("Frost nå.", style: .inntrondersk), "D e Frost!")
+        XCTAssertEqual(WeatherLanguage.text("Frost nå.", style: .inntrondersk), "D Rime!")
         XCTAssertEqual(WeatherLanguage.text("Sol i 4 timer nå.", style: .inntrondersk), "D e Sol!")
+    }
+
+    func testApprovedNowHeadlinesUseSelectedLanguageForms() {
+        let rule = Rule(type: .regn)
+        let rain = WeatherStatus(ruleID: rule.id, type: .regn, text: "", eventAt: base, isNow: true)
+        XCTAssertEqual(RotatingAlertCopy.headline(for: rain, rule: rule, languageStyle: .bokmal, now: base), "Det Regner!")
+        XCTAssertEqual(RotatingAlertCopy.headline(for: rain, rule: rule, languageStyle: .inntrondersk, now: base), "D e Regn!")
+
+        let snowRule = Rule(type: .sno)
+        let snow = WeatherStatus(ruleID: snowRule.id, type: .sno, text: "", eventAt: base, isNow: true)
+        XCTAssertEqual(RotatingAlertCopy.headline(for: snow, rule: snowRule, languageStyle: .inntrondersk, now: base), "Det Snør!")
+
+        let frostRule = Rule(type: .frost)
+        let frost = WeatherStatus(ruleID: frostRule.id, type: .frost, text: "", eventAt: base, isNow: true)
+        XCTAssertEqual(RotatingAlertCopy.headline(for: frost, rule: frostRule, languageStyle: .inntrondersk, now: base), "D Rime!")
     }
 
     func testWeatherGlanceUsesTwelveHoursAndOneEventPerType() {
@@ -1970,12 +1985,12 @@ final class PlannerTests: XCTestCase {
 
     func testRotatingAlertCopyCoversEveryWeatherTypeAndPossibleNowStatus() {
         let expectedBokmal: [AlertType: String] = [
-            .regn: "D e Regn!", .sno: "Det Snør!", .vind: "Det Blåser!",
+            .regn: "Det Regner!", .sno: "Det Snør!", .vind: "Det Blåser!",
             .dugg: "Det er Duggfall!", .frost: "Det er frost!", .sol: "Det er sol!"
         ]
         let expectedInntrondersk: [AlertType: String] = [
             .regn: "D e Regn!", .sno: "Det Snør!", .vind: "D blæs!",
-            .dugg: "D Dogge!", .frost: "D e Frost!", .sol: "D e Sol!"
+            .dugg: "D Dogge!", .frost: "D Rime!", .sol: "D e Sol!"
         ]
 
         for type in [AlertType.regn, .sno, .vind, .dugg, .frost, .sol] {

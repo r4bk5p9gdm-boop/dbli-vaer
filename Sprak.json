@@ -212,7 +212,7 @@
     },
     "now.rain": {
       "en": "It’s raining now",
-      "nb": "Regn nå",
+      "nb": "Det Regner!",
       "tr": "D Regne!"
     },
     "now.rain_possible": {
@@ -243,7 +243,7 @@
     "now.frost": {
       "en": "Frost now",
       "nb": "Frost nå",
-      "tr": "D e Frost!"
+      "tr": "D Rime!"
     },
     "now.sun": {
       "en": "Sun now",

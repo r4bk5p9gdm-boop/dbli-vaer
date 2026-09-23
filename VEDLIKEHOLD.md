@@ -64,15 +64,16 @@ engelsk «Up to», negativ null i temperatur og sikkert inntrøndersk «Dogg!» 
 push. Full suite før siste justering: 245 bestod, 18 feilet; de fleste feilene
 gjelder andre funksjoner eller gamle testforventninger. App og testmål bygger.
 Siste simulatortest hang under lagring av resultatet og ble avbrutt uten å
-starte ny simulator. Avventer Mathias' språkvalg om motstridende NÅ-tekster og
-duggpunkt på Hjem før resten av språkfasiten kan implementeres. Ny retting
+starte ny simulator. Ny retting
 2026-09-23: NÅ-detaljen for dugg leser nå faktisk duggpunkt fra prognosen,
 ikke lufttemperaturen under en misvisende etikett. En regresjonstest bruker
 bevisst ulike verdier (7° luft / 6,8° duggpunkt). iPhone-app og testmål
 kompilerer uten simulator. Bokmåls vind-NÅ er også justert til «Det Blåser!»,
 som både fellestabellen og vindeksempelet bruker; bygg av app og testmål
-består etter endringen. Regn-, snø- og frostvariantene avventer konkrete
-språkvalg innen samme språk.
+består etter endringen. Mathias avklarte 2026-09-23 at bokmål regn-NÅ
+er «Det Regner!», inntrøndersk snø-NÅ er «Det Snør!», inntrøndersk frost-NÅ
+er «D Rime!», og at dugg-NÅ alltid viser faktisk duggpunkt uten varighet.
+Dette er nå koblet i rullerende generator, språkfil og regresjonstester.
 
 **BRUKER-111 · FULLFØRT 2026-09-23** — Nedbørsmeldingen på Hjem gjentar ikke
 lenger «Mulig» eller klokkeslett i andrelinjen. Usikker varighet merkes
