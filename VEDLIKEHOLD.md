@@ -115,6 +115,10 @@ tekster; bokmål og inntrøndersk er begge dekket av regresjonstest.
 fellesmalen og «4 tima med småregn» i regn-eksempelet. Koden bruker foreløpig
 «med»; ingen ytterligere tekstendring gjøres før denne ene formuleringen er
 valgt.
+La til en eksplisitt regresjonstest for framtidig usikkert nedbør samme dag:
+førstelinjen kan bære «i dag kl. HH», mens andrelinjen ikke skal gjenta
+«fra kl.» eller «Mulig». Dette låser den rullerende visningen til malen selv
+om en eldre installasjon fortsatt viser den gamle ordlyden.
 
 **BRUKER-111 · FULLFØRT 2026-09-23** — Nedbørsmeldingen på Hjem gjentar ikke
 lenger «Mulig» eller klokkeslett i andrelinjen. Usikker varighet merkes

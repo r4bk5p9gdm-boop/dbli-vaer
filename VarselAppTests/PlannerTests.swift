@@ -1493,6 +1493,29 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(bokmal.title.hasPrefix("Det kan bli Regn!"))
     }
 
+    func testFuturePossibleRainWithDayClockKeepsClockOnHeadlineOnly() {
+        let calendar = Calendar.current
+        let now = base.addingTimeInterval(5 * 60)
+        let dry = ForecastHour(time: base, temp: 8, wind: 1, cloud: 90, dew: 5)
+        let event = calendar.date(bySettingHour: 11, minute: 0, second: 0, of: base)!
+        let possible = ForecastHour(
+            time: event, temp: 8, precip: 0, wind: 1, cloud: 90, dew: 5,
+            precipMax: 0.2, precipProbability: 40
+        )
+        let following = ForecastHour(
+            time: event.addingTimeInterval(3_600), temp: 8, precip: 0,
+            wind: 1, cloud: 90, dew: 5, precipMax: 0.2, precipProbability: 40
+        )
+
+        let summary = CurrentPrecipitationSummary.make(
+            from: [dry, possible, following], current: dry, now: now
+        )
+
+        XCTAssertEqual(summary.title.components(separatedBy: "kl.").count - 1, 1)
+        XCTAssertFalse(summary.detail?.contains("fra kl.") == true)
+        XCTAssertFalse(summary.detail?.contains("Mulig") == true)
+    }
+
     func testRotatingRainDurationStopsAtForecastGapOrSnowTransition() {
         let now = base.addingTimeInterval(5 * 60)
         let dry = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 90, dew: 5)
