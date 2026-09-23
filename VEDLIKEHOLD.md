@@ -54,6 +54,13 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-116 · FULLFØRT 2026-09-23** — Samordnet klokkeslett i rullerende
+varsler. Relative førstelinjer som «om tre kvarter» bærer tidspunktet selv og
+får ikke en ekstra klokke i andrelinjen. Brede uttrykk som «i morgen» og «i
+natt» står uten klokke i første linje, mens andrelinjen viser `fra kl. …`.
+NÅ-varsler beholder ingen klokkeslett. Dette gjelder også nedbørskortet,
+temperatur, vind og dugg.
+
 **BRUKER-115 · FULLFØRT 2026-09-23** — Utvidet terskelfiksen til framtidige
 rullerende temperaturkort. De viser nå «D bli Under 10°! om …» i stedet for
 «D bli Temperatur!», og andrelinjen bruker «Laveste temperatur blir …°C fra
