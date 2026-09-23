@@ -76,6 +76,7 @@ er «D Rime!», og at dugg-NÅ alltid viser faktisk duggpunkt uten varighet.
 Dette er nå koblet i rullerende generator, språkfil og regresjonstester.
 Nedbørskortet for pågående radarregn bruker også valgt språk, slik at bokmål
 viser «Det Regner!» og inntrøndersk «D e Regn!»; dette er dekket av egen test.
+Generisk iPhone-testbygg og Watch-bygg består etter endringen.
 
 **BRUKER-111 · FULLFØRT 2026-09-23** — Nedbørsmeldingen på Hjem gjentar ikke
 lenger «Mulig» eller klokkeslett i andrelinjen. Usikker varighet merkes
