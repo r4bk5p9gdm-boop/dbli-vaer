@@ -501,8 +501,7 @@ enum Planner {
         if status.type == .temperatur, let rule = displayRule(for: status, place: place) {
             let label = rule.temperatureDirection == .above ? "Høyeste temperatur blir" : "Laveste temperatur blir"
             let rounded = hour.temp.formatted(.number.precision(.fractionLength(0)))
-            let start = headlineDescribesTime ? nil : "fra kl. \(shortClockLabel(hour.time))"
-            return ["\(label) \(rounded)°C", start].compactMap { $0 }.joined(separator: " ") + "."
+            return "\(label) \(rounded)°C."
         }
 
         // Dugg has no useful duration in the rolling card. The event time is

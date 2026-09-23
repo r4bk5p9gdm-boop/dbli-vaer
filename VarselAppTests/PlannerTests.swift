@@ -2030,8 +2030,7 @@ final class PlannerTests: XCTestCase {
             ruleID: UUID(), type: .temperatur, text: "", eventAt: base.addingTimeInterval(3_600), isNow: false
         )
         let futureDetail = Planner.rotatingStatusDetail(
-            for: futureRegenerated, place: displayOnlyPlace, forecast: hours,
-            headlineDescribesTime: true
+            for: futureRegenerated, place: displayOnlyPlace, forecast: hours
         )
         XCTAssertEqual(futureDetail, "Laveste temperatur blir 8°C.")
     }

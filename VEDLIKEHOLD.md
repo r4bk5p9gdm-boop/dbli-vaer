@@ -54,6 +54,11 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-117 · FULLFØRT 2026-09-23** — Temperatur-rullering er nå et
+unntak fra klokkeslettregelen: «Laveste temperatur blir 5°C.» og «Høyeste
+temperatur blir 22°C.» får aldri `fra kl. …`, heller ikke når hendelsen ligger
+i natt. Testen dekker framtidig temperatur uten klokkeslett.
+
 **BRUKER-116 · FULLFØRT 2026-09-23** — Samordnet klokkeslett i rullerende
 varsler. Relative førstelinjer som «om tre kvarter» bærer tidspunktet selv og
 får ikke en ekstra klokke i andrelinjen. Brede uttrykk som «i morgen» og «i
