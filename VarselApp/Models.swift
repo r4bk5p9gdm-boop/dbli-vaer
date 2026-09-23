@@ -1280,6 +1280,7 @@ enum RotatingAlertCopy {
                 "now.snow", language: languageStyle.catalogCode,
                 fallback: "Det Snør!"
             )
+        case (.sno, .english): return "It’s snowing!"
         case (.vind, .inntrondersk), (.vind, .bokmal):
             return LanguageCatalog.value(
                 "now.wind", language: languageStyle.catalogCode,

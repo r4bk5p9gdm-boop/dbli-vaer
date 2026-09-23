@@ -2133,6 +2133,13 @@ final class PlannerTests: XCTestCase {
             XCTAssertEqual(RotatingAlertCopy.headline(for: status, rule: rule, languageStyle: .bokmal, now: base), expectedBokmal[type])
             XCTAssertEqual(RotatingAlertCopy.headline(for: status, rule: rule, languageStyle: .inntrondersk, now: base), expectedInntrondersk[type])
 
+            if type == .sno {
+                XCTAssertEqual(
+                    RotatingAlertCopy.headline(for: status, rule: rule, languageStyle: .english, now: base),
+                    "It’s snowing!"
+                )
+            }
+
             let possible = WeatherStatus(ruleID: rule.id, type: type, text: "", eventAt: base, isNow: true, possible: true)
             XCTAssertTrue(
                 RotatingAlertCopy.headline(for: possible, rule: rule, languageStyle: .bokmal, now: base).hasPrefix("Det kan bli "),

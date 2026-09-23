@@ -132,6 +132,9 @@ Lange usikre regnperioder i prognosekortet følger nå også den eksplisitte
 malen «Opptil N timer regnbyger på [dag]»; korte usikre perioder beholder
 varighet og intensitet. Dette hindrer at samme hendelse får ulik språkform
 avhengig av prognosekilden.
+En full iPhone-typekontroll av alle appkildene fant og rettet samtidig en
+uttømmende-switch-feil for engelsk snø-NÅ («It’s snowing!»). Typekontrollen
+passerer nå uten feil; dette er også låst i språkregresjonen.
 
 **BRUKER-111 · FULLFØRT 2026-09-23** — Nedbørsmeldingen på Hjem gjentar ikke
 lenger «Mulig» eller klokkeslett i andrelinjen. Usikker varighet merkes
