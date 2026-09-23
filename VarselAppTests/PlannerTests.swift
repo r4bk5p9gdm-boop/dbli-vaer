@@ -1924,6 +1924,13 @@ final class PlannerTests: XCTestCase {
             WeatherLanguage.text("Duggpunkt ved 6,8°C.", style: .inntrondersk),
             "Doggpunkt ved 6,8°C."
         )
+        let futureDew = WeatherStatus(
+            ruleID: dewRule.id, type: .dugg, text: "", eventAt: base.addingTimeInterval(3_600), isNow: false
+        )
+        XCTAssertEqual(
+            Planner.rotatingStatusDetail(for: futureDew, place: place, forecast: [dewHour]),
+            "Duggpunkt ved 6,8°C."
+        )
 
         var windRule = Rule(type: .vind)
         windRule.threshold = 8
@@ -3921,9 +3928,9 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(Store.shouldDebounceReplan(lastSignature: 7, currentSignature: 7, lastAt: base, now: base.addingTimeInterval(5)))
     }
 
-    func testRotatingHomeHorizonStopsAtTwentyFourHours() {
-        XCTAssertTrue(Planner.isWithinRotatingHomeHorizon(base.addingTimeInterval(24 * 60 * 60), now: base))
-        XCTAssertFalse(Planner.isWithinRotatingHomeHorizon(base.addingTimeInterval(24 * 60 * 60 + 1), now: base))
+    func testRotatingHomeHorizonStopsAtEighteenHours() {
+        XCTAssertTrue(Planner.isWithinRotatingHomeHorizon(base.addingTimeInterval(18 * 60 * 60), now: base))
+        XCTAssertFalse(Planner.isWithinRotatingHomeHorizon(base.addingTimeInterval(18 * 60 * 60 + 1), now: base))
     }
 
     func testMorningBandsKeepThreeCalendarDaysWithoutRotatingHorizon() throws {

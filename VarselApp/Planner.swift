@@ -2,9 +2,11 @@ import Foundation
 
 enum Planner {
     /// Hjemmets rullerende varsel skal være nært og handlingsrettet. Selve
-    /// værbåndet har en lengre horisont, men denne flaten stopper ved 24 timer.
+    /// værbåndet har en lengre horisont, men denne flaten stopper ved 18 timer.
+    static let rotatingHomeHorizon: TimeInterval = 18 * 60 * 60
+
     static func isWithinRotatingHomeHorizon(_ eventAt: Date, now: Date = Date()) -> Bool {
-        eventAt <= now.addingTimeInterval(24 * 60 * 60)
+        eventAt <= now.addingTimeInterval(rotatingHomeHorizon)
     }
 
     private static let rainAlertCooldown: TimeInterval = 6 * 3_600
@@ -476,6 +478,14 @@ enum Planner {
             return ["\(duration) \(unit) \(description)", start]
                 .compactMap { $0 }
                 .joined(separator: " ") + "."
+        }
+
+        // Dugg has no useful duration in the rolling card. The event time is
+        // already carried by the headline; show the dew point instead of
+        // repeating the generic "Duggfall" label.
+        if status.type == .dugg {
+            let dewPoint = hour.dew.formatted(.number.precision(.fractionLength(0...1)))
+            return "Duggpunkt ved \(dewPoint)°C."
         }
 
         let start = headlineHasStartClock ? nil : "fra kl. \(shortClockLabel(hour.time))"

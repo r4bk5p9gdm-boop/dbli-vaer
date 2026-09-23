@@ -728,7 +728,7 @@ struct CurrentPrecipitationSummary {
         from forecast: [ForecastHour], current: ForecastHour,
         languageStyle: AlertLanguageStyle = .inntrondersk, now: Date = Date()
     ) -> CurrentPrecipitationSummary {
-        let horizon = now.addingTimeInterval(24 * 60 * 60)
+        let horizon = now.addingTimeInterval(Planner.rotatingHomeHorizon)
         let samples = forecast.flatMap { $0.radarSamples ?? [] }.sorted { $0.time < $1.time }
         let radarInterval = PrecipitationSample.nominalInterval(in: samples)
         let latest = samples.last { $0.time <= now }

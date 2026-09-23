@@ -54,6 +54,14 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-113 · FULLFØRT 2026-09-23** — Begrenset rullerende Hjem-varsler til
+18 timer, inkludert nedbørskortet. Rullerende dugg viser nå alltid
+«Duggpunkt ved [verdi]°C.» (inntrøndersk «Doggpunkt …») i andrelinjen; den
+gjentar ikke bare «Doggfall». Tidspunktet ligger i overskriften, og dugg har
+ikke en kunstig varighetslinje. Mathias' pågående redigeringer i
+`VARSELTEKSTER.md` er beholdt. Testene dekker 18-timersgrensen og både
+nå/fremtidig duggdetalj.
+
 **BRUKER-112 · FULLFØRT 2026-09-23** — Fullførte kontrollen av alle rullerende
 værtyper mot `VARSELTEKSTER.md`, særlig de nyredigerte nå-tekstene og dugg.
 Fellesmalen og typeeksemplene er samordnet, inkludert valgt direkteform for
