@@ -1269,21 +1269,40 @@ enum RotatingAlertCopy {
         let threshold = rule?.threshold ?? 0
         let direction = rule?.temperatureDirection ?? .below
         switch (status.type, languageStyle) {
-        case (.regn, .inntrondersk): return "D e Regn!"
-        case (.regn, .bokmal): return "Det Regner!"
+        case (.regn, .inntrondersk), (.regn, .bokmal):
+            return LanguageCatalog.value(
+                "now.rain", language: languageStyle.catalogCode,
+                fallback: languageStyle == .bokmal ? "Det Regner!" : "D e Regn!"
+            )
         case (.regn, .english): return "It’s raining!"
-        case (.sno, _): return "Det Snør!"
-        case (.vind, .inntrondersk): return "D Blæs!"
-        case (.vind, .bokmal): return "Det Blåser!"
+        case (.sno, .inntrondersk), (.sno, .bokmal):
+            return LanguageCatalog.value(
+                "now.snow", language: languageStyle.catalogCode,
+                fallback: "Det Snør!"
+            )
+        case (.vind, .inntrondersk), (.vind, .bokmal):
+            return LanguageCatalog.value(
+                "now.wind", language: languageStyle.catalogCode,
+                fallback: languageStyle == .bokmal ? "Det Blåser!" : "D Blæs!"
+            )
         case (.vind, .english): return "It’s windy!"
-        case (.dugg, .inntrondersk): return "D Dogge!"
-        case (.dugg, .bokmal): return "Det er Duggfall!"
+        case (.dugg, .inntrondersk), (.dugg, .bokmal):
+            return LanguageCatalog.value(
+                "now.dew", language: languageStyle.catalogCode,
+                fallback: languageStyle == .bokmal ? "Det er Duggfall!" : "D Dogge!"
+            )
         case (.dugg, .english): return "It’s dewy!"
-        case (.frost, .inntrondersk): return "D Rime!"
-        case (.frost, .bokmal): return "Det er frost!"
+        case (.frost, .inntrondersk), (.frost, .bokmal):
+            return LanguageCatalog.value(
+                "now.frost", language: languageStyle.catalogCode,
+                fallback: languageStyle == .bokmal ? "Det er frost!" : "D Rime!"
+            )
         case (.frost, .english): return "It’s frosty!"
-        case (.sol, .inntrondersk): return "D e Sol!"
-        case (.sol, .bokmal): return "Det er sol!"
+        case (.sol, .inntrondersk), (.sol, .bokmal):
+            return LanguageCatalog.value(
+                "now.sun", language: languageStyle.catalogCode,
+                fallback: languageStyle == .bokmal ? "Det er sol!" : "D e Sol!"
+            )
         case (.sol, .english): return "It’s sunny!"
         case (.temperatur, .inntrondersk):
             return "D e \(direction == .above ? "Over" : "Under") \(threshold.formatted(.number.precision(.fractionLength(0...1))))°!"

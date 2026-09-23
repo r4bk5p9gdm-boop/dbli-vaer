@@ -227,27 +227,27 @@
     },
     "now.snow": {
       "en": "It’s snowing now",
-      "nb": "Snø nå",
+      "nb": "Det Snør!",
       "tr": "Det Snør!"
     },
     "now.wind": {
       "en": "It’s windy now",
-      "nb": "Vind nå",
+      "nb": "Det Blåser!",
       "tr": "D Blæs!"
     },
     "now.dew": {
       "en": "Dew now",
-      "nb": "Fare for dugg nå",
+      "nb": "Det er Duggfall!",
       "tr": "D Dogge!"
     },
     "now.frost": {
       "en": "Frost now",
-      "nb": "Frost nå",
+      "nb": "Det er frost!",
       "tr": "D Rime!"
     },
     "now.sun": {
       "en": "Sun now",
-      "nb": "Sol nå",
+      "nb": "Det er sol!",
       "tr": "D e Sol!"
     },
     "time.quarter": {

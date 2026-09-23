@@ -998,6 +998,11 @@ final class PlannerTests: XCTestCase {
     }
 
     func testApprovedNowHeadlinesUseSelectedLanguageForms() {
+        XCTAssertEqual(LanguageCatalog.value("now.rain", language: "nb", fallback: ""), "Det Regner!")
+        XCTAssertEqual(LanguageCatalog.value("now.rain", language: "tr", fallback: ""), "D e Regn!")
+        XCTAssertEqual(LanguageCatalog.value("now.snow", language: "tr", fallback: ""), "Det Snør!")
+        XCTAssertEqual(LanguageCatalog.value("now.frost", language: "tr", fallback: ""), "D Rime!")
+
         let rule = Rule(type: .regn)
         let rain = WeatherStatus(ruleID: rule.id, type: .regn, text: "", eventAt: base, isNow: true)
         XCTAssertEqual(RotatingAlertCopy.headline(for: rain, rule: rule, languageStyle: .bokmal, now: base), "Det Regner!")

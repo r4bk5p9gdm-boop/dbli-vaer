@@ -105,6 +105,10 @@ En eldre generell fallback for «Det regner!» brukte også «D regne!» og er
 rettet til samme godkjente «D e Regn!»-form.
 Rekkefølgen på dialektreglene er testet særskilt: «Kraftig regn» blir fortsatt
 «Striskur» før den generelle «regn» → «regnbyge»-regelen brukes.
+Sikre NÅ-overskrifter for regn, snø, vind, dugg, frost og sol hentes nå fra
+`Sprak.json` for bokmål og inntrøndersk, med regressjonstest på språkverdiene.
+Det reduserer risikoen for at språkfil og rullerende generator glir fra
+hverandre igjen.
 
 **BRUKER-111 · FULLFØRT 2026-09-23** — Nedbørsmeldingen på Hjem gjentar ikke
 lenger «Mulig» eller klokkeslett i andrelinjen. Usikker varighet merkes
