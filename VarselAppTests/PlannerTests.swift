@@ -1970,7 +1970,7 @@ final class PlannerTests: XCTestCase {
 
     func testRotatingAlertCopyCoversEveryWeatherTypeAndPossibleNowStatus() {
         let expectedBokmal: [AlertType: String] = [
-            .regn: "D e Regn!", .sno: "Det Snør!", .vind: "Det blåser!",
+            .regn: "D e Regn!", .sno: "Det Snør!", .vind: "Det Blåser!",
             .dugg: "Det er Duggfall!", .frost: "Det er frost!", .sol: "Det er sol!"
         ]
         let expectedInntrondersk: [AlertType: String] = [

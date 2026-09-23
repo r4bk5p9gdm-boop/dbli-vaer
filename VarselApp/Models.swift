@@ -1267,7 +1267,7 @@ enum RotatingAlertCopy {
         case (.regn, _): return "D e Regn!"
         case (.sno, _): return "Det Snør!"
         case (.vind, .inntrondersk): return "D blæs!"
-        case (.vind, .bokmal): return "Det blåser!"
+        case (.vind, .bokmal): return "Det Blåser!"
         case (.vind, .english): return "It’s windy!"
         case (.dugg, .inntrondersk): return "D Dogge!"
         case (.dugg, .bokmal): return "Det er Duggfall!"
