@@ -131,6 +131,10 @@ andrelinjen, mens snø nå følger fasiten «2 timer lett snøfall» uten regn-
 konnektor. Begge datakilder (prognose og radar) bruker samme skille.
 konnektor. Begge datakilder (prognose og radar) bruker samme skille, med
 regresjonstest på radargrenen.
+Lange usikre regnperioder i prognosekortet følger nå også den eksplisitte
+malen «Opptil N timer regnbyger på [dag]»; korte usikre perioder beholder
+varighet og intensitet. Dette hindrer at samme hendelse får ulik språkform
+avhengig av prognosekilden.
 
 **BRUKER-111 · FULLFØRT 2026-09-23** — Nedbørsmeldingen på Hjem gjentar ikke
 lenger «Mulig» eller klokkeslett i andrelinjen. Usikker varighet merkes

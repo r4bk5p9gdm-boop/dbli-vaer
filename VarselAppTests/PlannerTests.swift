@@ -1493,6 +1493,33 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(bokmal.title.hasPrefix("Det kan bli Regn!"))
     }
 
+    func testLongPossibleRainUsesShowerWindowTemplateInRollingCard() {
+        let now = base.addingTimeInterval(5 * 60)
+        let dry = ForecastHour(time: base, temp: 8, wind: 1, cloud: 90, dew: 5)
+        let event = base.addingTimeInterval(5 * 3_600)
+        let rainHours = (0..<4).map { offset in
+            ForecastHour(
+                time: event.addingTimeInterval(Double(offset) * 3_600), temp: 8,
+                precip: 0, wind: 1, cloud: 90, dew: 5,
+                precipMax: 0.2, precipProbability: 40
+            )
+        }
+
+        let summary = CurrentPrecipitationSummary.make(
+            from: [dry] + rainHours, current: dry, now: now
+        )
+
+        XCTAssertEqual(
+            summary.detail,
+            "Opptil 4 timer regnbyger på \(weekdayLabel(event))."
+        )
+        XCTAssertFalse(summary.detail?.contains("fra kl.") == true)
+        XCTAssertEqual(
+            WeatherLanguage.text(summary.detail ?? "", style: .inntrondersk),
+            "Oppte 4 tima regnbyga på \(WeatherLanguage.text(weekdayLabel(event), style: .inntrondersk))."
+        )
+    }
+
     func testFuturePossibleRainWithDayClockKeepsClockOnHeadlineOnly() {
         let calendar = Calendar.current
         let now = base.addingTimeInterval(5 * 60)

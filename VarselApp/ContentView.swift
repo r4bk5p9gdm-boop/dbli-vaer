@@ -886,6 +886,12 @@ struct CurrentPrecipitationSummary {
         guard duration > 0 else {
             return precipitationDescription(description, temperature: temperature)
         }
+        // The approved Hjem template uses a bounded shower window for a long
+        // uncertain rain period. This branch is only for future forecasts;
+        // the current-hour card keeps its shorter «opptil …» wording.
+        if possible, now == nil, temperature > 1, duration >= 4 {
+            return "Opptil \(duration) timer regnbyger på \(weekdayLabel(forecast[start].time))."
+        }
         let remainingSeconds = max(0, Double(duration) * 3_600 - (now?.timeIntervalSince(forecast[start].time) ?? 0))
         let durationText: String
         if remainingSeconds < 3_600 {
