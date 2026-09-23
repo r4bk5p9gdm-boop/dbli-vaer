@@ -457,6 +457,27 @@ enum Planner {
             return [base, durationText].compactMap { $0 }.joined(separator: " ") + "."
         }
 
+        // The approved Home template puts precipitation duration first so the
+        // detail reads as a compact amount of time followed by the weather
+        // description. Keep the start clock at the end without repeating it
+        // when the headline already carries the clock.
+        if status.type == .regn, let duration {
+            let unit = duration == 1 ? "time" : "timer"
+            let description = base.prefix(1).lowercased() + String(base.dropFirst())
+            let start = headlineHasStartClock ? nil : "fra kl. \(shortClockLabel(hour.time))"
+            return ["\(duration) \(unit) med \(description)", start]
+                .compactMap { $0 }
+                .joined(separator: " ") + "."
+        }
+        if status.type == .sno, let duration {
+            let unit = duration == 1 ? "time" : "timer"
+            let description = base.prefix(1).lowercased() + String(base.dropFirst())
+            let start = headlineHasStartClock ? nil : "fra kl. \(shortClockLabel(hour.time))"
+            return ["\(duration) \(unit) \(description)", start]
+                .compactMap { $0 }
+                .joined(separator: " ") + "."
+        }
+
         let start = headlineHasStartClock ? nil : "fra kl. \(shortClockLabel(hour.time))"
         return [base, durationText, start].compactMap { $0 }.joined(separator: " ") + "."
     }

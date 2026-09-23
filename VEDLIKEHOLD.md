@@ -89,6 +89,10 @@ ingen simulator ble startet.
 Audit fant også et konkret språkavvik i vind-NÅ: kode og test brukte «D blæs!»
 mens språkfil og styringstabell bruker «D Blæs!». Generator, fallback og tester
 er nå samordnet til den godkjente storbokstavformen.
+Neste formatteringsavvik var framtidig regn/snø i Hjem: detaljen startet med
+værbeskrivelsen og satte varigheten etterpå. Den følger nå malen med varighet
+først («2 timer med litt regn …» / «2 tima med småregn …»), med regresjonstest
+for begge aktive språk.
 
 **BRUKER-111 · FULLFØRT 2026-09-23** — Nedbørsmeldingen på Hjem gjentar ikke
 lenger «Mulig» eller klokkeslett i andrelinjen. Usikker varighet merkes
