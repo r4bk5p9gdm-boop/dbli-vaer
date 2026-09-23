@@ -111,6 +111,10 @@ Det reduserer risikoen for at språkfil og rullerende generator glir fra
 hverandre igjen.
 Radar-NÅ-kortet bruker samme generator i stedet for egne hardkodede regn-/snø-
 tekster; bokmål og inntrøndersk er begge dekket av regresjonstest.
+Åpent fasitpunkt for Mathias: `VARSELTEKSTER.md` har både «4 tima småregn» i
+fellesmalen og «4 tima med småregn» i regn-eksempelet. Koden bruker foreløpig
+«med»; ingen ytterligere tekstendring gjøres før denne ene formuleringen er
+valgt.
 
 **BRUKER-111 · FULLFØRT 2026-09-23** — Nedbørsmeldingen på Hjem gjentar ikke
 lenger «Mulig» eller klokkeslett i andrelinjen. Usikker varighet merkes
