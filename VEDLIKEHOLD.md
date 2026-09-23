@@ -77,6 +77,10 @@ Dette er nå koblet i rullerende generator, språkfil og regresjonstester.
 Nedbørskortet for pågående radarregn bruker også valgt språk, slik at bokmål
 viser «Det Regner!» og inntrøndersk «D e Regn!»; dette er dekket av egen test.
 Generisk iPhone-testbygg og Watch-bygg består etter endringen.
+Dokumentkontroll 2026-09-23: styringstabellen for frost er justert til
+inntrøndersk «D Rime!» og både språk- og varseltekstvalidatoren består.
+`VARSELTEKSTER.md` beholdes ellers urørt/ustaget fordi den inneholder Mathias'
+pågående redigeringer.
 
 **BRUKER-111 · FULLFØRT 2026-09-23** — Nedbørsmeldingen på Hjem gjentar ikke
 lenger «Mulig» eller klokkeslett i andrelinjen. Usikker varighet merkes
