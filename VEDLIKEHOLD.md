@@ -86,6 +86,9 @@ La til en egen regresjonstest for at inntrøndersk dugg-NÅ oversetter
 forsøkt med både Xcode 27 og Xcode 26.3, men begge stoppet før kompilering fordi
 CoreSimulator-tjenesten mangler registrerte simulator-/watchOS-runtime-er;
 ingen simulator ble startet.
+Audit fant også et konkret språkavvik i vind-NÅ: kode og test brukte «D blæs!»
+mens språkfil og styringstabell bruker «D Blæs!». Generator, fallback og tester
+er nå samordnet til den godkjente storbokstavformen.
 
 **BRUKER-111 · FULLFØRT 2026-09-23** — Nedbørsmeldingen på Hjem gjentar ikke
 lenger «Mulig» eller klokkeslett i andrelinjen. Usikker varighet merkes

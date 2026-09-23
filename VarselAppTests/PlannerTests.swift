@@ -1721,7 +1721,7 @@ final class PlannerTests: XCTestCase {
         let status = WeatherStatus(ruleID: UUID(), type: .regn, text: "D bli Regn! denne timen.", eventAt: base, isNow: false)
 
         XCTAssertEqual(WeatherLanguage.text(status.text, style: .inntrondersk), "D bli Regn! herre tima.")
-        XCTAssertEqual(WeatherLanguage.text("Det blåser!", style: .inntrondersk), "D blæs!")
+        XCTAssertEqual(WeatherLanguage.text("Det blåser!", style: .inntrondersk), "D Blæs!")
         XCTAssertEqual(Planner.statusDetail(for: status, place: place, forecast: [hour]), "Litt regn.")
         XCTAssertEqual(
             WeatherLanguage.text(
@@ -2003,7 +2003,7 @@ final class PlannerTests: XCTestCase {
             .dugg: "Det er Duggfall!", .frost: "Det er frost!", .sol: "Det er sol!"
         ]
         let expectedInntrondersk: [AlertType: String] = [
-            .regn: "D e Regn!", .sno: "Det Snør!", .vind: "D blæs!",
+            .regn: "D e Regn!", .sno: "Det Snør!", .vind: "D Blæs!",
             .dugg: "D Dogge!", .frost: "D Rime!", .sol: "D e Sol!"
         ]
 

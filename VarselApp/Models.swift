@@ -249,7 +249,7 @@ enum WeatherLanguage {
             .replacingOccurrences(of: "Duggpunkt", with: "Doggpunkt")
             // Current-condition messages are short, spoken phrases. Keep
             // these replacements before the generic «nå» -> «no» mapping.
-            .replacingOccurrences(of: "Det blåser!", with: "D blæs!")
+            .replacingOccurrences(of: "Det blåser!", with: "D Blæs!")
             .replacingOccurrences(of: "Det regner!", with: "D regne!")
             .replacingOccurrences(of: "Litt regn nå", with: LanguageCatalog.value("now.rain_light", language: "tr", fallback: "D e Litt Regn!"))
             .replacingOccurrences(of: "Mulig regn nå", with: LanguageCatalog.value("now.rain_possible", language: "tr", fallback: "D kan bli regn no"))
@@ -1268,7 +1268,7 @@ enum RotatingAlertCopy {
         case (.regn, .bokmal): return "Det Regner!"
         case (.regn, .english): return "It’s raining!"
         case (.sno, _): return "Det Snør!"
-        case (.vind, .inntrondersk): return "D blæs!"
+        case (.vind, .inntrondersk): return "D Blæs!"
         case (.vind, .bokmal): return "Det Blåser!"
         case (.vind, .english): return "It’s windy!"
         case (.dugg, .inntrondersk): return "D Dogge!"
