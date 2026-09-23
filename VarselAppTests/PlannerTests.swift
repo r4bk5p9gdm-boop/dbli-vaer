@@ -1800,6 +1800,10 @@ final class PlannerTests: XCTestCase {
             Planner.rotatingStatusDetail(for: currentDew, place: place, forecast: [dewHour]),
             "Duggpunkt ved 6,8°C."
         )
+        XCTAssertEqual(
+            WeatherLanguage.text("Duggpunkt ved 6,8°C.", style: .inntrondersk),
+            "Doggpunkt ved 6,8°C."
+        )
 
         var windRule = Rule(type: .vind)
         windRule.threshold = 8
