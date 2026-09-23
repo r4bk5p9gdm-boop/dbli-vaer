@@ -2,6 +2,22 @@
 
 def validate_alert_templates(text)
   errors = []
+  table = []
+  flush_table = lambda do
+    rows = table.reject { |row| row.match?(/^\|\s*-+(\s*\|\s*-+)+\s*\|?$/) }
+    duplicates = rows.group_by(&:itself).select { |_row, occurrences| occurrences.length > 1 }.keys
+    duplicates.each { |row| errors << "duplikat tabellrad: #{row}" }
+    table.clear
+  end
+  text.each_line do |line|
+    if line.lstrip.start_with?("|")
+      table << line.strip
+    else
+      flush_table.call unless table.empty?
+    end
+  end
+  flush_table.call unless table.empty?
+
   common = text.split(/^# Regn\s*$/, 2).first
   {
     'felles pushmal' => '### Push — første linje',
