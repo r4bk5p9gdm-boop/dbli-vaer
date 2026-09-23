@@ -129,6 +129,8 @@ siste lokale kopien av «D bli»/«D kan bli» fra rullerende Hjem-kort.
 Nedbørsdetaljen er samtidig gjort typebevisst: regn beholder «med» i
 andrelinjen, mens snø nå følger fasiten «2 timer lett snøfall» uten regn-
 konnektor. Begge datakilder (prognose og radar) bruker samme skille.
+konnektor. Begge datakilder (prognose og radar) bruker samme skille, med
+regresjonstest på radargrenen.
 
 **BRUKER-111 · FULLFØRT 2026-09-23** — Nedbørsmeldingen på Hjem gjentar ikke
 lenger «Mulig» eller klokkeslett i andrelinjen. Usikker varighet merkes

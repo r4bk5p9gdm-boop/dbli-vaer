@@ -1665,6 +1665,7 @@ final class PlannerTests: XCTestCase {
         )
         XCTAssertTrue(summary.title.hasPrefix("D bli Snø!"))
         XCTAssertEqual(summary.systemImage, "cloud.snow.fill")
+        XCTAssertFalse(summary.detail?.contains(" med ") == true)
     }
 
     func testStaleForecastDoesNotClaimDryWeatherNow() {
