@@ -694,14 +694,18 @@ velger nå seneste prognosetime fram til gjeldende tid fra samme datasett som
 værbåndene. En eldre første time i cache kan dermed ikke bli hengende som
 «nå» etter timeskiftet. Regresjonstest dekker 11:59 og 12:01.
 
-**AUTO-261 · ÅPEN** — Sikre at utdaterte Yr-data ikke får et nytt tidsstempel
-ved delvis mislykket oppdatering av flere steder.
+**AUTO-261 · FULLFØRT 2026-09-23** — Hjem og utvidet Steder viser nå hvert
+steds eget Yr-tidsstempel og vurderer «gammel» per sted. En vellykket henting
+for ett sted kan ikke få en mislykket naboprognose til å se ny ut.
 
 **AUTO-262 · ÅPEN** — Kontroller at soloppgang/-nedgang fortsatt plasseres i
 riktig timecelle over skifte mellom sommer- og vintertid.
 
 **AUTO-263 · ÅPEN** — Kontroller at Hjem viser de tre relevante vær-dagene
 etter oppstart med en eldre, men fortsatt framtidsdekkende prognosecache.
+
+**AUTO-264 · ÅPEN** — Kontroller at værbåndets nedbørmarkeringer og rullerende
+nedbørtekst ikke tolker en manglende Yr-time som faktisk opphold.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

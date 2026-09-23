@@ -426,6 +426,7 @@ final class Store: ObservableObject {
     var selected: Place? { places.first { $0.id == selectedID } ?? places.first }
     var selectedForecast: [ForecastHour] { selected.flatMap { forecasts[$0.id] } ?? [] }
     var error: String? { selected.flatMap { forecastErrors[$0.id] } }
+    func forecastUpdatedAt(for placeID: UUID) -> Date? { forecastUpdatedAt[placeID] }
 
     /// Select the saved place nearest the phone at launch, or add a lightweight
     /// current-location place when no saved place is nearby.

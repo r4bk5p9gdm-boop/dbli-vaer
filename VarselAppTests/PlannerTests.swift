@@ -3496,6 +3496,13 @@ final class PlannerTests: XCTestCase {
         let successful = Place(name: "Svarer", lat: 64.0, lon: 11.0)
         let failing = Place(name: "Feiler", lat: 65.0, lon: 11.0)
         let fetchedHour = ForecastHour(time: base, temp: 8, precip: 0, wind: 2, cloud: 40, dew: 4)
+        let oldHour = ForecastHour(time: base, temp: 2, precip: 0, wind: 1, cloud: 90, dew: 0)
+        let oldUpdate = Date().addingTimeInterval(-3 * 3_600)
+        UserDefaults.standard.set(try JSONEncoder().encode(PersistedStoreState(
+            places: [successful, failing], selectedID: successful.id, log: [],
+            forecasts: [failing.id: [oldHour]],
+            forecastUpdatedAt: [failing.id: oldUpdate], lastUpdate: oldUpdate
+        )), forKey: persistenceKey)
         let store = Store(
             forecastFetcher: { latitude, _ in
                 if latitude < 64.5 { return [fetchedHour] }
@@ -3510,12 +3517,16 @@ final class PlannerTests: XCTestCase {
         // successful cache must survive the subsequent notification replan.
         XCTAssertFalse(await store.refreshAll())
         XCTAssertEqual(store.forecasts[successful.id], [fetchedHour])
-        XCTAssertNil(store.forecasts[failing.id])
+        XCTAssertEqual(store.forecasts[failing.id], [oldHour])
+        XCTAssertEqual(store.forecastUpdatedAt(for: failing.id), oldUpdate)
+        XCTAssertTrue(Store.isForecastStale(store.forecastUpdatedAt(for: failing.id)))
+        XCTAssertFalse(Store.isForecastStale(store.forecastUpdatedAt(for: successful.id)))
 
         let data = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
         let persisted = try JSONDecoder().decode(PersistedStoreState.self, from: data)
         XCTAssertEqual(persisted.forecasts[successful.id], [fetchedHour])
-        XCTAssertNil(persisted.forecasts[failing.id])
+        XCTAssertEqual(persisted.forecasts[failing.id], [oldHour])
+        XCTAssertEqual(persisted.forecastUpdatedAt[failing.id], oldUpdate)
     }
 
     func testReplanDebounceRequiresSameStateAndShortInterval() {

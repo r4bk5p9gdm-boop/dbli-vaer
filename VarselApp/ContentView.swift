@@ -209,6 +209,7 @@ struct HomeView: View {
                     }
                     if let p = store.selected {
                         let fc = store.selectedForecast
+                        let forecastUpdatedAt = store.forecastUpdatedAt(for: p.id)
                         // The Home view is a three-day visual forecast. Its
                         // range is intentionally independent of the shorter
                         // 24-hour horizon used by the rotating alert text.
@@ -250,9 +251,9 @@ struct HomeView: View {
                                     latitude: p.lat,
                                     longitude: p.lon,
                                     todayTitle: forecastHeaderTitle,
-                                    updatedAt: store.lastUpdate,
+                                    updatedAt: forecastUpdatedAt,
                                     isRefreshing: store.isRefreshing,
-                                    isStale: Store.isForecastStale(store.lastUpdate)
+                                    isStale: Store.isForecastStale(forecastUpdatedAt)
                                 )
                                 .padding(.horizontal, 12)
                                 .padding(.top, 16)
@@ -1441,9 +1442,9 @@ struct PlacesView: View {
             latitude: place.lat,
             longitude: place.lon,
             todayTitle: "Resten av i dag",
-            updatedAt: store.lastUpdate,
+            updatedAt: store.forecastUpdatedAt(for: place.id),
             isRefreshing: store.isRefreshing,
-            isStale: Store.isForecastStale(store.lastUpdate)
+            isStale: Store.isForecastStale(store.forecastUpdatedAt(for: place.id))
         )
         .padding(.horizontal, 12)
         .padding(.top, 16)
