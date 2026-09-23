@@ -245,8 +245,8 @@ enum WeatherLanguage {
             // «No e d» describes only something happening right now. Keep
             // future dew forecasts as the plain weather name so a timestamp
             // is not accidentally phrased as a present status.
-            .replacingOccurrences(of: "Fare for dugg nå", with: LanguageCatalog.value("now.dew", language: "tr", fallback: "D e Duggfall!"))
-            .replacingOccurrences(of: "Duggfall nå", with: LanguageCatalog.value("now.dew", language: "tr", fallback: "D e Duggfall!"))
+            .replacingOccurrences(of: "Fare for dugg nå", with: LanguageCatalog.value("now.dew", language: "tr", fallback: "D Dogge!"))
+            .replacingOccurrences(of: "Duggfall nå", with: LanguageCatalog.value("now.dew", language: "tr", fallback: "D Dogge!"))
             .replacingOccurrences(of: "Frost nå", with: LanguageCatalog.value("now.frost", language: "tr", fallback: "D Rime!"))
             .replacingOccurrences(of: "Fare for dugg", with: "Mulig doggfall")
             .replacingOccurrences(of: "Duggfall", with: "Doggfall")
@@ -257,7 +257,7 @@ enum WeatherLanguage {
             .replacingOccurrences(of: "Det regner!", with: "D regne!")
             .replacingOccurrences(of: "Litt regn nå", with: LanguageCatalog.value("now.rain_light", language: "tr", fallback: "D e Litt Regn!"))
             .replacingOccurrences(of: "Mulig regn nå", with: LanguageCatalog.value("now.rain_possible", language: "tr", fallback: "D kan bli regn no"))
-            .replacingOccurrences(of: "Regn nå", with: LanguageCatalog.value("now.rain", language: "tr", fallback: "D Regne!"))
+            .replacingOccurrences(of: "Regn nå", with: LanguageCatalog.value("now.rain", language: "tr", fallback: "D e Regn!"))
             .replacingOccurrences(of: "Snø nå", with: LanguageCatalog.value("now.snow", language: "tr", fallback: "Det Snør!"))
             .replacingOccurrences(of: "Vindkast nå", with: LanguageCatalog.value("now.wind", language: "tr", fallback: "D Blæs!"))
             .replacingOccurrences(of: "Vind nå", with: LanguageCatalog.value("now.wind", language: "tr", fallback: "D Blæs!"))

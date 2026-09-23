@@ -981,13 +981,13 @@ final class PlannerTests: XCTestCase {
     }
 
     func testDialectUsesNoEOnlyForCurrentDewStatus() {
-        XCTAssertEqual(WeatherLanguage.text("Fare for dugg nå.", style: .inntrondersk), "D e Doggfall!")
+        XCTAssertEqual(WeatherLanguage.text("Fare for dugg nå.", style: .inntrondersk), "D Dogge!")
         XCTAssertEqual(WeatherLanguage.text("Fare for dugg i natt kl. 01.", style: .inntrondersk), "Mulig doggfall i natt kl. 01.")
         XCTAssertEqual(WeatherLanguage.text("Duggfall i morgen kl. 07.", style: .inntrondersk), "Doggfall i mårrå kl. 07.")
     }
 
     func testDialectCurrentWeatherUsesShortSpokenMessages() {
-        XCTAssertEqual(WeatherLanguage.text("Regn nå.", style: .inntrondersk), "D Regne!")
+        XCTAssertEqual(WeatherLanguage.text("Regn nå.", style: .inntrondersk), "D e Regn!")
         XCTAssertEqual(WeatherLanguage.text("Mulig regn nå.", style: .inntrondersk), "D kan bli regn no.")
         XCTAssertEqual(WeatherLanguage.text("Litt regn nå.", style: .inntrondersk), "Småregn no.")
         XCTAssertEqual(WeatherLanguage.text("Snø nå.", style: .inntrondersk), "Det Snør!")

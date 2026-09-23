@@ -98,6 +98,9 @@ formen brukes nå bare i detaljlinjens lille værbeskrivelse; overskriften
 «D bli Regn!» beholdes som værtypenavn. Dette er dekket av en egen test.
 Dokumentvalidatoren avviser nå identiske rader i samme Markdown-tabell, slik at
 en gjentatt styringstabell ikke kan bli stående som uklar språkfasit.
+Språkfilen hadde i tillegg to foreldede inntrønderske NÅ-former
+(«D Regne!» og «D e Doggfall!»). De er nå «D e Regn!» og «D Dogge!» i
+språkfil, fallback og tester, i tråd med rullerende fasit.
 
 **BRUKER-111 · FULLFØRT 2026-09-23** — Nedbørsmeldingen på Hjem gjentar ikke
 lenger «Mulig» eller klokkeslett i andrelinjen. Usikker varighet merkes

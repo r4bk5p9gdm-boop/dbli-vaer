@@ -213,7 +213,7 @@
     "now.rain": {
       "en": "It’s raining now",
       "nb": "Det Regner!",
-      "tr": "D Regne!"
+      "tr": "D e Regn!"
     },
     "now.rain_possible": {
       "en": "Rain may start now",
@@ -238,7 +238,7 @@
     "now.dew": {
       "en": "Dew now",
       "nb": "Fare for dugg nå",
-      "tr": "D e Doggfall!"
+      "tr": "D Dogge!"
     },
     "now.frost": {
       "en": "Frost now",
