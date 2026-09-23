@@ -19,6 +19,13 @@ enum Planner {
             ?? rules.first(where: { $0.type == status.type })
     }
 
+    /// Relative phrases such as «om tre kvarter» already communicate when
+    /// the event happens. Broad day phrases do not, so their detail line gets
+    /// the forecast clock instead.
+    static func headlineDescribesTime(_ headline: String) -> Bool {
+        headline.contains("kl.") || headline.contains("om ") || headline.contains("denne timen")
+    }
+
     private static let rainAlertCooldown: TimeInterval = 6 * 3_600
     private static let dewDryBuffer: TimeInterval = 3 * 3_600
 
@@ -377,7 +384,7 @@ enum Planner {
     /// and accessibility summaries elsewhere in the app.
     static func rotatingStatusDetail(
         for status: WeatherStatus, place: Place, forecast: [ForecastHour],
-        headlineHasStartClock: Bool = false
+        headlineDescribesTime: Bool = false
     ) -> String? {
         guard let hour = forecast.min(by: {
             abs($0.time.timeIntervalSince(status.eventAt)) < abs($1.time.timeIntervalSince(status.eventAt))
@@ -439,7 +446,7 @@ enum Planner {
                     : dayHours.map(\.temp).min()
                 if let extreme {
                     let label = rule.temperatureDirection == .above ? "Høyeste temperatur" : "Laveste temperatur"
-                    return "\(label) i dag blir \(extreme.formatted(.number.precision(.fractionLength(0...1))))°C."
+                    return "\(label) i dag blir \(extreme.formatted(.number.precision(.fractionLength(0))))°C."
                 }
             }
             if status.possible == true && (status.type == .regn || status.type == .sno) {
@@ -466,7 +473,8 @@ enum Planner {
         // The wind headline already carries the time of night/day. Repeating
         // the same start clock under the gust strength adds no information.
         if status.type == .vind {
-            return [base, durationText].compactMap { $0 }.joined(separator: " ") + "."
+            let start = headlineDescribesTime ? nil : "fra kl. \(shortClockLabel(hour.time))"
+            return [base, durationText, start].compactMap { $0 }.joined(separator: " ") + "."
         }
 
         // The approved Home template puts precipitation duration first so the
@@ -476,7 +484,7 @@ enum Planner {
         if status.type == .regn, let duration {
             let unit = duration == 1 ? "time" : "timer"
             let description = base.prefix(1).lowercased() + String(base.dropFirst())
-            let start = headlineHasStartClock ? nil : "fra kl. \(shortClockLabel(hour.time))"
+            let start = headlineDescribesTime ? nil : "fra kl. \(shortClockLabel(hour.time))"
             return ["\(duration) \(unit) \(description)", start]
                 .compactMap { $0 }
                 .joined(separator: " ") + "."
@@ -484,7 +492,7 @@ enum Planner {
         if status.type == .sno, let duration {
             let unit = duration == 1 ? "time" : "timer"
             let description = base.prefix(1).lowercased() + String(base.dropFirst())
-            let start = headlineHasStartClock ? nil : "fra kl. \(shortClockLabel(hour.time))"
+            let start = headlineDescribesTime ? nil : "fra kl. \(shortClockLabel(hour.time))"
             return ["\(duration) \(unit) \(description)", start]
                 .compactMap { $0 }
                 .joined(separator: " ") + "."
@@ -492,10 +500,9 @@ enum Planner {
 
         if status.type == .temperatur, let rule = displayRule(for: status, place: place) {
             let label = rule.temperatureDirection == .above ? "Høyeste temperatur blir" : "Laveste temperatur blir"
-            let start = headlineHasStartClock ? nil : "fra kl. \(shortClockLabel(hour.time))"
-            return ["\(label) \(number)°C", start]
-                .compactMap { $0 }
-                .joined(separator: " ") + "."
+            let rounded = hour.temp.formatted(.number.precision(.fractionLength(0)))
+            let start = headlineDescribesTime ? nil : "fra kl. \(shortClockLabel(hour.time))"
+            return ["\(label) \(rounded)°C", start].compactMap { $0 }.joined(separator: " ") + "."
         }
 
         // Dugg has no useful duration in the rolling card. The event time is
@@ -503,10 +510,11 @@ enum Planner {
         // repeating the generic "Duggfall" label.
         if status.type == .dugg {
             let dewPoint = hour.dew.formatted(.number.precision(.fractionLength(0...1)))
-            return "Duggpunkt ved \(dewPoint)°C."
+            let start = headlineDescribesTime ? nil : "fra kl. \(shortClockLabel(hour.time))"
+            return ["Duggpunkt ved \(dewPoint)°C", start].compactMap { $0 }.joined(separator: " ") + "."
         }
 
-        let start = headlineHasStartClock ? nil : "fra kl. \(shortClockLabel(hour.time))"
+        let start = headlineDescribesTime ? nil : "fra kl. \(shortClockLabel(hour.time))"
         return [base, durationText, start].compactMap { $0 }.joined(separator: " ") + "."
     }
 

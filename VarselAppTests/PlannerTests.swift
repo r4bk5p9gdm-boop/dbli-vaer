@@ -1520,7 +1520,7 @@ final class PlannerTests: XCTestCase {
         )
     }
 
-    func testFuturePossibleRainWithDayClockKeepsClockOnHeadlineOnly() {
+    func testFuturePossibleRainWithBroadDayPhrasePutsClockInDetail() {
         let calendar = Calendar.current
         let now = base.addingTimeInterval(5 * 60)
         let dry = ForecastHour(time: base, temp: 8, wind: 1, cloud: 90, dew: 5)
@@ -1538,8 +1538,8 @@ final class PlannerTests: XCTestCase {
             from: [dry, possible, following], current: dry, now: now
         )
 
-        XCTAssertEqual(summary.title.components(separatedBy: "kl.").count - 1, 1)
-        XCTAssertFalse(summary.detail?.contains("fra kl.") == true)
+        XCTAssertEqual(summary.title.components(separatedBy: "kl.").count - 1, 0)
+        XCTAssertTrue(summary.detail?.contains("fra kl.") == true)
         XCTAssertFalse(summary.detail?.contains("Mulig") == true)
     }
 
@@ -1562,7 +1562,7 @@ final class PlannerTests: XCTestCase {
 
         XCTAssertEqual(
             WeatherLanguage.text(summary.title, style: .inntrondersk),
-            "D kan bli Regn! i mårrå, kl. 09."
+            "D kan bli Regn! i mårrå."
         )
         XCTAssertFalse(summary.title.contains("tirsdag"))
     }
@@ -1886,7 +1886,7 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(
             Planner.rotatingStatusDetail(
                 for: future, place: place, forecast: hours,
-                headlineHasStartClock: true
+                headlineDescribesTime: true
             ),
             "2 timer litt regn."
         )
@@ -1928,7 +1928,10 @@ final class PlannerTests: XCTestCase {
             ruleID: dewRule.id, type: .dugg, text: "", eventAt: base.addingTimeInterval(3_600), isNow: false
         )
         XCTAssertEqual(
-            Planner.rotatingStatusDetail(for: futureDew, place: place, forecast: [dewHour]),
+            Planner.rotatingStatusDetail(
+                for: futureDew, place: place, forecast: [dewHour],
+                headlineDescribesTime: true
+            ),
             "Duggpunkt ved 6,8°C."
         )
 
@@ -1957,14 +1960,14 @@ final class PlannerTests: XCTestCase {
 
         XCTAssertEqual(
             RotatingAlertCopy.headline(for: status, rule: rule, languageStyle: .bokmal, now: reference),
-            "Det kan bli Regn! i morgen, kl. 09."
+            "Det kan bli Regn! i morgen."
         )
         XCTAssertEqual(
             WeatherLanguage.text(
                 RotatingAlertCopy.headline(for: status, rule: rule, languageStyle: .inntrondersk, now: reference),
                 style: .inntrondersk
             ),
-            "D kan bli Regn! i mårrå, kl. 09."
+            "D kan bli Regn! i mårrå."
         )
 
         var place = Place(name: "Klinga", lat: 64, lon: 11)
@@ -2027,9 +2030,10 @@ final class PlannerTests: XCTestCase {
             ruleID: UUID(), type: .temperatur, text: "", eventAt: base.addingTimeInterval(3_600), isNow: false
         )
         let futureDetail = Planner.rotatingStatusDetail(
-            for: futureRegenerated, place: displayOnlyPlace, forecast: hours
+            for: futureRegenerated, place: displayOnlyPlace, forecast: hours,
+            headlineDescribesTime: true
         )
-        XCTAssertTrue(futureDetail?.hasPrefix("Laveste temperatur blir 7,6°C fra kl. ") == true)
+        XCTAssertEqual(futureDetail, "Laveste temperatur blir 8°C.")
     }
 
     func testWindStrengthUsesEverydayBeaufortNames() {

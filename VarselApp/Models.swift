@@ -1351,16 +1351,19 @@ enum RotatingAlertCopy {
         let minutes = max(0, Int((eventAt.timeIntervalSince(now) / 60).rounded()))
         if minutes <= 209 { return eventTimePhrase(eventAt, relativeTo: now) }
         let calendar = Calendar.current
-        if let tomorrow = calendar.date(byAdding: .day, value: 1, to: now),
-           calendar.isDate(eventAt, inSameDayAs: tomorrow),
-           calendar.component(.hour, from: eventAt) >= 6 {
-            // Hjem trenger bare den korte dagkategorien her. Ukedagen
-            // tilhører detaljlinjen, slik at første linje ikke blir tung.
-            return "i morgen, kl. \(shortClockLabel(eventAt, calendar: calendar))"
+        let eventHour = calendar.component(.hour, from: eventAt)
+        if calendar.isDate(eventAt, inSameDayAs: now) {
+            return eventHour < 6 ? "i natt" : "i dag"
         }
-        guard minutes <= 24 * 60 else { return eventTimePhrase(eventAt, relativeTo: now) }
-        let hours = max(1, Int((Double(minutes) / 60).rounded()))
-        return hours == 1 ? "om en time" : "om \(hours) timer"
+        if let tomorrow = calendar.date(byAdding: .day, value: 1, to: now),
+           calendar.isDate(eventAt, inSameDayAs: tomorrow) {
+            return eventHour < 6 ? "i natt" : "i morgen"
+        }
+        if let dayAfterTomorrow = calendar.date(byAdding: .day, value: 2, to: now),
+           calendar.isDate(eventAt, inSameDayAs: dayAfterTomorrow) {
+            return eventHour < 6 ? "natt til \(weekdayLabel(eventAt, calendar: calendar))" : "i overmorgen"
+        }
+        return eventHour < 6 ? "natt til \(weekdayLabel(eventAt, calendar: calendar))" : weekdayLabel(eventAt, calendar: calendar)
     }
 }
 

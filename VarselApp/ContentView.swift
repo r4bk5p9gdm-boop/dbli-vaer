@@ -490,7 +490,7 @@ private struct CurrentWeatherCard: View {
                         title: WeatherLanguage.text(statusTitle, style: languageStyle),
                         detail: Planner.rotatingStatusDetail(
                             for: status, place: place, forecast: forecast,
-                            headlineHasStartClock: statusTitle.contains("kl.")
+                            headlineDescribesTime: Planner.headlineDescribesTime(statusTitle)
                         )
                             .map { WeatherLanguage.text($0, style: languageStyle) },
                         systemImage: status.type.systemImage,
@@ -767,9 +767,11 @@ struct CurrentPrecipitationSummary {
                 detail: radarDetail(
                     samples: samples, startingAt: upcoming, temperature: eventTemperature,
                     interval: radarInterval,
-                    startTimeAlreadyInHeadline: RotatingAlertCopy.headline(
-                        for: status, rule: nil, languageStyle: languageStyle, now: now
-                    ).contains("kl.")
+                    startTimeAlreadyInHeadline: Planner.headlineDescribesTime(
+                        RotatingAlertCopy.headline(
+                            for: status, rule: nil, languageStyle: languageStyle, now: now
+                        )
+                    )
                 ),
                 systemImage: eventTemperature <= 1 ? "cloud.snow.fill" : "cloud.rain.fill",
                 color: .blue,
@@ -837,7 +839,7 @@ struct CurrentPrecipitationSummary {
                     waterEquivalent: possible ? (upcoming.precipMax ?? upcoming.precipitationRiskRate) : upcoming.precip,
                     temperature: upcoming.temp,
                     possible: possible,
-                    includeStartClock: !title.contains("kl.")
+                    includeStartClock: !Planner.headlineDescribesTime(title)
                 ),
                 systemImage: possible ? "umbrella.fill" : (upcoming.temp <= 1 ? "cloud.snow.fill" : "cloud.rain.fill"),
                 color: possible ? .blue.opacity(0.75) : .blue,
