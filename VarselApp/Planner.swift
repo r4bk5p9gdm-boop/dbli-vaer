@@ -9,6 +9,16 @@ enum Planner {
         eventAt <= now.addingTimeInterval(rotatingHomeHorizon)
     }
 
+    /// Display-only default rules receive a fresh UUID each time they are
+    /// materialized. Resolve a status by type as a fallback so their
+    /// configured threshold is not lost between status generation and view
+    /// rendering.
+    static func displayRule(for status: WeatherStatus, place: Place) -> Rule? {
+        let rules = place.rulesForDisplay
+        return rules.first(where: { $0.id == status.ruleID })
+            ?? rules.first(where: { $0.type == status.type })
+    }
+
     private static let rainAlertCooldown: TimeInterval = 6 * 3_600
     private static let dewDryBuffer: TimeInterval = 3 * 3_600
 
@@ -418,7 +428,7 @@ enum Planner {
                 return "Duggpunkt ved \(dewPoint)°C."
             }
             if status.type == .temperatur,
-               let rule = place.rulesForDisplay.first(where: { $0.id == status.ruleID }) {
+               let rule = displayRule(for: status, place: place) {
                 let calendar = Calendar.current
                 let restOfDay = forecast.filter {
                     calendar.isDate($0.time, inSameDayAs: hour.time) && $0.time >= hour.time
@@ -428,7 +438,7 @@ enum Planner {
                     ? dayHours.map(\.temp).max()
                     : dayHours.map(\.temp).min()
                 if let extreme {
-                    let label = rule.temperatureDirection == .above ? "Maksimumstemp" : "Minimumstemp"
+                    let label = rule.temperatureDirection == .above ? "Høyeste temperatur" : "Laveste temperatur"
                     return "\(label) i dag blir \(extreme.formatted(.number.precision(.fractionLength(0...1))))°C."
                 }
             }
@@ -496,7 +506,7 @@ enum Planner {
     /// the compact Home copy, where «fresk bris i 3 timer» is easier to scan
     /// than another timestamp or a duplicated alert title.
     private static func matchingDuration(for status: WeatherStatus, place: Place, forecast: [ForecastHour]) -> Int? {
-        guard let rule = place.rulesForDisplay.first(where: { $0.id == status.ruleID }),
+        guard let rule = displayRule(for: status, place: place),
               let start = forecast.indices.min(by: {
                   abs(forecast[$0].time.timeIntervalSince(status.eventAt))
                       < abs(forecast[$1].time.timeIntervalSince(status.eventAt))

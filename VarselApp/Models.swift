@@ -1306,7 +1306,7 @@ enum RotatingAlertCopy {
             )
         case (.sol, .english): return "It’s sunny!"
         case (.temperatur, .inntrondersk):
-            return "D e \(direction == .above ? "Over" : "Under") \(threshold.formatted(.number.precision(.fractionLength(0...1))))°!"
+            return "D e \(direction == .above ? "Over" : "under") \(threshold.formatted(.number.precision(.fractionLength(0...1))))°!"
         case (.temperatur, .bokmal):
             return "Det er \(direction == .above ? "over" : "under") \(threshold.formatted(.number.precision(.fractionLength(0...1))))°!"
         case (.temperatur, .english):

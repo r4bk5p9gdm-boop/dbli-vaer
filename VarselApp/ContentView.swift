@@ -625,7 +625,7 @@ private struct CurrentWeatherCard: View {
     }
 
     private func rotatingTitle(for status: WeatherStatus) -> String {
-        let rule = place.rulesForDisplay.first { $0.id == status.ruleID }
+        let rule = Planner.displayRule(for: status, place: place)
         return RotatingAlertCopy.headline(
             for: status, rule: rule, languageStyle: languageStyle
         )

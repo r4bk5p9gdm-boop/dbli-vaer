@@ -54,6 +54,13 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-114 · FULLFØRT 2026-09-23** — Rettet rullerende temperaturkort for
+display-only-regler: standardgrensen 10° beholdes selv om visningsregelen får
+ny UUID mellom statusberegning og rendering, i stedet for feilaktig 0°.
+Inntrøndersk NÅ-tekst er «D e under 10°!», og detaljen bruker «Laveste
+temperatur i dag blir 6°C.» (tilsvarende «Høyeste temperatur» ved over-grense).
+La øvrige ulagrede brukerendringer stå urørt.
+
 **BRUKER-113 · FULLFØRT 2026-09-23** — Begrenset rullerende Hjem-varsler til
 18 timer, inkludert nedbørskortet. Rullerende dugg viser nå alltid
 «Duggpunkt ved [verdi]°C.» (inntrøndersk «Doggpunkt …») i andrelinjen; den

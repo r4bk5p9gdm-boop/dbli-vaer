@@ -1982,7 +1982,7 @@ final class PlannerTests: XCTestCase {
         )
     }
 
-    func testRotatingCurrentTemperatureUsesTodaysRelevantExtreme() {
+    func testRotatingCurrentTemperatureUsesTodaysRelevantExtreme() throws {
         var below = Rule(type: .temperatur)
         below.threshold = 10
         var above = Rule(type: .temperatur)
@@ -2000,11 +2000,28 @@ final class PlannerTests: XCTestCase {
         let currentAbove = WeatherStatus(ruleID: above.id, type: .temperatur, text: "", eventAt: base, isNow: true)
         XCTAssertEqual(
             Planner.rotatingStatusDetail(for: currentBelow, place: place, forecast: hours),
-            "Minimumstemp i dag blir 5°C."
+            "Laveste temperatur i dag blir 5°C."
         )
         XCTAssertEqual(
             Planner.rotatingStatusDetail(for: currentAbove, place: place, forecast: hours),
-            "Maksimumstemp i dag blir 22°C."
+            "Høyeste temperatur i dag blir 22°C."
+        )
+
+        // Display-only temperature rules are recreated with a new UUID for
+        // each view pass. The type fallback must still retain the default 10°
+        // threshold instead of rendering the 0° fallback.
+        var displayOnlyPlace = Place(name: "Hornburu", lat: 64, lon: 11)
+        displayOnlyPlace.rules = []
+        let regenerated = WeatherStatus(
+            ruleID: UUID(), type: .temperatur, text: "", eventAt: base, isNow: true
+        )
+        let regeneratedRule = try XCTUnwrap(Planner.displayRule(for: regenerated, place: displayOnlyPlace))
+        XCTAssertEqual(regeneratedRule.threshold, 10)
+        XCTAssertEqual(
+            RotatingAlertCopy.headline(
+                for: regenerated, rule: regeneratedRule, languageStyle: .inntrondersk, now: base
+            ),
+            "D e under 10°!"
         )
     }
 
