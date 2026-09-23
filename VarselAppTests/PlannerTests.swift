@@ -23,10 +23,11 @@ private final class FakeNotificationCenter: NotificationCenterClient {
     }
 }
 
+@MainActor
 final class PlannerTests: XCTestCase {
     func testPlaceDistanceRejectsMalformedCoordinates() {
         let home = CLLocation(latitude: 64, longitude: 11)
-        XCTAssertEqual(Place(name: "Hjem", lat: 64, lon: 11).distance(to: home), 0, accuracy: 0.001)
+        XCTAssertEqual(Place(name: "Hjem", lat: 64, lon: 11).distance(to: home) ?? .nan, 0, accuracy: 0.001)
         XCTAssertNotNil(Place(name: "Klinga", lat: 64.01, lon: 11.01).distance(to: home))
         XCTAssertNil(Place(name: "Ugyldig", lat: 91, lon: 11).distance(to: home))
         XCTAssertNil(Place(name: "Manglende", lat: .nan, lon: 11).distance(to: home))
@@ -73,7 +74,7 @@ final class PlannerTests: XCTestCase {
         )
         let status = Planner.status(
             for: rule, forecast: [hour], latitude: 64.46, longitude: 11.50,
-            now: evening, calendar: calendar
+            now: evening
         )
 
         XCTAssertFalse(SolarCycle.isDaylight(evening, latitude: 64.46, longitude: 11.50))
@@ -620,6 +621,7 @@ final class PlannerTests: XCTestCase {
 
     func testDisplayThresholdsAndDialectSeparator() throws {
         XCTAssertEqual(WeatherLanguage.text("om 2 timer", style: .inntrondersk), "om 2 tima")
+        XCTAssertEqual(WeatherLanguage.text("om tre timer", style: .inntrondersk), "om tre tima")
         var place = Place(name: "Klinga", lat: 64, lon: 11)
         place.displayDewThreshold = 2
         place.displaySunThreshold = 35
@@ -901,9 +903,9 @@ final class PlannerTests: XCTestCase {
         let rule = Rule(type: .vind)
         var hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 3, cloud: 20, dew: 4)
         hour.gust = 9
-        XCTAssertEqual(Planner.notificationEventDetail(rule: rule, hours: [hour], possible: false), "Frisk bris — vindkast opptil 9 m/s {tid}.")
+        XCTAssertEqual(Planner.notificationEventDetail(rule: rule, hours: [hour], possible: false), "Frisk bris — vindkast opptil 9 m/s {tid} — i en time.")
         hour.gust = nil
-        XCTAssertEqual(Planner.notificationEventDetail(rule: rule, hours: [hour], possible: false), "Vindkast ikke oppgitt {tid}.")
+        XCTAssertEqual(Planner.notificationEventDetail(rule: rule, hours: [hour], possible: false), "Vindkast ikke oppgitt {tid} — i en time.")
         var strong = hour
         strong.gust = 20
         let text = try XCTUnwrap(Planner.notificationEventDetail(rule: rule, hours: [hour, strong], possible: false))
@@ -1278,7 +1280,7 @@ final class PlannerTests: XCTestCase {
         calendar.timeZone = TimeZone(secondsFromGMT: 0)!
         let reference = calendar.date(from: DateComponents(year: 2030, month: 1, day: 1, hour: 23))!
         let event = calendar.date(from: DateComponents(year: 2030, month: 1, day: 2, hour: 6))!
-        XCTAssertEqual(eventTimePhrase(event, relativeTo: reference, calendar: calendar), "i morgen, tirsdag kl. 06")
+        XCTAssertEqual(eventTimePhrase(event, relativeTo: reference, calendar: calendar), "i morgen, onsdag kl. 06")
     }
 
     func testSharedWidgetDataSkipsIdenticalEncodedSnapshot() {
@@ -1670,7 +1672,7 @@ final class PlannerTests: XCTestCase {
         let dew = WeatherStatus(ruleID: UUID(), type: .dugg, text: "Duggfall i dag kl. 20.", eventAt: base, isNow: false)
         XCTAssertEqual(
             Planner.statusDetail(for: dew, place: place, forecast: [hour]),
-            "Duggfall ved 10°."
+            "Duggfall ved 3,3°."
         )
     }
 
@@ -2064,7 +2066,7 @@ final class PlannerTests: XCTestCase {
 
     func testPushTitleUsesDialectTomorrowAndReservesWeekendForWeekendRules() {
         let calendar = Calendar.current
-        let reference = base
+        let reference = calendar.date(bySettingHour: 12, minute: 0, second: 0, of: base)!
         let tomorrow = calendar.date(byAdding: .day, value: 1, to: reference)!
         let dayAfterTomorrow = calendar.date(byAdding: .day, value: 2, to: reference)!
         let rule = Rule(type: .regn)
@@ -2668,7 +2670,7 @@ final class PlannerTests: XCTestCase {
     @MainActor
     func testWidgetFreshSnapshotAppliesLocalTemperatureOffsetLikeFallback() throws {
         var place = Place(name: "Klinga", lat: 64, lon: 11)
-        place.localTemperatureOffset = 2
+        place.temperatureOffset = 2
         let raw = ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 20, dew: 5)
         let snapshot = try XCTUnwrap(Store.widgetSnapshot(place: place, forecast: [raw], updatedAt: base, cached: nil))
         XCTAssertEqual(snapshot.forecast.first?.temp, 12)
@@ -2680,14 +2682,14 @@ final class PlannerTests: XCTestCase {
     @MainActor
     func testWidgetFallbackAppliesOnlyChangedLocalTemperatureOffset() throws {
         var place = Place(name: "Klinga", lat: 64, lon: 11)
-        place.localTemperatureOffset = 1
+        place.temperatureOffset = 1
         let raw = ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 20, dew: 5)
         let cached = try XCTUnwrap(Store.widgetSnapshot(
             place: place, forecast: [raw], updatedAt: base, cached: nil
         ))
         XCTAssertEqual(cached.forecast.first?.temp, 11)
 
-        place.localTemperatureOffset = 3
+        place.temperatureOffset = 3
         let fallback = try XCTUnwrap(Store.widgetSnapshot(
             place: place, forecast: [], updatedAt: nil, cached: cached
         ))
@@ -2699,12 +2701,12 @@ final class PlannerTests: XCTestCase {
     @MainActor
     func testWatchTransferKeepsUpdatedOfflineLocalTemperatureOffset() throws {
         var place = Place(name: "Klinga", lat: 64, lon: 11)
-        place.localTemperatureOffset = 1
+        place.temperatureOffset = 1
         let raw = ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 20, dew: 5)
         let cached = try XCTUnwrap(Store.widgetSnapshot(
             place: place, forecast: [raw], updatedAt: base, cached: nil
         ))
-        place.localTemperatureOffset = 3
+        place.temperatureOffset = 3
         let offline = try XCTUnwrap(Store.widgetSnapshot(
             place: place, forecast: [], updatedAt: nil, cached: cached
         ))
@@ -3186,7 +3188,7 @@ final class PlannerTests: XCTestCase {
 
     func testConfigurationExportPreservesLanguageAndSelectedPlaceAcrossRestart() throws {
         var place = Place(name: "Namsos", lat: 64.5, lon: 11.5, preposition: .nerri)
-        place.localTemperatureOffset = -1.5
+        place.temperatureOffset = -1.5
         let export = WeatherConfigurationExport(
             places: [place], selectedPlaceID: place.id, alertLanguageStyle: .english
         )
@@ -3271,7 +3273,8 @@ final class PlannerTests: XCTestCase {
         }
         cancelled.cancel()
         _ = await first.value
-        XCTAssertFalse(await cancelled.value)
+        let cancelledResult = await cancelled.value
+        XCTAssertFalse(cancelledResult)
         await fulfillment(of: [cancelledMarker], timeout: 0.1)
     }
 
@@ -3404,7 +3407,7 @@ final class PlannerTests: XCTestCase {
         XCTAssertNil(Store.widgetSnapshot(place: Place(name: "Namsos", lat: 64, lon: 11), forecast: [], updatedAt: nil, cached: cached))
         XCTAssertNil(Store.widgetSnapshot(place: nil, forecast: [], updatedAt: nil, cached: cached))
         XCTAssertNil(Store.widgetSnapshot(place: place, forecast: [], updatedAt: nil, cached: cached, now: base.addingTimeInterval(7 * 3_600)))
-        XCTAssertNil(Store.widgetSnapshot(place: place, forecast: hours, updatedAt: base, cached: cached, now: base.addingTimeInterval(7 * 3_600)))
+        XCTAssertNil(Store.widgetSnapshot(place: place, forecast: cached.forecast, updatedAt: base, cached: cached, now: base.addingTimeInterval(7 * 3_600)))
     }
 
     @MainActor
@@ -3723,7 +3726,8 @@ final class PlannerTests: XCTestCase {
 
         // A failed sibling still makes the overall result false, but the
         // successful cache must survive the subsequent notification replan.
-        XCTAssertFalse(await store.refreshAll())
+        let refreshSucceeded = await store.refreshAll()
+        XCTAssertFalse(refreshSucceeded)
         XCTAssertEqual(store.forecasts[successful.id], [fetchedHour])
         XCTAssertEqual(store.forecasts[failing.id], [oldHour])
         XCTAssertEqual(store.forecastUpdatedAt(for: failing.id), oldUpdate)

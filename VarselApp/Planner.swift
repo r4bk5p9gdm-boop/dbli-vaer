@@ -10,6 +10,11 @@ enum Planner {
     private static let rainAlertCooldown: TimeInterval = 6 * 3_600
     private static let dewDryBuffer: TimeInterval = 3 * 3_600
 
+    private static func windStrengthHeadline(for gust: Double) -> String {
+        let label = windStrengthLabel(for: gust)
+        return label.prefix(1).uppercased() + label.dropFirst()
+    }
+
     private static func areConsecutiveHours(_ earlier: ForecastHour, _ later: ForecastHour) -> Bool {
         abs(later.time.timeIntervalSince(earlier.time) - 3_600) < 60
     }
@@ -343,9 +348,9 @@ enum Planner {
             if let gust = hour.gust {
                 if let duration = matchingDuration(for: status, place: place, forecast: forecast) {
                     let unit = duration == 1 ? "time" : "timer"
-                    return "\(windStrengthLabel(for: gust).capitalized) i \(duration) \(unit)."
+                    return "\(windStrengthHeadline(for: gust)) i \(duration) \(unit)."
                 }
-                return "\(windStrengthLabel(for: gust).capitalized) — vindkast opptil \(number(gust)) m/s."
+                return "\(windStrengthHeadline(for: gust)) — vindkast opptil \(number(gust)) m/s."
             }
             return "Vindkast ikke oppgitt."
         case .sol:
@@ -390,7 +395,7 @@ enum Planner {
             base = "Lokalt anslag \(number)°"
         case .vind:
             guard let gust = hour.gust else { return "Vindkast ikke oppgitt." }
-            base = windStrengthLabel(for: gust).capitalized
+            base = windStrengthHeadline(for: gust)
         case .sol:
             base = hour.cloud <= 20 ? "Sol" : "Solgløtt"
         }
@@ -632,7 +637,7 @@ enum Planner {
         case .vind:
             let gust = hours.compactMap(\.gust).max()
             guard let gust else { return withTime("Vindkast ikke oppgitt") }
-            return withTime(windStrengthLabel(for: gust).capitalized + " — vindkast opptil \(number(gust)) m/s")
+            return withTime(windStrengthHeadline(for: gust) + " — vindkast opptil \(number(gust)) m/s")
         case .frost:
             let lowest = hours.map(\.temp).min() ?? 0
             let description = possible || (frostMargin > 0 && lowest > 0) ? "Fare for frost" : "Frost"

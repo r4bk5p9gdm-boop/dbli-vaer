@@ -57,8 +57,15 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 **BRUKER-112 · ÅPEN 2026-09-23** — Fullfør kontrollen av alle rullerende
 værtyper mot `VARSELTEKSTER.md`, særlig de nyredigerte nå-tekstene og dugg.
 Avklar motstrid mellom felles tabell og værtypeeksemplene før de gjøres til
-kodefasit. Kjør regresjonstestene når testmålets eldre kompilasjonsfeil er
-rettet; inntil da brukes iPhone-bygg og målrettet statisk kontroll.
+kodefasit. Delvis framdrift 2026-09-23: testmålets eldre kompilasjonsfeil er
+rettet, og fem målrettede språk-/visningstester bestod. Rettet stor bokstav i
+vindstyrke («Frisk bris»), inntrøndersk «tre tima», solens NÅ-tekst,
+engelsk «Up to», negativ null i temperatur og sikkert inntrøndersk «Dogg!» i
+push. Full suite før siste justering: 245 bestod, 18 feilet; de fleste feilene
+gjelder andre funksjoner eller gamle testforventninger. App og testmål bygger.
+Siste simulatortest hang under lagring av resultatet og ble avbrutt uten å
+starte ny simulator. Avventer Mathias' språkvalg om motstridende NÅ-tekster og
+duggpunkt på Hjem før resten av språkfasiten kan implementeres.
 
 **BRUKER-111 · FULLFØRT 2026-09-23** — Nedbørsmeldingen på Hjem gjentar ikke
 lenger «Mulig» eller klokkeslett i andrelinjen. Usikker varighet merkes

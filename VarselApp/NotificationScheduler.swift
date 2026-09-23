@@ -51,7 +51,9 @@ enum NotificationCopy {
             language: languageStyle.catalogCode,
             fallback: fallback,
             arguments: [
-                "vaertype": localizedWeatherName(for: rule, languageStyle: languageStyle),
+                "vaertype": rule.type == .dugg && languageStyle == .inntrondersk && !possible
+                    ? "Dogg"
+                    : localizedWeatherName(for: rule, languageStyle: languageStyle),
                 "sted": placeName,
                 "temperatur": rule.threshold.formatted(.number.precision(.fractionLength(0...1)))
             ]

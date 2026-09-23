@@ -8,7 +8,8 @@ enum PlaceOrderingSettings {
 
 func compactTemperatureText(_ temperature: Double) -> String {
     guard temperature.isFinite else { return "–°" }
-    return "\(temperature.formatted(.number.precision(.fractionLength(0))))°"
+    let rounded = temperature.rounded()
+    return "\((rounded == 0 ? 0.0 : rounded).formatted(.number.precision(.fractionLength(0))))°"
 }
 
 /// Explicit favorites for the sides of the current-location home page.
@@ -220,7 +221,9 @@ enum WeatherLanguage {
         if style == .english { return englishText(text) }
         guard style == .inntrondersk else { return separator.format(text) }
         var result = text
+            .replacingOccurrences(of: "Sol i [0-9]+ timer nå\\.", with: LanguageCatalog.value("now.sun", language: "tr", fallback: "D e Sol!"), options: .regularExpression)
             .replacingOccurrences(of: "\\b([0-9]+) timer\\b", with: "$1 tima", options: .regularExpression)
+            .replacingOccurrences(of: "\\btimer\\b", with: "tima", options: .regularExpression)
             // The second line follows the vocabulary approved in
             // VARSELTEKSTER.md. Keep these replacements before generic
             // substitutions so multiword weather descriptions stay intact.
@@ -241,7 +244,6 @@ enum WeatherLanguage {
             .replacingOccurrences(of: "Fare for dugg nå", with: LanguageCatalog.value("now.dew", language: "tr", fallback: "D e Duggfall!"))
             .replacingOccurrences(of: "Duggfall nå", with: LanguageCatalog.value("now.dew", language: "tr", fallback: "D e Duggfall!"))
             .replacingOccurrences(of: "Frost nå", with: LanguageCatalog.value("now.frost", language: "tr", fallback: "D e Frost!"))
-            .replacingOccurrences(of: "Sol i [0-9]+ timer nå\\.", with: LanguageCatalog.value("now.sun", language: "tr", fallback: "D e Sol!"), options: .regularExpression)
             .replacingOccurrences(of: "Fare for dugg", with: "Mulig doggfall")
             .replacingOccurrences(of: "Duggfall", with: "Doggfall")
             .replacingOccurrences(of: "Duggpunkt", with: "Doggpunkt")
@@ -313,7 +315,7 @@ enum WeatherLanguage {
             .replacingOccurrences(of: "Yr melder", with: "Yr reports")
             .replacingOccurrences(of: "Lokalt anslag", with: "Local estimate")
             .replacingOccurrences(of: "Mulig", with: "Possible")
-            .replacingOccurrences(of: "Opptil", with: LanguageCatalog.value("detail.up_to", language: "en", fallback: "up to").capitalized)
+            .replacingOccurrences(of: "Opptil", with: sentenceStart(LanguageCatalog.value("detail.up_to", language: "en", fallback: "up to")))
             .replacingOccurrences(of: "opptil", with: LanguageCatalog.value("detail.up_to", language: "en", fallback: "up to"))
             .replacingOccurrences(of: "oppte", with: LanguageCatalog.value("detail.up_to", language: "en", fallback: "up to"))
         let weekdays = ["mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag", "søndag"]
