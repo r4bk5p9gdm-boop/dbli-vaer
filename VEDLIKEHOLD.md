@@ -101,6 +101,8 @@ en gjentatt styringstabell ikke kan bli stående som uklar språkfasit.
 Språkfilen hadde i tillegg to foreldede inntrønderske NÅ-former
 («D Regne!» og «D e Doggfall!»). De er nå «D e Regn!» og «D Dogge!» i
 språkfil, fallback og tester, i tråd med rullerende fasit.
+En eldre generell fallback for «Det regner!» brukte også «D regne!» og er
+rettet til samme godkjente «D e Regn!»-form.
 
 **BRUKER-111 · FULLFØRT 2026-09-23** — Nedbørsmeldingen på Hjem gjentar ikke
 lenger «Mulig» eller klokkeslett i andrelinjen. Usikker varighet merkes
