@@ -1313,6 +1313,21 @@ enum RotatingAlertCopy {
         }
     }
 
+    /// Shared current-condition headline for surfaces that do not have a
+    /// complete WeatherStatus yet (for example the radar NÅ card). Keeping it
+    /// routed through the same generator prevents a second language table
+    /// from drifting away from the rotating Home alert.
+    static func currentHeadline(
+        for type: AlertType,
+        languageStyle: AlertLanguageStyle
+    ) -> String {
+        guard type != .temperatur else { return "Temperatur!" }
+        let status = WeatherStatus(
+            ruleID: UUID(), type: type, text: "", eventAt: Date(), isNow: true
+        )
+        return currentHeadline(for: status, rule: nil, languageStyle: languageStyle)
+    }
+
     private static func shortFutureTime(_ eventAt: Date, relativeTo now: Date) -> String {
         let minutes = max(0, Int((eventAt.timeIntervalSince(now) / 60).rounded()))
         if minutes <= 209 { return eventTimePhrase(eventAt, relativeTo: now) }

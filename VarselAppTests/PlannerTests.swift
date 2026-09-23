@@ -1573,6 +1573,10 @@ final class PlannerTests: XCTestCase {
             from: [current], current: current, languageStyle: .bokmal, now: now
         )
         XCTAssertEqual(summary.title, "Det Regner!")
+        let dialectSummary = CurrentPrecipitationSummary.make(
+            from: [current], current: current, languageStyle: .inntrondersk, now: now
+        )
+        XCTAssertEqual(dialectSummary.title, "D e Regn!")
     }
 
     func testFutureRadarUsesTemperatureAtEventInsteadOfCurrentTemperature() {

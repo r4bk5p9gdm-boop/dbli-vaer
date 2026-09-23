@@ -109,6 +109,8 @@ Sikre NÅ-overskrifter for regn, snø, vind, dugg, frost og sol hentes nå fra
 `Sprak.json` for bokmål og inntrøndersk, med regressjonstest på språkverdiene.
 Det reduserer risikoen for at språkfil og rullerende generator glir fra
 hverandre igjen.
+Radar-NÅ-kortet bruker samme generator i stedet for egne hardkodede regn-/snø-
+tekster; bokmål og inntrøndersk er begge dekket av regresjonstest.
 
 **BRUKER-111 · FULLFØRT 2026-09-23** — Nedbørsmeldingen på Hjem gjentar ikke
 lenger «Mulig» eller klokkeslett i andrelinjen. Usikker varighet merkes
