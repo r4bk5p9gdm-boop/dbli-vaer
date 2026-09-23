@@ -902,7 +902,9 @@ struct CurrentPrecipitationSummary {
             durationText = hours == 1 ? "1 time" : "\(hours) timer"
         }
         let intensity = description.lowercased()
-        let connector = temperature <= 1 ? " " : " med "
+        // The approved compact rain/snow form places the description directly
+        // after the duration: «4 timer litt regn» / «2 timer lett snøfall».
+        let connector = " "
         let summary = possible
             ? "Opptil \(durationText)\(connector)\(intensity)"
             : "\(durationText)\(connector)\(intensity)"
@@ -938,8 +940,7 @@ struct CurrentPrecipitationSummary {
         }
         if now != nil { return "\(description) i \(duration) til." }
         let startClock = startTimeAlreadyInHeadline ? "" : " fra kl. \(shortClockLabel(sample.time))"
-        let connector = temperature <= 1 ? " " : " med "
-        return "\(duration)\(connector)\(description.lowercased())\(startClock)."
+        return "\(duration) \(description.lowercased())\(startClock)."
     }
 
     private static func precipitationDescription(_ description: String, temperature: Double) -> String? {

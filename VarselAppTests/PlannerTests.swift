@@ -1481,8 +1481,8 @@ final class PlannerTests: XCTestCase {
             from: [dry, possible, second], current: dry, now: now
         )
         XCTAssertTrue(summary.title.hasPrefix("D kan bli Regn!"))
-        XCTAssertEqual(summary.detail, "Opptil 2 timer med litt regn.")
-        XCTAssertEqual(WeatherLanguage.text(summary.detail ?? "", style: .inntrondersk), "Oppte 2 tima med småregn.")
+        XCTAssertEqual(summary.detail, "Opptil 2 timer litt regn.")
+        XCTAssertEqual(WeatherLanguage.text(summary.detail ?? "", style: .inntrondersk), "Oppte 2 tima småregn.")
         XCTAssertEqual(summary.title.components(separatedBy: "kl.").count - 1, 1)
         XCTAssertFalse(summary.detail?.contains("Mulig") == true)
 
@@ -1589,8 +1589,8 @@ final class PlannerTests: XCTestCase {
         let snowSummary = CurrentPrecipitationSummary.make(
             from: [dry, first, snow], current: dry, now: now
         )
-        XCTAssertEqual(gapSummary.detail, "1 time med litt regn.")
-        XCTAssertEqual(snowSummary.detail, "1 time med litt regn.")
+        XCTAssertEqual(gapSummary.detail, "1 time litt regn.")
+        XCTAssertEqual(snowSummary.detail, "1 time litt regn.")
     }
 
     func testFutureSnowDetailUsesTheSnowTemplateWithoutRainConnector() {
@@ -1713,7 +1713,7 @@ final class PlannerTests: XCTestCase {
             now: base.addingTimeInterval(50 * 60)
         )
         XCTAssertEqual(summary.title, "D bli Regn! denne timen.")
-        XCTAssertEqual(summary.detail, "15 min med litt regn.")
+        XCTAssertEqual(summary.detail, "15 min litt regn.")
     }
 
     func testFutureForecastHourIsNotReportedAsCurrentWeather() {
@@ -1888,19 +1888,19 @@ final class PlannerTests: XCTestCase {
                 for: future, place: place, forecast: hours,
                 headlineHasStartClock: true
             ),
-            "2 timer med litt regn."
+            "2 timer litt regn."
         )
         XCTAssertEqual(
-            WeatherLanguage.text("2 timer med litt regn fra kl. 14.", style: .inntrondersk),
-            "2 tima med småregn fra kl. 14."
+            WeatherLanguage.text("2 timer litt regn fra kl. 14.", style: .inntrondersk),
+            "2 tima småregn fra kl. 14."
         )
         XCTAssertEqual(
-            WeatherLanguage.text("2 timer med regn fra kl. 14.", style: .inntrondersk),
-            "2 tima med regnbyge fra kl. 14."
+            WeatherLanguage.text("2 timer regn fra kl. 14.", style: .inntrondersk),
+            "2 tima regnbyge fra kl. 14."
         )
         XCTAssertEqual(
-            WeatherLanguage.text("2 timer med kraftig regn fra kl. 14.", style: .inntrondersk),
-            "2 tima med striskur fra kl. 14."
+            WeatherLanguage.text("2 timer kraftig regn fra kl. 14.", style: .inntrondersk),
+            "2 tima striskur fra kl. 14."
         )
         XCTAssertEqual(
             Planner.rotatingStatusDetail(for: possibleNow, place: place, forecast: hours),

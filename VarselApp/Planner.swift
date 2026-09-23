@@ -465,7 +465,7 @@ enum Planner {
             let unit = duration == 1 ? "time" : "timer"
             let description = base.prefix(1).lowercased() + String(base.dropFirst())
             let start = headlineHasStartClock ? nil : "fra kl. \(shortClockLabel(hour.time))"
-            return ["\(duration) \(unit) med \(description)", start]
+            return ["\(duration) \(unit) \(description)", start]
                 .compactMap { $0 }
                 .joined(separator: " ") + "."
         }

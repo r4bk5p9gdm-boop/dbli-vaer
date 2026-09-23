@@ -91,7 +91,7 @@ mens språkfil og styringstabell bruker «D Blæs!». Generator, fallback og tes
 er nå samordnet til den godkjente storbokstavformen.
 Neste formatteringsavvik var framtidig regn/snø i Hjem: detaljen startet med
 værbeskrivelsen og satte varigheten etterpå. Den følger nå malen med varighet
-først («2 timer med litt regn …» / «2 tima med småregn …»), med regresjonstest
+først («2 timer litt regn …» / «2 tima småregn …»), med regresjonstest
 for begge aktive språk.
 Styringstabellen bruker også «Regnbyge» for vanlig inntrøndersk regn. Denne
 formen brukes nå bare i detaljlinjens lille værbeskrivelse; overskriften
@@ -111,10 +111,9 @@ Det reduserer risikoen for at språkfil og rullerende generator glir fra
 hverandre igjen.
 Radar-NÅ-kortet bruker samme generator i stedet for egne hardkodede regn-/snø-
 tekster; bokmål og inntrøndersk er begge dekket av regresjonstest.
-Åpent fasitpunkt for Mathias: `VARSELTEKSTER.md` har både «4 tima småregn» i
-fellesmalen og «4 tima med småregn» i regn-eksempelet. Koden bruker foreløpig
-«med»; ingen ytterligere tekstendring gjøres før denne ene formuleringen er
-valgt.
+Mathias' tidligere forslag «4 tima småregn fra kl. 14» er nå valgt som fasit
+for regn. `VARSELTEKSTER.md`, rullerende kode og tester bruker derfor ikke
+«med» mellom varighet og regnbeskrivelse.
 La til en eksplisitt regresjonstest for framtidig usikkert nedbør samme dag:
 førstelinjen kan bære «i dag kl. HH», mens andrelinjen ikke skal gjenta
 «fra kl.» eller «Mulig». Dette låser den rullerende visningen til malen selv
@@ -126,11 +125,9 @@ allerede inneholder klokkeslettet.
 Også nedbør som starter i den pågående prognosetimen bruker nå en delt
 `currentHourHeadline`-mal for sikkert/usikkert regn og snø. Det fjerner den
 siste lokale kopien av «D bli»/«D kan bli» fra rullerende Hjem-kort.
-Nedbørsdetaljen er samtidig gjort typebevisst: regn beholder «med» i
-andrelinjen, mens snø nå følger fasiten «2 timer lett snøfall» uten regn-
-konnektor. Begge datakilder (prognose og radar) bruker samme skille.
-konnektor. Begge datakilder (prognose og radar) bruker samme skille, med
-regresjonstest på radargrenen.
+Nedbørsdetaljen bruker nå direkteformen uten «med»: «4 timer litt regn» og
+«2 timer lett snøfall». Begge datakilder (prognose og radar) bruker samme
+skille, med regresjonstest på radargrenen.
 Lange usikre regnperioder i prognosekortet følger nå også den eksplisitte
 malen «Opptil N timer regnbyger på [dag]»; korte usikre perioder beholder
 varighet og intensitet. Dette hindrer at samme hendelse får ulik språkform
