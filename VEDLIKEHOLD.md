@@ -54,10 +54,13 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
-**BRUKER-112 · ÅPEN 2026-09-23** — Fullfør kontrollen av alle rullerende
+**BRUKER-112 · FULLFØRT 2026-09-23** — Fullførte kontrollen av alle rullerende
 værtyper mot `VARSELTEKSTER.md`, særlig de nyredigerte nå-tekstene og dugg.
-Avklar motstrid mellom felles tabell og værtypeeksemplene før de gjøres til
-kodefasit. Delvis framdrift 2026-09-23: testmålets eldre kompilasjonsfeil er
+Fellesmalen og typeeksemplene er samordnet, inkludert valgt direkteform for
+regn («4 tima småregn»). Rullerende overskrifter og detaljer går nå gjennom
+delte generatorer for prognose, radar og pågående time; lange usikre regnperioder
+bruker bygemalen, og dugg-NÅ viser faktisk duggpunkt uten varighet. Delvis
+framdrift 2026-09-23: testmålets eldre kompilasjonsfeil er
 rettet, og fem målrettede språk-/visningstester bestod. Rettet stor bokstav i
 vindstyrke («Frisk bris»), inntrøndersk «tre tima», solens NÅ-tekst,
 engelsk «Up to», negativ null i temperatur og sikkert inntrøndersk «Dogg!» i
