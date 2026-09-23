@@ -93,6 +93,9 @@ Neste formatteringsavvik var framtidig regn/snø i Hjem: detaljen startet med
 værbeskrivelsen og satte varigheten etterpå. Den følger nå malen med varighet
 først («2 timer med litt regn …» / «2 tima med småregn …»), med regresjonstest
 for begge aktive språk.
+Styringstabellen bruker også «Regnbyge» for vanlig inntrøndersk regn. Denne
+formen brukes nå bare i detaljlinjens lille værbeskrivelse; overskriften
+«D bli Regn!» beholdes som værtypenavn. Dette er dekket av en egen test.
 
 **BRUKER-111 · FULLFØRT 2026-09-23** — Nedbørsmeldingen på Hjem gjentar ikke
 lenger «Mulig» eller klokkeslett i andrelinjen. Usikker varighet merkes
