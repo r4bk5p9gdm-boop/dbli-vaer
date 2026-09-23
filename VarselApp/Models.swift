@@ -696,6 +696,14 @@ struct PrecipitationSample: Codable, Identifiable, Hashable {
     let time: Date
     let rate: Double
     var id: Date { time }
+
+    static func nominalInterval(in samples: [PrecipitationSample]) -> TimeInterval {
+        let ordered = samples.sorted { $0.time < $1.time }
+        let gaps = zip(ordered, ordered.dropFirst())
+            .map { $1.time.timeIntervalSince($0.time) }
+            .filter { $0 > 0 }
+        return min(15 * 60, max(60, gaps.min() ?? 5 * 60))
+    }
 }
 
 struct ForecastHour: Codable, Identifiable, Hashable {

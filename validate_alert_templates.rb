@@ -1,17 +1,34 @@
 # Run from any directory: ruby validate_alert_templates.rb [path to markdown]
 
 def validate_alert_templates(text)
-  required = {
-    'first-line template' => 'Det blir {Værtype}! {sted} {tid}.',
-    'second-line template' => '{Beskrivelse} {dag/klokkeslett} — {varighet}.',
-    'language table' => '| Del | Bokmål | Inntrøndersk |',
-    'rain table' => '### Regn',
-    'snow table' => '### Snø',
-    'wind table' => '### Vindkast'
-  }
-  required.each_with_object([]) do |(label, marker), errors|
-    errors << "#{label}: mangler #{marker}" unless text.include?(marker)
+  errors = []
+  common = text.split(/^# Regn\s*$/, 2).first
+  {
+    'felles pushmal' => '### Push — første linje',
+    'værtypenavn og nå-tekst' => '### Værtypenavn og nå-tekst',
+    'tidskategorier' => '### Tid i første linje',
+    'rullerende Hjem-mal' => '### Hjem — rullerende varsel',
+    'usikker Hjem-mal' => '| Usikkert |',
+    'nåstatus-mal' => '| Pågår nå |'
+  }.each do |label, marker|
+    errors << "#{label}: mangler #{marker}" unless common.include?(marker)
   end
+
+  types = %w[Regn Snø Vindkast Duggfall Frost Sol Temperatur]
+  types.each_with_index do |type, index|
+    next_type = types[index + 1]
+    section = text.split(/^# #{Regexp.escape(type)}\s*$/, 2)[1]
+    if section.nil?
+      errors << "værtype: mangler # #{type}"
+      next
+    end
+    section = section.split(/^# #{Regexp.escape(next_type)}\s*$/, 2).first if next_type
+    %w[Push-varsel Hjem\ —\ rullerende\ varsel Watch\ og\ CarPlay-widget].each do |surface|
+      errors << "#{type}: mangler #{surface}" unless section.include?("## #{surface}")
+    end
+    errors << "#{type}: mangler språk-kolonner" unless section.include?('| Bokmål | Inntrøndersk |')
+  end
+  errors
 end
 
 if __FILE__ == $PROGRAM_NAME

@@ -54,6 +54,23 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-112 · ÅPEN 2026-09-23** — Fullfør kontrollen av alle rullerende
+værtyper mot `VARSELTEKSTER.md`, særlig de nyredigerte nå-tekstene og dugg.
+Avklar motstrid mellom felles tabell og værtypeeksemplene før de gjøres til
+kodefasit. Kjør regresjonstestene når testmålets eldre kompilasjonsfeil er
+rettet; inntil da brukes iPhone-bygg og målrettet statisk kontroll.
+
+**BRUKER-111 · FULLFØRT 2026-09-23** — Nedbørsmeldingen på Hjem gjentar ikke
+lenger «Mulig» eller klokkeslett i andrelinjen. Usikker varighet merkes
+«Opptil», og time-/radarperioder må være sammenhengende. Framtidige
+radarpunkter kan ikke bli NÅ-status, gamle radarpunkter kan ikke gi regn
+«nå», og snø/regn ved framtidig radar bruker temperaturen på
+hendelsestidspunktet. Alle værtyper unngår nå gjentatt startklokke i
+rullerende detalj når den står i overskriften. Utvidet regresjonstestene og
+oppdatert dokumentvalidatoren til gjeldende mal. Generisk iPhone-bygg og
+dokumentvalidator består; testmålet stopper før testkjøring på eldre feil i
+`PlannerTests.swift` (bl.a. aktørisolasjon og utdaterte testkall).
+
 **BRUKER-110 · FULLFØRT 2026-09-22** — Soloppgang/-nedgang ligger igjen i
 sin faktiske timecelle. Overgangsceller undertrykker nå gul solmarkering, så
 ikonet forklarer overgangen mot en nøytral bakgrunn.

@@ -1441,6 +1441,180 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(AlertType.regn.matches(hour, threshold: 0.5))
     }
 
+    func testRotatingPossibleRainAddsNewInformationWithoutRepeatingUncertaintyOrClock() {
+        let now = base.addingTimeInterval(5 * 60)
+        let dry = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 90, dew: 5)
+        let event = base.addingTimeInterval(5 * 3_600)
+        let possible = ForecastHour(
+            time: event, temp: 8, precip: 0, wind: 1, cloud: 90, dew: 5,
+            precipMax: 0.2, precipProbability: 40
+        )
+        let second = ForecastHour(
+            time: event.addingTimeInterval(3_600), temp: 8, precip: 0,
+            wind: 1, cloud: 90, dew: 5, precipMax: 0.2, precipProbability: 40
+        )
+
+        let summary = CurrentPrecipitationSummary.make(
+            from: [dry, possible, second], current: dry, now: now
+        )
+        XCTAssertTrue(summary.title.hasPrefix("D kan bli Regn!"))
+        XCTAssertEqual(summary.detail, "Opptil 2 timer med litt regn.")
+        XCTAssertEqual(WeatherLanguage.text(summary.detail ?? "", style: .inntrondersk), "Oppte 2 tima med småregn.")
+        XCTAssertEqual(summary.title.components(separatedBy: "kl.").count - 1, 1)
+        XCTAssertFalse(summary.detail?.contains("Mulig") == true)
+
+        let bokmal = CurrentPrecipitationSummary.make(
+            from: [dry, possible, second], current: dry,
+            languageStyle: .bokmal, now: now
+        )
+        XCTAssertTrue(bokmal.title.hasPrefix("Det kan bli Regn!"))
+    }
+
+    func testRotatingRainDurationStopsAtForecastGapOrSnowTransition() {
+        let now = base.addingTimeInterval(5 * 60)
+        let dry = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 90, dew: 5)
+        let first = ForecastHour(
+            time: base.addingTimeInterval(5 * 3_600), temp: 8, precip: 0.2,
+            wind: 1, cloud: 90, dew: 5
+        )
+        let gap = ForecastHour(
+            time: first.time.addingTimeInterval(2 * 3_600), temp: 8,
+            precip: 0.2, wind: 1, cloud: 90, dew: 5
+        )
+        let snow = ForecastHour(
+            time: first.time.addingTimeInterval(3_600), temp: 0,
+            precip: 0.2, wind: 1, cloud: 90, dew: -1
+        )
+
+        let gapSummary = CurrentPrecipitationSummary.make(
+            from: [dry, first, gap], current: dry, now: now
+        )
+        let snowSummary = CurrentPrecipitationSummary.make(
+            from: [dry, first, snow], current: dry, now: now
+        )
+        XCTAssertEqual(gapSummary.detail, "1 time med litt regn.")
+        XCTAssertEqual(snowSummary.detail, "1 time med litt regn.")
+    }
+
+    func testFutureRadarMinuteDoesNotClaimRainIsFallingNow() {
+        let now = base.addingTimeInterval(5 * 60)
+        var current = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 90, dew: 5)
+        current.radarSamples = [
+            PrecipitationSample(time: now.addingTimeInterval(60), rate: 0.2)
+        ]
+
+        let summary = CurrentPrecipitationSummary.make(from: [current], current: current, now: now)
+        XCTAssertFalse(summary.isFallingNow)
+        XCTAssertTrue(summary.title.hasPrefix("D bli Regn!"))
+
+        var rule = Rule(type: .regn)
+        rule.threshold = 0.1
+        let status = Planner.status(for: rule, forecast: [current], now: now)
+        XCTAssertEqual(status?.isNow, false)
+        XCTAssertEqual(status?.eventAt, now.addingTimeInterval(60))
+    }
+
+    func testExpiredRadarSampleDoesNotCreateCurrentRainStatus() {
+        let now = base.addingTimeInterval(20 * 60)
+        var current = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 90, dew: 5)
+        current.radarSamples = [
+            PrecipitationSample(time: now.addingTimeInterval(-14 * 60), rate: 0),
+            PrecipitationSample(time: now.addingTimeInterval(-9 * 60), rate: 0.2)
+        ]
+
+        let summary = CurrentPrecipitationSummary.make(from: [current], current: current, now: now)
+        XCTAssertFalse(summary.isFallingNow)
+        XCTAssertEqual(summary.title, "Opphold nå")
+    }
+
+    func testCurrentRadarDetailUsesRemainingTimeInsteadOfPastStartClock() {
+        let now = base.addingTimeInterval(20 * 60)
+        var current = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 90, dew: 5)
+        current.radarSamples = (0..<4).map { index in
+            PrecipitationSample(
+                time: now.addingTimeInterval(TimeInterval(index * 5 - 1) * 60),
+                rate: 0.2
+            )
+        }
+
+        let summary = CurrentPrecipitationSummary.make(from: [current], current: current, now: now)
+        XCTAssertTrue(summary.isFallingNow)
+        XCTAssertEqual(summary.detail, "Litt regn i 15 min til.")
+    }
+
+    func testFutureRadarUsesTemperatureAtEventInsteadOfCurrentTemperature() {
+        let now = base.addingTimeInterval(5 * 60)
+        let current = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 90, dew: 5)
+        var future = ForecastHour(
+            time: base.addingTimeInterval(3_600), temp: -2, precip: 0,
+            wind: 1, cloud: 90, dew: -3
+        )
+        future.radarSamples = [
+            PrecipitationSample(time: future.time.addingTimeInterval(5 * 60), rate: 0.2)
+        ]
+
+        let summary = CurrentPrecipitationSummary.make(
+            from: [current, future], current: current, now: now
+        )
+        XCTAssertTrue(summary.title.hasPrefix("D bli Snø!"))
+        XCTAssertEqual(summary.systemImage, "cloud.snow.fill")
+    }
+
+    func testStaleForecastDoesNotClaimDryWeatherNow() {
+        let old = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 90, dew: 5)
+        let summary = CurrentPrecipitationSummary.make(
+            from: [old], current: old, now: base.addingTimeInterval(4 * 3_600)
+        )
+        XCTAssertEqual(summary.title, "Oppdaterer værdata")
+        XCTAssertNil(summary.detail)
+    }
+
+    func testCurrentForecastDetailUsesTimeRemainingInTheHour() {
+        let current = ForecastHour(
+            time: base, temp: 8, precip: 0.2, wind: 1, cloud: 90, dew: 5
+        )
+        let summary = CurrentPrecipitationSummary.make(
+            from: [current], current: current,
+            now: base.addingTimeInterval(50 * 60)
+        )
+        XCTAssertEqual(summary.title, "D bli Regn! denne timen.")
+        XCTAssertEqual(summary.detail, "15 min med litt regn.")
+    }
+
+    func testFutureForecastHourIsNotReportedAsCurrentWeather() {
+        var rule = Rule(type: .vind)
+        rule.threshold = 9
+        var upcoming = ForecastHour(
+            time: base.addingTimeInterval(5 * 60), temp: 8, precip: 0,
+            wind: 4, cloud: 80, dew: 5
+        )
+        upcoming.gust = 11
+
+        let status = Planner.status(for: rule, forecast: [upcoming], now: base)
+        XCTAssertEqual(status?.eventAt, upcoming.time)
+        XCTAssertEqual(status?.isNow, false)
+    }
+
+    func testMissingForecastHourBreaksDurationDependentAlertRun() {
+        var rule = Rule(type: .sol)
+        rule.durationHours = 2
+        rule.threshold = 20
+        let first = ForecastHour(
+            time: base.addingTimeInterval(3_600), temp: 15, precip: 0,
+            wind: 2, cloud: 5, dew: 8
+        )
+        let afterGap = ForecastHour(
+            time: base.addingTimeInterval(3 * 3_600), temp: 15, precip: 0,
+            wind: 2, cloud: 5, dew: 8
+        )
+
+        let result = Planner.plan(
+            rule: rule, forecast: [first, afterGap], placeName: "Klinga", now: base
+        )
+        XCTAssertNil(result.eventAt)
+        XCTAssertTrue(result.alerts.isEmpty)
+    }
+
     func testWindRuleUsesDetailedGustForecast() {
         let hour = ForecastHour(time: base, temp: 8, precip: 0, wind: 6, cloud: 50, dew: 4, gust: 12)
         XCTAssertTrue(AlertType.vind.matches(hour, threshold: 10))
@@ -1550,6 +1724,40 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(
             Planner.rotatingStatusDetail(for: current, place: place, forecast: [first, second]),
             "Frisk bris i 2 timer til."
+        )
+    }
+
+    func testRotatingRuleDetailDoesNotRepeatClockOrUncertainty() {
+        var rule = Rule(type: .regn)
+        rule.threshold = 0.1
+        var place = Place(name: "Klinga", lat: 64, lon: 11)
+        place.rules = [rule]
+        let hours = (0..<2).map { index in
+            ForecastHour(
+                time: base.addingTimeInterval(Double(index) * 3_600),
+                temp: 8, precip: 0, wind: 1, cloud: 90, dew: 5,
+                precipMax: 0.2, precipProbability: 40
+            )
+        }
+        let future = WeatherStatus(
+            ruleID: rule.id, type: .regn, text: "", eventAt: base,
+            isNow: false, possible: true
+        )
+        let possibleNow = WeatherStatus(
+            ruleID: rule.id, type: .regn, text: "", eventAt: base,
+            isNow: true, possible: true
+        )
+
+        XCTAssertEqual(
+            Planner.rotatingStatusDetail(
+                for: future, place: place, forecast: hours,
+                headlineHasStartClock: true
+            ),
+            "Litt regn i 2 timer."
+        )
+        XCTAssertEqual(
+            Planner.rotatingStatusDetail(for: possibleNow, place: place, forecast: hours),
+            "Litt regn i opptil 2 timer."
         )
     }
 

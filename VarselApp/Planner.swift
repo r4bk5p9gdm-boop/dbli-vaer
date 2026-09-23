@@ -10,6 +10,10 @@ enum Planner {
     private static let rainAlertCooldown: TimeInterval = 6 * 3_600
     private static let dewDryBuffer: TimeInterval = 3 * 3_600
 
+    private static func areConsecutiveHours(_ earlier: ForecastHour, _ later: ForecastHour) -> Bool {
+        abs(later.time.timeIntervalSince(earlier.time) - 3_600) < 60
+    }
+
     struct Result {
         var eventAt: Date?
         var alerts: [PlannedAlert] = []
@@ -88,9 +92,13 @@ enum Planner {
             (hour.radarSamples ?? []).map { (sample: $0, hour: hour) }
         }.sorted { $0.sample.time < $1.sample.time }
         guard !samples.isEmpty else { return nil }
+        let radarInterval = PrecipitationSample.nominalInterval(in: samples.map(\.sample))
 
         let nearNow = samples
-            .filter { abs($0.sample.time.timeIntervalSince(now)) <= 7.5 * 60 }
+            .filter {
+                $0.sample.time <= now
+                    && now.timeIntervalSince($0.sample.time) < radarInterval
+            }
             .min { abs($0.sample.time.timeIntervalSince(now)) < abs($1.sample.time.timeIntervalSince(now)) }
         if let nearNow, sampleMatches(nearNow.sample, rule: rule, hour: nearNow.hour, calendar: calendar) {
             return (nearNow.sample.time, true)
@@ -118,6 +126,11 @@ enum Planner {
                 rule, at: index, in: forecast, frostMargin: frostMargin,
                 latitude: latitude, longitude: longitude, calendar: calendar
             )
+            if isMatch, let first = start, index > first,
+               !areConsecutiveHours(forecast[index - 1], forecast[index]) {
+                runs.append(first..<index)
+                start = nil
+            }
             if isMatch, start == nil { start = index }
             if !isMatch, let first = start {
                 runs.append(first..<index)
@@ -345,7 +358,10 @@ enum Planner {
     /// duration when it is meaningful, then the start clock for future events.
     /// The regular status detail remains deliberately more verbose for rules
     /// and accessibility summaries elsewhere in the app.
-    static func rotatingStatusDetail(for status: WeatherStatus, place: Place, forecast: [ForecastHour]) -> String? {
+    static func rotatingStatusDetail(
+        for status: WeatherStatus, place: Place, forecast: [ForecastHour],
+        headlineHasStartClock: Bool = false
+    ) -> String? {
         guard let hour = forecast.min(by: {
             abs($0.time.timeIntervalSince(status.eventAt)) < abs($1.time.timeIntervalSince(status.eventAt))
         }) else { return nil }
@@ -365,9 +381,9 @@ enum Planner {
                 ? (hour.precipMax ?? hour.precipitationRiskRate)
                 : hour.precipitationRate
             let snow = estimatedFreshSnowMillimeters(waterEquivalent: water, temperature: hour.temp)
-            base = "\(status.possible == true ? "Mulig " : "")\(PrecipitationCopy.snow(snow))"
+            base = PrecipitationCopy.snow(snow)
         case .dugg:
-            base = status.possible == true ? "Mulig duggfall" : "Duggfall"
+            base = "Duggfall"
         case .frost:
             base = "\(status.possible == true || hour.temp > 0 ? "Fare for frost" : "Frost") ved \(number)°"
         case .temperatur:
@@ -409,6 +425,15 @@ enum Planner {
                     return "\(label) i dag blir \(extreme.formatted(.number.precision(.fractionLength(0...1))))°C."
                 }
             }
+            if status.possible == true && (status.type == .regn || status.type == .sno) {
+                let boundedDuration = duration.map { " i opptil \($0) \($0 == 1 ? "time" : "timer")" } ?? ""
+                return "\(base)\(boundedDuration)."
+            }
+            if status.type == .frost {
+                let frost = status.possible == true || hour.temp > 0 ? "Fare for frost" : "Frost"
+                let continuingDuration = durationText.map { "\($0) til" }
+                return [frost, continuingDuration].compactMap { $0 }.joined(separator: " ") + "."
+            }
             let continuingDuration = durationText.map { "\($0) til" }
             return [base, continuingDuration].compactMap { $0 }.joined(separator: " ") + "."
         }
@@ -427,7 +452,7 @@ enum Planner {
             return [base, durationText].compactMap { $0 }.joined(separator: " ") + "."
         }
 
-        let start = "fra kl. \(shortClockLabel(hour.time))"
+        let start = headlineHasStartClock ? nil : "fra kl. \(shortClockLabel(hour.time))"
         return [base, durationText, start].compactMap { $0 }.joined(separator: " ") + "."
     }
 
@@ -442,6 +467,7 @@ enum Planner {
               }) else { return nil }
         var duration = 0
         for index in start..<forecast.endIndex {
+            if index > start, !areConsecutiveHours(forecast[index - 1], forecast[index]) { break }
             guard matches(
                 rule, at: index, in: forecast, frostMargin: place.localFrostMargin,
                 latitude: place.lat, longitude: place.lon
@@ -465,15 +491,26 @@ enum Planner {
             let text = rule.type == .sno ? "Snø nå." : "Regn nå."
             return WeatherStatus(ruleID: rule.id, type: rule.type, text: rule.statusText(text), eventAt: radar.date, isNow: true)
         }
+        if let radar, radar.date > now {
+            let text = weatherAlertText(for: rule, eventAt: radar.date, referenceAt: now)
+            return WeatherStatus(
+                ruleID: rule.id, type: rule.type, text: rule.statusText(text),
+                eventAt: radar.date, isNow: false
+            )
+        }
         let currentFloor = now.addingTimeInterval(-3_600)
-        let currentIndex = forecast.firstIndex { $0.time >= currentFloor } ?? forecast.startIndex
-        let currentIsNearNow = forecast[currentIndex].time <= now.addingTimeInterval(10 * 60)
-        if currentIsNearNow, matches(
+        if let currentIndex = forecast.lastIndex(where: {
+            $0.time <= now && $0.time > currentFloor
+        }),
+        (!isPrecipitationRule(rule) || forecast[currentIndex].radarSamples?.isEmpty != false),
+        matches(
             rule, at: currentIndex, in: forecast, frostMargin: frostMargin,
             latitude: latitude, longitude: longitude
         ) {
             var duration = 0
             for index in currentIndex..<forecast.endIndex {
+                if index > currentIndex,
+                   !areConsecutiveHours(forecast[index - 1], forecast[index]) { break }
                 guard matches(
                     rule, at: index, in: forecast, frostMargin: frostMargin,
                     latitude: latitude, longitude: longitude
