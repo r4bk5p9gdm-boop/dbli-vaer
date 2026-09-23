@@ -756,13 +756,21 @@ struct CurrentPrecipitationSummary {
                 && $0.rate >= 0.1
         }) {
             let eventTemperature = forecast.last(where: { $0.time <= upcoming.time })?.temp ?? current.temp
-            let kind = eventTemperature <= 1 ? "Snø" : "Regn"
+            let kind: AlertType = eventTemperature <= 1 ? .sno : .regn
+            let status = WeatherStatus(
+                ruleID: UUID(), type: kind, text: "", eventAt: upcoming.time,
+                isNow: false
+            )
             return CurrentPrecipitationSummary(
-                title: "D bli \(kind)! \(eventTimePhrase(upcoming.time, relativeTo: now)).",
+                title: RotatingAlertCopy.headline(
+                    for: status, rule: nil, languageStyle: languageStyle, now: now
+                ),
                 detail: radarDetail(
                     samples: samples, startingAt: upcoming, temperature: eventTemperature,
                     interval: radarInterval,
-                    startTimeAlreadyInHeadline: eventTimePhrase(upcoming.time, relativeTo: now).contains("kl.")
+                    startTimeAlreadyInHeadline: RotatingAlertCopy.headline(
+                        for: status, rule: nil, languageStyle: languageStyle, now: now
+                    ).contains("kl.")
                 ),
                 systemImage: eventTemperature <= 1 ? "cloud.snow.fill" : "cloud.rain.fill",
                 color: .blue,
@@ -808,16 +816,23 @@ struct CurrentPrecipitationSummary {
             $0.time > now && $0.time <= horizon && $0.precipitationRiskRate >= 0.1
         }) {
             let possible = upcoming.precipitationRate < 0.1
-            let timePhrase = eventTimePhrase(upcoming.time, relativeTo: now)
+            let kind: AlertType = upcoming.temp <= 1 ? .sno : .regn
+            let status = WeatherStatus(
+                ruleID: UUID(), type: kind, text: "", eventAt: upcoming.time,
+                isNow: false, possible: possible
+            )
+            let title = RotatingAlertCopy.headline(
+                for: status, rule: nil, languageStyle: languageStyle, now: now
+            )
             return CurrentPrecipitationSummary(
-                title: "\(possible ? possiblePrefix : "D bli") \(upcoming.temp <= 1 ? "Snø" : "Regn")! \(timePhrase).",
+                title: title,
                 detail: forecastDetail(
                     forecast: forecast,
                     startingAt: upcoming.time,
                     waterEquivalent: possible ? (upcoming.precipMax ?? upcoming.precipitationRiskRate) : upcoming.precip,
                     temperature: upcoming.temp,
                     possible: possible,
-                    includeStartClock: !timePhrase.contains("kl.")
+                    includeStartClock: !title.contains("kl.")
                 ),
                 systemImage: possible ? "umbrella.fill" : (upcoming.temp <= 1 ? "cloud.snow.fill" : "cloud.rain.fill"),
                 color: possible ? .blue.opacity(0.75) : .blue,

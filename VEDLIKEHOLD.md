@@ -119,6 +119,10 @@ La til en eksplisitt regresjonstest for framtidig usikkert nedbør samme dag:
 førstelinjen kan bære «i dag kl. HH», mens andrelinjen ikke skal gjenta
 «fra kl.» eller «Mulig». Dette låser den rullerende visningen til malen selv
 om en eldre installasjon fortsatt viser den gamle ordlyden.
+Radar- og prognosebaserte framtidstreff bruker nå samme `RotatingAlertCopy`
+som vanlige Hjem-statuskort. Dermed får også disse kortene kortformen «i mårrå,
+kl. 09» uten ukedagsduplikat, og andrelinjen vet sikkert om førstelinjen
+allerede inneholder klokkeslettet.
 
 **BRUKER-111 · FULLFØRT 2026-09-23** — Nedbørsmeldingen på Hjem gjentar ikke
 lenger «Mulig» eller klokkeslett i andrelinjen. Usikker varighet merkes

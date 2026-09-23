@@ -1516,6 +1516,30 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(summary.detail?.contains("Mulig") == true)
     }
 
+    func testFuturePossibleRainUsesShortTomorrowPhraseInRotatingHeadline() {
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone(identifier: "Europe/Oslo")!
+        let now = base.addingTimeInterval(5 * 60)
+        let tomorrow = calendar.date(byAdding: .day, value: 1, to: base)!
+        let event = calendar.date(bySettingHour: 9, minute: 0, second: 0, of: tomorrow)!
+        let dry = ForecastHour(time: base, temp: 8, wind: 1, cloud: 90, dew: 5)
+        let possible = ForecastHour(
+            time: event, temp: 8, precip: 0, wind: 1, cloud: 90, dew: 5,
+            precipMax: 0.2, precipProbability: 40
+        )
+
+        let summary = CurrentPrecipitationSummary.make(
+            from: [dry, possible], current: dry,
+            languageStyle: .inntrondersk, now: now
+        )
+
+        XCTAssertEqual(
+            WeatherLanguage.text(summary.title, style: .inntrondersk),
+            "D kan bli Regn! i mårrå, kl. 09."
+        )
+        XCTAssertFalse(summary.title.contains("tirsdag"))
+    }
+
     func testRotatingRainDurationStopsAtForecastGapOrSnowTransition() {
         let now = base.addingTimeInterval(5 * 60)
         let dry = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 90, dew: 5)
