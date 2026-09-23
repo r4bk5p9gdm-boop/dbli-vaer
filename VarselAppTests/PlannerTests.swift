@@ -2023,6 +2023,13 @@ final class PlannerTests: XCTestCase {
             ),
             "D e under 10°!"
         )
+        let futureRegenerated = WeatherStatus(
+            ruleID: UUID(), type: .temperatur, text: "", eventAt: base.addingTimeInterval(3_600), isNow: false
+        )
+        let futureDetail = Planner.rotatingStatusDetail(
+            for: futureRegenerated, place: displayOnlyPlace, forecast: hours
+        )
+        XCTAssertTrue(futureDetail?.hasPrefix("Laveste temperatur blir 7,6°C fra kl. ") == true)
     }
 
     func testWindStrengthUsesEverydayBeaufortNames() {

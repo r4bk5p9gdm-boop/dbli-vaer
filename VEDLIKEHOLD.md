@@ -54,6 +54,12 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-115 · FULLFØRT 2026-09-23** — Utvidet terskelfiksen til framtidige
+rullerende temperaturkort. De viser nå «D bli Under 10°! om …» i stedet for
+«D bli Temperatur!», og andrelinjen bruker «Laveste temperatur blir …°C fra
+kl. …» (eller «Høyeste» ved over-grense) i stedet for «Lokalt anslag».
+Selbu/Hornburu med display-only-regel er dekket av regresjonstest.
+
 **BRUKER-114 · FULLFØRT 2026-09-23** — Rettet rullerende temperaturkort for
 display-only-regler: standardgrensen 10° beholdes selv om visningsregelen får
 ny UUID mellom statusberegning og rendering, i stedet for feilaktig 0°.

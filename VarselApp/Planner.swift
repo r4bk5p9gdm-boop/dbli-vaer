@@ -490,6 +490,14 @@ enum Planner {
                 .joined(separator: " ") + "."
         }
 
+        if status.type == .temperatur, let rule = displayRule(for: status, place: place) {
+            let label = rule.temperatureDirection == .above ? "Høyeste temperatur blir" : "Laveste temperatur blir"
+            let start = headlineHasStartClock ? nil : "fra kl. \(shortClockLabel(hour.time))"
+            return ["\(label) \(number)°C", start]
+                .compactMap { $0 }
+                .joined(separator: " ") + "."
+        }
+
         // Dugg has no useful duration in the rolling card. The event time is
         // already carried by the headline; show the dew point instead of
         // repeating the generic "Duggfall" label.
