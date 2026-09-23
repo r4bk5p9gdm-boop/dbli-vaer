@@ -229,14 +229,15 @@ enum WeatherLanguage {
             // substitutions so multiword weather descriptions stay intact.
             .replacingOccurrences(of: "Litt regn", with: "Småregn")
             .replacingOccurrences(of: "litt regn", with: "småregn")
-            // The steering table calls ordinary rain «regnbyge» in the
-            // dialect. Detail lines use lowercase «regn»; the capitalized
-            // headline «D bli Regn!» must remain unchanged.
-            .replacingOccurrences(of: "\\bregn\\b", with: "regnbyge", options: .regularExpression)
             .replacingOccurrences(of: "Kraftig regn", with: "Striskur")
             .replacingOccurrences(of: "kraftig regn", with: "striskur")
             .replacingOccurrences(of: "Regnbyger", with: "Regnbyga")
             .replacingOccurrences(of: "regnbyger", with: "regnbyga")
+            // The steering table calls ordinary rain «regnbyge» in the
+            // dialect. Detail lines use lowercase «regn»; the capitalized
+            // headline «D bli Regn!» must remain unchanged. Keep this after
+            // the more specific rain descriptions above.
+            .replacingOccurrences(of: "\\bregn\\b", with: "regnbyge", options: .regularExpression)
             .replacingOccurrences(of: "Lett snøfall", with: "Litt snø")
             .replacingOccurrences(of: "lett snøfall", with: "litt snø")
             .replacingOccurrences(of: "Snøbyger", with: "Snøbyga")

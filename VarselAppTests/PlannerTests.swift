@@ -1792,6 +1792,10 @@ final class PlannerTests: XCTestCase {
             "2 tima med regnbyge fra kl. 14."
         )
         XCTAssertEqual(
+            WeatherLanguage.text("2 timer med kraftig regn fra kl. 14.", style: .inntrondersk),
+            "2 tima med striskur fra kl. 14."
+        )
+        XCTAssertEqual(
             Planner.rotatingStatusDetail(for: possibleNow, place: place, forecast: hours),
             "Litt regn i opptil 2 timer."
         )

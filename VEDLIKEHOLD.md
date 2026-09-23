@@ -103,6 +103,8 @@ Språkfilen hadde i tillegg to foreldede inntrønderske NÅ-former
 språkfil, fallback og tester, i tråd med rullerende fasit.
 En eldre generell fallback for «Det regner!» brukte også «D regne!» og er
 rettet til samme godkjente «D e Regn!»-form.
+Rekkefølgen på dialektreglene er testet særskilt: «Kraftig regn» blir fortsatt
+«Striskur» før den generelle «regn» → «regnbyge»-regelen brukes.
 
 **BRUKER-111 · FULLFØRT 2026-09-23** — Nedbørsmeldingen på Hjem gjentar ikke
 lenger «Mulig» eller klokkeslett i andrelinjen. Usikker varighet merkes
