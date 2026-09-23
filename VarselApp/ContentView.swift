@@ -736,7 +736,9 @@ struct CurrentPrecipitationSummary {
 
         if let latest, now.timeIntervalSince(latest.time) < radarInterval, latest.rate >= 0.1 {
             return CurrentPrecipitationSummary(
-                title: current.temp <= 1 ? "Det Snør!" : "D e Regn!",
+                title: current.temp <= 1
+                    ? "Det Snør!"
+                    : (languageStyle == .bokmal ? "Det Regner!" : "D e Regn!"),
                 detail: radarDetail(
                     samples: samples, startingAt: latest, temperature: current.temp,
                     interval: radarInterval, now: now

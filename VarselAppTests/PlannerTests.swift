@@ -1559,6 +1559,16 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(summary.detail, "Litt regn i 15 min til.")
     }
 
+    func testCurrentRadarRainHeadlineUsesBokmalNowForm() {
+        let now = base.addingTimeInterval(20 * 60)
+        var current = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 90, dew: 5)
+        current.radarSamples = [PrecipitationSample(time: now.addingTimeInterval(-5 * 60), rate: 0.2)]
+        let summary = CurrentPrecipitationSummary.make(
+            from: [current], current: current, languageStyle: .bokmal, now: now
+        )
+        XCTAssertEqual(summary.title, "Det Regner!")
+    }
+
     func testFutureRadarUsesTemperatureAtEventInsteadOfCurrentTemperature() {
         let now = base.addingTimeInterval(5 * 60)
         let current = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 90, dew: 5)
