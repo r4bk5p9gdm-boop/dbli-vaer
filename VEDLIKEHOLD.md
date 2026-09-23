@@ -65,7 +65,11 @@ push. Full suite før siste justering: 245 bestod, 18 feilet; de fleste feilene
 gjelder andre funksjoner eller gamle testforventninger. App og testmål bygger.
 Siste simulatortest hang under lagring av resultatet og ble avbrutt uten å
 starte ny simulator. Avventer Mathias' språkvalg om motstridende NÅ-tekster og
-duggpunkt på Hjem før resten av språkfasiten kan implementeres.
+duggpunkt på Hjem før resten av språkfasiten kan implementeres. Ny retting
+2026-09-23: NÅ-detaljen for dugg leser nå faktisk duggpunkt fra prognosen,
+ikke lufttemperaturen under en misvisende etikett. En regresjonstest bruker
+bevisst ulike verdier (7° luft / 6,8° duggpunkt). iPhone-app og testmål
+kompilerer uten simulator.
 
 **BRUKER-111 · FULLFØRT 2026-09-23** — Nedbørsmeldingen på Hjem gjentar ikke
 lenger «Mulig» eller klokkeslett i andrelinjen. Usikker varighet merkes

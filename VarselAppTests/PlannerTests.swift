@@ -1773,7 +1773,7 @@ final class PlannerTests: XCTestCase {
         )
         XCTAssertEqual(
             Planner.rotatingStatusDetail(for: currentDew, place: place, forecast: [dewHour]),
-            "Duggpunkt ved 7°C."
+            "Duggpunkt ved 6,8°C."
         )
 
         var windRule = Rule(type: .vind)

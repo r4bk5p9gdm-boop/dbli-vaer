@@ -408,12 +408,12 @@ enum Planner {
         }
 
         if status.isNow {
-            // Dew point is useful when explaining a scheduled push, but the
-            // compact Home card is clearer with the local air temperature.
-            // This also avoids repeating "Duggfall" immediately below the
-            // already explicit current-state headline.
+            // A detail labelled "Duggpunkt" must use the dew-point field,
+            // not the locally adjusted air temperature. Avoid repeating
+            // "Duggfall" below the already explicit current-state headline.
             if status.type == .dugg {
-                return "Duggpunkt ved \(number)°C."
+                let dewPoint = hour.dew.formatted(.number.precision(.fractionLength(0...1)))
+                return "Duggpunkt ved \(dewPoint)°C."
             }
             if status.type == .temperatur,
                let rule = place.rulesForDisplay.first(where: { $0.id == status.ruleID }) {
