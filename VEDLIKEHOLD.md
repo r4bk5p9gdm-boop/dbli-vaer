@@ -842,6 +842,10 @@ nedbørtekst ikke tolker en manglende Yr-time som faktisk opphold.
 prognosen viser opphold. «Opphold nå» og «Opphold neste time» sendes ikke som
 et roterende varsel; faktiske regn- og snøhendelser beholder samme tekstmal.
 
+**BRUKER-113 · FULLFØRT 2026-09-24** — Posisjonsmerket bruker nå en 45°
+venstrestilt pil, og «her» er sentrert over pilen med samme lette avrundede
+skriftstil som stedsnavnet og hvit kontur for bedre lesbarhet.
+
 **AUTO-265 · ÅPEN** — Kontroller at samme rullerende tekstmal brukes for
 nedbør, temperatur, vind, dugg og frost i bokmål og inntrøndersk, inkludert
 at NÅ-teksten ikke får et foreldet klokkeslett i understeksten.

@@ -20,16 +20,20 @@ private struct LocationPresenceBadge: View {
             Image(systemName: "location.north.fill")
                 .font(.system(size: 31, weight: .black))
                 .foregroundStyle(.indigo.gradient)
-                // The compact iOS location-arrow posture points right at rest.
-                // Keep a live course relative to that resting orientation.
-                .rotationEffect(.degrees(90 + (course ?? 0)))
+                // The arrow rests 45° left of the previous right-pointing
+                // posture, while a live course still rotates it with GPS.
+                .rotationEffect(.degrees(45 + (course ?? 0)))
                 .animation(.easeInOut(duration: 0.35), value: course)
 
-            Text(label)
-                .font(.caption.weight(.black))
-                .foregroundStyle(.white)
-                .shadow(color: .indigo.opacity(0.70), radius: 1)
-                .offset(x: 3, y: 3)
+            // A white contour keeps the same light rounded label legible over
+            // both the arrow and its animated rings.
+            ZStack {
+                Text(label).font(.system(size: 23, weight: .light, design: .rounded)).foregroundStyle(.white).offset(x: 1.2)
+                Text(label).font(.system(size: 23, weight: .light, design: .rounded)).foregroundStyle(.white).offset(x: -1.2)
+                Text(label).font(.system(size: 23, weight: .light, design: .rounded)).foregroundStyle(.white).offset(y: 1.2)
+                Text(label).font(.system(size: 23, weight: .light, design: .rounded)).foregroundStyle(.white).offset(y: -1.2)
+                Text(label).font(.system(size: 23, weight: .light, design: .rounded)).foregroundStyle(.indigo)
+            }
         }
         .frame(width: label == "here" ? 46 : 40, height: 34)
         .onAppear { pulse = true }
