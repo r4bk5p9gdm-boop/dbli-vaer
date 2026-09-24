@@ -1664,7 +1664,8 @@ final class PlannerTests: XCTestCase {
 
         let summary = CurrentPrecipitationSummary.make(from: [current], current: current, now: now)
         XCTAssertFalse(summary.isFallingNow)
-        XCTAssertEqual(summary.title, "Opphold nå")
+        XCTAssertTrue(summary.title.isEmpty)
+        XCTAssertNil(summary.detail)
     }
 
     func testCurrentRadarDetailUsesRemainingTimeInsteadOfPastStartClock() {

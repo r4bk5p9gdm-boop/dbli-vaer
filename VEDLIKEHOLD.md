@@ -838,6 +838,10 @@ cache som første time.
 **AUTO-264 · ÅPEN** — Kontroller at værbåndets nedbørmarkeringer og rullerende
 nedbørtekst ikke tolker en manglende Yr-time som faktisk opphold.
 
+**BRUKER-112 · FULLFØRT 2026-09-24** — Rullerende nedbør er nå stille når
+prognosen viser opphold. «Opphold nå» og «Opphold neste time» sendes ikke som
+et roterende varsel; faktiske regn- og snøhendelser beholder samme tekstmal.
+
 **AUTO-265 · ÅPEN** — Kontroller at samme rullerende tekstmal brukes for
 nedbør, temperatur, vind, dugg og frost i bokmål og inntrøndersk, inkludert
 at NÅ-teksten ikke får et foreldet klokkeslett i understeksten.

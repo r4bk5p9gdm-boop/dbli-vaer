@@ -366,6 +366,10 @@ private struct CurrentWeatherCard: View {
             .map { $0 }
     }
 
+    private var hasPrecipitationHeadline: Bool {
+        !precipitation.title.isEmpty
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .center, spacing: 7) {
@@ -473,29 +477,32 @@ private struct CurrentWeatherCard: View {
                 )
             }
 
-            SwiftUI.TimelineView(.periodic(from: .now, by: 6)) { timeline in
-                let count = rotatingStatuses.count + 1
-                let index = Int(timeline.date.timeIntervalSince1970 / 6) % max(count, 1)
-                if index == 0 {
-                    headline(
-                        title: WeatherLanguage.text(precipitation.title, style: languageStyle),
-                        detail: precipitation.detail.map { WeatherLanguage.text($0, style: languageStyle) },
-                        systemImage: precipitation.systemImage,
-                        color: precipitation.color
-                    )
-                } else {
-                    let status = rotatingStatuses[index - 1]
-                    let statusTitle = rotatingTitle(for: status)
-                    headline(
-                        title: WeatherLanguage.text(statusTitle, style: languageStyle),
-                        detail: Planner.rotatingStatusDetail(
-                            for: status, place: place, forecast: forecast,
-                            headlineDescribesTime: Planner.headlineDescribesTime(statusTitle)
+            if hasPrecipitationHeadline || !rotatingStatuses.isEmpty {
+                SwiftUI.TimelineView(.periodic(from: .now, by: 6)) { timeline in
+                    let count = rotatingStatuses.count + (hasPrecipitationHeadline ? 1 : 0)
+                    let index = Int(timeline.date.timeIntervalSince1970 / 6) % count
+                    if hasPrecipitationHeadline && index == 0 {
+                        headline(
+                            title: WeatherLanguage.text(precipitation.title, style: languageStyle),
+                            detail: precipitation.detail.map { WeatherLanguage.text($0, style: languageStyle) },
+                            systemImage: precipitation.systemImage,
+                            color: precipitation.color
                         )
-                            .map { WeatherLanguage.text($0, style: languageStyle) },
-                        systemImage: status.type.systemImage,
-                        color: status.type.color
-                    )
+                    } else {
+                        let statusIndex = hasPrecipitationHeadline ? index - 1 : index
+                        let status = rotatingStatuses[statusIndex]
+                        let statusTitle = rotatingTitle(for: status)
+                        headline(
+                            title: WeatherLanguage.text(statusTitle, style: languageStyle),
+                            detail: Planner.rotatingStatusDetail(
+                                for: status, place: place, forecast: forecast,
+                                headlineDescribesTime: Planner.headlineDescribesTime(statusTitle)
+                            )
+                                .map { WeatherLanguage.text($0, style: languageStyle) },
+                            systemImage: status.type.systemImage,
+                            color: status.type.color
+                        )
+                    }
                 }
             }
         }
@@ -847,13 +854,12 @@ struct CurrentPrecipitationSummary {
             )
         }
 
-        let nextHourIsCovered = forecast.contains {
-            $0.time >= now.addingTimeInterval(3_600)
-                && $0.time <= now.addingTimeInterval(2 * 3_600)
-        }
         return CurrentPrecipitationSummary(
-            title: currentHourIsFresh ? "Opphold nå" : "Oppdaterer værdata",
-            detail: currentHourIsFresh && nextHourIsCovered ? "Opphold neste time." : nil,
+            // Dry weather is intentionally silent in the rolling alert area;
+            // this space is reserved for actual precipitation or another
+            // active status (wind, temperature, dew, frost, or sun).
+            title: "",
+            detail: nil,
             systemImage: "umbrella",
             color: .secondary,
             isFallingNow: false
