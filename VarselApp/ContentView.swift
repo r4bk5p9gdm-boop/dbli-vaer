@@ -360,7 +360,7 @@ private struct CurrentWeatherCard: View {
     }
     private var rotatingStatuses: [WeatherStatus] {
         return WeatherStatus.uniqueByType(
-            Planner.statuses(for: place, forecast: forecast)
+            Planner.rollingStatuses(for: place, forecast: forecast)
                 .filter {
                     $0.type != .regn && $0.type != .sno
                         && Planner.isWithinRotatingHomeHorizon($0.eventAt)

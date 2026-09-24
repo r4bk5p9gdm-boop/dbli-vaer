@@ -334,6 +334,40 @@ enum Planner {
         }
     }
 
+    /// Status cards on Hjem describe the visible weather, not the push queue.
+    /// Most display rules can use the regular status calculation directly, but
+    /// the solar row has a deliberately more permissive second threshold and
+    /// does not require the push rule's multi-hour duration. Build that one
+    /// display-only status separately so a yellow solar cell is never silent
+    /// merely because no push rule is enabled (or because its duration is
+    /// longer than the visible run).
+    static func rollingStatuses(for place: Place, forecast: [ForecastHour], now: Date = Date()) -> [WeatherStatus] {
+        var rolling = statuses(for: place, forecast: forecast, now: now)
+            .filter { $0.type != .sol }
+
+        if place.isAlertTypeVisible(.sol) {
+            var displaySunRule = Rule(type: .sol)
+            displaySunRule.isDisplayOnly = true
+            displaySunRule.threshold = place.resolvedDisplaySunThreshold2
+            displaySunRule.durationHours = 1
+            if let solarStatus = status(
+                for: displaySunRule,
+                forecast: forecast,
+                frostMargin: place.localFrostMargin,
+                latitude: place.lat,
+                longitude: place.lon,
+                now: now
+            ) {
+                rolling.append(solarStatus)
+            }
+        }
+
+        return rolling.sorted {
+            if $0.isNow != $1.isNow { return $0.isNow }
+            return $0.eventAt < $1.eventAt
+        }
+    }
+
     static func statusDetail(for status: WeatherStatus, place: Place, forecast: [ForecastHour]) -> String? {
         guard let hour = forecast.min(by: {
             abs($0.time.timeIntervalSince(status.eventAt)) < abs($1.time.timeIntervalSince(status.eventAt))

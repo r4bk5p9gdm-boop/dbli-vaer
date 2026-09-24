@@ -1292,6 +1292,24 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(status.first?.isNow == true)
     }
 
+    func testRollingStatusesUseDisplaySolarThresholdWithoutPushRule() {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let now = base.addingTimeInterval(6 * 3_600)
+        let hour = ForecastHour(time: now, temp: 12, precip: 0, wind: 1, cloud: 30, dew: 6)
+
+        // The row's second solar threshold is 40%, while the default push
+        // rule is stricter (20%) and requires four hours. The rolling card
+        // must still describe the visible yellow cell, without creating push.
+        var displayPlace = place
+        displayPlace.displaySunThreshold2 = 40
+        let rolling = Planner.rollingStatuses(for: displayPlace, forecast: [hour], now: now)
+        XCTAssertEqual(rolling.first?.type, .sol)
+        XCTAssertTrue(rolling.first?.isNow == true)
+        XCTAssertTrue(
+            Planner.planAll(places: [displayPlace], forecasts: [displayPlace.id: [hour]]).isEmpty
+        )
+    }
+
     func testDeletedRuleImmediatelyDisappearsFromWidgetEventSource() {
         var place = Place(name: "Klinga", lat: 64, lon: 11)
         var rule = Rule(type: .regn)

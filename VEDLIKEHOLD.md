@@ -54,6 +54,14 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-118 · FULLFØRT 2026-09-24** — Hjemmets rullerende statuskort er
+skilt fra push-planleggingen. Statusene bruker fortsatt visningsreglene og
+18-timershorisonten, mens sol får en egen display-only-beregning med den
+andre solgrensen fra raden og uten push-regelens krav om flere timer. Dermed
+kan en gul solcelle gi en rullerende status selv om det ikke finnes et
+matchende pushvarsel; display-only-statusen går fortsatt aldri inn i
+`Planner.planAll`. En regresjonstest dekker dette skillet.
+
 **BRUKER-117 · FULLFØRT 2026-09-23** — Temperatur-rullering er nå et
 unntak fra klokkeslettregelen: «Laveste temperatur blir 5°C.» og «Høyeste
 temperatur blir 22°C.» får aldri `fra kl. …`, heller ikke når hendelsen ligger
