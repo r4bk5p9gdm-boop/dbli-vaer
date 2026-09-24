@@ -851,8 +851,10 @@ framtidsdekkende prognosecachen, slik at en eldre første cache-dag ikke skyver
 dag tre ut av visningen. Regresjonstest dekker oppstart kl. 06 med gårsdagens
 cache som første time.
 
-**AUTO-264 · ÅPEN** — Kontroller at værbåndets nedbørmarkeringer og rullerende
-nedbørtekst ikke tolker en manglende Yr-time som faktisk opphold.
+**AUTO-264 · FULLFØRT 2026-09-24** — Nedbørsbåndet viser nå manglende
+Yr-prognosetimer med skravert, nøytral markering i stedet for å la dem se ut
+som opphold. VoiceOver forklarer at været er ukjent, og en regresjonstest
+bekrefter at timesporet identifiserer det manglende klokkeslettet.
 
 **BRUKER-112 · FULLFØRT 2026-09-24** — Rullerende nedbør er nå stille når
 prognosen viser opphold. «Opphold nå» og «Opphold neste time» sendes ikke som
@@ -877,6 +879,10 @@ at NÅ-teksten ikke får et foreldet klokkeslett i understeksten.
 **AUTO-266 · ÅPEN** — Kontroller at Hjem og Steder bruker samme tre-dagers
 utvalg også når prognosen oppdateres etter at skjermen er synlig, uten å
 blande inn en fjerde kalenderdag ved ny data.
+
+**AUTO-267 · ÅPEN** — Revider værbåndene for temperatur, vind og sol slik at
+manglende Yr-timer også skilles visuelt fra nøytral værstatus, med
+tilgjengelighetsforklaring og regresjonstester der markørene innføres.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

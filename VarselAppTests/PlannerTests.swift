@@ -1292,6 +1292,23 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(status.first?.isNow == true)
     }
 
+    func testMissingForecastHoursAreNotTreatedAsDry() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 0))
+        let start = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 6, day: 1, hour: 7)))
+        let missingHour = try XCTUnwrap(calendar.date(byAdding: .hour, value: 1, to: start))
+        let lastHour = try XCTUnwrap(calendar.date(byAdding: .hour, value: 2, to: start))
+        let forecast = [
+            ForecastHour(time: start, temp: 12, precip: 0, wind: 1, cloud: 40, dew: 6),
+            ForecastHour(time: lastHour, temp: 12, precip: 0, wind: 1, cloud: 40, dew: 6),
+        ]
+
+        XCTAssertEqual(
+            ForecastHourSelection.missingHours(in: start..<lastHour.addingTimeInterval(3_600), forecast: forecast, calendar: calendar),
+            [missingHour]
+        )
+    }
+
     func testRollingStatusesUseDisplaySolarThresholdWithoutPushRule() {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let now = base.addingTimeInterval(6 * 3_600)

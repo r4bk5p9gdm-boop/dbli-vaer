@@ -762,6 +762,27 @@ struct ForecastHour: Codable, Identifiable, Hashable {
 }
 
 enum ForecastHourSelection {
+    /// Returns expected hourly timestamps that are absent from the forecast.
+    /// A missing point is unknown weather, not an observation of dry weather.
+    static func missingHours(
+        in interval: Range<Date>,
+        forecast: [ForecastHour],
+        calendar: Calendar = .current
+    ) -> [Date] {
+        guard interval.lowerBound < interval.upperBound else { return [] }
+        let coveredHours = Set(forecast.map { hour in
+            calendar.dateInterval(of: .hour, for: hour.time)?.start ?? hour.time
+        })
+        var missing: [Date] = []
+        var expected = calendar.dateInterval(of: .hour, for: interval.lowerBound)?.start ?? interval.lowerBound
+        while expected < interval.upperBound {
+            if !coveredHours.contains(expected) { missing.append(expected) }
+            guard let next = calendar.date(byAdding: .hour, value: 1, to: expected), next > expected else { break }
+            expected = next
+        }
+        return missing
+    }
+
     /// The NÅ card uses the same hourly sample that the weather band paints
     /// beneath the current time. Cached forecasts may still contain earlier
     /// hours after the clock moves on.

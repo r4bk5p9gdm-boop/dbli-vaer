@@ -372,7 +372,7 @@ private struct WeatherBandsForecast: View {
                                 color: AlertType.regn.color,
                                 showsNotification: moistureRules.contains(where: { !$0.isDisplayOnly })
                             )
-                            MoistureBandTrack(hours: bandHours, rules: moistureRules, includeEarlyMorning: includesEarlyMorningCell, compressForMorning: isMorningCompression && !isToday)
+                            MoistureBandTrack(hours: bandHours, rules: moistureRules, day: day.date, includeEarlyMorning: includesEarlyMorningCell, compressForMorning: isMorningCompression && !isToday)
                         }
                     }
                     ForEach(displayedTypes) { type in
@@ -568,6 +568,7 @@ private struct CombinedHourBandCell: View {
 private struct MoistureBandTrack: View {
     let hours: [ForecastHour]
     let rules: [Rule]
+    let day: Date
     let includeEarlyMorning: Bool
     let compressForMorning: Bool
 
@@ -579,11 +580,11 @@ private struct MoistureBandTrack: View {
             let totalHours: CGFloat = (includeEarlyMorning || compressForMorning) ? 26 : 24
             HStack(spacing: spacing) {
                 if includeEarlyMorning {
-                    MoistureHourBandCell(hours: hours, rules: rules, period: .earlyMorning)
+                    MoistureHourBandCell(hours: hours, rules: rules, day: day, period: .earlyMorning)
                         .frame(width: availableWidth * 2 / 26)
                 }
                 ForEach(WeatherBandPeriod.all) { period in
-                    MoistureHourBandCell(hours: hours, rules: rules, period: period)
+                    MoistureHourBandCell(hours: hours, rules: rules, day: day, period: period)
                         .frame(width: availableWidth * 8 / totalHours)
                 }
             }
@@ -591,13 +592,14 @@ private struct MoistureBandTrack: View {
         }
         .frame(height: 18)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Regnrad: regn, snø og fare for dugg vises med egne farger")
+        .accessibilityLabel("Nedbør: regn, snø og fare for dugg vises med egne farger. Skravert felt betyr manglende Yr-prognose, ikke opphold.")
     }
 }
 
 private struct MoistureHourBandCell: View {
     let hours: [ForecastHour]
     let rules: [Rule]
+    let day: Date
     let period: WeatherBandPeriod
 
     private func matchingRule(of type: AlertType, for hour: ForecastHour) -> Rule? {
@@ -624,11 +626,32 @@ private struct MoistureHourBandCell: View {
         }
     }
 
+    private var missingOffsets: [Int] {
+        let calendar = Calendar.current
+        let dayStart = calendar.startOfDay(for: day)
+        guard let start = calendar.date(
+            bySettingHour: period.startHour, minute: 0, second: 0, of: dayStart
+        ), let end = calendar.date(byAdding: .hour, value: period.hours, to: start) else {
+            return []
+        }
+        return ForecastHourSelection.missingHours(in: start..<end, forecast: hours).compactMap { missing in
+            let missingHour = calendar.component(.hour, from: missing)
+            let offset = (missingHour - period.startHour + 24) % 24
+            return (0..<period.hours).contains(offset) ? offset : nil
+        }
+    }
+
     var body: some View {
         GeometryReader { proxy in
             ZStack(alignment: .leading) {
                 RoundedRectangle(cornerRadius: 5)
                     .fill(period.isNight ? Color.primary.opacity(0.14) : Color.secondary.opacity(0.08))
+                ForEach(missingOffsets, id: \.self) { offset in
+                    ForecastGapMark()
+                        .frame(width: proxy.size.width / CGFloat(period.hours), height: proxy.size.height)
+                        .offset(x: proxy.size.width * CGFloat(offset) / CGFloat(period.hours))
+                        .accessibilityLabel("Manglende Yr-prognose; været er ukjent")
+                }
                 ForEach(hours) { hour in
                     let hourNumber = Calendar.current.component(.hour, from: hour.time)
                     let offset = hourOffset(hourNumber, from: period.startHour)
@@ -658,6 +681,25 @@ private struct MoistureHourBandCell: View {
             }
             .clipShape(RoundedRectangle(cornerRadius: 5))
         }
+    }
+}
+
+private struct ForecastGapMark: View {
+    var body: some View {
+        GeometryReader { proxy in
+            Path { path in
+                let spacing: CGFloat = 5
+                var startX = -proxy.size.height
+                while startX < proxy.size.width {
+                    path.move(to: CGPoint(x: startX, y: proxy.size.height))
+                    path.addLine(to: CGPoint(x: startX + proxy.size.height, y: 0))
+                    startX += spacing
+                }
+            }
+            .stroke(Color.secondary.opacity(0.42), lineWidth: 0.7)
+        }
+        .background(Color.secondary.opacity(0.12))
+        .clipped()
     }
 }
 
