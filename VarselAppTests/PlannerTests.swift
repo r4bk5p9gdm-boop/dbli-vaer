@@ -124,6 +124,26 @@ final class PlannerTests: XCTestCase {
         XCTAssertNotEqual(klinga.map(\.0), oslo.map(\.0))
     }
 
+    func testSolarRowMarkersStayUniqueAcrossDaylightSavingTransitions() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let transitionDays = [
+            try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 3, day: 31))),
+            try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 10, day: 27)))
+        ]
+
+        for day in transitionDays {
+            let start = calendar.startOfDay(for: day)
+            let markers = (0..<26).compactMap { offset in
+                let sample = calendar.date(byAdding: .hour, value: offset, to: start)!
+                return SolarCycle.transition(near: sample, latitude: 64.46, longitude: 11.50)
+            }
+
+            XCTAssertEqual(markers.filter { $0 == .sunrise }.count, 1, "Expected one sunrise marker on DST day \(day)")
+            XCTAssertEqual(markers.filter { $0 == .sunset }.count, 1, "Expected one sunset marker on DST day \(day)")
+        }
+    }
+
     func testPolarSolarStatesHaveNoFalseTransitionOrNightSunAlert() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))

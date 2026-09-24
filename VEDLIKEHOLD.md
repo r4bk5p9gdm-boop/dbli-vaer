@@ -827,7 +827,7 @@ værbåndene. En eldre første time i cache kan dermed ikke bli hengende som
 steds eget Yr-tidsstempel og vurderer «gammel» per sted. En vellykket henting
 for ett sted kan ikke få en mislykket naboprognose til å se ny ut.
 
-**AUTO-262 · ÅPEN** — Kontroller at soloppgang/-nedgang fortsatt plasseres i
+**AUTO-262 · FULLFØRT** — Kontroller at soloppgang/-nedgang fortsatt plasseres i
 riktig timecelle over skifte mellom sommer- og vintertid.
 
 **AUTO-263 · ÅPEN** — Kontroller at Hjem viser de tre relevante vær-dagene
