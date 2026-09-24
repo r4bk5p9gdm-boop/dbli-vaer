@@ -842,6 +842,10 @@ nedbørtekst ikke tolker en manglende Yr-time som faktisk opphold.
 nedbør, temperatur, vind, dugg og frost i bokmål og inntrøndersk, inkludert
 at NÅ-teksten ikke får et foreldet klokkeslett i understeksten.
 
+**AUTO-266 · ÅPEN** — Kontroller at Hjem og Steder bruker samme tre-dagers
+utvalg også når prognosen oppdateres etter at skjermen er synlig, uten å
+blande inn en fjerde kalenderdag ved ny data.
+
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
 
