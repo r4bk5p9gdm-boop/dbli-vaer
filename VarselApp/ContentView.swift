@@ -28,17 +28,17 @@ private struct LocationPresenceBadge: View {
             // A white contour keeps the same light rounded label legible over
             // both the arrow and its animated rings.
             ZStack {
-                Text(label).font(.system(size: 23, weight: .light, design: .rounded)).foregroundStyle(.white).offset(x: 1.2)
-                Text(label).font(.system(size: 23, weight: .light, design: .rounded)).foregroundStyle(.white).offset(x: -1.2)
-                Text(label).font(.system(size: 23, weight: .light, design: .rounded)).foregroundStyle(.white).offset(y: 1.2)
-                Text(label).font(.system(size: 23, weight: .light, design: .rounded)).foregroundStyle(.white).offset(y: -1.2)
+                Text(label).font(.system(size: 23, weight: .light, design: .rounded)).foregroundStyle(.white).offset(x: 2)
+                Text(label).font(.system(size: 23, weight: .light, design: .rounded)).foregroundStyle(.white).offset(x: -2)
+                Text(label).font(.system(size: 23, weight: .light, design: .rounded)).foregroundStyle(.white).offset(y: 2)
+                Text(label).font(.system(size: 23, weight: .light, design: .rounded)).foregroundStyle(.white).offset(y: -2)
                 Text(label).font(.system(size: 23, weight: .light, design: .rounded)).foregroundStyle(.indigo)
             }
         }
         .frame(width: label == "here" ? 46 : 40, height: 34)
         .onAppear { pulse = true }
         .animation(
-            .easeInOut(duration: 1.8).repeatForever(autoreverses: false),
+            .spring(response: 0.85, dampingFraction: 0.55).repeatForever(autoreverses: true),
             value: pulse
         )
     }

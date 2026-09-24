@@ -192,8 +192,8 @@ struct WatchWeatherWidgetView: View {
 
     private func compactEventTime(_ date: Date) -> String {
         let minutes = max(0, Int(date.timeIntervalSince(entry.date) / 60))
-        if minutes < 60 { return "\(max(1, minutes))m" }
-        return "\(minutes / 60)t"
+        if minutes < 60 { return "om \(max(1, minutes))m" }
+        return "om \(minutes / 60)t"
     }
 
     private func progress(for status: WeatherStatus) -> CGFloat {

@@ -846,6 +846,10 @@ et roterende varsel; faktiske regn- og snøhendelser beholder samme tekstmal.
 venstrestilt pil, og «her» er sentrert over pilen med samme lette avrundede
 skriftstil som stedsnavnet og hvit kontur for bedre lesbarhet.
 
+**BRUKER-114 · FULLFØRT 2026-09-24** — Posisjonsmerket har kraftigere hvit
+kontur og en sømløs, fjærende ringanimasjon. Watch-sirkelen skriver nå
+«om 4t»/«om 23m», slik at framtidig hendelse skilles tydelig fra varighet.
+
 **AUTO-265 · ÅPEN** — Kontroller at samme rullerende tekstmal brukes for
 nedbør, temperatur, vind, dugg og frost i bokmål og inntrøndersk, inkludert
 at NÅ-teksten ikke får et foreldet klokkeslett i understeksten.
