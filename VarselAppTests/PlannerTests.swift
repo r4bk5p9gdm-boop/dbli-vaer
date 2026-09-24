@@ -2041,6 +2041,42 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testRotatingBroadDayHeadlineKeepsClockInDetailLine() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let reference = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 9, day: 16, hour: 7)))
+        let eventAt = try XCTUnwrap(calendar.date(bySettingHour: 11, minute: 0, second: 0, of: reference))
+        var rule = Rule(type: .vind)
+        rule.threshold = 9
+        var place = Place(name: "Klinga", lat: 64, lon: 11)
+        place.rules = [rule]
+        let forecast = (0..<4).map { offset in
+            var hour = ForecastHour(
+                time: eventAt.addingTimeInterval(Double(offset) * 3_600),
+                temp: 10, precip: 0, wind: 4, cloud: 50, dew: 5
+            )
+            hour.gust = 10
+            return hour
+        }
+        let status = WeatherStatus(
+            ruleID: rule.id, type: .vind, text: "", eventAt: eventAt, isNow: false
+        )
+        let headline = RotatingAlertCopy.headline(
+            for: status, rule: rule, languageStyle: .bokmal, now: reference
+        )
+
+        XCTAssertEqual(headline, "D bli Vindkast! i dag.")
+        XCTAssertFalse(Planner.headlineDescribesTime(headline))
+        XCTAssertTrue(Planner.headlineDescribesTime("D bli Vindkast! om tre kvarter."))
+        XCTAssertEqual(
+            Planner.rotatingStatusDetail(
+                for: status, place: place, forecast: forecast,
+                headlineDescribesTime: Planner.headlineDescribesTime(headline)
+            ),
+            "Frisk bris i 4 timer fra kl. 11."
+        )
+    }
+
     func testRotatingCurrentTemperatureUsesTodaysRelevantExtreme() throws {
         var below = Rule(type: .temperatur)
         below.threshold = 10

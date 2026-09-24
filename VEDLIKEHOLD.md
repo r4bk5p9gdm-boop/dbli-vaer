@@ -872,9 +872,12 @@ kontur og en sømløs, fjærende ringanimasjon. Watch-sirkelen skriver nå
 oppdateres nå hvert minutt og animerer mellom målepunktene, i stedet for å
 stå stille til neste widget-tidslinje.
 
-**AUTO-265 · ÅPEN** — Kontroller at samme rullerende tekstmal brukes for
-nedbør, temperatur, vind, dugg og frost i bokmål og inntrøndersk, inkludert
-at NÅ-teksten ikke får et foreldet klokkeslett i understeksten.
+**AUTO-265 · FULLFØRT 2026-09-25** — Kontrollert at Hjem bruker samme
+overskrift-/detaljlinjevisning for rullerende statuser på tvers av værtyper,
+og at overskrifter og detaljer går gjennom valgt språk. Eksisterende
+regresjoner dekker nå-former og klokkeslettfrie NÅ-detaljer. La til test for
+«i dag», som er for upresist alene og derfor beholder startklokkeslettet i
+detaljlinjen; «om tre kvarter» beskriver allerede tidspunktet.
 
 **AUTO-266 · ÅPEN** — Kontroller at Hjem og Steder bruker samme tre-dagers
 utvalg også når prognosen oppdateres etter at skjermen er synlig, uten å
@@ -883,6 +886,10 @@ blande inn en fjerde kalenderdag ved ny data.
 **AUTO-267 · ÅPEN** — Revider værbåndene for temperatur, vind og sol slik at
 manglende Yr-timer også skilles visuelt fra nøytral værstatus, med
 tilgjengelighetsforklaring og regresjonstester der markørene innføres.
+
+**AUTO-268 · ÅPEN** — Verifiser at tidsbåndenes 07–15–23–07-perioder og
+markering av ukjent Yr-time fortsatt er riktig på overgang til og fra
+sommertid i Europe/Oslo.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
