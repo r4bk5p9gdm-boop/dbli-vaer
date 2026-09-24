@@ -4001,6 +4001,26 @@ final class PlannerTests: XCTestCase {
         ])
     }
 
+    func testVisibleForecastSkipsOlderCacheDayAndKeepsThreeFutureDays() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let now = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 5, day: 10, hour: 6)))
+        let cacheStart = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 5, day: 9)))
+        let cached = (0..<120).map { offset in
+            ForecastHour(
+                time: calendar.date(byAdding: .hour, value: offset, to: cacheStart)!,
+                temp: 8, precip: 0, wind: 1, cloud: 30, dew: 4
+            )
+        }
+
+        let visible = ForecastDaySelection.hoursForVisibleDays(from: cached, now: now, calendar: calendar)
+        let visibleDates = Set(visible.map { calendar.startOfDay(for: $0.time) })
+        XCTAssertEqual(visibleDates, Set((0..<3).map {
+            calendar.date(byAdding: .day, value: $0, to: calendar.startOfDay(for: now))!
+        }))
+        XCTAssertTrue(visible.allSatisfy { $0.time >= calendar.startOfDay(for: now) })
+    }
+
     func testWeatherBandIncludesFollowingMorningInIts23To07Cell() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))

@@ -213,7 +213,7 @@ struct HomeView: View {
                         // The Home view is a three-day visual forecast. Its
                         // range is intentionally independent of the shorter
                         // 24-hour horizon used by the rotating alert text.
-                        let visibleForecast = Array(fc.prefix(72))
+                        let visibleForecast = ForecastDaySelection.hoursForVisibleDays(from: fc)
                         if !visibleForecast.isEmpty {
                             VStack(spacing: 0) {
                                 CurrentWeatherCard(
@@ -1447,7 +1447,7 @@ struct PlacesView: View {
                         LazyVStack(spacing: 12) {
                             ForEach(orderedPlaces) { place in
                                 if let forecast = store.forecasts[place.id], !forecast.isEmpty {
-                                    let visibleForecast = Array(forecast.prefix(72))
+                                    let visibleForecast = ForecastDaySelection.hoursForVisibleDays(from: forecast)
                                     VStack(spacing: 0) {
                                         CurrentWeatherCard(
                                             place: place,

@@ -830,8 +830,10 @@ for ett sted kan ikke få en mislykket naboprognose til å se ny ut.
 **AUTO-262 · FULLFØRT** — Kontroller at soloppgang/-nedgang fortsatt plasseres i
 riktig timecelle over skifte mellom sommer- og vintertid.
 
-**AUTO-263 · ÅPEN** — Kontroller at Hjem viser de tre relevante vær-dagene
-etter oppstart med en eldre, men fortsatt framtidsdekkende prognosecache.
+**AUTO-263 · FULLFØRT** — Hjem velger nå tre kalenderdager fra hele den
+framtidsdekkende prognosecachen, slik at en eldre første cache-dag ikke skyver
+dag tre ut av visningen. Regresjonstest dekker oppstart kl. 06 med gårsdagens
+cache som første time.
 
 **AUTO-264 · ÅPEN** — Kontroller at værbåndets nedbørmarkeringer og rullerende
 nedbørtekst ikke tolker en manglende Yr-time som faktisk opphold.

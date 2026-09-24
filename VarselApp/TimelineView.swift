@@ -115,6 +115,20 @@ enum ForecastDaySelection {
         // three available calendar days, never a partial fourth.
         return Array(relevantDays.prefix(3))
     }
+
+    /// Keeps a cached forecast that starts on an older calendar day from
+    /// consuming one of Home's three visible days. This is important at
+    /// launch: a still-future-covering cache may begin yesterday, but Home
+    /// should show today and the next two calendar days.
+    static func hoursForVisibleDays(
+        from forecast: [ForecastHour], now: Date = Date(), calendar: Calendar = .current
+    ) -> [ForecastHour] {
+        let days = ForecastDay.make(from: forecast, calendar: calendar)
+        let visibleDates = Set(visibleDays(from: days, now: now, calendar: calendar).map(\.date))
+        return forecast
+            .filter { visibleDates.contains(calendar.startOfDay(for: $0.time)) }
+            .sorted { $0.time < $1.time }
+    }
 }
 
 private func weatherDayDate(for date: Date, calendar: Calendar = .current) -> Date {
