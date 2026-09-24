@@ -836,6 +836,10 @@ etter oppstart med en eldre, men fortsatt framtidsdekkende prognosecache.
 **AUTO-264 · ÅPEN** — Kontroller at værbåndets nedbørmarkeringer og rullerende
 nedbørtekst ikke tolker en manglende Yr-time som faktisk opphold.
 
+**AUTO-265 · ÅPEN** — Kontroller at samme rullerende tekstmal brukes for
+nedbør, temperatur, vind, dugg og frost i bokmål og inntrøndersk, inkludert
+at NÅ-teksten ikke får et foreldet klokkeslett i understeksten.
+
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
 
