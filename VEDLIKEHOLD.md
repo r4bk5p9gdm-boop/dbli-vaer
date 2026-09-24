@@ -850,6 +850,10 @@ skriftstil som stedsnavnet og hvit kontur for bedre lesbarhet.
 kontur og en sømløs, fjærende ringanimasjon. Watch-sirkelen skriver nå
 «om 4t»/«om 23m», slik at framtidig hendelse skilles tydelig fra varighet.
 
+**BRUKER-115 · FULLFØRT 2026-09-24** — Watch-sirkelens nedtellingsbue
+oppdateres nå hvert minutt og animerer mellom målepunktene, i stedet for å
+stå stille til neste widget-tidslinje.
+
 **AUTO-265 · ÅPEN** — Kontroller at samme rullerende tekstmal brukes for
 nedbør, temperatur, vind, dugg og frost i bokmål og inntrøndersk, inkludert
 at NÅ-teksten ikke får et foreldet klokkeslett i understeksten.

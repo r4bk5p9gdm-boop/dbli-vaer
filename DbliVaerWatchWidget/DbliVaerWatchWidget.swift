@@ -96,25 +96,9 @@ struct WatchWeatherWidgetView: View {
             case .accessoryInline:
                 Label(inlineText, systemImage: icon)
             case .accessoryCircular:
-                ZStack {
-                    AccessoryWidgetBackground()
-                    Circle()
-                        .trim(from: 0, to: status.map(progress(for:)) ?? 0.2)
-                        .stroke(ringGradient, style: StrokeStyle(lineWidth: 3, lineCap: .round))
-                        .rotationEffect(.degrees(-90))
-                        .padding(2)
-                    VStack(spacing: 1) {
-                        Text(status.map { WeatherGlance.compactEventLabel(for: $0, languageStyle: entry.snapshot?.languageStyle ?? .bokmal) } ?? temperature)
-                            .font(.caption2.bold())
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.8)
-                        Text(status.map { compactEventTime($0.eventAt) } ?? "")
-                            .font(.system(size: 10, weight: .semibold, design: .rounded).monospacedDigit())
-                    }
+                TimelineView(.periodic(from: .now, by: 60)) { timeline in
+                    circularView(at: timeline.date)
                 }
-                .widgetAccentable()
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel(circularAccessibilityLabel)
             case .accessoryCorner:
                 Image(systemName: icon)
                     .font(.title3)
@@ -183,6 +167,30 @@ struct WatchWeatherWidgetView: View {
         return "\(localized(WeatherGlance.compactEventLabel(for: status, languageStyle: entry.snapshot?.languageStyle ?? .bokmal))), \(compactEventTime(status.eventAt))"
     }
 
+    private func circularView(at now: Date) -> some View {
+        let ringProgress = status.map { progress(for: $0, at: now) } ?? 0.2
+        return ZStack {
+            AccessoryWidgetBackground()
+            Circle()
+                .trim(from: 0, to: ringProgress)
+                .stroke(ringGradient, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+                .padding(2)
+                .animation(.linear(duration: 60), value: ringProgress)
+            VStack(spacing: 1) {
+                Text(status.map { WeatherGlance.compactEventLabel(for: $0, languageStyle: entry.snapshot?.languageStyle ?? .bokmal) } ?? temperature)
+                    .font(.caption2.bold())
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+                Text(status.map { compactEventTime($0.eventAt) } ?? "")
+                    .font(.system(size: 10, weight: .semibold, design: .rounded).monospacedDigit())
+            }
+        }
+        .widgetAccentable()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(circularAccessibilityLabel)
+    }
+
     private var ringGradient: AngularGradient {
         // The visible leading edge is urgent red; as the ring gets longer it
         // transitions through orange to the weather type's normal tint.
@@ -196,10 +204,10 @@ struct WatchWeatherWidgetView: View {
         return "om \(minutes / 60)t"
     }
 
-    private func progress(for status: WeatherStatus) -> CGFloat {
+    private func progress(for status: WeatherStatus, at now: Date) -> CGFloat {
         // The ring is a countdown: full at the start of the 12-hour window,
         // shrinking continuously as the event approaches.
-        let remaining = max(0, status.eventAt.timeIntervalSince(entry.date))
+        let remaining = max(0, status.eventAt.timeIntervalSince(now))
         return min(1, max(0, CGFloat(remaining / (12 * 3_600))))
     }
 
