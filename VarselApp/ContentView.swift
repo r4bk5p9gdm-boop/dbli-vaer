@@ -1035,91 +1035,132 @@ struct RulesView: View {
                     }
                     Section {
                         ForEach([AlertType.regn, .dugg, .sno, .frost, .temperatur, .vind, .sol]) { type in
-                            HStack {
-                                Image(systemName: type.systemImage).foregroundStyle(type.color)
-                                if [.temperatur, .dugg, .sol, .vind].contains(type) {
-                                    HStack(spacing: 2) {
-                                        Text(type == .temperatur ? "Temp under / over" : type == .dugg ? "Fare for dugg" : type == .vind ? "Vindkast" : "Sol · maks skyer 1")
-                                            .font(.subheadline)
-                                        Picker("Grense for \(type.label)", selection: Binding(
-                                            get: { p.displayThreshold(for: type) },
-                                            set: { value in
-                                                switch type {
-                                                case .temperatur: p.displayTemperatureThreshold = value
-                                                case .dugg: p.displayDewThreshold = value
-                                                case .sol: p.displaySunThreshold = value
-                                                case .vind: p.displayGustThreshold = value
-                                                default: break
-                                                }
-                                                store.update(p)
-                                            }
-                                        )) {
-                                            ForEach(Array(stride(from: type.range.lowerBound, through: type.range.upperBound, by: type.step)), id: \.self) { value in
-                                                if type == .vind {
-                                                    Text("\(value.formatted(.number.precision(.fractionLength(0...1)))) m/s · \(windStrengthLabel(for: value))").tag(value)
-                                                } else {
-                                                    Text("\(value.formatted(.number.precision(.fractionLength(0...1))))\(type == .sol ? " % skydekke" : "°")").tag(value)
-                                                }
-                                            }
-                                        }
-                                        .labelsHidden().pickerStyle(.menu)
-                                        if type == .temperatur {
-                                            Picker("Temp over", selection: Binding(
-                                                get: { p.resolvedDisplayTemperatureHighThreshold },
-                                                set: { p.displayTemperatureHighThreshold = $0; store.update(p) }
-                                            )) {
-                                                ForEach(Array(stride(from: -10.0, through: 40.0, by: 1.0)), id: \.self) { value in
-                                                    Text("over \(value.formatted(.number.precision(.fractionLength(0...1))))°").tag(value)
-                                                }
-                                            }
-                                            .labelsHidden().pickerStyle(.menu)
-                                        }
-                                        if type == .sol {
-                                            Picker("Sol maks skyer 2", selection: Binding(
-                                                get: { p.resolvedDisplaySunThreshold2 },
-                                                set: { p.displaySunThreshold2 = $0; store.update(p) }
-                                            )) {
-                                                ForEach(Array(stride(from: 0.0, through: 50.0, by: 5.0)), id: \.self) { value in
-                                                    Text("2: \(value.formatted(.number.precision(.fractionLength(0)))) % skydekke").tag(value)
-                                                }
-                                            }
-                                            .labelsHidden().pickerStyle(.menu)
-                                        }
-                                    }
-                                    .padding(.horizontal, 5)
-                                    .padding(.vertical, 3)
-                                    .background(type.color.opacity(0.10), in: RoundedRectangle(cornerRadius: 6))
-                                } else if type == .frost {
-                                    Text("Frost")
-                                    Picker("Frostmargin", selection: Binding(
-                                        get: { p.localFrostMargin },
-                                        set: { p.frostMargin = $0; store.update(p); Task { await store.replan() } }
-                                    )) {
-                                        ForEach(Array(stride(from: 0.0, through: 5.0, by: 0.5)), id: \.self) { value in
-                                            Text("+\(value.formatted())°").tag(value)
-                                        }
-                                    }.labelsHidden().pickerStyle(.menu)
-                                } else {
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack(spacing: 8) {
+                                    Image(systemName: type.systemImage)
+                                        .foregroundStyle(type.color)
+                                        .frame(width: 24)
                                     Text(type.label)
+                                        .font(.subheadline.weight(.semibold))
+                                    Spacer(minLength: 4)
+                                    Toggle("Vis \(type.label)", isOn: Binding(
+                                        get: { p.isAlertTypeVisible(type) },
+                                        set: { visible in
+                                            var hidden = p.hiddenAlertTypes ?? []
+                                            if visible { hidden.remove(type) } else { hidden.insert(type) }
+                                            p.hiddenAlertTypes = hidden
+                                            store.update(p)
+                                        }
+                                    ))
+                                    .labelsHidden()
                                 }
-                                Button("Push \(p.rules.filter { $0.type == type }.count)") {
-                                    pushFilter = type
-                                }
-                                .font(.caption2.weight(.semibold))
-                                .buttonStyle(.bordered)
-                                .accessibilityLabel("Pushvarsler for \(type.label)")
-                                .accessibilityValue("\(p.rules.filter { $0.type == type }.count) oppsatt")
-                                Spacer()
-                                Toggle("Vis \(type.label)", isOn: Binding(
-                                    get: { p.isAlertTypeVisible(type) },
-                                    set: { visible in
-                                        var hidden = p.hiddenAlertTypes ?? []
-                                        if visible { hidden.remove(type) } else { hidden.insert(type) }
-                                        p.hiddenAlertTypes = hidden
-                                        store.update(p)
+
+                                if [.temperatur, .dugg, .sol, .vind].contains(type) {
+                                    VStack(alignment: .leading, spacing: 5) {
+                                        HStack(spacing: 6) {
+                                            Text(type == .temperatur ? "Under" : type == .dugg ? "Duggfare" : type == .vind ? "Vindkast fra" : "Hovedgrense")
+                                                .font(.caption.weight(.medium))
+                                                .foregroundStyle(.secondary)
+                                            Picker("Grense for \(type.label)", selection: Binding(
+                                                get: { p.displayThreshold(for: type) },
+                                                set: { value in
+                                                    switch type {
+                                                    case .temperatur: p.displayTemperatureThreshold = value
+                                                    case .dugg: p.displayDewThreshold = value
+                                                    case .sol: p.displaySunThreshold = value
+                                                    case .vind: p.displayGustThreshold = value
+                                                    default: break
+                                                    }
+                                                    store.update(p)
+                                                }
+                                            )) {
+                                                ForEach(Array(stride(from: type.range.lowerBound, through: type.range.upperBound, by: type.step)), id: \.self) { value in
+                                                    if type == .vind {
+                                                        Text("\(value.formatted(.number.precision(.fractionLength(0...1)))) m/s · \(windStrengthLabel(for: value))").tag(value)
+                                                    } else {
+                                                        Text("\(value.formatted(.number.precision(.fractionLength(0...1))))\(type == .sol ? " % skydekke" : "°")").tag(value)
+                                                    }
+                                                }
+                                            }
+                                            .labelsHidden()
+                                            .pickerStyle(.menu)
+                                        }
+
+                                        if type == .temperatur {
+                                            HStack(spacing: 6) {
+                                                Text("Over")
+                                                    .font(.caption.weight(.medium))
+                                                    .foregroundStyle(.secondary)
+                                                Picker("Temp over", selection: Binding(
+                                                    get: { p.resolvedDisplayTemperatureHighThreshold },
+                                                    set: { p.displayTemperatureHighThreshold = $0; store.update(p) }
+                                                )) {
+                                                    ForEach(Array(stride(from: -10.0, through: 40.0, by: 1.0)), id: \.self) { value in
+                                                        Text("\(value.formatted(.number.precision(.fractionLength(0...1))))°").tag(value)
+                                                    }
+                                                }
+                                                .labelsHidden()
+                                                .pickerStyle(.menu)
+                                            }
+                                        }
+
+                                        if type == .sol {
+                                            HStack(spacing: 6) {
+                                                Text("Solgløtt")
+                                                    .font(.caption.weight(.medium))
+                                                    .foregroundStyle(.secondary)
+                                                Picker("Solgløttgrense", selection: Binding(
+                                                    get: { p.resolvedDisplaySunThreshold2 },
+                                                    set: { p.displaySunThreshold2 = $0; store.update(p) }
+                                                )) {
+                                                    ForEach(Array(stride(from: 0.0, through: 50.0, by: 5.0)), id: \.self) { value in
+                                                        Text("\(value.formatted(.number.precision(.fractionLength(0)))) % skydekke").tag(value)
+                                                    }
+                                                }
+                                                .labelsHidden()
+                                                .pickerStyle(.menu)
+                                            }
+                                        }
                                     }
-                                )).labelsHidden()
+                                    .padding(.leading, 32)
+                                } else if type == .frost {
+                                    HStack(spacing: 6) {
+                                        Text("Frostmargin")
+                                            .font(.caption.weight(.medium))
+                                            .foregroundStyle(.secondary)
+                                        Picker("Frostmargin", selection: Binding(
+                                            get: { p.localFrostMargin },
+                                            set: { p.frostMargin = $0; store.update(p); Task { await store.replan() } }
+                                        )) {
+                                            ForEach(Array(stride(from: 0.0, through: 5.0, by: 0.5)), id: \.self) { value in
+                                                Text("+\(value.formatted())°").tag(value)
+                                            }
+                                        }
+                                        .labelsHidden()
+                                        .pickerStyle(.menu)
+                                    }
+                                    .padding(.leading, 32)
+                                }
+
+                                Text(displayThresholdExplanation(for: type, place: p))
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .padding(.leading, 32)
+
+                                HStack(spacing: 8) {
+                                    Button("Push \(p.rules.filter { $0.type == type }.count)") {
+                                        pushFilter = type
+                                    }
+                                    .font(.caption2.weight(.semibold))
+                                    .buttonStyle(.bordered)
+                                    .accessibilityLabel("Pushvarsler for \(type.label)")
+                                    .accessibilityValue("\(p.rules.filter { $0.type == type }.count) oppsatt")
+                                }
+                                .padding(.leading, 32)
                             }
+                            .padding(10)
+                            .background(type.color.opacity(0.08), in: RoundedRectangle(cornerRadius: 10))
                         }
                     } header: {
                         HStack {
@@ -1131,7 +1172,7 @@ struct RulesView: View {
                             }
                         }
                     } footer: {
-                        Text("Grensene gjelder visning uten aktive regler. Aktive varsler beholder egne grenser. Dugggrensen er avstand mellom lufttemperatur og duggpunkt; Yr-verdien endres ikke. Solgrensen er maksimalt skydekke for gult felt.")
+                        Text("Dette er visningsgrenser for radene på Hjem. De bestemmer når celler får markering, men slår ikke pushvarsler av eller på. Push-reglene redigeres under hver type.")
                     }
                     Section {
                         ForEach(visibleRules) { r in
@@ -1224,6 +1265,35 @@ struct RulesView: View {
             return lhs.id.uuidString < rhs.id.uuidString
         }
         store.update(place)
+    }
+
+    private func displayThresholdExplanation(for type: AlertType, place: Place) -> String {
+        let number: (Double) -> String = {
+            $0.formatted(.number.precision(.fractionLength(0...1)))
+        }
+        switch type {
+        case .regn:
+            let threshold = place.rulesForDisplay.first(where: { $0.type == .regn })?.threshold ?? AlertType.regn.defaultThreshold
+            return "Nedbør markeres fra \(number(threshold)) mm/t. Dette er en visningsgrense; push-regler kan ha egne grenser."
+        case .sno:
+            let threshold = place.rulesForDisplay.first(where: { $0.type == .sno })?.threshold ?? AlertType.sno.defaultThreshold
+            return "Snø markeres fra \(number(threshold)) mm vann/t fra Yr. Det er ikke det samme som ferdig nysnø på bakken."
+        case .dugg:
+            return "Markeres når lufttemperaturen er høyst \(number(place.displayThreshold(for: .dugg)))°C fra duggpunktet. Yr-verdien endres ikke."
+        case .frost:
+            let margin = number(place.localFrostMargin)
+            let threshold = place.rulesForDisplay.first(where: { $0.type == .frost })?.threshold ?? AlertType.frost.defaultThreshold
+            return place.localFrostMargin == 0
+                ? "Frost markeres ved \(number(threshold))°C eller kaldere."
+                : "Frost markeres ved \(number(threshold))°C eller kaldere, og fare for frost også opptil +\(margin)°C. Dette endrer ikke Yr-temperaturen."
+        case .temperatur:
+            return "Blå markering under \(number(place.resolvedDisplayTemperatureThreshold))°C og varm markering over \(number(place.resolvedDisplayTemperatureHighThreshold))°C."
+        case .vind:
+            let threshold = place.displayThreshold(for: .vind)
+            return "Markeres ved vindkast fra \(number(threshold)) m/s (\(windStrengthLabel(for: threshold))). Middelvind brukes ikke."
+        case .sol:
+            return "Hovedgrense: maks \(number(place.displayThreshold(for: .sol)))% skydekke. Solgløttgrense: maks \(number(place.resolvedDisplaySunThreshold2))%."
+        }
     }
 }
 

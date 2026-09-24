@@ -54,6 +54,14 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-119 · FULLFØRT 2026-09-24** — Ryddet opp i siden for synlige
+værrader på Hjem. Hver cellegrense har nå en forklaring som viser hva som
+faktisk markeres: frost forklarer 0 °C-grensen og eventuell frostmargin,
+temperatur forklarer under/over-grensene, og sol skiller hovedgrense fra
+solgløttgrense. Kortene bruker mer vertikal plass og bryter teksten naturlig
+i stedet for å presse flere valg inn på én rad. Forklaringene presiserer også
+at disse valgene styrer radvisning, ikke pushvarsler.
+
 **BRUKER-118 · FULLFØRT 2026-09-24** — Hjemmets rullerende statuskort er
 skilt fra push-planleggingen. Statusene bruker fortsatt visningsreglene og
 18-timershorisonten, mens sol får en egen display-only-beregning med den
