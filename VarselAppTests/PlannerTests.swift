@@ -1333,6 +1333,12 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testForecastGapAccessibilityExplainsUnknownIsNotDry() {
+        XCTAssertTrue(ForecastGapAccessibility.explanation.contains("Yr-prognose mangler"))
+        XCTAssertTrue(ForecastGapAccessibility.explanation.contains("ukjent"))
+        XCTAssertTrue(ForecastGapAccessibility.explanation.contains("ikke opphold"))
+    }
+
     func testRollingStatusesUseDisplaySolarThresholdWithoutPushRule() {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let now = base.addingTimeInterval(6 * 3_600)

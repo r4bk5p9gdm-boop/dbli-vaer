@@ -504,7 +504,7 @@ private struct CombinedDayBandTrack: View {
         }
         .frame(height: 18)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(type.label), samlet fra \(rules.count) \(rules.count == 1 ? "regel" : "regler"). Skravert felt betyr manglende Yr-prognose; været er ukjent.")
+        .accessibilityLabel("\(type.label), samlet fra \(rules.count) \(rules.count == 1 ? "regel" : "regler"). \(ForecastGapAccessibility.explanation)")
     }
 }
 
@@ -618,7 +618,7 @@ private struct MoistureBandTrack: View {
         }
         .frame(height: 18)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Nedbør: regn, snø og fare for dugg vises med egne farger. Skravert felt betyr manglende Yr-prognose, ikke opphold.")
+        .accessibilityLabel("Nedbør: regn, snø og fare for dugg vises med egne farger. \(ForecastGapAccessibility.explanation)")
     }
 }
 
@@ -711,10 +711,11 @@ private struct ForecastGapMark: View {
                     startX += spacing
                 }
             }
-            .stroke(Color.secondary.opacity(0.42), lineWidth: 0.7)
+            .stroke(Color.primary.opacity(0.26), lineWidth: 0.9)
         }
         .background(Color.secondary.opacity(0.12))
         .clipped()
+        .accessibilityHidden(true)
     }
 }
 

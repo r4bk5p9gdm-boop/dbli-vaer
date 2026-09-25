@@ -902,9 +902,11 @@ stedets stabile ID, uavhengig av sortering og prognoseoppdatering. Tilstanden
 endres ved trykk, og ryddes når det utvidede stedet fjernes. La til en ren
 tilstandsmodell og regresjonstest for omordning og fjerning.
 
-**AUTO-270 · ÅPEN** — Legg til en visuell-/tilgjengelighetskontroll av
-ukjent-prognosemarkeringen i Hjem og Steder, inkludert at VoiceOver forklarer
-at skravering betyr manglende data og ikke opphold.
+**AUTO-270 · FULLFØRT 2026-09-25** — Gjorde skraveringen for manglende Yr-
+timer tydeligere med høyere kontrast og delte én VoiceOver-forklaring på tvers
+av nedbør- og øvrige værbånd: prognosen mangler, været er ukjent, ikke opphold.
+Skraveringen er dekorativ; den samlede radetiketten gir forklaringen. La til
+regresjonstest for at tilgjengelighetsteksten beholder alle tre poengene.
 
 **AUTO-271 · ÅPEN** — Kontroller at soloppgangs-/solnedgangsmarkører fortsatt
 plasseres på riktig lokal time ved sommertidsskifte, uten å fargelegge selve
@@ -913,6 +915,9 @@ solnedgangscellen.
 **AUTO-272 · ÅPEN** — Legg til en regresjonstest som bekrefter at trykk på et
 åpent Steder-kort lukker det igjen, og at trykk på et annet kort flytter
 utvidelsen dit uten at to steder står åpne samtidig.
+
+**AUTO-273 · ÅPEN** — Kontroller kontrasten på ukjent-prognose-skravering i
+lyst og mørkt utseende og over både dag- og nattbakgrunn.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

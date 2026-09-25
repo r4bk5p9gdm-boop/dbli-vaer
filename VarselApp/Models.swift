@@ -834,6 +834,10 @@ enum ForecastHourSelection {
     }
 }
 
+enum ForecastGapAccessibility {
+    static let explanation = "Skravert felt betyr at Yr-prognose mangler; været er ukjent, ikke opphold."
+}
+
 /// Converts liquid-water equivalent from Yr to a rough depth of fresh snow.
 /// The temperature-dependent ratio is deliberately capped at 4:1–13:1.
 func estimatedFreshSnowMillimeters(waterEquivalent: Double, temperature: Double) -> Double {
