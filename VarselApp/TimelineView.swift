@@ -163,14 +163,11 @@ private func missingHourOffsets(
     forecast: [ForecastHour],
     calendar: Calendar = .current
 ) -> [Int] {
-    let dayStart = calendar.startOfDay(for: day)
-    guard let start = calendar.date(
-        bySettingHour: period.startHour, minute: 0, second: 0, of: dayStart
-    ), let end = calendar.date(byAdding: .hour, value: period.hours, to: start) else {
-        return []
-    }
+    guard let interval = ForecastHourSelection.bandInterval(
+        on: day, startingAt: period.startHour, slotCount: period.hours, calendar: calendar
+    ) else { return [] }
     return ForecastHourSelection.missingHourOffsets(
-        in: start..<end, startingAt: period.startHour, slotCount: period.hours,
+        in: interval, startingAt: period.startHour, slotCount: period.hours,
         forecast: forecast, calendar: calendar
     )
 }

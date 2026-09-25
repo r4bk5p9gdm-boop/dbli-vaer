@@ -762,6 +762,32 @@ struct ForecastHour: Codable, Identifiable, Hashable {
 }
 
 enum ForecastHourSelection {
+    /// Builds a visual-band interval from local wall-clock boundaries. A band
+    /// such as 23–07 is shorter or longer in elapsed time across DST changes.
+    static func bandInterval(
+        on day: Date,
+        startingAt startHour: Int,
+        slotCount: Int,
+        calendar: Calendar
+    ) -> Range<Date>? {
+        guard (0..<24).contains(startHour), (1...24).contains(slotCount) else { return nil }
+        let dayStart = calendar.startOfDay(for: day)
+        let endHourOfDay = startHour + slotCount
+        let endDayOffset = endHourOfDay / 24
+        let endHour = endHourOfDay % 24
+        guard
+            let start = calendar.date(
+                bySettingHour: startHour, minute: 0, second: 0, of: dayStart
+            ),
+            let endDay = calendar.date(byAdding: .day, value: endDayOffset, to: dayStart),
+            let end = calendar.date(
+                bySettingHour: endHour, minute: 0, second: 0, of: endDay
+            ),
+            start < end
+        else { return nil }
+        return start..<end
+    }
+
     /// Returns expected hourly timestamps that are absent from the forecast.
     /// A missing point is unknown weather, not an observation of dry weather.
     static func missingHours(

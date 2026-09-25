@@ -891,9 +891,11 @@ Radens tilgjengelighetstekst forklarer at markeringen betyr ukjent vær, ikke
 nøytral prognose. Felles offset-beregning har en regresjonstest for plassering
 av et manglende klokkeslett i riktig timecelle.
 
-**AUTO-268 · ÅPEN** — Verifiser at tidsbåndenes 07–15–23–07-perioder og
-markering av ukjent Yr-time fortsatt er riktig på overgang til og fra
-sommertid i Europe/Oslo.
+**AUTO-268 · FULLFØRT 2026-09-25** — Tidsbåndenes manglende-timekontroll
+bruker nå lokale veggklokkegrenser for periodene, slik at nattperioden slutter
+kl. 07 også når den faktisk er 7 eller 9 timer lang rundt sommertidsskiftet.
+Regresjonstest dekker begge overgangene i Europe/Oslo og bekrefter at komplette
+Yr-timer ikke feilmarkeres som ukjente.
 
 **AUTO-269 · ÅPEN** — Verifiser at Steder-kortets åpne/lukkede tilstand er
 stabil gjennom asynkron prognoseoppdatering og sortering, og at den bare
@@ -902,6 +904,10 @@ endres ved brukertrykk eller når stedet fjernes.
 **AUTO-270 · ÅPEN** — Legg til en visuell-/tilgjengelighetskontroll av
 ukjent-prognosemarkeringen i Hjem og Steder, inkludert at VoiceOver forklarer
 at skravering betyr manglende data og ikke opphold.
+
+**AUTO-271 · ÅPEN** — Kontroller at soloppgangs-/solnedgangsmarkører fortsatt
+plasseres på riktig lokal time ved sommertidsskifte, uten å fargelegge selve
+solnedgangscellen.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

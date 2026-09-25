@@ -4149,6 +4149,59 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(band.contains { $0.time == times[0].time || $0.time == times[6].time })
     }
 
+    func testWeatherBandWallClockIntervalsHandleBothDaylightSavingTransitions() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+
+        let transitions = [
+            (year: 2030, month: 3, day: 30, expectedNightHours: 7, missingHour: 4, expectedOffset: 5),
+            (year: 2030, month: 10, day: 26, expectedNightHours: 9, missingHour: 2, expectedOffset: 3),
+        ]
+        for transition in transitions {
+            let day = try XCTUnwrap(calendar.date(from: DateComponents(
+                year: transition.year, month: transition.month, day: transition.day
+            )))
+            let interval = try XCTUnwrap(ForecastHourSelection.bandInterval(
+                on: day, startingAt: 23, slotCount: 8, calendar: calendar
+            ))
+            let elapsedHours = Int(interval.upperBound.timeIntervalSince(interval.lowerBound) / 3_600)
+            XCTAssertEqual(elapsedHours, transition.expectedNightHours)
+
+            for startHour in [7, 15] {
+                let daytimeInterval = try XCTUnwrap(ForecastHourSelection.bandInterval(
+                    on: day, startingAt: startHour, slotCount: 8, calendar: calendar
+                ))
+                XCTAssertEqual(
+                    Int(daytimeInterval.upperBound.timeIntervalSince(daytimeInterval.lowerBound) / 3_600),
+                    8
+                )
+            }
+
+            var forecast: [ForecastHour] = []
+            var time = interval.lowerBound
+            while time < interval.upperBound {
+                forecast.append(ForecastHour(
+                    time: time, temp: 8, precip: 0, wind: 1, cloud: 60, dew: 7
+                ))
+                time = try XCTUnwrap(calendar.date(byAdding: .hour, value: 1, to: time))
+            }
+            XCTAssertTrue(ForecastHourSelection.missingHourOffsets(
+                in: interval, startingAt: 23, slotCount: 8, forecast: forecast, calendar: calendar
+            ).isEmpty)
+            let missingTime = try XCTUnwrap(forecast.first {
+                calendar.component(.hour, from: $0.time) == transition.missingHour
+            }?.time)
+            let incompleteForecast = forecast.filter { $0.time != missingTime }
+            XCTAssertEqual(
+                ForecastHourSelection.missingHourOffsets(
+                    in: interval, startingAt: 23, slotCount: 8,
+                    forecast: incompleteForecast, calendar: calendar
+                ),
+                [transition.expectedOffset]
+            )
+        }
+    }
+
     func testNowCardTracksTheWeatherBandHourAcrossAnHourBoundary() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))

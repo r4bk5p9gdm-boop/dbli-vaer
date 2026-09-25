@@ -1,6 +1,5 @@
 {
-  "lastScheduledStart": "2026-09-13T05:15:12.787Z",
+  "lastScheduledStart": "2026-09-25T11:08:25Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-099 fullført: Steder bruker samme rolige overgang fra status til tredagersvarsel.",
-  "stopReason": "Ingen meningsfull oppgave akkurat nå; planleggeren bruker 240 minutters intervall og forsøker arbeid igjen ved neste kjøring."
+  "lastProgress": "AUTO-268 fullført: Tidsbånd bruker lokale DST-grenser; vår- og høstskifte dekkes av regresjonstest."
 }
