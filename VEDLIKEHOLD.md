@@ -897,9 +897,10 @@ kl. 07 også når den faktisk er 7 eller 9 timer lang rundt sommertidsskiftet.
 Regresjonstest dekker begge overgangene i Europe/Oslo og bekrefter at komplette
 Yr-timer ikke feilmarkeres som ukjente.
 
-**AUTO-269 · ÅPEN** — Verifiser at Steder-kortets åpne/lukkede tilstand er
-stabil gjennom asynkron prognoseoppdatering og sortering, og at den bare
-endres ved brukertrykk eller når stedet fjernes.
+**AUTO-269 · FULLFØRT 2026-09-25** — Steder holder utvidelsen knyttet til
+stedets stabile ID, uavhengig av sortering og prognoseoppdatering. Tilstanden
+endres ved trykk, og ryddes når det utvidede stedet fjernes. La til en ren
+tilstandsmodell og regresjonstest for omordning og fjerning.
 
 **AUTO-270 · ÅPEN** — Legg til en visuell-/tilgjengelighetskontroll av
 ukjent-prognosemarkeringen i Hjem og Steder, inkludert at VoiceOver forklarer
@@ -908,6 +909,10 @@ at skravering betyr manglende data og ikke opphold.
 **AUTO-271 · ÅPEN** — Kontroller at soloppgangs-/solnedgangsmarkører fortsatt
 plasseres på riktig lokal time ved sommertidsskifte, uten å fargelegge selve
 solnedgangscellen.
+
+**AUTO-272 · ÅPEN** — Legg til en regresjonstest som bekrefter at trykk på et
+åpent Steder-kort lukker det igjen, og at trykk på et annet kort flytter
+utvidelsen dit uten at to steder står åpne samtidig.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

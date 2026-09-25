@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-09-25T11:08:25Z",
+  "lastScheduledStart": "2026-09-25T15:06:38Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-268 fullført: Tidsbånd bruker lokale DST-grenser; vår- og høstskifte dekkes av regresjonstest."
+  "lastProgress": "AUTO-269 fullført: Utvidet Steder-visning bevarer ID-valgt kort ved sortering/refresh og nullstiller når stedet fjernes."
 }

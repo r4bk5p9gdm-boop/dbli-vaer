@@ -1059,6 +1059,19 @@ enum PlaceOrdering {
     }
 }
 
+struct PlaceExpansionState: Equatable {
+    private(set) var expandedPlaceID: UUID?
+
+    mutating func toggle(_ placeID: UUID) {
+        expandedPlaceID = expandedPlaceID == placeID ? nil : placeID
+    }
+
+    mutating func reconcile(availablePlaceIDs: Set<UUID>) {
+        guard let expandedPlaceID, !availablePlaceIDs.contains(expandedPlaceID) else { return }
+        self.expandedPlaceID = nil
+    }
+}
+
 enum SolarCycle {
     enum Transition: Equatable {
         case sunrise

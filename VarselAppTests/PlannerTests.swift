@@ -44,6 +44,23 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(result.map(\.id), [favorite.id, home.id, near.id, far.id])
     }
 
+    func testExpandedPlaceSurvivesReorderingAndClearsWhenPlaceIsRemoved() {
+        let expanded = UUID()
+        let other = UUID()
+        var state = PlaceExpansionState()
+        state.toggle(expanded)
+
+        state.reconcile(availablePlaceIDs: Set([other, expanded]))
+        XCTAssertEqual(state.expandedPlaceID, expanded)
+
+        // Forecast refreshes do not affect this place-ID-only state.
+        state.reconcile(availablePlaceIDs: Set([expanded, other]))
+        XCTAssertEqual(state.expandedPlaceID, expanded)
+
+        state.reconcile(availablePlaceIDs: Set([other]))
+        XCTAssertNil(state.expandedPlaceID)
+    }
+
     func testManualPlaceOrderSurvivesPersistedStateRoundTrip() throws {
         let first = Place(name: "Først", lat: 64, lon: 11)
         let second = Place(name: "Deretter", lat: 65, lon: 12)

@@ -1425,7 +1425,7 @@ struct PlacesView: View {
     @State private var locationError: String?
     @State private var showingExporter = false
     @State private var editingPlaces = false
-    @State private var expandedPlaceID: UUID?
+    @State private var placeExpansion = PlaceExpansionState()
     @AppStorage(PlaceOrderingSettings.homePlaceIDKey) private var homePlaceID = ""
     @AppStorage(PlaceOrderingSettings.sortModeKey) private var placeSortMode = PlaceSortMode.automatic.rawValue
 
@@ -1552,11 +1552,11 @@ struct PlacesView: View {
                                         .contentShape(RoundedRectangle(cornerRadius: 18))
                                         .onTapGesture {
                                             withAnimation(.easeInOut(duration: 0.22)) {
-                                                expandedPlaceID = expandedPlaceID == place.id ? nil : place.id
+                                                placeExpansion.toggle(place.id)
                                             }
                                         }
 
-                                        if expandedPlaceID == place.id {
+                                        if placeExpansion.expandedPlaceID == place.id {
                                             expandedForecast(for: place, forecast: visibleForecast)
                                         }
                                     }
@@ -1603,6 +1603,9 @@ struct PlacesView: View {
                 contentType: .json,
                 defaultFilename: "D-bli-Vaer-oppsett"
             ) { _ in }
+            .onChange(of: store.places.map(\.id)) { _, placeIDs in
+                placeExpansion.reconcile(availablePlaceIDs: Set(placeIDs))
+            }
         }
     }
 
