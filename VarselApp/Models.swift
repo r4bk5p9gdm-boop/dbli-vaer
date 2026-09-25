@@ -783,6 +783,22 @@ enum ForecastHourSelection {
         return missing
     }
 
+    /// Maps missing forecast hours to the visual slots in a fixed-width band.
+    static func missingHourOffsets(
+        in interval: Range<Date>,
+        startingAt startHour: Int,
+        slotCount: Int,
+        forecast: [ForecastHour],
+        calendar: Calendar = .current
+    ) -> [Int] {
+        guard slotCount > 0 else { return [] }
+        return missingHours(in: interval, forecast: forecast, calendar: calendar).compactMap { missing in
+            let hour = calendar.component(.hour, from: missing)
+            let offset = (hour - startHour + 24) % 24
+            return (0..<slotCount).contains(offset) ? offset : nil
+        }
+    }
+
     /// The NÅ card uses the same hourly sample that the weather band paints
     /// beneath the current time. Cached forecasts may still contain earlier
     /// hours after the clock moves on.

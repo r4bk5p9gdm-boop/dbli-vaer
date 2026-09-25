@@ -157,6 +157,24 @@ private func hourOffset(_ hour: Int, from startHour: Int) -> Int {
     (hour - startHour + 24) % 24
 }
 
+private func missingHourOffsets(
+    for day: Date,
+    period: WeatherBandPeriod,
+    forecast: [ForecastHour],
+    calendar: Calendar = .current
+) -> [Int] {
+    let dayStart = calendar.startOfDay(for: day)
+    guard let start = calendar.date(
+        bySettingHour: period.startHour, minute: 0, second: 0, of: dayStart
+    ), let end = calendar.date(byAdding: .hour, value: period.hours, to: start) else {
+        return []
+    }
+    return ForecastHourSelection.missingHourOffsets(
+        in: start..<end, startingAt: period.startHour, slotCount: period.hours,
+        forecast: forecast, calendar: calendar
+    )
+}
+
 private func forecastDayTitle(_ date: Date) -> String {
     let today = Calendar.current.startOfDay(for: Date())
     let calendar = Calendar.current
@@ -386,7 +404,7 @@ private struct WeatherBandsForecast: View {
                                 color: type.color,
                                 showsNotification: typeRules.contains(where: { !$0.isDisplayOnly })
                             )
-                            CombinedDayBandTrack(hours: bandHours, rules: typeRules, type: type, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, includeEarlyMorning: includesEarlyMorningCell, compressForMorning: isMorningCompression && !isToday)
+                            CombinedDayBandTrack(hours: bandHours, rules: typeRules, type: type, day: day.date, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, includeEarlyMorning: includesEarlyMorningCell, compressForMorning: isMorningCompression && !isToday)
                         }
                     }
                 }
@@ -459,6 +477,7 @@ private struct CombinedDayBandTrack: View {
     let hours: [ForecastHour]
     let rules: [Rule]
     let type: AlertType
+    let day: Date
     let frostMargin: Double
     let sunThreshold2: Double
     let temperatureLowThreshold: Double
@@ -476,11 +495,11 @@ private struct CombinedDayBandTrack: View {
             let totalHours: CGFloat = (includeEarlyMorning || compressForMorning) ? 26 : 24
             HStack(spacing: spacing) {
                 if includeEarlyMorning {
-                    CombinedHourBandCell(hours: hours, rules: rules, type: type, period: .earlyMorning, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude)
+                    CombinedHourBandCell(hours: hours, rules: rules, type: type, day: day, period: .earlyMorning, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude)
                         .frame(width: availableWidth * 2 / 26)
                 }
                 ForEach(WeatherBandPeriod.all) { period in
-                    CombinedHourBandCell(hours: hours, rules: rules, type: type, period: period, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude)
+                    CombinedHourBandCell(hours: hours, rules: rules, type: type, day: day, period: period, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude)
                         .frame(width: availableWidth * 8 / totalHours)
                 }
             }
@@ -488,7 +507,7 @@ private struct CombinedDayBandTrack: View {
         }
         .frame(height: 18)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(type.label), samlet fra \(rules.count) \(rules.count == 1 ? "regel" : "regler")")
+        .accessibilityLabel("\(type.label), samlet fra \(rules.count) \(rules.count == 1 ? "regel" : "regler"). Skravert felt betyr manglende Yr-prognose; været er ukjent.")
     }
 }
 
@@ -496,6 +515,7 @@ private struct CombinedHourBandCell: View {
     let hours: [ForecastHour]
     let rules: [Rule]
     let type: AlertType
+    let day: Date
     let period: WeatherBandPeriod
     let frostMargin: Double
     let sunThreshold2: Double
@@ -504,11 +524,20 @@ private struct CombinedHourBandCell: View {
     let latitude: Double
     let longitude: Double
 
+    private func missingOffsets(for period: WeatherBandPeriod) -> [Int] {
+        missingHourOffsets(for: day, period: period, forecast: hours)
+    }
+
     var body: some View {
         GeometryReader { proxy in
             ZStack(alignment: .leading) {
                 RoundedRectangle(cornerRadius: 5)
                     .fill(period.isNight ? Color.primary.opacity(0.14) : Color.secondary.opacity(0.08))
+                ForEach(missingOffsets(for: period), id: \.self) { offset in
+                    ForecastGapMark()
+                        .frame(width: proxy.size.width / CGFloat(period.hours), height: proxy.size.height)
+                        .offset(x: proxy.size.width * CGFloat(offset) / CGFloat(period.hours))
+                }
                 ForEach(hours) { hour in
                     let hourNumber = Calendar.current.component(.hour, from: hour.time)
                     let offset = hourOffset(hourNumber, from: period.startHour)
@@ -627,18 +656,7 @@ private struct MoistureHourBandCell: View {
     }
 
     private var missingOffsets: [Int] {
-        let calendar = Calendar.current
-        let dayStart = calendar.startOfDay(for: day)
-        guard let start = calendar.date(
-            bySettingHour: period.startHour, minute: 0, second: 0, of: dayStart
-        ), let end = calendar.date(byAdding: .hour, value: period.hours, to: start) else {
-            return []
-        }
-        return ForecastHourSelection.missingHours(in: start..<end, forecast: hours).compactMap { missing in
-            let missingHour = calendar.component(.hour, from: missing)
-            let offset = (missingHour - period.startHour + 24) % 24
-            return (0..<period.hours).contains(offset) ? offset : nil
-        }
+        missingHourOffsets(for: day, period: period, forecast: hours)
     }
 
     var body: some View {

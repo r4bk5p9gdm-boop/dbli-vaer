@@ -885,9 +885,11 @@ visningen beregnes på nytt etter refresh. Ny regresjonstest legger til en
 fjerde prognosedag etter oppdatering og bekrefter at bare de opprinnelige tre
 kalenderdagene vises samtidig som nye timeverdier tas i bruk.
 
-**AUTO-267 · ÅPEN** — Revider værbåndene for temperatur, vind og sol slik at
-manglende Yr-timer også skilles visuelt fra nøytral værstatus, med
-tilgjengelighetsforklaring og regresjonstester der markørene innføres.
+**AUTO-267 · FULLFØRT 2026-09-25** — Temperatur-, vind- og solbånd bruker
+nå samme skraverte, nøytrale markering som nedbør når en Yr-time mangler.
+Radens tilgjengelighetstekst forklarer at markeringen betyr ukjent vær, ikke
+nøytral prognose. Felles offset-beregning har en regresjonstest for plassering
+av et manglende klokkeslett i riktig timecelle.
 
 **AUTO-268 · ÅPEN** — Verifiser at tidsbåndenes 07–15–23–07-perioder og
 markering av ukjent Yr-time fortsatt er riktig på overgang til og fra
@@ -896,6 +898,10 @@ sommertid i Europe/Oslo.
 **AUTO-269 · ÅPEN** — Verifiser at Steder-kortets åpne/lukkede tilstand er
 stabil gjennom asynkron prognoseoppdatering og sortering, og at den bare
 endres ved brukertrykk eller når stedet fjernes.
+
+**AUTO-270 · ÅPEN** — Legg til en visuell-/tilgjengelighetskontroll av
+ukjent-prognosemarkeringen i Hjem og Steder, inkludert at VoiceOver forklarer
+at skravering betyr manglende data og ikke opphold.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

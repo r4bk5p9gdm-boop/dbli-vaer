@@ -1307,6 +1307,13 @@ final class PlannerTests: XCTestCase {
             ForecastHourSelection.missingHours(in: start..<lastHour.addingTimeInterval(3_600), forecast: forecast, calendar: calendar),
             [missingHour]
         )
+        XCTAssertEqual(
+            ForecastHourSelection.missingHourOffsets(
+                in: start..<lastHour.addingTimeInterval(3_600), startingAt: 7,
+                slotCount: 3, forecast: forecast, calendar: calendar
+            ),
+            [1]
+        )
     }
 
     func testRollingStatusesUseDisplaySolarThresholdWithoutPushRule() {
