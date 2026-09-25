@@ -4093,6 +4093,38 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(visible.allSatisfy { $0.time >= calendar.startOfDay(for: now) })
     }
 
+    func testVisibleForecastKeepsSameThreeDaysAfterRefreshAddsFourthDay() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let now = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 5, day: 10, hour: 12)))
+        let firstDay = calendar.startOfDay(for: now)
+
+        func forecast(days: Int, temperature: Double) -> [ForecastHour] {
+            (0..<(days * 24)).map { offset in
+                ForecastHour(
+                    time: calendar.date(byAdding: .hour, value: offset, to: firstDay)!,
+                    temp: temperature, precip: 0, wind: 1, cloud: 30, dew: 4
+                )
+            }
+        }
+
+        let beforeRefresh = ForecastDaySelection.hoursForVisibleDays(
+            from: forecast(days: 3, temperature: 8), now: now, calendar: calendar
+        )
+        let afterRefresh = ForecastDaySelection.hoursForVisibleDays(
+            from: forecast(days: 4, temperature: 12), now: now, calendar: calendar
+        )
+        let expectedDays = Set((0..<3).map {
+            calendar.date(byAdding: .day, value: $0, to: firstDay)!
+        })
+        let refreshedDays = Set(afterRefresh.map { calendar.startOfDay(for: $0.time) })
+
+        XCTAssertEqual(Set(beforeRefresh.map { calendar.startOfDay(for: $0.time) }), expectedDays)
+        XCTAssertEqual(refreshedDays, expectedDays)
+        XCTAssertEqual(afterRefresh.count, 72)
+        XCTAssertTrue(afterRefresh.allSatisfy { $0.temp == 12 })
+    }
+
     func testWeatherBandIncludesFollowingMorningInIts23To07Cell() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
