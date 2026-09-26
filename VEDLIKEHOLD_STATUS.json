@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-09-26T19:12:13Z",
+  "lastScheduledStart": "2026-09-26T23:13:44Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-275 fullført: Steder-kortet eksponerer VoiceOver-knapp, åpen/lukket-verdi og samsvarende handlingstekst; standard VoiceOver-handling deler animert veksling med trykk."
+  "lastProgress": "AUTO-276 fullført: Felles værbåndskjerm legger ukjent-prognose-skravering synlig i komprimert 05–07-celle og alle tre dagsperioder; regresjonstest verifiserer manglende time-offset for hver periode."
 }

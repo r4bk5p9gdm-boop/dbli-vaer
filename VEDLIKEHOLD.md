@@ -936,8 +936,12 @@ gir en dobbeltrykkhint som samsvarer med neste handling. VoiceOver-standard-
 handlingen og det vanlige trykket bruker samme animerte veksling. Kortets
 værinnhold beholdes som kombinert etikett.
 
-**AUTO-276 · ÅPEN** — Kontroller ukjent-prognose-skraveringens synlighet i de
-komprimerte 05–07-morgencellene og de tre dagsbåndene på både Hjem og Steder.
+**AUTO-276 · FULLFØRT 2026-09-27** — Hjem og Steder bruker samme
+`ForecastVariantsView`. Kildegjennomgang bekreftet at både den komprimerte
+05–07-cellen og dagsbåndene 07–15, 15–23 og 23–07 legger `ForecastGapMark`
+under prognosefyllet, slik at markeringen står synlig når en time mangler.
+Regresjonstest verifiserer at en manglende time lander i riktig offset i alle
+fire periodene.
 
 **AUTO-277 · ÅPEN** — Kontroller at gjentatte lokale 02-prognoser ikke tegner
 overlappende værfyll i samme faste celle eller skjuler den sterkeste hendelsen.
@@ -945,6 +949,10 @@ overlappende værfyll i samme faste celle eller skjuler den sterkeste hendelsen.
 **AUTO-278 · ÅPEN** — Verifiser med VoiceOver at et Steder-kort oppgir sted og
 værinnhold sammen med knappestatus, at utvidet værbånd fortsatt kan fokuseres
 etter kortet, og at dobbeltrykk åpner og lukker båndet.
+
+**AUTO-279 · ÅPEN** — Legg til grenseverdiregresjonstester for manglende timer
+rett før og etter 05, 07, 15, 23 og 07 neste dag, slik at skraveringen ikke
+wrap-er til nabocellen når tidsbåndene møtes.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

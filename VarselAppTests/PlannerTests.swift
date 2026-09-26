@@ -1389,6 +1389,50 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(ForecastGapAccessibility.explanation.contains("ikke opphold"))
     }
 
+    func testMissingForecastOffsetsCoverCompressedMorningAndAllWeatherBands() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 0))
+        let day = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 6, day: 1)))
+        let nextDay = try XCTUnwrap(calendar.date(byAdding: .day, value: 1, to: day))
+        let gaps: [(startHour: Int, slotCount: Int, missingHour: Int, expectedOffset: Int)] = [
+            (5, 2, 6, 1),   // Compressed 05–07 morning cell.
+            (7, 8, 9, 2),   // 07–15 daytime band.
+            (15, 8, 20, 5), // 15–23 evening band.
+            (23, 8, 3, 4),  // 23–07 night band, missing at 03 next day.
+        ]
+
+        for gap in gaps {
+            let interval = try XCTUnwrap(ForecastHourSelection.bandInterval(
+                on: day, startingAt: gap.startHour, slotCount: gap.slotCount, calendar: calendar
+            ))
+            let missingTime = try XCTUnwrap(calendar.date(
+                bySettingHour: gap.missingHour,
+                minute: 0,
+                second: 0,
+                of: gap.startHour == 23 ? nextDay : day
+            ))
+            var forecast: [ForecastHour] = []
+            var time = interval.lowerBound
+            while time < interval.upperBound {
+                if time != missingTime {
+                    forecast.append(ForecastHour(
+                        time: time, temp: 8, precip: 0, wind: 1, cloud: 60, dew: 7
+                    ))
+                }
+                time = try XCTUnwrap(calendar.date(byAdding: .hour, value: 1, to: time))
+            }
+
+            XCTAssertEqual(
+                ForecastHourSelection.missingHourOffsets(
+                    in: interval, startingAt: gap.startHour, slotCount: gap.slotCount,
+                    forecast: forecast, calendar: calendar
+                ),
+                [gap.expectedOffset],
+                "Missing \(gap.missingHour):00 must keep its hatch in the \(gap.startHour) band."
+            )
+        }
+    }
+
     func testRollingStatusesUseDisplaySolarThresholdWithoutPushRule() {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let now = base.addingTimeInterval(6 * 3_600)
