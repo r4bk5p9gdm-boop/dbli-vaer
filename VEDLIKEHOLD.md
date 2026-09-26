@@ -918,14 +918,20 @@ ikke solfyll.
 `PlaceExpansionState`: nytt trykk på samme sted lukker kortet, mens trykk på
 et annet sted flytter utvidelsen slik at bare ett sted er åpent.
 
-**AUTO-273 · ÅPEN** — Kontroller kontrasten på ukjent-prognose-skravering i
-lyst og mørkt utseende og over både dag- og nattbakgrunn.
+**AUTO-273 · FULLFØRT 2026-09-26** — Skraveringen for ukjent Yr-time tegnes nå
+med en mørk ytterkant og lys kjerne. De to kontrastlagene er uavhengige av
+fargeskjemaet, slik at mønsteret står tydeligere både på lyse dagceller og
+mørkere nattceller i lys og mørk modus. VoiceOver fortsetter å lese felles
+forklaring fra værbåndet, ikke dekorative enkeltskråstreker.
 
 **AUTO-274 · ÅPEN** — Verifiser at den gjentatte lokale 02-timen ved overgang
 til vintertid ikke gir misvisende dobbeltmarkering i den faste værbåndscellen.
 
 **AUTO-275 · ÅPEN** — Gjør Steder-kortenes åpne/lukkede tilstand tilgjengelig
 for VoiceOver med knapprolle og oppdatert handlingstekst.
+
+**AUTO-276 · ÅPEN** — Kontroller ukjent-prognose-skraveringens synlighet i de
+komprimerte 05–07-morgencellene og de tre dagsbåndene på både Hjem og Steder.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

@@ -703,7 +703,7 @@ private struct MoistureHourBandCell: View {
 private struct ForecastGapMark: View {
     var body: some View {
         GeometryReader { proxy in
-            Path { path in
+            let stripes = Path { path in
                 let spacing: CGFloat = 5
                 var startX = -proxy.size.height
                 while startX < proxy.size.width {
@@ -712,7 +712,12 @@ private struct ForecastGapMark: View {
                     startX += spacing
                 }
             }
-            .stroke(Color.primary.opacity(0.26), lineWidth: 0.9)
+            ZStack {
+                // A dark edge and bright core keep the hatch legible against
+                // both pale daytime and dark nighttime band backgrounds.
+                stripes.stroke(Color.black.opacity(0.7), lineWidth: 1.5)
+                stripes.stroke(Color.white.opacity(0.9), lineWidth: 0.65)
+            }
         }
         .background(Color.secondary.opacity(0.12))
         .clipped()
