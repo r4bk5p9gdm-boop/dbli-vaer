@@ -930,14 +930,21 @@ faktiske 02-timene høyst én skravert markering i den delte visuelle cellen.
 Regresjonstest dekker komplett prognose, én manglende 02-time og begge
 manglende 02-timer.
 
-**AUTO-275 · ÅPEN** — Gjør Steder-kortenes åpne/lukkede tilstand tilgjengelig
-for VoiceOver med knapprolle og oppdatert handlingstekst.
+**AUTO-275 · FULLFØRT 2026-09-26** — Steder-kortet oppgir nå VoiceOver-
+semantikk som knapp, leser opp om tredagersvarselet er åpent eller lukket, og
+gir en dobbeltrykkhint som samsvarer med neste handling. VoiceOver-standard-
+handlingen og det vanlige trykket bruker samme animerte veksling. Kortets
+værinnhold beholdes som kombinert etikett.
 
 **AUTO-276 · ÅPEN** — Kontroller ukjent-prognose-skraveringens synlighet i de
 komprimerte 05–07-morgencellene og de tre dagsbåndene på både Hjem og Steder.
 
 **AUTO-277 · ÅPEN** — Kontroller at gjentatte lokale 02-prognoser ikke tegner
 overlappende værfyll i samme faste celle eller skjuler den sterkeste hendelsen.
+
+**AUTO-278 · ÅPEN** — Verifiser med VoiceOver at et Steder-kort oppgir sted og
+værinnhold sammen med knappestatus, at utvidet værbånd fortsatt kan fokuseres
+etter kortet, og at dobbeltrykk åpner og lukker båndet.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

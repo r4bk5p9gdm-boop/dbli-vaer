@@ -1539,6 +1539,21 @@ struct PlacesView: View {
                                             showsPlaceMenu: false,
                                             showsContainer: false
                                         )
+                                        .accessibilityElement(children: .combine)
+                                        .accessibilityAddTraits(.isButton)
+                                        .accessibilityValue(
+                                            placeExpansion.expandedPlaceID == place.id
+                                                ? "Tredagersvarsel åpent"
+                                                : "Tredagersvarsel lukket"
+                                        )
+                                        .accessibilityHint(
+                                            placeExpansion.expandedPlaceID == place.id
+                                                ? "Dobbeltrykk for å lukke tredagersvarselet."
+                                                : "Dobbeltrykk for å åpne tredagersvarselet."
+                                        )
+                                        .accessibilityAction(.default) {
+                                            toggleExpansion(for: place.id)
+                                        }
                                         .background(
                                             LinearGradient(
                                                 colors: [Color.white, Color(red: 0.96, green: 0.98, blue: 1.0)],
@@ -1551,9 +1566,7 @@ struct PlacesView: View {
                                         .padding(.top, 4)
                                         .contentShape(RoundedRectangle(cornerRadius: 18))
                                         .onTapGesture {
-                                            withAnimation(.easeInOut(duration: 0.22)) {
-                                                placeExpansion.toggle(place.id)
-                                            }
+                                            toggleExpansion(for: place.id)
                                         }
 
                                         if placeExpansion.expandedPlaceID == place.id {
@@ -1606,6 +1619,12 @@ struct PlacesView: View {
             .onChange(of: store.places.map(\.id)) { _, placeIDs in
                 placeExpansion.reconcile(availablePlaceIDs: Set(placeIDs))
             }
+        }
+    }
+
+    private func toggleExpansion(for placeID: UUID) {
+        withAnimation(.easeInOut(duration: 0.22)) {
+            placeExpansion.toggle(placeID)
         }
     }
 
