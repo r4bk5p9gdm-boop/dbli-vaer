@@ -161,6 +161,39 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testSolarBoundaryCellsAreMarkersRatherThanSunPreviewOnDSTDays() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let transitionDays = [
+            try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 3, day: 31))),
+            try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 10, day: 27))),
+        ]
+
+        for day in transitionDays {
+            let start = calendar.startOfDay(for: day)
+            var appearances: [(Date, SolarCycle.RowAppearance)] = []
+            for offset in 0..<26 {
+                let sample = try XCTUnwrap(calendar.date(byAdding: .hour, value: offset, to: start))
+                let appearance = SolarCycle.rowAppearance(
+                    near: sample, cloud: 0, sunThreshold: 100,
+                    latitude: 64.46, longitude: 11.50, calendar: calendar
+                )
+                appearances.append((sample, appearance))
+            }
+
+            let sunriseCells = appearances.filter { $0.1 == .sunrise }
+            let sunsetCells = appearances.filter { $0.1 == .sunset }
+            XCTAssertEqual(sunriseCells.count, 1)
+            XCTAssertEqual(sunsetCells.count, 1)
+            guard let sunrise = sunriseCells.first, let sunset = sunsetCells.first else {
+                XCTFail("Each DST day must have one sunrise and one sunset marker")
+                continue
+            }
+            XCTAssertTrue((5...9).contains(calendar.component(.hour, from: sunrise.0)))
+            XCTAssertTrue((16...21).contains(calendar.component(.hour, from: sunset.0)))
+        }
+    }
+
     func testPolarSolarStatesHaveNoFalseTransitionOrNightSunAlert() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))

@@ -908,9 +908,11 @@ av nedbør- og øvrige værbånd: prognosen mangler, været er ukjent, ikke opph
 Skraveringen er dekorativ; den samlede radetiketten gir forklaringen. La til
 regresjonstest for at tilgjengelighetsteksten beholder alle tre poengene.
 
-**AUTO-271 · ÅPEN** — Kontroller at soloppgangs-/solnedgangsmarkører fortsatt
-plasseres på riktig lokal time ved sommertidsskifte, uten å fargelegge selve
-solnedgangscellen.
+**AUTO-271 · FULLFØRT 2026-09-26** — Solradens markør og solfylte celle er nå
+gjensidig utelukkende presentasjonstilstander. Beregningen tar eksplisitt
+kalender/tidssone, og regresjonstest for begge Europe/Oslo-skiftene bekrefter
+én soloppgangs- og én solnedgangsmarkør på lokal klokktime; grensecellen får
+ikke solfyll.
 
 **AUTO-272 · ÅPEN** — Legg til en regresjonstest som bekrefter at trykk på et
 åpent Steder-kort lukker det igjen, og at trykk på et annet kort flytter
@@ -918,6 +920,9 @@ utvidelsen dit uten at to steder står åpne samtidig.
 
 **AUTO-273 · ÅPEN** — Kontroller kontrasten på ukjent-prognose-skravering i
 lyst og mørkt utseende og over både dag- og nattbakgrunn.
+
+**AUTO-274 · ÅPEN** — Verifiser at den gjentatte lokale 02-timen ved overgang
+til vintertid ikke gir misvisende dobbeltmarkering i den faste værbåndscellen.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

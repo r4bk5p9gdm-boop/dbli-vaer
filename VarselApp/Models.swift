@@ -1089,11 +1089,31 @@ enum SolarCycle {
         }
     }
 
+    enum RowAppearance: Equatable {
+        case sunrise
+        case sunset
+        case sunlit
+        case neutral
+
+        var transition: Transition? {
+            switch self {
+            case .sunrise: .sunrise
+            case .sunset: .sunset
+            case .sunlit, .neutral: nil
+            }
+        }
+    }
+
     /// Daylight has a lower boundary as well as a sunset boundary. Treating
     /// every pre-sunset hour as daylight made a 02:00 cloud forecast look
     /// like «solgløtt» in the Home card and the sun row.
-    static func isDaylight(_ date: Date, latitude: Double, longitude: Double) -> Bool {
-        switch state(for: date, latitude: latitude, longitude: longitude) {
+    static func isDaylight(
+        _ date: Date,
+        latitude: Double,
+        longitude: Double,
+        calendar: Calendar = .current
+    ) -> Bool {
+        switch state(for: date, latitude: latitude, longitude: longitude, calendar: calendar) {
         case let .normal(sunrise, sunset):
             return date >= sunrise && date < sunset
         case .polarDay:
@@ -1103,8 +1123,13 @@ enum SolarCycle {
         }
     }
 
-    static func isAfterSunset(_ date: Date, latitude: Double, longitude: Double) -> Bool {
-        switch state(for: date, latitude: latitude, longitude: longitude) {
+    static func isAfterSunset(
+        _ date: Date,
+        latitude: Double,
+        longitude: Double,
+        calendar: Calendar = .current
+    ) -> Bool {
+        switch state(for: date, latitude: latitude, longitude: longitude, calendar: calendar) {
         case let .normal(_, sunset):
             return date >= sunset
         case .polarNight:
@@ -1122,9 +1147,12 @@ enum SolarCycle {
         near date: Date,
         latitude: Double,
         longitude: Double,
-        tolerance: TimeInterval = 30 * 60
+        tolerance: TimeInterval = 30 * 60,
+        calendar: Calendar = .current
     ) -> Transition? {
-        guard case let .normal(sunrise, sunset) = state(for: date, latitude: latitude, longitude: longitude) else {
+        guard case let .normal(sunrise, sunset) = state(
+            for: date, latitude: latitude, longitude: longitude, calendar: calendar
+        ) else {
             return nil
         }
         let candidates: [(Transition, Date)] = [(.sunrise, sunrise), (.sunset, sunset)]
@@ -1134,6 +1162,24 @@ enum SolarCycle {
         return nearest.0
     }
 
+    static func rowAppearance(
+        near date: Date,
+        cloud: Double,
+        sunThreshold: Double,
+        latitude: Double,
+        longitude: Double,
+        calendar: Calendar = .current
+    ) -> RowAppearance {
+        if let transition = transition(
+            near: date, latitude: latitude, longitude: longitude, calendar: calendar
+        ) {
+            return transition == .sunrise ? .sunrise : .sunset
+        }
+        guard isDaylight(date, latitude: latitude, longitude: longitude, calendar: calendar),
+              cloud <= sunThreshold else { return .neutral }
+        return .sunlit
+    }
+
     private enum State {
         case normal(sunrise: Date, sunset: Date)
         case polarDay
@@ -1141,11 +1187,14 @@ enum SolarCycle {
         case unavailable
     }
 
-    private static func state(for date: Date, latitude: Double, longitude: Double) -> State {
+    private static func state(
+        for date: Date,
+        latitude: Double,
+        longitude: Double,
+        calendar: Calendar
+    ) -> State {
         guard latitude.isFinite, longitude.isFinite,
               (-90...90).contains(latitude), (-180...180).contains(longitude) else { return .unavailable }
-        var calendar = Calendar.current
-        calendar.timeZone = .current
         let day = calendar.ordinality(of: .day, in: .year, for: date) ?? 1
         let radians = Double.pi / 180
         let declination = 23.44 * sin(radians * (360 / 365 * Double(day - 81)))

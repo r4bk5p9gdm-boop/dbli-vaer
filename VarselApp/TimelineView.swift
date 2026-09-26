@@ -538,14 +538,15 @@ private struct CombinedHourBandCell: View {
                 ForEach(hours) { hour in
                     let hourNumber = Calendar.current.component(.hour, from: hour.time)
                     let offset = hourOffset(hourNumber, from: period.startHour)
-                    let solarTransition = type == .sol
-                        ? SolarCycle.transition(near: hour.time, latitude: latitude, longitude: longitude)
-                        : nil
-                    // Solar boundaries belong in their real hour, but are an
-                    // orientation marker rather than a yellow sun forecast.
-                    let matchesSunPreview = type == .sol && solarTransition == nil
-                        && SolarCycle.isDaylight(hour.time, latitude: latitude, longitude: longitude)
-                        && hour.cloud <= sunThreshold2
+                    let solarAppearance = type == .sol
+                        ? SolarCycle.rowAppearance(
+                            near: hour.time, cloud: hour.cloud, sunThreshold: sunThreshold2,
+                            latitude: latitude, longitude: longitude
+                        )
+                        : .neutral
+                    // Boundary cells show a marker instead of a yellow sun fill.
+                    let solarTransition = solarAppearance.transition
+                    let matchesSunPreview = type == .sol && solarAppearance == .sunlit
                     let matchesTemperaturePreview = type == .temperatur && (hour.temp <= temperatureLowThreshold || hour.temp >= temperatureHighThreshold)
                     let matchesFrost = type == .temperatur && rules.contains(where: {
                         $0.type == .frost && $0.isActive(at: hour.time) && $0.matches(hour, frostMargin: frostMargin)
