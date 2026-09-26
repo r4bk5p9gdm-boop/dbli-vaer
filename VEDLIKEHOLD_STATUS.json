@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-09-26T03:12:58Z",
+  "lastScheduledStart": "2026-09-26T07:11:19Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-271 fullført: Solradens DST-markører og solfyll er gjensidig utelukkende, med eksplisitt lokal kalender og test på begge skifter."
+  "lastProgress": "AUTO-272 fullført: Testet at stedskort kan lukkes med samme trykk og at ny utvidelse flytter seg til et annet kort."
 }

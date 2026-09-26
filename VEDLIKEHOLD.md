@@ -914,15 +914,18 @@ kalender/tidssone, og regresjonstest for begge Europe/Oslo-skiftene bekrefter
 én soloppgangs- og én solnedgangsmarkør på lokal klokktime; grensecellen får
 ikke solfyll.
 
-**AUTO-272 · ÅPEN** — Legg til en regresjonstest som bekrefter at trykk på et
-åpent Steder-kort lukker det igjen, og at trykk på et annet kort flytter
-utvidelsen dit uten at to steder står åpne samtidig.
+**AUTO-272 · FULLFØRT 2026-09-26** — La til regresjonstest av
+`PlaceExpansionState`: nytt trykk på samme sted lukker kortet, mens trykk på
+et annet sted flytter utvidelsen slik at bare ett sted er åpent.
 
 **AUTO-273 · ÅPEN** — Kontroller kontrasten på ukjent-prognose-skravering i
 lyst og mørkt utseende og over både dag- og nattbakgrunn.
 
 **AUTO-274 · ÅPEN** — Verifiser at den gjentatte lokale 02-timen ved overgang
 til vintertid ikke gir misvisende dobbeltmarkering i den faste værbåndscellen.
+
+**AUTO-275 · ÅPEN** — Gjør Steder-kortenes åpne/lukkede tilstand tilgjengelig
+for VoiceOver med knapprolle og oppdatert handlingstekst.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

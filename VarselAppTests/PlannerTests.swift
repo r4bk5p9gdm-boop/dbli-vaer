@@ -61,6 +61,23 @@ final class PlannerTests: XCTestCase {
         XCTAssertNil(state.expandedPlaceID)
     }
 
+    func testExpandedPlaceToggleClosesItOrMovesExpansionToAnotherPlace() {
+        let first = UUID()
+        let second = UUID()
+        var state = PlaceExpansionState()
+
+        state.toggle(first)
+        XCTAssertEqual(state.expandedPlaceID, first)
+        state.toggle(first)
+        XCTAssertNil(state.expandedPlaceID)
+
+        state.toggle(first)
+        state.toggle(second)
+        XCTAssertEqual(state.expandedPlaceID, second)
+        state.toggle(second)
+        XCTAssertNil(state.expandedPlaceID)
+    }
+
     func testManualPlaceOrderSurvivesPersistedStateRoundTrip() throws {
         let first = Place(name: "Først", lat: 64, lon: 11)
         let second = Place(name: "Deretter", lat: 65, lon: 12)
