@@ -924,14 +924,20 @@ fargeskjemaet, slik at mønsteret står tydeligere både på lyse dagceller og
 mørkere nattceller i lys og mørk modus. VoiceOver fortsetter å lese felles
 forklaring fra værbåndet, ikke dekorative enkeltskråstreker.
 
-**AUTO-274 · ÅPEN** — Verifiser at den gjentatte lokale 02-timen ved overgang
-til vintertid ikke gir misvisende dobbeltmarkering i den faste værbåndscellen.
+**AUTO-274 · FULLFØRT 2026-09-26** — For markering av manglende data i
+23–07-båndet dedupliseres lokale celleoffsetter før tegning. Dermed gir de to
+faktiske 02-timene høyst én skravert markering i den delte visuelle cellen.
+Regresjonstest dekker komplett prognose, én manglende 02-time og begge
+manglende 02-timer.
 
 **AUTO-275 · ÅPEN** — Gjør Steder-kortenes åpne/lukkede tilstand tilgjengelig
 for VoiceOver med knapprolle og oppdatert handlingstekst.
 
 **AUTO-276 · ÅPEN** — Kontroller ukjent-prognose-skraveringens synlighet i de
 komprimerte 05–07-morgencellene og de tre dagsbåndene på både Hjem og Steder.
+
+**AUTO-277 · ÅPEN** — Kontroller at gjentatte lokale 02-prognoser ikke tegner
+overlappende værfyll i samme faste celle eller skjuler den sterkeste hendelsen.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

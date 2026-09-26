@@ -818,11 +818,14 @@ enum ForecastHourSelection {
         calendar: Calendar = .current
     ) -> [Int] {
         guard slotCount > 0 else { return [] }
-        return missingHours(in: interval, forecast: forecast, calendar: calendar).compactMap { missing in
+        let offsets = missingHours(in: interval, forecast: forecast, calendar: calendar).compactMap { missing in
             let hour = calendar.component(.hour, from: missing)
             let offset = (hour - startHour + 24) % 24
             return (0..<slotCount).contains(offset) ? offset : nil
         }
+        // The autumn clock change can produce two distinct 02:00 instants,
+        // but the fixed-width band has only one cell for that local hour.
+        return Array(Set(offsets)).sorted()
     }
 
     /// The NÅ card uses the same hourly sample that the weather band paints

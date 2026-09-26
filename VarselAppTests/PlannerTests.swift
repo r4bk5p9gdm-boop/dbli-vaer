@@ -4275,6 +4275,43 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testRepeatedAutumnHourProducesOneMissingVisualCell() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let day = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 10, day: 26)))
+        let interval = try XCTUnwrap(ForecastHourSelection.bandInterval(
+            on: day, startingAt: 23, slotCount: 8, calendar: calendar
+        ))
+
+        var forecast: [ForecastHour] = []
+        var time = interval.lowerBound
+        while time < interval.upperBound {
+            forecast.append(ForecastHour(
+                time: time, temp: 8, precip: 0, wind: 1, cloud: 60, dew: 7
+            ))
+            time = try XCTUnwrap(calendar.date(byAdding: .hour, value: 1, to: time))
+        }
+        let repeatedHour = forecast.filter { calendar.component(.hour, from: $0.time) == 2 }
+        guard repeatedHour.count == 2 else {
+            XCTFail("The autumn transition must contain both local 02:00 samples")
+            return
+        }
+        XCTAssertTrue(ForecastHourSelection.missingHourOffsets(
+            in: interval, startingAt: 23, slotCount: 8, forecast: forecast, calendar: calendar
+        ).isEmpty)
+
+        let missingOne = forecast.filter { $0.time != repeatedHour[0].time }
+        XCTAssertEqual(ForecastHourSelection.missingHourOffsets(
+            in: interval, startingAt: 23, slotCount: 8, forecast: missingOne, calendar: calendar
+        ), [3])
+
+        let repeatedTimes = Set(repeatedHour.map(\.time))
+        let missingBoth = forecast.filter { !repeatedTimes.contains($0.time) }
+        XCTAssertEqual(ForecastHourSelection.missingHourOffsets(
+            in: interval, startingAt: 23, slotCount: 8, forecast: missingBoth, calendar: calendar
+        ), [3])
+    }
+
     func testNowCardTracksTheWeatherBandHourAcrossAnHourBoundary() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
