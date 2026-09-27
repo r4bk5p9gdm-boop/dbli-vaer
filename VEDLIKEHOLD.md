@@ -966,9 +966,10 @@ inn i nabobåndet.
 konsekvent det tidligste tidspunktet, og ugyldig starttime eller periodelengde
 gir ingen celler.
 
-**AUTO-281 · ÅPEN** — Trekk nedbørs-/duggprioriteringen for gjentatte 02-prøver
-ut i en testbar modellhjelper og lås rangeringen mellom sikkert, mulig og
-observert nedbør, samt dugg etter nylig nedbør.
+**AUTO-281 · FULLFØRT 2026-09-27** — Flyttet værbåndets signalklasse-rangering
+og tre-timers kontroll av nylig nedbør til testbare modellhjelpere. Både
+nedbørsnivåenes prioritet over dugg og at dugg dempes etter nylig nedbør er
+dekket av regresjonstester; tegningen bruker nå de samme hjelperne.
 
 **AUTO-282 · ÅPEN** — Når simulatoren er tilgjengelig, ta en lys/mørk
 skjermkontroll av høstskiftets 23–07-bånd på Hjem og Steder for å verifisere at
@@ -977,6 +978,10 @@ ett valgt 02-signal ikke tegner over nabo-/dagceller.
 **AUTO-283 · ÅPEN** — Legg til tester for at `strongestPerBandCell` bruker
 den innsendte kalenderens tidssone ved celleplassering, også for samme prognose
 med ulike tidssoner og ved overgang til/fra sommertid.
+
+**AUTO-284 · ÅPEN** — Test at `strongestPerBandCell` gir samme sterkeste
+prøvevalg uansett rekkefølgen i inndataene, og returnerer cellene sortert etter
+båndoffset.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

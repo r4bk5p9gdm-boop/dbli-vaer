@@ -4490,6 +4490,40 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testForecastBandSignalPriorityRanksPrecipitationAboveDew() {
+        let dew = ForecastBandSignalPriority.score(for: .dew, strength: 0.8)
+        let possible = ForecastBandSignalPriority.score(for: .possiblePrecipitation, strength: 0.2)
+        let observed = ForecastBandSignalPriority.score(for: .observedPrecipitation, strength: 0.2)
+        let certain = ForecastBandSignalPriority.score(for: .certainPrecipitation, strength: 0.2)
+
+        XCTAssertGreaterThan(possible, dew)
+        XCTAssertGreaterThan(observed, possible)
+        XCTAssertGreaterThan(certain, observed)
+    }
+
+    func testRecentPrecipitationSuppressesDewForThreeHours() throws {
+        let wetTime = try XCTUnwrap(Calendar(identifier: .gregorian).date(
+            from: DateComponents(year: 2030, month: 9, day: 22, hour: 7)
+        ))
+        let dewTime = wetTime.addingTimeInterval(2 * 3_600)
+        let wetHour = ForecastHour(
+            time: wetTime, temp: 8, precip: 0.2, wind: 1, cloud: 60, dew: 7
+        )
+        let dewHour = ForecastHour(
+            time: dewTime, temp: 8, precip: 0, wind: 1, cloud: 60, dew: 7
+        )
+        let dryHour = ForecastHour(
+            time: dewTime.addingTimeInterval(3_601), temp: 8, precip: 0, wind: 1, cloud: 60, dew: 7
+        )
+
+        XCTAssertTrue(ForecastBandSignalPriority.hasRecentPrecipitation(
+            before: dewHour, among: [wetHour]
+        ))
+        XCTAssertFalse(ForecastBandSignalPriority.hasRecentPrecipitation(
+            before: dryHour, among: [wetHour]
+        ))
+    }
+
     func testNowCardTracksTheWeatherBandHourAcrossAnHourBoundary() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))

@@ -761,6 +761,43 @@ struct ForecastHour: Codable, Identifiable, Hashable {
     }
 }
 
+/// Stable ranking for competing signals painted into one forecast-band cell.
+/// Larger base levels represent the visual order; strength breaks ties within
+/// a signal class.
+enum ForecastBandSignalPriority {
+    enum Signal {
+        case none
+        case dew
+        case possiblePrecipitation
+        case observedPrecipitation
+        case certainPrecipitation
+    }
+
+    static func score(for signal: Signal, strength: Double = 0) -> Double {
+        let base: Double
+        switch signal {
+        case .none: base = 0
+        case .dew: base = 1_000
+        case .possiblePrecipitation: base = 2_000
+        case .observedPrecipitation: base = 3_000
+        case .certainPrecipitation: base = 4_000
+        }
+        return base + strength
+    }
+
+    static func hasRecentPrecipitation(
+        before hour: ForecastHour,
+        among forecast: [ForecastHour]
+    ) -> Bool {
+        let start = hour.time.addingTimeInterval(-3 * 3_600)
+        return forecast.contains { candidate in
+            candidate.time >= start
+                && candidate.time <= hour.time
+                && candidate.precipitationRiskRate >= 0.1
+        }
+    }
+}
+
 enum ForecastHourSelection {
     /// Builds a visual-band interval from local wall-clock boundaries. A band
     /// such as 23–07 is shorter or longer in elapsed time across DST changes.

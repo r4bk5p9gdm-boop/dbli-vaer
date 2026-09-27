@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-09-27T11:16:17Z",
+  "lastScheduledStart": "2026-09-27T15:17:18Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-280 fullført: La til tester for deterministisk tidligste tie-break ved like sterke duplikater under høstskiftet og for tomt resultat ved ugyldig starttime eller periodelengde. Swift parse/typecheck og git diff --check bestått; full XCTest-run ikke kjørt grunnet manglende CoreSimulator. AUTO-278 står på vent av samme simulatorbegrensning."
+  "lastProgress": "AUTO-281 fullført: Flyttet prioritering av sikkert/observert/mulig nedbør over dugg og tre-timers nedbørsdemping til testbare ForecastBandSignalPriority-hjelpere; la til regresjonstester for rangering og nylig nedbør. Swift parse/typecheck og git diff --check bestått. XCTest ikke kjørt fordi CoreSimulator fortsatt er utilgjengelig; AUTO-282 og AUTO-278 står på vent for simulatorbasert kontroll."
 }

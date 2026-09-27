@@ -692,12 +692,7 @@ private struct MoistureHourBandCell: View {
     }
 
     private func hadRecentPrecipitation(before hour: ForecastHour) -> Bool {
-        let start = hour.time.addingTimeInterval(-3 * 3_600)
-        return hours.contains { candidate in
-            candidate.time >= start
-                && candidate.time <= hour.time
-                && candidate.precipitationRiskRate >= 0.1
-        }
+        ForecastBandSignalPriority.hasRecentPrecipitation(before: hour, among: hours)
     }
 
     private var missingOffsets: [Int] {
@@ -708,15 +703,22 @@ private struct MoistureHourBandCell: View {
         if let precipitationRule = matchingRule(of: .sno, for: hour)
             ?? matchingRule(of: .regn, for: hour) {
             let isPossible = hour.isPossiblePrecipitation(atOrAbove: precipitationRule.threshold)
-            return (isPossible ? 2_000 : 4_000) + hour.precipitationRiskRate
+            return ForecastBandSignalPriority.score(
+                for: isPossible ? .possiblePrecipitation : .certainPrecipitation,
+                strength: hour.precipitationRiskRate
+            )
         }
         if hour.precipitationRate >= 0.1 && hour.temp > 1 {
-            return 3_000 + hour.precipitationRate
+            return ForecastBandSignalPriority.score(
+                for: .observedPrecipitation, strength: hour.precipitationRate
+            )
         }
         if let dewRule = matchingRule(of: .dugg, for: hour), !hadRecentPrecipitation(before: hour) {
-            return 1_000 + max(0, dewRule.threshold - (hour.temp - hour.dew))
+            return ForecastBandSignalPriority.score(
+                for: .dew, strength: max(0, dewRule.threshold - (hour.temp - hour.dew))
+            )
         }
-        return 0
+        return ForecastBandSignalPriority.score(for: .none)
     }
 
     private var displayedHours: [ForecastHour] {
