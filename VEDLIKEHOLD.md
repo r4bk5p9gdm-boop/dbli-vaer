@@ -951,17 +951,27 @@ nedbør, og nedbør over dugg. I øvrige rader vinner det sterkeste aktive
 terskelutslaget. Tilstandshjelperen har regresjonstest som bekrefter én valgt
 prøve og at sterkeste prøvesignal vinner.
 
-**AUTO-278 · ÅPEN** — Verifiser med VoiceOver at et Steder-kort oppgir sted og
-værinnhold sammen med knappestatus, at utvidet værbånd fortsatt kan fokuseres
-etter kortet, og at dobbeltrykk åpner og lukker båndet.
+**AUTO-278 · PÅ VENT 2026-09-27** — VoiceOver-prøven må kjøres i simulator,
+men `xcrun simctl list devices available` feiler fordi CoreSimulatorService
+avviser tilkoblingen og ingen simulator-runtime oppdages. Kjør fokus-, verdi-
+og dobbeltrykkontrollen når simulator-tjenesten er tilgjengelig.
 
-**AUTO-279 · ÅPEN** — Legg til grenseverdiregresjonstester for manglende timer
-rett før og etter 05, 07, 15, 23 og 07 neste dag, slik at skraveringen ikke
-glir over i nabocellen når tidsbåndene møtes.
+**AUTO-279 · FULLFØRT 2026-09-27** — La til en grenseverdiregresjonstest for
+05–07, 07–15, 15–23 og 23–07-båndene. Manglende første/siste time gir første/
+siste celleoffset, mens manglende timer rett utenfor intervallet ikke lekker
+inn i nabobåndet.
 
 **AUTO-280 · ÅPEN** — Lås tie-break og ugyldige periodegrenser for
 `strongestPerBandCell`, slik at like sterke duplikater velges deterministisk og
 ugyldige periodestørrelser ikke slipper prøver inn i tegningen.
+
+**AUTO-281 · ÅPEN** — Trekk nedbørs-/duggprioriteringen for gjentatte 02-prøver
+ut i en testbar modellhjelper og lås rangeringen mellom sikkert, mulig og
+observert nedbør, samt dugg etter nylig nedbør.
+
+**AUTO-282 · ÅPEN** — Når simulatoren er tilgjengelig, ta en lys/mørk
+skjermkontroll av høstskiftets 23–07-bånd på Hjem og Steder for å verifisere at
+ett valgt 02-signal ikke tegner over nabo-/dagceller.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

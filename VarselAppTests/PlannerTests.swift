@@ -1433,6 +1433,49 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testMissingForecastOffsetsStayWithinWeatherBandBoundaries() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 0))
+        let day = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 6, day: 1)))
+        let periods: [(startHour: Int, slotCount: Int)] = [(5, 2), (7, 8), (15, 8), (23, 8)]
+
+        for period in periods {
+            let interval = try XCTUnwrap(ForecastHourSelection.bandInterval(
+                on: day, startingAt: period.startHour, slotCount: period.slotCount, calendar: calendar
+            ))
+            let beforeStart = try XCTUnwrap(calendar.date(byAdding: .hour, value: -1, to: interval.lowerBound))
+            let lastInBand = try XCTUnwrap(calendar.date(byAdding: .hour, value: -1, to: interval.upperBound))
+            let afterEnd = try XCTUnwrap(calendar.date(byAdding: .hour, value: 1, to: interval.upperBound))
+            var completeForecast: [ForecastHour] = []
+            var time = beforeStart
+            while time <= afterEnd {
+                completeForecast.append(ForecastHour(
+                    time: time, temp: 8, precip: 0, wind: 1, cloud: 60, dew: 7
+                ))
+                time = try XCTUnwrap(calendar.date(byAdding: .hour, value: 1, to: time))
+            }
+
+            let boundaryCases: [(missing: Date, expectedOffset: Int?)] = [
+                (beforeStart, nil),
+                (interval.lowerBound, 0),
+                (lastInBand, period.slotCount - 1),
+                (interval.upperBound, nil),
+            ]
+            for boundary in boundaryCases {
+                let forecast = completeForecast.filter { $0.time != boundary.missing }
+                let offsets = ForecastHourSelection.missingHourOffsets(
+                    in: interval, startingAt: period.startHour, slotCount: period.slotCount,
+                    forecast: forecast, calendar: calendar
+                )
+                XCTAssertEqual(
+                    offsets,
+                    boundary.expectedOffset.map { [$0] } ?? [],
+                    "A missing hour must remain inside the \(period.startHour) band."
+                )
+            }
+        }
+    }
+
     func testRollingStatusesUseDisplaySolarThresholdWithoutPushRule() {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let now = base.addingTimeInterval(6 * 3_600)

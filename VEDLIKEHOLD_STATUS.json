@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-09-27T03:15:15Z",
+  "lastScheduledStart": "2026-09-27T07:16:46Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-277 fullført: Gjentatte lokale 02-prøver slås sammen per fast celle; én prøve med høyest værhendelsesprioritet tegnes. Test dekker at den sterkeste nedbørprøven representerer høstskiftets kolliderende 02-celle."
+  "lastProgress": "AUTO-279 fullført: Grenseverdiregresjon bekrefter at manglende timer i 05–07 og de tre værbåndene markeres i riktig celle, mens timer rett utenfor intervallene ikke lekker inn i nabobånd. AUTO-278 satt på vent fordi CoreSimulatorService er utilgjengelig."
 }
