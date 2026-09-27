@@ -4356,6 +4356,43 @@ final class PlannerTests: XCTestCase {
         ), [3])
     }
 
+    func testRepeatedAutumnForecastSamplesShareOneCellAndKeepStrongerEvent() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let day = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 10, day: 26)))
+        let interval = try XCTUnwrap(ForecastHourSelection.bandInterval(
+            on: day, startingAt: 23, slotCount: 8, calendar: calendar
+        ))
+
+        var forecast: [ForecastHour] = []
+        var time = interval.lowerBound
+        while time < interval.upperBound {
+            forecast.append(ForecastHour(
+                time: time, temp: 8, precip: 0, wind: 1, cloud: 60, dew: 7
+            ))
+            time = try XCTUnwrap(calendar.date(byAdding: .hour, value: 1, to: time))
+        }
+        let repeatedHours = forecast.filter { calendar.component(.hour, from: $0.time) == 2 }
+        guard repeatedHours.count == 2 else {
+            XCTFail("The autumn transition must contain both local 02:00 samples")
+            return
+        }
+
+        let quieter = ForecastHour(
+            time: repeatedHours[0].time, temp: 8, precip: 0.2, wind: 1, cloud: 60, dew: 7
+        )
+        let stronger = ForecastHour(
+            time: repeatedHours[1].time, temp: 8, precip: 2, wind: 1, cloud: 60, dew: 7
+        )
+        let selected = ForecastHourSelection.strongestPerBandCell(
+            from: [quieter, stronger], startingAt: 23, slotCount: 8, calendar: calendar,
+            priority: { $0.precipitationRate }
+        )
+
+        XCTAssertEqual(selected.count, 1, "Both samples must map to one fixed 02:00 cell.")
+        XCTAssertEqual(selected.first?.time, stronger.time, "The stronger precipitation event must represent the cell.")
+    }
+
     func testNowCardTracksTheWeatherBandHourAcrossAnHourBoundary() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))

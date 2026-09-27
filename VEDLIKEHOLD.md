@@ -943,8 +943,13 @@ under prognosefyllet, slik at markeringen står synlig når en time mangler.
 Regresjonstest verifiserer at en manglende time lander i riktig offset i alle
 fire periodene.
 
-**AUTO-277 · ÅPEN** — Kontroller at gjentatte lokale 02-prognoser ikke tegner
-overlappende værfyll i samme faste celle eller skjuler den sterkeste hendelsen.
+**AUTO-277 · FULLFØRT 2026-09-27** — Samlet prognoseprøver per fast lokal
+værbåndscelle før tegning, både i værtypecellene og nedbørs-/duggcellen. Når
+høstskiftets to 02-prøver kolliderer, vises bare den med høyest prioritet;
+sikkert nedbørstreff rangeres over faktisk nedbør, faktisk nedbør over mulig
+nedbør, og nedbør over dugg. I øvrige rader vinner det sterkeste aktive
+terskelutslaget. Tilstandshjelperen har regresjonstest som bekrefter én valgt
+prøve og at sterkeste prøvesignal vinner.
 
 **AUTO-278 · ÅPEN** — Verifiser med VoiceOver at et Steder-kort oppgir sted og
 værinnhold sammen med knappestatus, at utvidet værbånd fortsatt kan fokuseres
@@ -952,7 +957,11 @@ etter kortet, og at dobbeltrykk åpner og lukker båndet.
 
 **AUTO-279 · ÅPEN** — Legg til grenseverdiregresjonstester for manglende timer
 rett før og etter 05, 07, 15, 23 og 07 neste dag, slik at skraveringen ikke
-wrap-er til nabocellen når tidsbåndene møtes.
+glir over i nabocellen når tidsbåndene møtes.
+
+**AUTO-280 · ÅPEN** — Lås tie-break og ugyldige periodegrenser for
+`strongestPerBandCell`, slik at like sterke duplikater velges deterministisk og
+ugyldige periodestørrelser ikke slipper prøver inn i tegningen.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

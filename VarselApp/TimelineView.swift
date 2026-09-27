@@ -525,6 +525,53 @@ private struct CombinedHourBandCell: View {
         missingHourOffsets(for: day, period: period, forecast: hours)
     }
 
+    private func displayPriority(for hour: ForecastHour) -> Double {
+        let solarAppearance = type == .sol
+            ? SolarCycle.rowAppearance(
+                near: hour.time, cloud: hour.cloud, sunThreshold: sunThreshold2,
+                latitude: latitude, longitude: longitude
+            )
+            : .neutral
+        if type == .sol, solarAppearance == .sunlit {
+            return 500 + max(0, sunThreshold2 - hour.cloud)
+        }
+        if type == .temperatur,
+           hour.temp <= temperatureLowThreshold || hour.temp >= temperatureHighThreshold {
+            return 400 + max(temperatureLowThreshold - hour.temp, hour.temp - temperatureHighThreshold)
+        }
+
+        let matchingRules = rules.filter {
+            $0.isActive(at: hour.time) && $0.matches(hour, frostMargin: frostMargin)
+        }
+        guard !matchingRules.isEmpty else { return 0 }
+        let ruleStrengths = matchingRules.map { rule in
+            switch rule.type {
+            case .regn, .sno:
+                return hour.precipitationRiskRate + (hour.isPossiblePrecipitation(atOrAbove: rule.threshold) ? 0 : 100)
+            case .frost:
+                return max(0, rule.threshold + max(0, frostMargin) - hour.temp)
+            case .temperatur:
+                return rule.temperatureDirection == .above
+                    ? max(0, hour.temp - rule.threshold)
+                    : max(0, rule.threshold - hour.temp)
+            case .vind:
+                return hour.gust ?? 0
+            case .dugg:
+                return max(0, rule.threshold - (hour.temp - hour.dew))
+            case .sol:
+                return max(0, rule.threshold - hour.cloud)
+            }
+        }
+        return 1_000 + (ruleStrengths.max() ?? 0)
+    }
+
+    private var displayedHours: [ForecastHour] {
+        ForecastHourSelection.strongestPerBandCell(
+            from: hours, startingAt: period.startHour, slotCount: period.hours,
+            priority: { displayPriority(for: $0) }
+        )
+    }
+
     var body: some View {
         GeometryReader { proxy in
             ZStack(alignment: .leading) {
@@ -535,7 +582,7 @@ private struct CombinedHourBandCell: View {
                         .frame(width: proxy.size.width / CGFloat(period.hours), height: proxy.size.height)
                         .offset(x: proxy.size.width * CGFloat(offset) / CGFloat(period.hours))
                 }
-                ForEach(hours) { hour in
+                ForEach(displayedHours) { hour in
                     let hourNumber = Calendar.current.component(.hour, from: hour.time)
                     let offset = hourOffset(hourNumber, from: period.startHour)
                     let solarAppearance = type == .sol
@@ -657,6 +704,28 @@ private struct MoistureHourBandCell: View {
         missingHourOffsets(for: day, period: period, forecast: hours)
     }
 
+    private func displayPriority(for hour: ForecastHour) -> Double {
+        if let precipitationRule = matchingRule(of: .sno, for: hour)
+            ?? matchingRule(of: .regn, for: hour) {
+            let isPossible = hour.isPossiblePrecipitation(atOrAbove: precipitationRule.threshold)
+            return (isPossible ? 2_000 : 4_000) + hour.precipitationRiskRate
+        }
+        if hour.precipitationRate >= 0.1 && hour.temp > 1 {
+            return 3_000 + hour.precipitationRate
+        }
+        if let dewRule = matchingRule(of: .dugg, for: hour), !hadRecentPrecipitation(before: hour) {
+            return 1_000 + max(0, dewRule.threshold - (hour.temp - hour.dew))
+        }
+        return 0
+    }
+
+    private var displayedHours: [ForecastHour] {
+        ForecastHourSelection.strongestPerBandCell(
+            from: hours, startingAt: period.startHour, slotCount: period.hours,
+            priority: { displayPriority(for: $0) }
+        )
+    }
+
     var body: some View {
         GeometryReader { proxy in
             ZStack(alignment: .leading) {
@@ -668,7 +737,7 @@ private struct MoistureHourBandCell: View {
                         .offset(x: proxy.size.width * CGFloat(offset) / CGFloat(period.hours))
                         .accessibilityLabel("Manglende Yr-prognose; været er ukjent")
                 }
-                ForEach(hours) { hour in
+                ForEach(displayedHours) { hour in
                     let hourNumber = Calendar.current.component(.hour, from: hour.time)
                     let offset = hourOffset(hourNumber, from: period.startHour)
                     if offset < period.hours {

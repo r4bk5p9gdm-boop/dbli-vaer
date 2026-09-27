@@ -828,6 +828,32 @@ enum ForecastHourSelection {
         return Array(Set(offsets)).sorted()
     }
 
+    /// Chooses one forecast sample for each fixed-width local-clock cell.
+    /// During the autumn clock change two real hours can share one cell; the
+    /// higher-priority sample should represent it instead of painting over it.
+    static func strongestPerBandCell(
+        from forecast: [ForecastHour],
+        startingAt startHour: Int,
+        slotCount: Int,
+        calendar: Calendar = .current,
+        priority: (ForecastHour) -> Double
+    ) -> [ForecastHour] {
+        guard (0..<24).contains(startHour), (1...24).contains(slotCount) else { return [] }
+        let byOffset = Dictionary(grouping: forecast) { hour in
+            (calendar.component(.hour, from: hour.time) - startHour + 24) % 24
+        }
+        return byOffset.keys.sorted().compactMap { offset in
+            guard (0..<slotCount).contains(offset), let candidates = byOffset[offset] else { return nil }
+            return candidates.max { lhs, rhs in
+                let lhsPriority = priority(lhs)
+                let rhsPriority = priority(rhs)
+                return lhsPriority == rhsPriority
+                    ? lhs.time > rhs.time
+                    : lhsPriority < rhsPriority
+            }
+        }
+    }
+
     /// The NÅ card uses the same hourly sample that the weather band paints
     /// beneath the current time. Cached forecasts may still contain earlier
     /// hours after the clock moves on.
