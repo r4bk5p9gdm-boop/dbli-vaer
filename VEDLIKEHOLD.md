@@ -982,9 +982,9 @@ og Steder når simulatoren kan starte.
 plasseres etter den innsendte kalenderen. Testen dekker også værbåndets lokale
 timeceller gjennom vår- og høstskiftet i Oslo.
 
-**AUTO-284 · ÅPEN** — Test at `strongestPerBandCell` gir samme sterkeste
-prøvevalg uansett rekkefølgen i inndataene, og returnerer cellene sortert etter
-båndoffset.
+**AUTO-284 · FULLFØRT 2026-09-27** — La til test med tre permutasjoner av
+samme prognose. Hver rekkefølge velger den sterkeste prøven i duplisert
+07-celle og returnerer valgene i stigende båndoffset.
 
 **AUTO-285 · ÅPEN** — Definer og test hvordan `strongestPerBandCell` håndterer
 ikke-endelige prioritetsverdier (`NaN` og uendelig), slik at komparatoren alltid
@@ -993,6 +993,10 @@ gir et deterministisk valg.
 **AUTO-286 · ÅPEN** — Legg til en lett modelltest for at ugyldige eller tomme
 prognoseprøver ikke lager værbåndssignaler, og at gyldige kandidater fortsatt
 sorteres stabilt før tegning.
+
+**AUTO-287 · ÅPEN** — Avklar om styrkeverdier i `ForecastBandSignalPriority`
+skal avgrenses innenfor signalklassen; test at uvanlig store, negative eller
+ikke-endelige verdier ikke snur ønsket rangering mellom signalklassene.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

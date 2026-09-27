@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-09-27T19:17:49Z",
+  "lastScheduledStart": "2026-09-27T23:18:50Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-283 fullført: La til test av strongestPerBandCell med samme 07:00Z-prøve i UTC og Los Angeles, og av lokale celler ved Oslo-overgangene til og fra sommertid. Parsing, modelltypekontroll og diff-check bestått; XCTest ikke kjørt fordi CoreSimulatorService feiler, ingen runtime oppdages og simdiskimaged ikke er registrert. AUTO-282 satt på vent med denne konkrete blokkeringen."
+  "lastProgress": "AUTO-284 fullført: La til test som kjører samme værprøver i tre inndatarekkefølger og bekrefter stabilt valg av sterkeste duplikat samt sorterte båndoffset. Swift-parsing, modelltypekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

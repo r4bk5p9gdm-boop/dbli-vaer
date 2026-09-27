@@ -4549,6 +4549,42 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testStrongestPerBandCellIsIndependentOfInputOrderAndSortsOffsets() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 0))
+        let day = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 9, day: 22)))
+        func sample(hour: Int, minute: Int = 0, precipitation: Double) throws -> ForecastHour {
+            ForecastHour(
+                time: try XCTUnwrap(calendar.date(
+                    bySettingHour: hour, minute: minute, second: 0, of: day
+                )),
+                temp: 8, precip: precipitation, wind: 1, cloud: 60, dew: 7
+            )
+        }
+        let weakerSameCell = try sample(hour: 7, minute: 5, precipitation: 0.2)
+        let strongerSameCell = try sample(hour: 7, minute: 45, precipitation: 0.8)
+        let nextCell = try sample(hour: 8, precipitation: 0.4)
+        let laterCell = try sample(hour: 10, precipitation: 1.0)
+        let forecast = [weakerSameCell, nextCell, laterCell, strongerSameCell]
+        let inputOrders = [
+            forecast,
+            Array(forecast.reversed()),
+            [forecast[2], forecast[0], forecast[3], forecast[1]],
+        ]
+
+        let selectedByOrder = inputOrders.map { input in
+            ForecastHourSelection.strongestPerBandCell(
+                from: input, startingAt: 7, slotCount: 8, calendar: calendar,
+                priority: { $0.precipitationRate }
+            ).map(\.time)
+        }
+        let expected = [strongerSameCell.time, nextCell.time, laterCell.time]
+
+        XCTAssertEqual(selectedByOrder[0], expected)
+        XCTAssertEqual(selectedByOrder[1], expected)
+        XCTAssertEqual(selectedByOrder[2], expected)
+    }
+
     func testForecastBandSignalPriorityRanksPrecipitationAboveDew() {
         let dew = ForecastBandSignalPriority.score(for: .dew, strength: 0.8)
         let possible = ForecastBandSignalPriority.score(for: .possiblePrecipitation, strength: 0.2)
