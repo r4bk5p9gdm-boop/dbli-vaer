@@ -4490,6 +4490,65 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testStrongestPerBandCellUsesSuppliedCalendarForTimezoneAndDST() throws {
+        var utc = Calendar(identifier: .gregorian)
+        utc.timeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 0))
+        var losAngeles = Calendar(identifier: .gregorian)
+        losAngeles.timeZone = try XCTUnwrap(TimeZone(identifier: "America/Los_Angeles"))
+        let instant = try XCTUnwrap(utc.date(from: DateComponents(
+            year: 2030, month: 1, day: 1, hour: 7
+        )))
+        let sample = ForecastHour(
+            time: instant, temp: 8, precip: 0.2, wind: 1, cloud: 60, dew: 7
+        )
+
+        XCTAssertEqual(ForecastHourSelection.strongestPerBandCell(
+            from: [sample], startingAt: 7, slotCount: 1, calendar: utc,
+            priority: { $0.precipitationRate }
+        ).count, 1, "07:00 UTC belongs in the UTC 07:00 cell.")
+        XCTAssertTrue(ForecastHourSelection.strongestPerBandCell(
+            from: [sample], startingAt: 7, slotCount: 1, calendar: losAngeles,
+            priority: { $0.precipitationRate }
+        ).isEmpty, "The same instant is 23:00 locally in Los Angeles, not 07:00.")
+        XCTAssertEqual(ForecastHourSelection.strongestPerBandCell(
+            from: [sample], startingAt: 23, slotCount: 1, calendar: losAngeles,
+            priority: { $0.precipitationRate }
+        ).count, 1)
+
+        var oslo = Calendar(identifier: .gregorian)
+        oslo.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let transitions: [(month: Int, day: Int, expectedLocalHours: [Int])] = [
+            (3, 31, [1, 3, 4]),
+            (10, 27, [1, 2, 3, 4]),
+        ]
+        for transition in transitions {
+            let day = try XCTUnwrap(oslo.date(from: DateComponents(
+                year: 2030, month: transition.month, day: transition.day
+            )))
+            let interval = try XCTUnwrap(ForecastHourSelection.bandInterval(
+                on: day, startingAt: 1, slotCount: 4, calendar: oslo
+            ))
+            var forecast: [ForecastHour] = []
+            var time = interval.lowerBound
+            while time < interval.upperBound {
+                forecast.append(ForecastHour(
+                    time: time, temp: 8, precip: 0.2, wind: 1, cloud: 60, dew: 7
+                ))
+                time = try XCTUnwrap(oslo.date(byAdding: .hour, value: 1, to: time))
+            }
+            let selected = ForecastHourSelection.strongestPerBandCell(
+                from: forecast, startingAt: 1, slotCount: 4, calendar: oslo,
+                priority: { _ in 1 }
+            )
+
+            XCTAssertEqual(
+                selected.map { oslo.component(.hour, from: $0.time) },
+                transition.expectedLocalHours,
+                "The band should represent each existing wall-clock cell once across DST."
+            )
+        }
+    }
+
     func testForecastBandSignalPriorityRanksPrecipitationAboveDew() {
         let dew = ForecastBandSignalPriority.score(for: .dew, strength: 0.8)
         let possible = ForecastBandSignalPriority.score(for: .possiblePrecipitation, strength: 0.2)

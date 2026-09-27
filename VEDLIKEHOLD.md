@@ -971,17 +971,28 @@ og tre-timers kontroll av nylig nedbør til testbare modellhjelpere. Både
 nedbørsnivåenes prioritet over dugg og at dugg dempes etter nylig nedbør er
 dekket av regresjonstester; tegningen bruker nå de samme hjelperne.
 
-**AUTO-282 · ÅPEN** — Når simulatoren er tilgjengelig, ta en lys/mørk
-skjermkontroll av høstskiftets 23–07-bånd på Hjem og Steder for å verifisere at
-ett valgt 02-signal ikke tegner over nabo-/dagceller.
+**AUTO-282 · PÅ VENT 2026-09-27** — Simulatorbasert lys/mørk skjermkontroll
+venter: `xcrun simctl list devices available` feiler med brutt tilkobling til
+CoreSimulatorService, manglende simulator-runtime og uregistrert
+`simdiskimaged`-tjeneste. Kjør kontrollen av høstskiftets 23–07-bånd på Hjem
+og Steder når simulatoren kan starte.
 
-**AUTO-283 · ÅPEN** — Legg til tester for at `strongestPerBandCell` bruker
-den innsendte kalenderens tidssone ved celleplassering, også for samme prognose
-med ulike tidssoner og ved overgang til/fra sommertid.
+**AUTO-283 · FULLFØRT 2026-09-27** — La til regresjonstest som sender samme
+07:00 UTC-prøve gjennom UTC- og Los Angeles-kalendere og bekrefter at den
+plasseres etter den innsendte kalenderen. Testen dekker også værbåndets lokale
+timeceller gjennom vår- og høstskiftet i Oslo.
 
 **AUTO-284 · ÅPEN** — Test at `strongestPerBandCell` gir samme sterkeste
 prøvevalg uansett rekkefølgen i inndataene, og returnerer cellene sortert etter
 båndoffset.
+
+**AUTO-285 · ÅPEN** — Definer og test hvordan `strongestPerBandCell` håndterer
+ikke-endelige prioritetsverdier (`NaN` og uendelig), slik at komparatoren alltid
+gir et deterministisk valg.
+
+**AUTO-286 · ÅPEN** — Legg til en lett modelltest for at ugyldige eller tomme
+prognoseprøver ikke lager værbåndssignaler, og at gyldige kandidater fortsatt
+sorteres stabilt før tegning.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
