@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-09-27T07:16:46Z",
+  "lastScheduledStart": "2026-09-27T11:16:17Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-279 fullført: Grenseverdiregresjon bekrefter at manglende timer i 05–07 og de tre værbåndene markeres i riktig celle, mens timer rett utenfor intervallene ikke lekker inn i nabobånd. AUTO-278 satt på vent fordi CoreSimulatorService er utilgjengelig."
+  "lastProgress": "AUTO-280 fullført: La til tester for deterministisk tidligste tie-break ved like sterke duplikater under høstskiftet og for tomt resultat ved ugyldig starttime eller periodelengde. Swift parse/typecheck og git diff --check bestått; full XCTest-run ikke kjørt grunnet manglende CoreSimulator. AUTO-278 står på vent av samme simulatorbegrensning."
 }

@@ -4436,6 +4436,60 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(selected.first?.time, stronger.time, "The stronger precipitation event must represent the cell.")
     }
 
+    func testRepeatedAutumnForecastSamplesUseEarlierSampleForEqualPriority() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let day = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 10, day: 26)))
+        let interval = try XCTUnwrap(ForecastHourSelection.bandInterval(
+            on: day, startingAt: 23, slotCount: 8, calendar: calendar
+        ))
+
+        var forecast: [ForecastHour] = []
+        var time = interval.lowerBound
+        while time < interval.upperBound {
+            forecast.append(ForecastHour(
+                time: time, temp: 8, precip: 0, wind: 1, cloud: 60, dew: 7
+            ))
+            time = try XCTUnwrap(calendar.date(byAdding: .hour, value: 1, to: time))
+        }
+        let repeatedHours = forecast.filter { calendar.component(.hour, from: $0.time) == 2 }
+        guard repeatedHours.count == 2 else {
+            XCTFail("The autumn transition must contain both local 02:00 samples")
+            return
+        }
+
+        let selected = ForecastHourSelection.strongestPerBandCell(
+            from: repeatedHours, startingAt: 23, slotCount: 8, calendar: calendar,
+            priority: { _ in 1 }
+        )
+
+        XCTAssertEqual(selected.count, 1)
+        XCTAssertEqual(selected.first?.time, repeatedHours[0].time,
+                       "Equal-priority duplicate hours must consistently choose the earlier instant.")
+    }
+
+    func testStrongestPerBandCellRejectsInvalidStartHoursAndSlotCounts() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let sample = ForecastHour(
+            time: try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 9, day: 22, hour: 5))),
+            temp: 8, precip: 1, wind: 1, cloud: 60, dew: 7
+        )
+
+        for startHour in [-1, 24] {
+            XCTAssertTrue(ForecastHourSelection.strongestPerBandCell(
+                from: [sample], startingAt: startHour, slotCount: 8, calendar: calendar,
+                priority: { $0.precipitationRate }
+            ).isEmpty, "Invalid start hour \(startHour) must not yield a cell.")
+        }
+        for slotCount in [0, 25] {
+            XCTAssertTrue(ForecastHourSelection.strongestPerBandCell(
+                from: [sample], startingAt: 5, slotCount: slotCount, calendar: calendar,
+                priority: { $0.precipitationRate }
+            ).isEmpty, "Invalid slot count \(slotCount) must not yield a cell.")
+        }
+    }
+
     func testNowCardTracksTheWeatherBandHourAcrossAnHourBoundary() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))

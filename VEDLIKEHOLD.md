@@ -961,9 +961,10 @@ og dobbeltrykkontrollen når simulator-tjenesten er tilgjengelig.
 siste celleoffset, mens manglende timer rett utenfor intervallet ikke lekker
 inn i nabobåndet.
 
-**AUTO-280 · ÅPEN** — Lås tie-break og ugyldige periodegrenser for
-`strongestPerBandCell`, slik at like sterke duplikater velges deterministisk og
-ugyldige periodestørrelser ikke slipper prøver inn i tegningen.
+**AUTO-280 · FULLFØRT 2026-09-27** — La til regresjonstester for
+`strongestPerBandCell`: like sterke prøver i høstens doble 02-time velger
+konsekvent det tidligste tidspunktet, og ugyldig starttime eller periodelengde
+gir ingen celler.
 
 **AUTO-281 · ÅPEN** — Trekk nedbørs-/duggprioriteringen for gjentatte 02-prøver
 ut i en testbar modellhjelper og lås rangeringen mellom sikkert, mulig og
@@ -972,6 +973,10 @@ observert nedbør, samt dugg etter nylig nedbør.
 **AUTO-282 · ÅPEN** — Når simulatoren er tilgjengelig, ta en lys/mørk
 skjermkontroll av høstskiftets 23–07-bånd på Hjem og Steder for å verifisere at
 ett valgt 02-signal ikke tegner over nabo-/dagceller.
+
+**AUTO-283 · ÅPEN** — Legg til tester for at `strongestPerBandCell` bruker
+den innsendte kalenderens tidssone ved celleplassering, også for samme prognose
+med ulike tidssoner og ved overgang til/fra sommertid.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
