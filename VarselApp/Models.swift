@@ -884,9 +884,13 @@ enum ForecastHourSelection {
             return candidates.max { lhs, rhs in
                 let lhsPriority = priority(lhs)
                 let rhsPriority = priority(rhs)
-                return lhsPriority == rhsPriority
-                    ? lhs.time > rhs.time
-                    : lhsPriority < rhsPriority
+                let lhsIsFinite = lhsPriority.isFinite
+                let rhsIsFinite = rhsPriority.isFinite
+                // Invalid scores never outrank a real score. If both are
+                // invalid (or finite and equal), the earlier sample wins.
+                if lhsIsFinite != rhsIsFinite { return !lhsIsFinite }
+                if lhsIsFinite && lhsPriority != rhsPriority { return lhsPriority < rhsPriority }
+                return lhs.time > rhs.time
             }
         }
     }

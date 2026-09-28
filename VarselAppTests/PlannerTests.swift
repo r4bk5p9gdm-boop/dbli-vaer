@@ -4585,6 +4585,46 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(selectedByOrder[2], expected)
     }
 
+    func testStrongestPerBandCellHandlesNonFinitePrioritiesDeterministically() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 0))
+        let day = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 9, day: 22)))
+        func sample(minute: Int) throws -> ForecastHour {
+            ForecastHour(
+                time: try XCTUnwrap(calendar.date(
+                    bySettingHour: 7, minute: minute, second: 0, of: day
+                )),
+                temp: 8, precip: 0.2, wind: 1, cloud: 60, dew: 7
+            )
+        }
+        let nanScore = try sample(minute: 5)
+        let positiveInfinityScore = try sample(minute: 15)
+        let negativeInfinityScore = try sample(minute: 25)
+        let finiteScore = try sample(minute: 35)
+        let nonFiniteCandidates = [nanScore, positiveInfinityScore, negativeInfinityScore]
+
+        for candidates in [nonFiniteCandidates, Array(nonFiniteCandidates.reversed())] {
+            let selected = ForecastHourSelection.strongestPerBandCell(
+                from: candidates, startingAt: 7, slotCount: 1, calendar: calendar,
+                priority: { hour in
+                    if hour.time == nanScore.time { return .nan }
+                    if hour.time == positiveInfinityScore.time { return .infinity }
+                    return -.infinity
+                }
+            )
+            XCTAssertEqual(selected.map(\.time), [nanScore.time],
+                           "When all scores are non-finite, the earliest sample is the deterministic fallback.")
+        }
+
+        let finiteWins = ForecastHourSelection.strongestPerBandCell(
+            from: [positiveInfinityScore, finiteScore], startingAt: 7, slotCount: 1,
+            calendar: calendar,
+            priority: { $0.time == finiteScore.time ? -100 : .infinity }
+        )
+        XCTAssertEqual(finiteWins.map(\.time), [finiteScore.time],
+                       "A finite score wins over a non-finite score, even when it is negative.")
+    }
+
     func testForecastBandSignalPriorityRanksPrecipitationAboveDew() {
         let dew = ForecastBandSignalPriority.score(for: .dew, strength: 0.8)
         let possible = ForecastBandSignalPriority.score(for: .possiblePrecipitation, strength: 0.2)

@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-09-27T23:18:50Z",
+  "lastScheduledStart": "2026-09-28T03:18:21Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-284 fullført: La til test som kjører samme værprøver i tre inndatarekkefølger og bekrefter stabilt valg av sterkeste duplikat samt sorterte båndoffset. Swift-parsing, modelltypekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-285 fullført: strongestPerBandCell behandler NaN og +/-uendelig som svakere enn endelige prioriteter; når begge kandidater har ikke-endelige eller like finite verdier, avgjør tidligste tidspunkt. Tester dekker alle tre ikke-endelige scoretypene, negativ finite score og inputrekkefølge. Swift-parsing, modelltypekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

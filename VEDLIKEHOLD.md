@@ -986,9 +986,11 @@ timeceller gjennom vår- og høstskiftet i Oslo.
 samme prognose. Hver rekkefølge velger den sterkeste prøven i duplisert
 07-celle og returnerer valgene i stigende båndoffset.
 
-**AUTO-285 · ÅPEN** — Definer og test hvordan `strongestPerBandCell` håndterer
-ikke-endelige prioritetsverdier (`NaN` og uendelig), slik at komparatoren alltid
-gir et deterministisk valg.
+**AUTO-285 · FULLFØRT 2026-09-28** — `strongestPerBandCell` lar nå endelige
+prioriteter vinne over `NaN` og uendelig. Når alle aktuelle prioriteter er
+ikke-endelige, vinner det tidligste tidspunktet. Regresjonstesten dekker
+`NaN`, begge uendelighetsretninger, endelig negativ prioritet og omstokket
+input.
 
 **AUTO-286 · ÅPEN** — Legg til en lett modelltest for at ugyldige eller tomme
 prognoseprøver ikke lager værbåndssignaler, og at gyldige kandidater fortsatt
@@ -997,6 +999,10 @@ sorteres stabilt før tegning.
 **AUTO-287 · ÅPEN** — Avklar om styrkeverdier i `ForecastBandSignalPriority`
 skal avgrenses innenfor signalklassen; test at uvanlig store, negative eller
 ikke-endelige verdier ikke snur ønsket rangering mellom signalklassene.
+
+**AUTO-288 · ÅPEN** — Test og dokumenter tie-break når prøver med lik prioritet
+og identisk tidsstempel, men ulikt værinnhold, kolliderer i samme celle; valget
+skal ikke avhenge av inputrekkefølgen.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
