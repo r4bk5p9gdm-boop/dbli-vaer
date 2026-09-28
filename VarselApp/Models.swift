@@ -807,6 +807,49 @@ enum ForecastBandSignalPriority {
 }
 
 enum ForecastHourSelection {
+    /// Provides an input-order-independent final tie-break when two samples
+    /// have the same instant and priority. Higher finite weather values win;
+    /// optional values rank above missing values, while non-finite values use
+    /// their bit pattern for a deterministic total order.
+    private static func hasLowerWeatherContentKey(_ lhs: ForecastHour, than rhs: ForecastHour) -> Bool {
+        var lhsKey: [Double?] = [
+            lhs.precipitationRate, lhs.effectiveWind, lhs.cloud, lhs.temp, lhs.dew,
+            lhs.precip, lhs.precipMin, lhs.precipMax, lhs.precipProbability,
+            lhs.gust, lhs.fog, lhs.temperatureLow, lhs.temperatureHigh, lhs.yrTemperature,
+        ]
+        var rhsKey: [Double?] = [
+            rhs.precipitationRate, rhs.effectiveWind, rhs.cloud, rhs.temp, rhs.dew,
+            rhs.precip, rhs.precipMin, rhs.precipMax, rhs.precipProbability,
+            rhs.gust, rhs.fog, rhs.temperatureLow, rhs.temperatureHigh, rhs.yrTemperature,
+        ]
+        let lhsRadar = lhs.radarSamples?.sorted {
+            $0.time == $1.time ? $0.rate < $1.rate : $0.time < $1.time
+        } ?? []
+        let rhsRadar = rhs.radarSamples?.sorted {
+            $0.time == $1.time ? $0.rate < $1.rate : $0.time < $1.time
+        } ?? []
+        lhsKey.append(lhs.radarSamples == nil ? nil : Double(lhsRadar.count))
+        rhsKey.append(rhs.radarSamples == nil ? nil : Double(rhsRadar.count))
+        lhsKey.append(contentsOf: lhsRadar.flatMap { [Optional($0.time.timeIntervalSince1970), $0.rate] })
+        rhsKey.append(contentsOf: rhsRadar.flatMap { [Optional($0.time.timeIntervalSince1970), $0.rate] })
+
+        for index in 0..<min(lhsKey.count, rhsKey.count) {
+            switch (lhsKey[index], rhsKey[index]) {
+            case (nil, nil): continue
+            case (nil, .some): return true
+            case (.some, nil): return false
+            case let (.some(left), .some(right)):
+                if left == right { continue }
+                if left.isFinite != right.isFinite { return !left.isFinite }
+                if !left.isFinite {
+                    return left.bitPattern < right.bitPattern
+                }
+                return left < right
+            }
+        }
+        return lhsKey.count < rhsKey.count
+    }
+
     /// Builds a visual-band interval from local wall-clock boundaries. A band
     /// such as 23–07 is shorter or longer in elapsed time across DST changes.
     static func bandInterval(
@@ -898,7 +941,8 @@ enum ForecastHourSelection {
                 // invalid (or finite and equal), the earlier sample wins.
                 if lhsIsFinite != rhsIsFinite { return !lhsIsFinite }
                 if lhsIsFinite && lhsPriority != rhsPriority { return lhsPriority < rhsPriority }
-                return lhs.time > rhs.time
+                if lhs.time != rhs.time { return lhs.time > rhs.time }
+                return hasLowerWeatherContentKey(lhs, than: rhs)
             }
         }
     }

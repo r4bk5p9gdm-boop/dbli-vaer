@@ -1005,9 +1005,13 @@ bekrefter at svært høy styrke ikke kan snu rekkefølgen mellom dugg, mulig,
 observert og sikkert nedbør. Swift-parsing/typekontroll og diffkontroll består;
 XCTest er ikke kjørt fordi CoreSimulator mangler fungerende runtime.
 
-**AUTO-288 · ÅPEN** — Test og dokumenter tie-break når prøver med lik prioritet
-og identisk tidsstempel, men ulikt værinnhold, kolliderer i samme celle; valget
-skal ikke avhenge av inputrekkefølgen.
+**AUTO-288 · FULLFØRT 2026-09-28** — Når både prioritet og tidsstempel er
+identiske, `strongestPerBandCell` sammenligner nå en fast værinnholdsnøkkel
+(nedbør, vind, skydekke, temperaturer og eventuelle tilleggsverdier/radarprøver).
+Høyere endelige verdier vinner; manglende felt og ikke-endelige tall har en
+deterministisk rekkefølge. Test med ulik nedbør og omvendt input bekrefter samme
+valg. Swift-parsing/typekontroll og diffkontroll består; XCTest er ikke kjørt
+fordi CoreSimulator mangler fungerende runtime.
 
 **AUTO-289 · ÅPEN** — Test at `ForecastHourSelection.current` foretrekker
 seneste prognosetime som ikke ligger etter `now`, også når input er usortert,
@@ -1017,6 +1021,10 @@ og bruker tidligste framtidstime bare når alle prøver ligger fram i tid.
 nedbørverdier i `ForecastHour` ikke blir til kunstig nedbørsrisiko eller
 signaler. Test kombinasjonene for `precip`, `precipProbability`, `precipMax`
 og radarmålinger, og behold gyldige risikoanslag.
+
+**AUTO-291 · ÅPEN** — Test at `ForecastHour.precipitationOnset` finner den
+tidligste kvalifiserende radartiden etter grensen selv når `radarSamples` er
+usortert, og returnerer `nil` når ingen prøve kvalifiserer.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

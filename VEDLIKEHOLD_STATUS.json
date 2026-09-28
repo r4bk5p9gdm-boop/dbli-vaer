@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-09-28T11:29:25Z",
+  "lastScheduledStart": "2026-09-28T15:29:53Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-287 fullført: styrkescore er avgrenset til 0–999 innen signalklassen; none er 0, negative og ikke-endelige styrker faller tilbake til klassens grunnverdi. Test dekker rangering og ekstreme verdier. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-288 fullført: lik prioritet og identisk tidspunkt bruker nå deterministisk værinnholdsnøkkel i strongestPerBandCell; test bekrefter samme kandidat for omvendt input. AUTO-291 lagt til for usorterte radarmålinger i precipitationOnset. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

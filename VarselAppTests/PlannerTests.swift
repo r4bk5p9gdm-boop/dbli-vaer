@@ -4625,6 +4625,30 @@ final class PlannerTests: XCTestCase {
                        "A finite score wins over a non-finite score, even when it is negative.")
     }
 
+    func testStrongestPerBandCellBreaksExactTiesByWeatherContentNotInputOrder() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 0))
+        let sameTime = try XCTUnwrap(calendar.date(from: DateComponents(
+            year: 2030, month: 9, day: 22, hour: 7
+        )))
+        let lighter = ForecastHour(
+            time: sameTime, temp: 8, precip: 0.2, wind: 1, cloud: 60, dew: 7
+        )
+        let heavier = ForecastHour(
+            time: sameTime, temp: 8, precip: 0.8, wind: 1, cloud: 60, dew: 7
+        )
+
+        for candidates in [[lighter, heavier], [heavier, lighter]] {
+            let selected = ForecastHourSelection.strongestPerBandCell(
+                from: candidates, startingAt: 7, slotCount: 1, calendar: calendar,
+                priority: { _ in 42 }
+            )
+            XCTAssertEqual(selected.count, 1)
+            XCTAssertEqual(selected.first?.precipitationRate, 0.8,
+                           "Exact time/priority ties use the deterministic weather-content key.")
+        }
+    }
+
     func testForecastBandSignalPriorityRanksPrecipitationAboveDew() {
         let dew = ForecastBandSignalPriority.score(for: .dew, strength: 0.8)
         let possible = ForecastBandSignalPriority.score(for: .possiblePrecipitation, strength: 0.2)
