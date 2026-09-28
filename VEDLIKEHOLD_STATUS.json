@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-09-28T15:29:53Z",
+  "lastScheduledStart": "2026-09-28T19:30:58Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-288 fullført: lik prioritet og identisk tidspunkt bruker nå deterministisk værinnholdsnøkkel i strongestPerBandCell; test bekrefter samme kandidat for omvendt input. AUTO-291 lagt til for usorterte radarmålinger i precipitationOnset. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-289 fullført: current-valg er testet med usortert prognose og framtidig-only fallback til nærmeste kommende sample. AUTO-292 lagt til for like timestamps med ulikt værinnhold i current-valget. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

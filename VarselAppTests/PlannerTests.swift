@@ -4762,6 +4762,31 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(after.precip, 0)
     }
 
+    func testCurrentForecastSelectionHandlesUnsortedAndFutureOnlyInput() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 0))
+        let day = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 9, day: 22)))
+        func sample(hour: Int) throws -> ForecastHour {
+            ForecastHour(
+                time: try XCTUnwrap(calendar.date(
+                    bySettingHour: hour, minute: 0, second: 0, of: day
+                )),
+                temp: Double(hour), precip: 0, wind: 1, cloud: 60, dew: 7
+            )
+        }
+        let nine = try sample(hour: 9)
+        let ten = try sample(hour: 10)
+        let noon = try sample(hour: 12)
+        let unsorted = [noon, nine, ten]
+
+        XCTAssertEqual(ForecastHourSelection.current(
+            in: unsorted, at: ten.time.addingTimeInterval(1)
+        )?.time, ten.time, "Choose the latest sample at or before now, regardless of input order.")
+        XCTAssertEqual(ForecastHourSelection.current(
+            in: [noon, ten], at: nine.time
+        )?.time, ten.time, "When every sample is future-dated, fall back to the earliest one.")
+    }
+
     @MainActor
     func testForecastRecipientsExcludeRemovedAndRelocatedPlaces() {
         let removed = Place(name: "Slettet", lat: 64, lon: 11)

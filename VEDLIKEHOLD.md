@@ -1013,9 +1013,10 @@ deterministisk rekkefølge. Test med ulik nedbør og omvendt input bekrefter sam
 valg. Swift-parsing/typekontroll og diffkontroll består; XCTest er ikke kjørt
 fordi CoreSimulator mangler fungerende runtime.
 
-**AUTO-289 · ÅPEN** — Test at `ForecastHourSelection.current` foretrekker
-seneste prognosetime som ikke ligger etter `now`, også når input er usortert,
-og bruker tidligste framtidstime bare når alle prøver ligger fram i tid.
+**AUTO-289 · FULLFØRT 2026-09-28** — La til regresjonstest der `current` får
+usortert input og velger seneste sample ved/forut for `now`; ved bare framtidige
+samples velges den tidligste. Swift-parsing/typekontroll og diffkontroll består;
+XCTest er ikke kjørt fordi CoreSimulator mangler fungerende runtime.
 
 **AUTO-290 · ÅPEN** — Kontroller at ugyldige eller ikke-endelige
 nedbørverdier i `ForecastHour` ikke blir til kunstig nedbørsrisiko eller
@@ -1025,6 +1026,10 @@ og radarmålinger, og behold gyldige risikoanslag.
 **AUTO-291 · ÅPEN** — Test at `ForecastHour.precipitationOnset` finner den
 tidligste kvalifiserende radartiden etter grensen selv når `radarSamples` er
 usortert, og returnerer `nil` når ingen prøve kvalifiserer.
+
+**AUTO-292 · ÅPEN** — Test at `ForecastHourSelection.current` velger samme
+værprøve ved identiske tidsstempler med ulikt innhold uavhengig av
+inputrekkefølge, eller dokumenter at like tidsstempler er forbudt i prognosen.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
