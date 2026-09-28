@@ -992,9 +992,11 @@ ikke-endelige, vinner det tidligste tidspunktet. Regresjonstesten dekker
 `NaN`, begge uendelighetsretninger, endelig negativ prioritet og omstokket
 input.
 
-**AUTO-286 · ÅPEN** — Legg til en lett modelltest for at ugyldige eller tomme
-prognoseprøver ikke lager værbåndssignaler, og at gyldige kandidater fortsatt
-sorteres stabilt før tegning.
+**AUTO-286 · FULLFØRT 2026-09-28** — La til en lett modelltest som bekrefter
+at tom prognose ikke evaluerer signalprioritet, nøytrale timer beholder
+prioritet 0, og gyldig nedbør beholder signalet i sortert celle-rekkefølge.
+Swift-parsing/typekontroll og diffkontroll består; XCTest er ikke kjørt fordi
+CoreSimulator fortsatt mangler fungerende runtime.
 
 **AUTO-287 · ÅPEN** — Avklar om styrkeverdier i `ForecastBandSignalPriority`
 skal avgrenses innenfor signalklassen; test at uvanlig store, negative eller
@@ -1003,6 +1005,10 @@ ikke-endelige verdier ikke snur ønsket rangering mellom signalklassene.
 **AUTO-288 · ÅPEN** — Test og dokumenter tie-break når prøver med lik prioritet
 og identisk tidsstempel, men ulikt værinnhold, kolliderer i samme celle; valget
 skal ikke avhenge av inputrekkefølgen.
+
+**AUTO-289 · ÅPEN** — Test at `ForecastHourSelection.current` foretrekker
+seneste prognosetime som ikke ligger etter `now`, også når input er usortert,
+og bruker tidligste framtidstime bare når alle prøver ligger fram i tid.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

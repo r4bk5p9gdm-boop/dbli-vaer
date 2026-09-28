@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-09-28T03:18:21Z",
+  "lastScheduledStart": "2026-09-28T07:23:18Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-285 fullført: strongestPerBandCell behandler NaN og +/-uendelig som svakere enn endelige prioriteter; når begge kandidater har ikke-endelige eller like finite verdier, avgjør tidligste tidspunkt. Tester dekker alle tre ikke-endelige scoretypene, negativ finite score og inputrekkefølge. Swift-parsing, modelltypekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-286 fullført: modellregresjon dekker tom prognose uten evaluering av prioritetslukning, nøytral score 0 og stabil rekkefølge for gyldig værbåndssignal. AUTO-289 lagt til for current-time-valg med usortert prognose. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

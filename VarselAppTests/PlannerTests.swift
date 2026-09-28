@@ -4636,6 +4636,47 @@ final class PlannerTests: XCTestCase {
         XCTAssertGreaterThan(certain, observed)
     }
 
+    func testEmptyAndNeutralForecastSamplesDoNotCreateBandSignals() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 0))
+        let day = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 9, day: 22)))
+        var emptyPriorityEvaluations = 0
+        let emptySelection = ForecastHourSelection.strongestPerBandCell(
+            from: [], startingAt: 7, slotCount: 8, calendar: calendar,
+            priority: { _ in
+                emptyPriorityEvaluations += 1
+                return ForecastBandSignalPriority.score(for: .observedPrecipitation)
+            }
+        )
+        XCTAssertTrue(emptySelection.isEmpty)
+        XCTAssertEqual(emptyPriorityEvaluations, 0, "An empty forecast must not evaluate or create a signal.")
+
+        func sample(hour: Int, precipitation: Double) throws -> ForecastHour {
+            ForecastHour(
+                time: try XCTUnwrap(calendar.date(
+                    bySettingHour: hour, minute: 0, second: 0, of: day
+                )),
+                temp: 8, precip: precipitation, wind: 1, cloud: 60, dew: 7
+            )
+        }
+        let neutral = try sample(hour: 7, precipitation: 0)
+        let observed = try sample(hour: 10, precipitation: 0.5)
+        let candidates = [observed, neutral]
+        func signalPriority(_ hour: ForecastHour) -> Double {
+            hour.precipitationRate >= 0.1
+                ? ForecastBandSignalPriority.score(for: .observedPrecipitation, strength: hour.precipitationRate)
+                : ForecastBandSignalPriority.score(for: .none)
+        }
+        let selected = ForecastHourSelection.strongestPerBandCell(
+            from: candidates, startingAt: 7, slotCount: 8, calendar: calendar,
+            priority: signalPriority
+        )
+
+        XCTAssertEqual(selected.map { calendar.component(.hour, from: $0.time) }, [7, 10])
+        XCTAssertEqual(selected.map(signalPriority), [0, 3_000.5],
+                       "Neutral samples remain unmarked while a valid signal keeps its stable cell order.")
+    }
+
     func testRecentPrecipitationSuppressesDewForThreeHours() throws {
         let wetTime = try XCTUnwrap(Calendar(identifier: .gregorian).date(
             from: DateComponents(year: 2030, month: 9, day: 22, hour: 7)
