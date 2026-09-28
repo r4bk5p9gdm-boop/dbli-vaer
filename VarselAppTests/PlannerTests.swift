@@ -4636,6 +4636,22 @@ final class PlannerTests: XCTestCase {
         XCTAssertGreaterThan(certain, observed)
     }
 
+    func testForecastBandSignalStrengthCannotCrossSignalClassBoundaries() {
+        let dew = ForecastBandSignalPriority.score(for: .dew, strength: 10_000)
+        let possible = ForecastBandSignalPriority.score(for: .possiblePrecipitation, strength: 10_000)
+        let observed = ForecastBandSignalPriority.score(for: .observedPrecipitation, strength: 10_000)
+        let certain = ForecastBandSignalPriority.score(for: .certainPrecipitation, strength: 10_000)
+
+        XCTAssertLessThan(dew, possible)
+        XCTAssertLessThan(possible, observed)
+        XCTAssertLessThan(observed, certain)
+        XCTAssertEqual(dew, 1_999)
+        XCTAssertEqual(ForecastBandSignalPriority.score(for: .dew, strength: -10_000), 1_000)
+        XCTAssertEqual(ForecastBandSignalPriority.score(for: .dew, strength: .nan), 1_000)
+        XCTAssertEqual(ForecastBandSignalPriority.score(for: .dew, strength: .infinity), 1_000)
+        XCTAssertEqual(ForecastBandSignalPriority.score(for: .none, strength: 10_000), 0)
+    }
+
     func testEmptyAndNeutralForecastSamplesDoNotCreateBandSignals() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 0))

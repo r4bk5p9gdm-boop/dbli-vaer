@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-09-28T07:23:18Z",
+  "lastScheduledStart": "2026-09-28T11:29:25Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-286 fullført: modellregresjon dekker tom prognose uten evaluering av prioritetslukning, nøytral score 0 og stabil rekkefølge for gyldig værbåndssignal. AUTO-289 lagt til for current-time-valg med usortert prognose. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-287 fullført: styrkescore er avgrenset til 0–999 innen signalklassen; none er 0, negative og ikke-endelige styrker faller tilbake til klassens grunnverdi. Test dekker rangering og ekstreme verdier. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

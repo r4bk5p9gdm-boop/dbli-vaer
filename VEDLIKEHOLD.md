@@ -998,9 +998,12 @@ prioritet 0, og gyldig nedbør beholder signalet i sortert celle-rekkefølge.
 Swift-parsing/typekontroll og diffkontroll består; XCTest er ikke kjørt fordi
 CoreSimulator fortsatt mangler fungerende runtime.
 
-**AUTO-287 · ÅPEN** — Avklar om styrkeverdier i `ForecastBandSignalPriority`
-skal avgrenses innenfor signalklassen; test at uvanlig store, negative eller
-ikke-endelige verdier ikke snur ønsket rangering mellom signalklassene.
+**AUTO-287 · FULLFØRT 2026-09-28** — Avgrenset styrke til 0–999, slik at den
+bare avgjør rangering innenfor en signalklasse; `.none` er alltid 0, og
+negative/ikke-endelige styrker gir bare klassens grunnverdi. Regresjonstesten
+bekrefter at svært høy styrke ikke kan snu rekkefølgen mellom dugg, mulig,
+observert og sikkert nedbør. Swift-parsing/typekontroll og diffkontroll består;
+XCTest er ikke kjørt fordi CoreSimulator mangler fungerende runtime.
 
 **AUTO-288 · ÅPEN** — Test og dokumenter tie-break når prøver med lik prioritet
 og identisk tidsstempel, men ulikt værinnhold, kolliderer i samme celle; valget
@@ -1009,6 +1012,11 @@ skal ikke avhenge av inputrekkefølgen.
 **AUTO-289 · ÅPEN** — Test at `ForecastHourSelection.current` foretrekker
 seneste prognosetime som ikke ligger etter `now`, også når input er usortert,
 og bruker tidligste framtidstime bare når alle prøver ligger fram i tid.
+
+**AUTO-290 · ÅPEN** — Kontroller at ugyldige eller ikke-endelige
+nedbørverdier i `ForecastHour` ikke blir til kunstig nedbørsrisiko eller
+signaler. Test kombinasjonene for `precip`, `precipProbability`, `precipMax`
+og radarmålinger, og behold gyldige risikoanslag.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

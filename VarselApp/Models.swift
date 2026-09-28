@@ -765,6 +765,10 @@ struct ForecastHour: Codable, Identifiable, Hashable {
 /// Larger base levels represent the visual order; strength breaks ties within
 /// a signal class.
 enum ForecastBandSignalPriority {
+    /// Keeps strength as a within-class tie-breaker; it must never cross into
+    /// the next signal class even when upstream weather values are unusual.
+    private static let maximumStrength = 999.0
+
     enum Signal {
         case none
         case dew
@@ -774,15 +778,19 @@ enum ForecastBandSignalPriority {
     }
 
     static func score(for signal: Signal, strength: Double = 0) -> Double {
+        guard signal != .none else { return 0 }
         let base: Double
         switch signal {
-        case .none: base = 0
+        case .none: return 0
         case .dew: base = 1_000
         case .possiblePrecipitation: base = 2_000
         case .observedPrecipitation: base = 3_000
         case .certainPrecipitation: base = 4_000
         }
-        return base + strength
+        let boundedStrength = strength.isFinite
+            ? min(maximumStrength, max(0, strength))
+            : 0
+        return base + boundedStrength
     }
 
     static func hasRecentPrecipitation(
