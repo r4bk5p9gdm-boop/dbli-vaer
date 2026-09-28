@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-09-28T19:30:58Z",
+  "lastScheduledStart": "2026-09-28T23:30:38Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-289 fullført: current-valg er testet med usortert prognose og framtidig-only fallback til nærmeste kommende sample. AUTO-292 lagt til for like timestamps med ulikt værinnhold i current-valget. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-290 fullført: negative/ikke-endelige nedbørsmengder filtreres; precipMax krever gyldig sannsynlighet og mengde. Regresjonstest dekker ugyldige og gyldige Yr-/radarfelt. AUTO-293 lagt til for nominalInterval-modelltester. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

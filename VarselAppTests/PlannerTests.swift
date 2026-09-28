@@ -1635,6 +1635,47 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testMalformedPrecipitationValuesDoNotCreateRainRisk() {
+        let time = Date(timeIntervalSince1970: 1_900_000_000)
+        let invalidAmounts = [Double.nan, Double.infinity, -.infinity, -0.1]
+        for amount in invalidAmounts {
+            let hour = ForecastHour(
+                time: time, temp: 8, precip: amount, wind: 1, cloud: 60, dew: 7,
+                radarSamples: invalidAmounts.enumerated().map { index, rate in
+                    PrecipitationSample(time: time.addingTimeInterval(Double(index)), rate: rate)
+                }
+            )
+            XCTAssertEqual(hour.precipitationRate, 0)
+            XCTAssertEqual(hour.precipitationRiskRate, 0)
+            XCTAssertFalse(hour.isPossiblePrecipitation(atOrAbove: 0.1))
+        }
+
+        let invalidRiskInputs = [Double.nan, Double.infinity, -1, 101]
+        for probability in invalidRiskInputs {
+            let hour = ForecastHour(
+                time: time, temp: 8, precip: 0.2, wind: 1, cloud: 60, dew: 7,
+                precipMax: 2, precipProbability: probability
+            )
+            XCTAssertEqual(hour.precipitationRiskRate, 0.2)
+            XCTAssertFalse(hour.isPossiblePrecipitation(atOrAbove: 1))
+        }
+
+        let invalidMaximum = ForecastHour(
+            time: time, temp: 8, precip: 0.2, wind: 1, cloud: 60, dew: 7,
+            precipMax: .infinity, precipProbability: 80
+        )
+        XCTAssertEqual(invalidMaximum.precipitationRiskRate, 0.2)
+
+        let validEstimate = ForecastHour(
+            time: time, temp: 8, precip: 0.2, wind: 1, cloud: 60, dew: 7,
+            precipMax: 2, precipProbability: 80,
+            radarSamples: [PrecipitationSample(time: time, rate: 0.6)]
+        )
+        XCTAssertEqual(validEstimate.precipitationRate, 0.6)
+        XCTAssertEqual(validEstimate.precipitationRiskRate, 2)
+        XCTAssertTrue(validEstimate.isPossiblePrecipitation(atOrAbove: 1))
+    }
+
     func testNowcastIsLimitedToYrsNinetyMinuteWindow() {
         let samples = stride(from: 0, through: 110, by: 5).map { minute in
             PrecipitationSample(time: base.addingTimeInterval(TimeInterval(minute * 60)), rate: 1)

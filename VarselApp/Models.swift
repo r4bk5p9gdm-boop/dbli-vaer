@@ -735,13 +735,28 @@ struct ForecastHour: Codable, Identifiable, Hashable {
     }
     var id: Date { time }
 
+    private static func validPrecipitationAmount(_ value: Double?) -> Double? {
+        guard let value, value.isFinite, value >= 0 else { return nil }
+        return value
+    }
+
     var precipitationRate: Double {
-        max(precip, radarSamples?.map(\.rate).max() ?? 0)
+        let forecastRate = Self.validPrecipitationAmount(precip) ?? 0
+        let radarRate = radarSamples?.compactMap {
+            Self.validPrecipitationAmount($0.rate)
+        }.max() ?? 0
+        return max(forecastRate, radarRate)
     }
 
     var precipitationRiskRate: Double {
-        guard (precipProbability ?? 0) >= 20 else { return precipitationRate }
-        return max(precipitationRate, precipMax ?? 0)
+        guard let probability = precipProbability,
+              probability.isFinite,
+              (0...100).contains(probability),
+              probability >= 20,
+              let maximum = Self.validPrecipitationAmount(precipMax) else {
+            return precipitationRate
+        }
+        return max(precipitationRate, maximum)
     }
 
     func isPossiblePrecipitation(atOrAbove threshold: Double) -> Bool {
