@@ -1033,9 +1033,12 @@ Regresjonstest dekker usorterte prøver, prøver før grensen og ingen treff.
 Swift-parsing/typekontroll og diffkontroll består; XCTest er ikke kjørt fordi
 CoreSimulator mangler fungerende runtime.
 
-**AUTO-292 · ÅPEN** — Test at `ForecastHourSelection.current` velger samme
-værprøve ved identiske tidsstempler med ulikt innhold uavhengig av
-inputrekkefølge, eller dokumenter at like tidsstempler er forbudt i prognosen.
+**AUTO-292 · FULLFØRT 2026-09-29** — `ForecastHourSelection.current` bruker
+nå den deterministiske værinnholdsnøkkelen når flere prøver har samme
+tidsstempel, både for aktuell prøve og framtidsfallback. Regresjonstest med
+ombyttet rekkefølge bekrefter at samme nedbørprøve velges. Swift-parsing,
+typekontroll og diffkontroll består; XCTest er ikke kjørt fordi CoreSimulator
+mangler fungerende runtime.
 
 **AUTO-293 · ÅPEN** — Legg til modelltester for `PrecipitationSample.nominalInterval`:
 utvalg fra usorterte prøver, ignorering av dupliserte tidsstempler og grensene
@@ -1044,6 +1047,10 @@ på ett minutt og femten minutter.
 **AUTO-294 · ÅPEN** — Utvid regresjonstestene for `precipitationOnset` med
 NaN/uendelige radarrater og ikke-endelige terskler, så ugyldige tall aldri kan
 utløse et starttidspunkt.
+
+**AUTO-295 · ÅPEN** — Test tie-break for like tidsstempler når vanlige
+værverdier er identiske, men radarprøvene har forskjellig rekkefølge; utvalget
+skal være stabilt uavhengig av inputrekkefølge.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

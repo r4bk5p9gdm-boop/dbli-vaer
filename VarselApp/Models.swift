@@ -968,10 +968,20 @@ enum ForecastHourSelection {
 
     /// The NÅ card uses the same hourly sample that the weather band paints
     /// beneath the current time. Cached forecasts may still contain earlier
-    /// hours after the clock moves on.
+    /// hours after the clock moves on. Duplicate timestamps use the same
+    /// deterministic weather-content ordering in either selection path.
     static func current(in forecast: [ForecastHour], at now: Date) -> ForecastHour? {
-        forecast.filter { $0.time <= now }.max { $0.time < $1.time }
-            ?? forecast.min { $0.time < $1.time }
+        let currentHours = forecast.filter { $0.time <= now }
+        if let latestCurrentTime = currentHours.map(\.time).max() {
+            return currentHours
+                .filter { $0.time == latestCurrentTime }
+                .max { hasLowerWeatherContentKey($0, than: $1) }
+        }
+
+        guard let earliestFutureTime = forecast.map(\.time).min() else { return nil }
+        return forecast
+            .filter { $0.time == earliestFutureTime }
+            .max { hasLowerWeatherContentKey($0, than: $1) }
     }
 }
 

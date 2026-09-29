@@ -4851,6 +4851,17 @@ final class PlannerTests: XCTestCase {
         )?.time, ten.time, "When every sample is future-dated, fall back to the earliest one.")
     }
 
+    func testCurrentForecastSelectionBreaksIdenticalTimestampTiesIndependentlyOfInputOrder() {
+        let time = Date(timeIntervalSince1970: 1_900_000_000)
+        let lighter = ForecastHour(time: time, temp: 8, precip: 0.2, wind: 1, cloud: 60, dew: 7)
+        let heavier = ForecastHour(time: time, temp: 8, precip: 0.8, wind: 1, cloud: 60, dew: 7)
+
+        for input in [[lighter, heavier], [heavier, lighter]] {
+            let selected = ForecastHourSelection.current(in: input, at: time.addingTimeInterval(1))
+            XCTAssertEqual(selected?.precipitationRate, 0.8)
+        }
+    }
+
     @MainActor
     func testForecastRecipientsExcludeRemovedAndRelocatedPlaces() {
         let removed = Place(name: "Slettet", lat: 64, lon: 11)
