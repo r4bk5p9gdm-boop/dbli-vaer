@@ -1058,9 +1058,11 @@ radarprøver. Hjemmets valgte prøve er den samme ved omvendt rekkefølge.
 Swift-parsing/typekontroll og diffkontroll består; XCTest er ikke kjørt fordi
 CoreSimulator mangler fungerende runtime.
 
-**AUTO-296 · ÅPEN** — Test at `ForecastHourSelection.current` gir samme
-værprøve når prognosen bare har framtidige timer med likeste tidligste
-tidsstempel, uavhengig av inputrekkefølge.
+**AUTO-296 · FULLFØRT 2026-09-29** — La til regresjonstest for framtidsfallback
+når flere framtidige prognoseprøver deler det tidligste tidsstempelet.
+Innholdsnøkkelen velger samme prøve i begge inputrekkefølger. Swift-parsing/
+typekontroll og diffkontroll består; XCTest er ikke kjørt fordi CoreSimulator
+mangler fungerende runtime.
 
 **AUTO-297 · ÅPEN** — Legg til regresjonstest som låser at `precipitationOnset`
 inkluderer en radartid nøyaktig på `after`-grensen og en rate nøyaktig lik
@@ -1069,6 +1071,9 @@ terskelen.
 **AUTO-298 · ÅPEN** — Legg til en modelltest for femminutters standardintervallet
 fra `PrecipitationSample.nominalInterval` når listen er tom eller ikke har
 noen positive tidsavstander.
+
+**AUTO-299 · ÅPEN** — Legg til en eksplisitt regresjonstest som bekrefter at
+`ForecastHourSelection.current` returnerer `nil` for en tom prognose.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

@@ -4920,6 +4920,22 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testCurrentForecastSelectionBreaksFutureFallbackTiesIndependentlyOfOrder() {
+        let time = Date(timeIntervalSince1970: 1_900_000_000)
+        let earlierButStillFuture = time.addingTimeInterval(60 * 60)
+        let lighter = ForecastHour(
+            time: earlierButStillFuture, temp: 8, precip: 0.2, wind: 1, cloud: 60, dew: 7
+        )
+        let heavier = ForecastHour(
+            time: earlierButStillFuture, temp: 8, precip: 0.8, wind: 1, cloud: 60, dew: 7
+        )
+
+        for input in [[lighter, heavier], [heavier, lighter]] {
+            let selected = ForecastHourSelection.current(in: input, at: time)
+            XCTAssertEqual(selected?.precipitationRate, 0.8)
+        }
+    }
+
     func testCurrentForecastSelectionBreaksTiesUsingUnsortedRadarContent() throws {
         let time = Date(timeIntervalSince1970: 1_900_000_000)
         let earlyRadarTime = time.addingTimeInterval(5 * 60)
