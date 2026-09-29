@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-09-29T07:32:06Z",
+  "lastScheduledStart": "2026-09-29T11:32:32Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-292 fullført: ForecastHourSelection.current bruker nå deterministisk værinnholdsnøkkel ved like tidsstempler, inkludert framtidsfallback. Regresjonstest viser samme nedbørprøve uansett inputrekkefølge. AUTO-295 lagt til for radarprøvetie-break med identiske værverdier. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-293 fullført: tester dekker nominalInterval med usorterte prøver, duplikate tider, minste positive gap og klamping ved ett og femten minutter. AUTO-296 lagt til for like tidsstempler i framtidsfallback. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

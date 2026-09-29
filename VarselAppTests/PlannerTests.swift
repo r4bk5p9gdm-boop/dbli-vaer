@@ -1699,6 +1699,33 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(validEstimate.isPossiblePrecipitation(atOrAbove: 1))
     }
 
+    func testNominalPrecipitationIntervalUsesSmallestPositiveGapForUnsortedSamples() {
+        let times = [20, 0, 10, 10, 5].map { base.addingTimeInterval(Double($0 * 60)) }
+        let samples = times.map { PrecipitationSample(time: $0, rate: 0.4) }
+
+        XCTAssertEqual(PrecipitationSample.nominalInterval(in: samples), 5 * 60)
+    }
+
+    func testNominalPrecipitationIntervalClampsShortAndLongGaps() {
+        let shortGap = [0.0, 30.0].map {
+            PrecipitationSample(time: base.addingTimeInterval($0), rate: 0.4)
+        }
+        let oneMinuteGap = [0.0, 60.0].map {
+            PrecipitationSample(time: base.addingTimeInterval($0), rate: 0.4)
+        }
+        let fifteenMinuteGap = [0.0, 15 * 60.0].map {
+            PrecipitationSample(time: base.addingTimeInterval($0), rate: 0.4)
+        }
+        let longGap = [0.0, 20 * 60.0].map {
+            PrecipitationSample(time: base.addingTimeInterval($0), rate: 0.4)
+        }
+
+        XCTAssertEqual(PrecipitationSample.nominalInterval(in: shortGap), 60)
+        XCTAssertEqual(PrecipitationSample.nominalInterval(in: oneMinuteGap), 60)
+        XCTAssertEqual(PrecipitationSample.nominalInterval(in: fifteenMinuteGap), 15 * 60)
+        XCTAssertEqual(PrecipitationSample.nominalInterval(in: longGap), 15 * 60)
+    }
+
     func testNowcastIsLimitedToYrsNinetyMinuteWindow() {
         let samples = stride(from: 0, through: 110, by: 5).map { minute in
             PrecipitationSample(time: base.addingTimeInterval(TimeInterval(minute * 60)), rate: 1)
