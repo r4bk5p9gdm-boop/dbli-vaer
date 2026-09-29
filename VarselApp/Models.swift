@@ -770,9 +770,13 @@ struct ForecastHour: Codable, Identifiable, Hashable {
     }
 
     func precipitationOnset(atOrAbove threshold: Double, after date: Date? = nil) -> Date? {
-        radarSamples?.first {
-            $0.rate >= threshold && (date == nil || $0.time >= date!)
-        }?.time
+        guard threshold.isFinite else { return nil }
+        return radarSamples?
+            .filter { sample in
+                sample.rate.isFinite && sample.rate >= threshold && (date.map { sample.time >= $0 } ?? true)
+            }
+            .min { $0.time < $1.time }?
+            .time
     }
 }
 

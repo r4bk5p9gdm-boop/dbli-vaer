@@ -1635,6 +1635,29 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testPrecipitationOnsetChoosesEarliestQualifyingSampleRegardlessOfOrder() {
+        let cutoff = base.addingTimeInterval(10 * 60)
+        let earliest = base.addingTimeInterval(15 * 60)
+        let later = base.addingTimeInterval(25 * 60)
+        let hour = ForecastHour(
+            time: base,
+            temp: 8,
+            precip: 0,
+            wind: 2,
+            cloud: 90,
+            dew: 6,
+            radarSamples: [
+                PrecipitationSample(time: later, rate: 0.8),
+                PrecipitationSample(time: base, rate: 1.0),
+                PrecipitationSample(time: earliest, rate: 0.7),
+                PrecipitationSample(time: cutoff, rate: 0.2),
+            ]
+        )
+
+        XCTAssertEqual(hour.precipitationOnset(atOrAbove: 0.5, after: cutoff), earliest)
+        XCTAssertNil(hour.precipitationOnset(atOrAbove: 1.1, after: cutoff))
+    }
+
     func testMalformedPrecipitationValuesDoNotCreateRainRisk() {
         let time = Date(timeIntervalSince1970: 1_900_000_000)
         let invalidAmounts = [Double.nan, Double.infinity, -.infinity, -0.1]
