@@ -1046,9 +1046,11 @@ gap, dupliserte tidsstempler ignoreres, og intervallene klampes til 1–15 minut
 Swift-parsing/typekontroll og diffkontroll består; XCTest er ikke kjørt fordi
 CoreSimulator mangler fungerende runtime.
 
-**AUTO-294 · ÅPEN** — Utvid regresjonstestene for `precipitationOnset` med
-NaN/uendelige radarrater og ikke-endelige terskler, så ugyldige tall aldri kan
-utløse et starttidspunkt.
+**AUTO-294 · FULLFØRT 2026-09-29** — La til regresjonstest som bekrefter at
+`precipitationOnset` avviser NaN og uendelige radarrater, samt ikke-endelige
+terskler, men fortsatt finner gyldig radarnedbør. Swift-parsing/typekontroll og
+diffkontroll består; XCTest er ikke kjørt fordi CoreSimulator mangler fungerende
+runtime.
 
 **AUTO-295 · ÅPEN** — Test tie-break for like tidsstempler når vanlige
 værverdier er identiske, men radarprøvene har forskjellig rekkefølge; utvalget
@@ -1057,6 +1059,10 @@ skal være stabilt uavhengig av inputrekkefølge.
 **AUTO-296 · ÅPEN** — Test at `ForecastHourSelection.current` gir samme
 værprøve når prognosen bare har framtidige timer med likeste tidligste
 tidsstempel, uavhengig av inputrekkefølge.
+
+**AUTO-297 · ÅPEN** — Legg til regresjonstest som låser at `precipitationOnset`
+inkluderer en radartid nøyaktig på `after`-grensen og en rate nøyaktig lik
+terskelen.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

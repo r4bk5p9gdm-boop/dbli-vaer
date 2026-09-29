@@ -1658,6 +1658,37 @@ final class PlannerTests: XCTestCase {
         XCTAssertNil(hour.precipitationOnset(atOrAbove: 1.1, after: cutoff))
     }
 
+    func testPrecipitationOnsetIgnoresNonFiniteRadarRatesAndThresholds() {
+        let invalidRates = [Double.nan, .infinity, -.infinity]
+        let invalidRateHour = ForecastHour(
+            time: base,
+            temp: 8,
+            precip: 0,
+            wind: 2,
+            cloud: 90,
+            dew: 6,
+            radarSamples: invalidRates.enumerated().map { index, rate in
+                PrecipitationSample(time: base.addingTimeInterval(Double(index)), rate: rate)
+            }
+        )
+        let validTime = base.addingTimeInterval(60)
+        let validHour = ForecastHour(
+            time: base,
+            temp: 8,
+            precip: 0,
+            wind: 2,
+            cloud: 90,
+            dew: 6,
+            radarSamples: [PrecipitationSample(time: validTime, rate: 0.8)]
+        )
+
+        XCTAssertNil(invalidRateHour.precipitationOnset(atOrAbove: 0.1))
+        for threshold in [Double.nan, .infinity, -.infinity] {
+            XCTAssertNil(validHour.precipitationOnset(atOrAbove: threshold))
+        }
+        XCTAssertEqual(validHour.precipitationOnset(atOrAbove: 0.5), validTime)
+    }
+
     func testMalformedPrecipitationValuesDoNotCreateRainRisk() {
         let time = Date(timeIntervalSince1970: 1_900_000_000)
         let invalidAmounts = [Double.nan, Double.infinity, -.infinity, -0.1]
