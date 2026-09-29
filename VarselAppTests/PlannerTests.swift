@@ -4920,6 +4920,34 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testCurrentForecastSelectionBreaksTiesUsingUnsortedRadarContent() throws {
+        let time = Date(timeIntervalSince1970: 1_900_000_000)
+        let earlyRadarTime = time.addingTimeInterval(5 * 60)
+        let lateRadarTime = time.addingTimeInterval(10 * 60)
+        let lowerRadarContent = ForecastHour(
+            time: time, temp: 8, precip: 0.1, wind: 1, cloud: 60, dew: 7,
+            radarSamples: [
+                PrecipitationSample(time: lateRadarTime, rate: 0.8),
+                PrecipitationSample(time: earlyRadarTime, rate: 0.2),
+            ]
+        )
+        let higherRadarContent = ForecastHour(
+            time: time, temp: 8, precip: 0.1, wind: 1, cloud: 60, dew: 7,
+            radarSamples: [
+                PrecipitationSample(time: earlyRadarTime, rate: 0.5),
+                PrecipitationSample(time: lateRadarTime, rate: 0.8),
+            ]
+        )
+
+        for input in [[lowerRadarContent, higherRadarContent], [higherRadarContent, lowerRadarContent]] {
+            let selected = try XCTUnwrap(ForecastHourSelection.current(
+                in: input, at: time.addingTimeInterval(1)
+            ))
+            let earlyRate = try XCTUnwrap(selected.radarSamples?.first { $0.time == earlyRadarTime }?.rate)
+            XCTAssertEqual(earlyRate, 0.5)
+        }
+    }
+
     @MainActor
     func testForecastRecipientsExcludeRemovedAndRelocatedPlaces() {
         let removed = Place(name: "Slettet", lat: 64, lon: 11)

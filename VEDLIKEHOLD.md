@@ -1052,9 +1052,11 @@ terskler, men fortsatt finner gyldig radarnedbør. Swift-parsing/typekontroll og
 diffkontroll består; XCTest er ikke kjørt fordi CoreSimulator mangler fungerende
 runtime.
 
-**AUTO-295 · ÅPEN** — Test tie-break for like tidsstempler når vanlige
-værverdier er identiske, men radarprøvene har forskjellig rekkefølge; utvalget
-skal være stabilt uavhengig av inputrekkefølge.
+**AUTO-295 · FULLFØRT 2026-09-29** — La til regresjonstest der prognoser med
+likt klokkeslett og ellers like vanlige værdetaljer skilles på usorterte
+radarprøver. Hjemmets valgte prøve er den samme ved omvendt rekkefølge.
+Swift-parsing/typekontroll og diffkontroll består; XCTest er ikke kjørt fordi
+CoreSimulator mangler fungerende runtime.
 
 **AUTO-296 · ÅPEN** — Test at `ForecastHourSelection.current` gir samme
 værprøve når prognosen bare har framtidige timer med likeste tidligste
@@ -1063,6 +1065,10 @@ tidsstempel, uavhengig av inputrekkefølge.
 **AUTO-297 · ÅPEN** — Legg til regresjonstest som låser at `precipitationOnset`
 inkluderer en radartid nøyaktig på `after`-grensen og en rate nøyaktig lik
 terskelen.
+
+**AUTO-298 · ÅPEN** — Legg til en modelltest for femminutters standardintervallet
+fra `PrecipitationSample.nominalInterval` når listen er tom eller ikke har
+noen positive tidsavstander.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

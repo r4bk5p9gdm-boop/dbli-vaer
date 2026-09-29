@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-09-29T15:35:27Z",
+  "lastScheduledStart": "2026-09-29T19:39:26Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-294 fullført: regresjonstest bekrefter at precipitationOnset avviser ikke-endelige radarrater og terskler, men fortsatt finner gyldig radarprøve. AUTO-297 lagt til for eksakt cutoff-/terskelgrense. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-295 fullført: ForecastHourSelection.current tie-break testes nå med identiske ordinære værdetaljer og usortert, ulikt radarinnhold; begge inputrekkefølger velger samme radarprofil. AUTO-298 lagt til for femminutters fallback i nominalInterval. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }
