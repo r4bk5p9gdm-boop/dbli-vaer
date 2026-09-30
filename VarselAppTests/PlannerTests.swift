@@ -1658,6 +1658,25 @@ final class PlannerTests: XCTestCase {
         XCTAssertNil(hour.precipitationOnset(atOrAbove: 1.1, after: cutoff))
     }
 
+    func testPrecipitationOnsetChoosesEarliestQualifyingSampleWithoutCutoff() {
+        let earliest = base.addingTimeInterval(5 * 60)
+        let hour = ForecastHour(
+            time: base,
+            temp: 8,
+            precip: 0,
+            wind: 2,
+            cloud: 90,
+            dew: 6,
+            radarSamples: [
+                PrecipitationSample(time: base.addingTimeInterval(20 * 60), rate: 0.8),
+                PrecipitationSample(time: base, rate: 0.3),
+                PrecipitationSample(time: earliest, rate: 0.6),
+            ]
+        )
+
+        XCTAssertEqual(hour.precipitationOnset(atOrAbove: 0.5), earliest)
+    }
+
     func testPrecipitationOnsetIgnoresNonFiniteRadarRatesAndThresholds() {
         let invalidRates = [Double.nan, .infinity, -.infinity]
         let invalidRateHour = ForecastHour(

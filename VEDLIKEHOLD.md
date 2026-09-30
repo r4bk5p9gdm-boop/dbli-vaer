@@ -1080,8 +1080,10 @@ bekrefter at `ForecastHourSelection.current` returnerer `nil` for en tom
 prognose. Swift-parsing/typekontroll og diffkontroll består; XCTest er ikke
 kjørt fordi CoreSimulator mangler fungerende runtime.
 
-**AUTO-300 · ÅPEN** — Test at `precipitationOnset` uten `after`-grense fortsatt
-velger tidligste kvalifiserende prøve fra usortert radarinput.
+**AUTO-300 · FULLFØRT 2026-09-30** — La til regresjonstest som bekrefter at
+`precipitationOnset` uten `after`-grense velger tidligste kvalifiserende prøve
+fra usortert radarinput. Swift-parsing/typekontroll og diffkontroll består;
+XCTest er ikke kjørt fordi CoreSimulator mangler fungerende runtime.
 
 **AUTO-301 · ÅPEN** — Legg til permutasjonstest som bekrefter at
 `PrecipitationSample.nominalInterval` gir samme svar for flere rekkefølger av
@@ -1090,6 +1092,9 @@ samme prøver, også når noen tidsstempler er duplikater.
 **AUTO-302 · ÅPEN** — Test at `ForecastHourSelection.current` inkluderer en
 prognoseprøve med tidsstempel nøyaktig lik `now` i stedet for å falle tilbake
 til en framtidig prøve.
+
+**AUTO-303 · ÅPEN** — Legg til test for at `precipitationOnset` returnerer
+`nil` når radarprøver mangler eller listen er tom.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
