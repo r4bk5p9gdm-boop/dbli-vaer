@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-09-30T07:47:55Z",
+  "lastScheduledStart": "2026-09-30T11:47:36Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-298 fullført: nominalInterval har nå regresjonstest for standard fem minutter ved tom liste, ett element og duplikate tidsstempler. AUTO-301 lagt til for rekkefølgeuavhengighet. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-299 fullført: la til regresjonstest for at ForecastHourSelection.current returnerer nil med tom prognose. AUTO-302 lagt til for nøyaktig now-grense. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

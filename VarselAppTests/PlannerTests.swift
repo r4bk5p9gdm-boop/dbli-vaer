@@ -4939,6 +4939,10 @@ final class PlannerTests: XCTestCase {
         )?.time, ten.time, "When every sample is future-dated, fall back to the earliest one.")
     }
 
+    func testCurrentForecastSelectionReturnsNilForEmptyForecast() {
+        XCTAssertNil(ForecastHourSelection.current(in: [], at: Date()))
+    }
+
     func testCurrentForecastSelectionBreaksIdenticalTimestampTiesIndependentlyOfInputOrder() {
         let time = Date(timeIntervalSince1970: 1_900_000_000)
         let lighter = ForecastHour(time: time, temp: 8, precip: 0.2, wind: 1, cloud: 60, dew: 7)
