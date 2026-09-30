@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-09-30T03:46:48Z",
+  "lastScheduledStart": "2026-09-30T07:47:55Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-297 fullført: regresjonstest låser inklusiv after-grense og inklusiv nedbørsterskel for precipitationOnset. AUTO-300 lagt til for usortert radarinput uten cutoff. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-298 fullført: nominalInterval har nå regresjonstest for standard fem minutter ved tom liste, ett element og duplikate tidsstempler. AUTO-301 lagt til for rekkefølgeuavhengighet. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

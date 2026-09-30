@@ -1069,15 +1069,21 @@ mangler fungerende runtime.
 og en rate nøyaktig lik terskelen. Swift-parsing/typekontroll og diffkontroll
 består; XCTest er ikke kjørt fordi CoreSimulator mangler fungerende runtime.
 
-**AUTO-298 · ÅPEN** — Legg til en modelltest for femminutters standardintervallet
-fra `PrecipitationSample.nominalInterval` når listen er tom eller ikke har
-noen positive tidsavstander.
+**AUTO-298 · FULLFØRT 2026-09-30** — La til modelltest som låser femminutters
+standardintervallet fra `PrecipitationSample.nominalInterval` for tom liste,
+ett element og gjentatte tidsstempler uten positive tidsavstander.
+Swift-parsing/typekontroll og diffkontroll består; XCTest er ikke kjørt fordi
+CoreSimulator mangler fungerende runtime.
 
 **AUTO-299 · ÅPEN** — Legg til en eksplisitt regresjonstest som bekrefter at
 `ForecastHourSelection.current` returnerer `nil` for en tom prognose.
 
 **AUTO-300 · ÅPEN** — Test at `precipitationOnset` uten `after`-grense fortsatt
 velger tidligste kvalifiserende prøve fra usortert radarinput.
+
+**AUTO-301 · ÅPEN** — Legg til permutasjonstest som bekrefter at
+`PrecipitationSample.nominalInterval` gir samme svar for flere rekkefølger av
+samme prøver, også når noen tidsstempler er duplikater.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

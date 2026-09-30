@@ -1776,6 +1776,17 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(PrecipitationSample.nominalInterval(in: longGap), 15 * 60)
     }
 
+    func testNominalPrecipitationIntervalDefaultsToFiveMinutesWithoutPositiveGaps() {
+        let duplicateTime = PrecipitationSample(time: base, rate: 0.4)
+
+        XCTAssertEqual(PrecipitationSample.nominalInterval(in: []), 5 * 60)
+        XCTAssertEqual(PrecipitationSample.nominalInterval(in: [duplicateTime]), 5 * 60)
+        XCTAssertEqual(
+            PrecipitationSample.nominalInterval(in: [duplicateTime, duplicateTime]),
+            5 * 60
+        )
+    }
+
     func testNowcastIsLimitedToYrsNinetyMinuteWindow() {
         let samples = stride(from: 0, through: 110, by: 5).map { minute in
             PrecipitationSample(time: base.addingTimeInterval(TimeInterval(minute * 60)), rate: 1)
