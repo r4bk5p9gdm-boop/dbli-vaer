@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-09-29T23:42:29Z",
+  "lastScheduledStart": "2026-09-30T03:46:48Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-296 fullført: regresjonstest bekrefter at ForecastHourSelection.current sin framtidsfallback velger samme værprøve for like tidligste tidsstempler, uavhengig av rekkefølge. AUTO-299 lagt til for tom prognose. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-297 fullført: regresjonstest låser inklusiv after-grense og inklusiv nedbørsterskel for precipitationOnset. AUTO-300 lagt til for usortert radarinput uten cutoff. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

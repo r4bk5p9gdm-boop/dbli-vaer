@@ -1689,6 +1689,25 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(validHour.precipitationOnset(atOrAbove: 0.5), validTime)
     }
 
+    func testPrecipitationOnsetIncludesExactCutoffAndThreshold() {
+        let cutoff = base.addingTimeInterval(10 * 60)
+        let hour = ForecastHour(
+            time: base,
+            temp: 8,
+            precip: 0,
+            wind: 2,
+            cloud: 90,
+            dew: 6,
+            radarSamples: [
+                PrecipitationSample(time: cutoff.addingTimeInterval(60), rate: 0.4),
+                PrecipitationSample(time: cutoff.addingTimeInterval(-1), rate: 1.0),
+                PrecipitationSample(time: cutoff, rate: 0.5),
+            ]
+        )
+
+        XCTAssertEqual(hour.precipitationOnset(atOrAbove: 0.5, after: cutoff), cutoff)
+    }
+
     func testMalformedPrecipitationValuesDoNotCreateRainRisk() {
         let time = Date(timeIntervalSince1970: 1_900_000_000)
         let invalidAmounts = [Double.nan, Double.infinity, -.infinity, -0.1]
