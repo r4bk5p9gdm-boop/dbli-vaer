@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-09-30T15:53:10Z",
+  "lastScheduledStart": "2026-09-30T20:02:32Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-300 fullført: test bekrefter at precipitationOnset uten cutoff finner tidligste kvalifiserende prøve selv ved usortert input. AUTO-303 lagt til for manglende/tom radarprøveliste. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-301 fullført: permutasjonstest bekrefter at nominalInterval er uavhengig av rekkefølge også med dupliserte tidsstempler. AUTO-304 lagt til for sommertidsovergang. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

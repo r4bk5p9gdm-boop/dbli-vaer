@@ -1775,6 +1775,26 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(PrecipitationSample.nominalInterval(in: samples), 5 * 60)
     }
 
+    func testNominalPrecipitationIntervalIsIndependentOfSampleOrderWithDuplicateTimes() {
+        let samples = [
+            PrecipitationSample(time: base.addingTimeInterval(20 * 60), rate: 0.4),
+            PrecipitationSample(time: base, rate: 0.2),
+            PrecipitationSample(time: base.addingTimeInterval(10 * 60), rate: 0.6),
+            PrecipitationSample(time: base.addingTimeInterval(10 * 60), rate: 0.8),
+            PrecipitationSample(time: base.addingTimeInterval(5 * 60), rate: 0.3)
+        ]
+        let permutations = [
+            samples,
+            Array(samples.reversed()),
+            [samples[2], samples[4], samples[0], samples[3], samples[1]],
+            [samples[3], samples[1], samples[4], samples[2], samples[0]]
+        ]
+
+        for permutation in permutations {
+            XCTAssertEqual(PrecipitationSample.nominalInterval(in: permutation), 5 * 60)
+        }
+    }
+
     func testNominalPrecipitationIntervalClampsShortAndLongGaps() {
         let shortGap = [0.0, 30.0].map {
             PrecipitationSample(time: base.addingTimeInterval($0), rate: 0.4)
