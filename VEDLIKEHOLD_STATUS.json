@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-01T14:06:23Z",
+  "lastScheduledStart": "2026-10-01T14:36:23Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-310 fullført: 100 % nedbørssannsynlighet bruker precipMax, mens 101 % faller tilbake til observert rate. AUTO-313 lagt til for ikke-endelige temperaturverdier i temperaturvarsler. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-311 fullført: temperaturmålinger nøyaktig lik over-/under-terskel gir ikke varsel. AUTO-314 lagt til for rullerende temp-extrema avgrenset til lokal kalenderdag. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

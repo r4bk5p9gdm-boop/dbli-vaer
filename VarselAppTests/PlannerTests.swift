@@ -706,6 +706,18 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(legacy.temperatureDirection, .below)
     }
 
+    func testTemperatureRuleDoesNotMatchExactThresholdInEitherDirection() {
+        let sample = ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 0, dew: 5)
+
+        for direction in Rule.TemperatureDirection.allCases {
+            var rule = Rule(type: .temperatur)
+            rule.threshold = 10
+            rule.temperatureDirection = direction
+
+            XCTAssertFalse(rule.matches(sample), "\(direction.label) must be strict at its threshold.")
+        }
+    }
+
     func testDisplayThresholdsAndDialectSeparator() throws {
         XCTAssertEqual(WeatherLanguage.text("om 2 timer", style: .inntrondersk), "om 2 tima")
         XCTAssertEqual(WeatherLanguage.text("om tre timer", style: .inntrondersk), "om tre tima")
