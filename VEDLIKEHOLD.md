@@ -1246,8 +1246,13 @@ bekrefter at prøverekkefølgen og temperaturene blir unike/sorterte. Swift-
 parsing/typekontroll og diffkontroll består; XCTest ble ikke kjørt fordi
 CoreSimulator er utilgjengelig.
 
-**AUTO-328 · ÅPEN** — Kontroller om aggregater for temperatur, vind og dugg i
-pushdetaljer velger samme entydige prognoseprøver som varselplanleggeren.
+**AUTO-328 · FULLFØRT 2026-10-01** — La til planleggerintegrasjonstest for
+temperatur-, vind- og duggdetaljer med konfliktduplikat på siste prognosetime.
+Alle detaljene samsvarer med varsel uten duplikat: temperatur og dugg beholder
+tre timers varighet, duggpunktet bruker første måling, og vindkastet 40 m/s
+blir ikke medregnet i stedet for de unike timenes 12 m/s. Swift-parsing/
+typekontroll og diffkontroll består; XCTest ble ikke kjørt fordi CoreSimulator
+er utilgjengelig.
 
 **AUTO-329 · ÅPEN** — Undersøk om `Planner.statusDetail` trenger samme vern mot
 ikke-endelige temperaturmålinger som den rullerende detaljen.
@@ -1255,6 +1260,10 @@ ikke-endelige temperaturmålinger som den rullerende detaljen.
 **AUTO-330 · ÅPEN** — Test at daggrupperingen beholder begge virkelige
 tidspunktene for en gjentatt lokaltime ved høstens DST-overgang, men fjerner et
 eksakt duplikat av ett av tidspunktene.
+
+**AUTO-331 · ÅPEN** — Test at `Planner.planAll` bevarer separate vind-, dugg-
+og temperaturvarsler selv når regnregler for samme sted dedupliseres mot
+hverandre.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

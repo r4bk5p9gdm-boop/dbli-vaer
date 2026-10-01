@@ -3237,6 +3237,62 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(withDuplicate.alerts.first?.eventDetail?.contains("i 4 timer") == true)
     }
 
+    func testPlannerDeduplicatesSamplesBeforeTemperatureWindAndDewPushDetails() throws {
+        let uniqueHours = forecast(values: [
+            (9, 0, 3, 40, 8),
+            (8, 0, 3, 40, 7),
+            (7, 0, 3, 40, 6),
+        ])
+        var gustHours = uniqueHours
+        gustHours[0].gust = 10
+        gustHours[1].gust = 12
+        gustHours[2].gust = 11
+        let duplicateTime = uniqueHours[2].time
+        let now = base.addingTimeInterval(-2 * 3_600)
+
+        func plannedDetail(for rule: Rule, hours: [ForecastHour]) -> String? {
+            Planner.plan(rule: rule, forecast: hours, placeName: "på Klinga", now: now)
+                .alerts.first?.eventDetail
+        }
+
+        var temperatureRule = Rule(type: .temperatur)
+        temperatureRule.threshold = 10
+        let temperatureDuplicate = ForecastHour(
+            time: duplicateTime, temp: 0, precip: 0, wind: 3, cloud: 40, dew: 6
+        )
+        let temperatureDetail = try XCTUnwrap(plannedDetail(for: temperatureRule, hours: uniqueHours))
+        let duplicateTemperatureDetail = try XCTUnwrap(plannedDetail(
+            for: temperatureRule,
+            hours: [uniqueHours[0], uniqueHours[1], uniqueHours[2], temperatureDuplicate]
+        ))
+        XCTAssertEqual(duplicateTemperatureDetail, temperatureDetail)
+        XCTAssertTrue(temperatureDetail.contains("i 3 timer"), temperatureDetail)
+
+        var windRule = Rule(type: .vind)
+        windRule.threshold = 9
+        var windDuplicate = gustHours[2]
+        windDuplicate.gust = 40
+        let windDetail = try XCTUnwrap(plannedDetail(for: windRule, hours: gustHours))
+        let duplicateWindDetail = try XCTUnwrap(plannedDetail(
+            for: windRule, hours: [gustHours[0], gustHours[1], gustHours[2], windDuplicate]
+        ))
+        XCTAssertEqual(duplicateWindDetail, windDetail)
+        XCTAssertTrue(windDetail.contains("12 m/s"), windDetail)
+
+        var dewRule = Rule(type: .dugg)
+        dewRule.threshold = 1
+        let dewDuplicate = ForecastHour(
+            time: duplicateTime, temp: 7, precip: 0, wind: 3, cloud: 40, dew: 7
+        )
+        let dewDetail = try XCTUnwrap(plannedDetail(for: dewRule, hours: uniqueHours))
+        let duplicateDewDetail = try XCTUnwrap(plannedDetail(
+            for: dewRule, hours: [uniqueHours[0], uniqueHours[1], uniqueHours[2], dewDuplicate]
+        ))
+        XCTAssertEqual(duplicateDewDetail, dewDetail)
+        XCTAssertTrue(dewDetail.contains("i 3 timer"), dewDetail)
+        XCTAssertTrue(dewDetail.contains("ved 9°"), dewDetail)
+    }
+
     func testConflictingDuplicateForecastTimestampDoesNotInflateRainSummary() {
         var rule = Rule(type: .regn)
         rule.threshold = 0.5

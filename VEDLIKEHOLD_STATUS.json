@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-01T22:36:25Z",
+  "lastScheduledStart": "2026-10-01T23:06:26Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-327 fullført: ForecastDay.make dedupliserer nå eksakte prognosetidspunkter før timekortene sampler dagstimer, og test bekrefter sorterte unike timer med første kildemåling beholdt. AUTO-330 lagt til for DST-gjentatt lokal time i daggruppering. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-328 fullført: planleggerintegrasjonstest bekrefter at eksakte konfliktduplikater ikke endrer temperatur-, vind- eller duggdetaljer; varighet og aggregater kommer fra de entydige prognoseprøvene. AUTO-331 lagt til for samspill mellom planAll-varsler på tvers av værtyper. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }
