@@ -2669,6 +2669,43 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testRotatingTemperatureExtremeUsesSingleRemainingSampleInLocalDay() throws {
+        let calendar = Calendar.current
+        let dayStart = calendar.startOfDay(for: base)
+        let earlierToday = try XCTUnwrap(calendar.date(bySettingHour: 12, minute: 0, second: 0, of: dayStart))
+        let eventAt = try XCTUnwrap(calendar.date(bySettingHour: 23, minute: 0, second: 0, of: dayStart))
+        let nextDay = try XCTUnwrap(calendar.date(byAdding: .day, value: 1, to: dayStart))
+        var below = Rule(type: .temperatur)
+        below.threshold = 10
+        var above = Rule(type: .temperatur)
+        above.threshold = 20
+        above.temperatureDirection = .above
+        let place = Place(name: "Klinga", lat: 64, lon: 11, rules: [below, above])
+        let onlyRemainingSample = ForecastHour(
+            time: eventAt, temp: 6, precip: 0, wind: 1, cloud: 0, dew: 0
+        )
+        let forecast = [
+            ForecastHour(time: earlierToday, temp: -15, precip: 0, wind: 1, cloud: 0, dew: 0),
+            onlyRemainingSample,
+            ForecastHour(time: nextDay, temp: 100, precip: 0, wind: 1, cloud: 0, dew: 0),
+        ]
+
+        XCTAssertEqual(
+            Planner.rotatingStatusDetail(
+                for: WeatherStatus(ruleID: below.id, type: .temperatur, text: "", eventAt: eventAt, isNow: true),
+                place: place, forecast: forecast
+            ),
+            "Laveste temperatur i dag blir 6°C."
+        )
+        XCTAssertEqual(
+            Planner.rotatingStatusDetail(
+                for: WeatherStatus(ruleID: above.id, type: .temperatur, text: "", eventAt: eventAt, isNow: true),
+                place: place, forecast: forecast
+            ),
+            "Høyeste temperatur i dag blir 6°C."
+        )
+    }
+
     func testWindStrengthUsesEverydayBeaufortNames() {
         XCTAssertEqual(windStrengthLabel(for: 0), "stille")
         XCTAssertEqual(windStrengthLabel(for: 4), "lett bris")

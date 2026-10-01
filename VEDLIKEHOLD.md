@@ -1173,8 +1173,12 @@ Regresjonstesten bruker gyldig 20 °C-måling og NaN/±uendelig terskel i begge
 retninger. Swift-parsing/typekontroll og diffkontroll består; XCTest ble ikke
 kjørt fordi CoreSimulator-tjenesten er utilgjengelig.
 
-**AUTO-317 · ÅPEN** — Legg til regresjonstest for rullerende temperaturkort
-som bare har én gjenværende prøve i det lokale døgnet.
+**AUTO-317 · FULLFØRT 2026-10-01** — La til regresjonstest for rullerende
+temperaturkort kl. 23 når bare én prøve gjenstår i det lokale døgnet. Den
+kontrollerer både laveste og høyeste temperatur, og at tidligere måling samme
+dag og morgendagens verdi ikke påvirker teksten. Swift-parsing/typekontroll og
+diffkontroll består; XCTest ble ikke kjørt fordi CoreSimulator er
+utilgjengelig.
 
 **AUTO-318 · ÅPEN** — Test at `WeatherBandHours.make` håndterer
 ikke-sorterte tidsstempler i samme celle og returnerer dem i stigende
@@ -1183,6 +1187,10 @@ tidsrekkefølge etter deduplisering.
 **AUTO-319 · ÅPEN** — Legg til en planleggerregresjon som sikrer at en
 temperaturregel med NaN eller ±uendelig terskel ikke produserer pushvarsel
 selv om prognosetemperaturen ellers ville passert sammenligningen.
+
+**AUTO-320 · ÅPEN** — Kontroller at rullerende temperaturmin/maks ignorerer
+ikke-endelige temperaturverdier i gjenværende dagsprøver når gyldige prøver
+også finnes.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

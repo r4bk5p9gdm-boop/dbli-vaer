@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-01T17:06:24Z",
+  "lastScheduledStart": "2026-10-01T17:36:24Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-316 fullført: temperaturregel avviser ikke-endelig terskel også når prognosemålingen er gyldig; test dekker NaN/±uendelig i begge retninger. AUTO-319 lagt til for planleggerintegrasjon. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-317 fullført: la til test ved kl. 23 der bare én prøve gjenstår i lokalt døgn; laveste/høyeste vises fra prøven og ekstreme verdier tidligere i dagen/i morgen påvirker ikke teksten. AUTO-320 lagt til for ikke-endelige restverdier. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }
