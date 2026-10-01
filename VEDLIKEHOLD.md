@@ -1112,9 +1112,10 @@ værprøver med samme tidsstempel nøyaktig lik `now`; begge inputrekkefølger m
 velge prøven med høyest nedbørsrate. Swift-parsing/typekontroll og diffkontroll
 består; XCTest er ikke kjørt fordi CoreSimulator mangler fungerende runtime.
 
-**AUTO-306 · ÅPEN** — Legg til regresjonstest som bekrefter at
-`precipitationOnset` bare finner radarbasert starttid og ikke utleder et
-klokkeslett fra Yr-timeverdien alene når radarmålinger mangler.
+**AUTO-306 · FULLFØRT 2026-10-01** — La til test som bekrefter at en Yr-time
+med nedbør fortsatt har nedbørsrate, men ikke får radarbasert starttid når
+radarmålinger mangler. Swift-parsing/typekontroll og diffkontroll består;
+XCTest er ikke kjørt fordi CoreSimulator mangler fungerende runtime.
 
 **AUTO-307 · ÅPEN** — Legg til regresjonstest for at `precipitationRiskRate`
 ignorerer `precipMax` når `precipProbability` mangler, og faller tilbake til
@@ -1123,6 +1124,9 @@ observert/radarbasert nedbørsrate.
 **AUTO-308 · ÅPEN** — Test den inklusive 20 %-grensen for at
 `precipitationRiskRate` kan bruke `precipMax`, inkludert at verdien like under
 grensen ikke gjør det.
+
+**AUTO-309 · ÅPEN** — Utvid snøestimatets regresjonstest slik at den øvre
+13:1-konverteringsgrensen er eksplisitt låst ved svært lave temperaturer.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

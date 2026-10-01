@@ -1700,6 +1700,22 @@ final class PlannerTests: XCTestCase {
         XCTAssertNil(emptySamples.precipitationOnset(atOrAbove: 0.5))
     }
 
+    func testPrecipitationOnsetDoesNotInferRadarTimingFromYrHourlyPrecipitation() {
+        let hour = ForecastHour(
+            time: base,
+            temp: 8,
+            precip: 0.8,
+            wind: 2,
+            cloud: 90,
+            dew: 6,
+            precipMax: 1.2,
+            precipProbability: 60
+        )
+
+        XCTAssertEqual(hour.precipitationRate, 0.8)
+        XCTAssertNil(hour.precipitationOnset(atOrAbove: 0.5))
+    }
+
     func testPrecipitationOnsetIgnoresNonFiniteRadarRatesAndThresholds() {
         let invalidRates = [Double.nan, .infinity, -.infinity]
         let invalidRateHour = ForecastHour(

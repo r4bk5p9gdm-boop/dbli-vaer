@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-01T11:28:32Z",
+  "lastScheduledStart": "2026-10-01T11:58:32Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-305 fullført: tie-break ved duplisert tidsstempel nøyaktig lik now velger høyeste nedbørsrate i begge inputrekkefølger. AUTO-308 lagt til for inklusiv 20 %-grense i nedbørsrisiko. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-306 fullført: Yr-times nedbørsrate beholdes, men precipitationOnset utleder ikke starttid uten radarmålinger. AUTO-309 lagt til for eksplisitt 13:1-snowratio cap-test. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }
