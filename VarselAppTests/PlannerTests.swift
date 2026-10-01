@@ -2744,6 +2744,42 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testRotatingTemperatureDetailSkipsNonFiniteNearestEventSample() throws {
+        let calendar = Calendar.current
+        let dayStart = calendar.startOfDay(for: base)
+        let eventAt = try XCTUnwrap(calendar.date(bySettingHour: 8, minute: 0, second: 0, of: dayStart))
+        let nextHour = try XCTUnwrap(calendar.date(byAdding: .hour, value: 1, to: eventAt))
+        let laterHour = try XCTUnwrap(calendar.date(byAdding: .hour, value: 2, to: eventAt))
+        var rule = Rule(type: .temperatur)
+        rule.threshold = 10
+        let place = Place(name: "Klinga", lat: 64, lon: 11, rules: [rule])
+        let validHours = [
+            ForecastHour(time: nextHour, temp: 6, precip: 0, wind: 1, cloud: 0, dew: 0),
+            ForecastHour(time: laterHour, temp: 3, precip: 0, wind: 1, cloud: 0, dew: 0),
+        ]
+
+        for invalidTemperature in [Double.nan, .infinity, -.infinity] {
+            let forecast = [
+                ForecastHour(time: eventAt, temp: invalidTemperature, precip: 0, wind: 1, cloud: 0, dew: 0)
+            ] + validHours
+            let future = WeatherStatus(
+                ruleID: rule.id, type: .temperatur, text: "", eventAt: eventAt, isNow: false
+            )
+            let current = WeatherStatus(
+                ruleID: rule.id, type: .temperatur, text: "", eventAt: eventAt, isNow: true
+            )
+
+            XCTAssertEqual(
+                Planner.rotatingStatusDetail(for: future, place: place, forecast: forecast),
+                "Laveste temperatur blir 6°C."
+            )
+            XCTAssertEqual(
+                Planner.rotatingStatusDetail(for: current, place: place, forecast: forecast),
+                "Laveste temperatur i dag blir 3°C."
+            )
+        }
+    }
+
     func testWindStrengthUsesEverydayBeaufortNames() {
         XCTAssertEqual(windStrengthLabel(for: 0), "stille")
         XCTAssertEqual(windStrengthLabel(for: 4), "lett bris")

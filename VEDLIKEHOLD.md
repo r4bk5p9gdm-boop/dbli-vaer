@@ -1212,9 +1212,12 @@ regntimer med samme serie pluss et duplikat; begge gir ett varsel med fire
 timers varighet. Swift-parsing/typekontroll og diffkontroll består; XCTest ble
 ikke kjørt fordi CoreSimulator er utilgjengelig.
 
-**AUTO-323 · ÅPEN** — Sørg for at et rullerende temperaturkort ikke viser
-NaN/±uendelig når selve nærmeste hendelsesprøven har ugyldig temperatur, selv
-om senere dagsprøver er gyldige.
+**AUTO-323 · FULLFØRT 2026-10-01** — Rullerende temperaturdetaljer velger nå
+nærmeste prøve med endelig temperatur, ikke en NaN/±uendelig hendelsesprøve.
+Regresjonstest dekker alle tre ugyldige verdier for både framtidig detalj og
+NÅ-ekstrem, med gyldige prøver senere samme dag. Swift-parsing/typekontroll og
+diffkontroll består; XCTest ble ikke kjørt fordi CoreSimulator er
+utilgjengelig.
 
 **AUTO-324 · ÅPEN** — Test at duplikat utenfor værbåndets 07–07-intervall
 ikke skygger for en prøve med samme tidsstempel som ligger innenfor intervallet.
@@ -1222,6 +1225,9 @@ ikke skygger for en prøve med samme tidsstempel som ligger innenfor intervallet
 **AUTO-325 · ÅPEN** — Test at et konfliktduplikat med en avvikende
 nedbørsmengde ikke skjevfordeler mengdesammendraget i det planlagte varselet;
 første prognoseprøve for tidspunktet skal være kilden.
+
+**AUTO-326 · ÅPEN** — Legg til regresjonstest som sikrer at temperaturdetaljen
+blir utelatt når prognosen ikke inneholder noen måling med endelig temperatur.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

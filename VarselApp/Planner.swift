@@ -431,7 +431,10 @@ enum Planner {
         for status: WeatherStatus, place: Place, forecast: [ForecastHour],
         headlineDescribesTime: Bool = false
     ) -> String? {
-        guard let hour = forecast.min(by: {
+        let detailForecast = status.type == .temperatur
+            ? forecast.filter { $0.temp.isFinite }
+            : forecast
+        guard let hour = detailForecast.min(by: {
             abs($0.time.timeIntervalSince(status.eventAt)) < abs($1.time.timeIntervalSince(status.eventAt))
         }) else { return nil }
 
