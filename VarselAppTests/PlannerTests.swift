@@ -4920,6 +4920,25 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(secondLocal0230.timeIntervalSince(firstLocal0230), 3_600)
     }
 
+    func testWeatherBandIgnoresOutsideSampleWithSameWallClockHour() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let day = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 9, day: 22)))
+        let nextDay = try XCTUnwrap(calendar.date(byAdding: .day, value: 1, to: day))
+        let outsideAtSix = try XCTUnwrap(calendar.date(bySettingHour: 6, minute: 0, second: 0, of: day))
+        let insideAtSix = try XCTUnwrap(calendar.date(bySettingHour: 6, minute: 0, second: 0, of: nextDay))
+        let outside = ForecastHour(time: outsideAtSix, temp: 99, precip: 0, wind: 1, cloud: 0, dew: 0)
+        let inside = ForecastHour(time: insideAtSix, temp: 6, precip: 0, wind: 1, cloud: 0, dew: 0)
+        let insideDuplicate = ForecastHour(time: insideAtSix, temp: 99, precip: 0, wind: 1, cloud: 0, dew: 0)
+
+        let band = WeatherBandHours.make(
+            for: day, from: [outside, inside, insideDuplicate], calendar: calendar
+        )
+
+        XCTAssertEqual(band.map(\.time), [insideAtSix])
+        XCTAssertEqual(band.first?.temp, 6)
+    }
+
     func testWeatherBandWallClockIntervalsHandleBothDaylightSavingTransitions() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))

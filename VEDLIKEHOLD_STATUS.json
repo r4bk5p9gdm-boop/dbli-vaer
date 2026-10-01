@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-01T20:36:25Z",
+  "lastScheduledStart": "2026-10-01T21:06:25Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-323 fullført: rullerende temperaturdetalj ignorerer NaN/±uendelig hendelsesprøve og velger nærmeste gyldige måling; test dekker framtidig detalj og NÅ-ekstrem. AUTO-326 lagt til for prognose uten noen endelig temperatur. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-324 fullført: test bekrefter at prøve kl. 06 før lokal 07-grense ikke påvirker værbåndet, mens neste dags 06-prøve beholdes og eksakt duplikat fjernes. Oppgavepresiseringen skiller klokktime fra identisk absolutt tidsstempel. AUTO-327 lagt til for kalenderdags-/timekortduplikater. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

@@ -1219,8 +1219,12 @@ NÅ-ekstrem, med gyldige prøver senere samme dag. Swift-parsing/typekontroll og
 diffkontroll består; XCTest ble ikke kjørt fordi CoreSimulator er
 utilgjengelig.
 
-**AUTO-324 · ÅPEN** — Test at duplikat utenfor værbåndets 07–07-intervall
-ikke skygger for en prøve med samme tidsstempel som ligger innenfor intervallet.
+**AUTO-324 · FULLFØRT 2026-10-01** — Rettet oppgavebeskrivelsen til samme
+lokale klokktime på ulike dager: samme absolutte tidsstempel kan ikke være
+både utenfor og innenfor et intervall. Regresjonstesten bekrefter at 06-prøven
+før båndets 07-grense ignoreres, mens neste dags 06-prøve beholdes og dens
+eksakte duplikat fjernes. Swift-parsing/typekontroll og diffkontroll består;
+XCTest ble ikke kjørt fordi CoreSimulator er utilgjengelig.
 
 **AUTO-325 · ÅPEN** — Test at et konfliktduplikat med en avvikende
 nedbørsmengde ikke skjevfordeler mengdesammendraget i det planlagte varselet;
@@ -1228,6 +1232,9 @@ første prognoseprøve for tidspunktet skal være kilden.
 
 **AUTO-326 · ÅPEN** — Legg til regresjonstest som sikrer at temperaturdetaljen
 blir utelatt når prognosen ikke inneholder noen måling med endelig temperatur.
+
+**AUTO-327 · ÅPEN** — Undersøk og test at kalenderdags-/timekortvisningen ikke
+tegner eksakte duplikate prognosetidspunkter mer enn én gang.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
