@@ -4978,6 +4978,28 @@ final class PlannerTests: XCTestCase {
         )?.time, ten.time, "When every sample is future-dated, fall back to the earliest one.")
     }
 
+    func testCurrentForecastSelectionIncludesSampleExactlyAtNow() throws {
+        let now = Date(timeIntervalSince1970: 1_900_000_000)
+        let previous = ForecastHour(
+            time: now.addingTimeInterval(-60 * 60), temp: 8, precip: 0.2,
+            wind: 1, cloud: 60, dew: 7
+        )
+        let exact = ForecastHour(
+            time: now, temp: 9, precip: 0.7, wind: 1, cloud: 60, dew: 7
+        )
+        let future = ForecastHour(
+            time: now.addingTimeInterval(60 * 60), temp: 10, precip: 0,
+            wind: 1, cloud: 60, dew: 7
+        )
+
+        let selected = try XCTUnwrap(ForecastHourSelection.current(
+            in: [future, previous, exact], at: now
+        ))
+
+        XCTAssertEqual(selected.time, now)
+        XCTAssertEqual(selected.precipitationRate, 0.7)
+    }
+
     func testCurrentForecastSelectionReturnsNilForEmptyForecast() {
         XCTAssertNil(ForecastHourSelection.current(in: [], at: Date()))
     }

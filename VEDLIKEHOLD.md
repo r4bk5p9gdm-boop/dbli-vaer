@@ -1091,9 +1091,11 @@ rekkefølger av samme usorterte prøver med dupliserte tidsstempler. Swift-parsi
 typekontroll og diffkontroll består; XCTest er ikke kjørt fordi CoreSimulator
 mangler fungerende runtime.
 
-**AUTO-302 · ÅPEN** — Test at `ForecastHourSelection.current` inkluderer en
-prognoseprøve med tidsstempel nøyaktig lik `now` i stedet for å falle tilbake
-til en framtidig prøve.
+**AUTO-302 · FULLFØRT 2026-10-01** — La til test med både tidligere, nøyaktig
+nåværende og framtidig prøve; `ForecastHourSelection.current` må velge prøven
+akkurat lik `now`, ikke den tidligere eller framtidige. Swift-parsing/
+typekontroll og diffkontroll består; XCTest er ikke kjørt fordi CoreSimulator
+mangler fungerende runtime.
 
 **AUTO-303 · ÅPEN** — Legg til test for at `precipitationOnset` returnerer
 `nil` når radarprøver mangler eller listen er tom.
@@ -1101,6 +1103,10 @@ til en framtidig prøve.
 **AUTO-304 · ÅPEN** — Legg til test for at `PrecipitationSample.nominalInterval`
 regner faktisk forløpt tid over overgangen til sommertid, ikke forskjellen
 mellom lokale klokkeslett.
+
+**AUTO-305 · ÅPEN** — Utvid gjeldende-time-regresjonen slik at duplikater med
+tidsstempel nøyaktig lik `now` velges deterministisk ut fra værinnhold uansett
+inputrekkefølge.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-09-30T20:02:32Z",
+  "lastScheduledStart": "2026-10-01T00:02:59Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-301 fullført: permutasjonstest bekrefter at nominalInterval er uavhengig av rekkefølge også med dupliserte tidsstempler. AUTO-304 lagt til for sommertidsovergang. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-302 fullført: test bekrefter at current velger prognoseprøven med tidspunkt nøyaktig lik now fremfor tidligere eller framtidig prøve. AUTO-305 lagt til for deterministisk tie-break ved duplikater akkurat ved now. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }
