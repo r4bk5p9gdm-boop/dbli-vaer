@@ -4667,6 +4667,23 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(band.contains { $0.time == times[0].time || $0.time == times[6].time })
     }
 
+    func testWeatherBandDeduplicatesTimestampsKeepingFirstForecastSample() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let day = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 9, day: 22)))
+        let duplicateTime = try XCTUnwrap(calendar.date(bySettingHour: 8, minute: 0, second: 0, of: day))
+        let first = ForecastHour(time: duplicateTime, temp: 6, precip: 0, wind: 1, cloud: 20, dew: 2)
+        let duplicate = ForecastHour(time: duplicateTime, temp: 9, precip: 1, wind: 4, cloud: 80, dew: 7)
+        let later = ForecastHour(
+            time: duplicateTime.addingTimeInterval(3_600), temp: 7, precip: 0, wind: 2, cloud: 30, dew: 3
+        )
+
+        let band = WeatherBandHours.make(for: day, from: [first, duplicate, later], calendar: calendar)
+
+        XCTAssertEqual(band.map(\.time), [first.time, later.time])
+        XCTAssertEqual(band.first, first)
+    }
+
     func testWeatherBandWallClockIntervalsHandleBothDaylightSavingTransitions() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))

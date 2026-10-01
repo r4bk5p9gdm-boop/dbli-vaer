@@ -1160,14 +1160,22 @@ rullerende min/maks skal bare bruke gjenværende timeprøver samme dag.
 Swift-parsing/typekontroll og diffkontroll består; XCTest er ikke kjørt fordi
 CoreSimulator mangler fungerende runtime.
 
-**AUTO-315 · ÅPEN** — Undersøk og test at `WeatherBandHours.make` håndterer
-dupliserte tidsstempler deterministisk uten å tegne samme time flere ganger.
+**AUTO-315 · FULLFØRT 2026-10-01** — `WeatherBandHours.make` beholder nå
+første prognoseprøve per eksakt tidsstempel før sortering, slik at overlappende
+kildedata ikke tegner samme time flere ganger. Regresjonstesten dekker både
+deduplisering og at første prøve vinner ved motstridende verdier. Swift-parsing
+og diffkontroll består; XCTest er ikke kjørt fordi CoreSimulator mangler
+fungerende runtime.
 
 **AUTO-316 · ÅPEN** — Kontroller at temperaturvarsler avviser ikke-endelige
 terskelverdier selv når prognosetemperaturen er gyldig.
 
 **AUTO-317 · ÅPEN** — Legg til regresjonstest for rullerende temperaturkort
 som bare har én gjenværende prøve i det lokale døgnet.
+
+**AUTO-318 · ÅPEN** — Test at `WeatherBandHours.make` håndterer
+ikke-sorterte tidsstempler i samme celle og returnerer dem i stigende
+tidsrekkefølge etter deduplisering.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

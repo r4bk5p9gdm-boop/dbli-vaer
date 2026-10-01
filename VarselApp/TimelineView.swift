@@ -93,7 +93,15 @@ enum WeatherBandHours {
               let end = calendar.date(bySettingHour: 7, minute: 0, second: 0, of: nextDay) else {
             return []
         }
-        return forecast.filter { $0.time >= start && $0.time < end }.sorted { $0.time < $1.time }
+        // Keep the first source sample for a timestamp. Forecast feeds may
+        // overlap at refresh boundaries; returning both would draw the same
+        // hour twice, and an explicit first-wins rule avoids relying on sort
+        // stability for equal dates.
+        var seenTimestamps = Set<Date>()
+        return forecast
+            .filter { $0.time >= start && $0.time < end }
+            .filter { seenTimestamps.insert($0.time).inserted }
+            .sorted { $0.time < $1.time }
     }
 }
 
