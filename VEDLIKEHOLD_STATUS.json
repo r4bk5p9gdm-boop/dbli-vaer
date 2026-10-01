@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-01T18:06:24Z",
+  "lastScheduledStart": "2026-10-01T18:36:24Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-318 fullført: test med usorterte værprøver og konfliktduplikat bekrefter én sample per eksakt tidsstempel i stigende rekkefølge, med første forekomst beholdt. AUTO-321 lagt til for gjentatt lokal DST-time. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-319 fullført: Planner.plan integrasjonstest bekrefter at gyldig 21 °C-prognose ikke gir treff eller pushvarsel med NaN/±uendelig temperaturterskel i noen retning. AUTO-322 lagt til for duplikatpåvirkning på varighetsserier. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

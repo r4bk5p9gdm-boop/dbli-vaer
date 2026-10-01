@@ -1186,9 +1186,11 @@ per tidspunkt i stigende rekkefølge, med første prøve som vinner. Swift-
 parsing/typekontroll og diffkontroll består; XCTest ble ikke kjørt fordi
 CoreSimulator er utilgjengelig.
 
-**AUTO-319 · ÅPEN** — Legg til en planleggerregresjon som sikrer at en
-temperaturregel med NaN eller ±uendelig terskel ikke produserer pushvarsel
-selv om prognosetemperaturen ellers ville passert sammenligningen.
+**AUTO-319 · FULLFØRT 2026-10-01** — La til planleggerintegrasjonstest med
+gyldig 21 °C-prognose, NaN/±uendelig temperaturterskel og begge retninger.
+Testen bekrefter at hver kombinasjon gir verken treff eller pushvarsel.
+Swift-parsing/typekontroll og diffkontroll består; XCTest ble ikke kjørt fordi
+CoreSimulator er utilgjengelig.
 
 **AUTO-320 · ÅPEN** — Kontroller at rullerende temperaturmin/maks ignorerer
 ikke-endelige temperaturverdier i gjenværende dagsprøver når gyldige prøver
@@ -1197,6 +1199,10 @@ også finnes.
 **AUTO-321 · ÅPEN** — Test at høstens gjentatte lokale klokktime beholder begge
 ulike absolutte prognosetidspunkter, samtidig som et eksakt tidsduplikat
 fjernes.
+
+**AUTO-322 · ÅPEN** — Undersøk om eksakte duplikater i prognosen kan påvirke
+`Planner.matchingRuns`; test at de ikke forlenger en varighetsserie eller
+skaper et ekstra varsel.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

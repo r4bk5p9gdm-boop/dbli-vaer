@@ -3086,6 +3086,29 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(NotificationCopy.title(for: rule, placeName: "på Klinga"), "D bli Under 10°! på Klinga")
     }
 
+    func testPlannerDoesNotScheduleTemperatureAlertForNonFiniteThreshold() {
+        let hours = forecast(values: [(21, 0, 1, 20, 5)])
+
+        for threshold in [Double.nan, .infinity, -.infinity] {
+            for direction in Rule.TemperatureDirection.allCases {
+                var rule = Rule(type: .temperatur)
+                rule.threshold = threshold
+                rule.temperatureDirection = direction
+                rule.leadMinutes = 60
+
+                let result = Planner.plan(
+                    rule: rule,
+                    forecast: hours,
+                    placeName: "på Klinga",
+                    now: base.addingTimeInterval(-2 * 3_600)
+                )
+
+                XCTAssertTrue(result.hitIndices.isEmpty, "\(direction.label) accepted threshold \(threshold).")
+                XCTAssertTrue(result.alerts.isEmpty, "\(direction.label) scheduled threshold \(threshold).")
+            }
+        }
+    }
+
     func testLocalFrostMarginCreatesPossibleFrostAlertWithoutChangingForecastTemperature() {
         var rule = Rule(type: .frost)
         rule.threshold = 0
