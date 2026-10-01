@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-01T12:58:32Z",
+  "lastScheduledStart": "2026-10-01T13:36:22Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-308 fullført: 20 % nedbørssannsynlighet bruker precipMax inklusivt, mens 19 % ikke gjør det. AUTO-311 lagt til for temperaturvarsler ved eksakt terskel. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-309 fullført: snøestimatets regresjonstest bekrefter øvre 13:1-konverteringsgrense ved -100°C. AUTO-312 lagt til for nedre ratio-grense og lineær vannmengdeskala. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }
