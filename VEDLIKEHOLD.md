@@ -1133,14 +1133,19 @@ med svært lav temperatur og en eksplisitt kontroll av øvre 13:1-grense.
 Swift-parsing/typekontroll og diffkontroll består; XCTest er ikke kjørt fordi
 CoreSimulator mangler fungerende runtime.
 
-**AUTO-310 · ÅPEN** — Test at 100 % nedbørssannsynlighet fortsatt kan bruke
-`precipMax`, mens ugyldige verdier over 100 % ikke gjør det.
+**AUTO-310 · FULLFØRT 2026-10-01** — La til eksplisitt grenseverditest som
+bekrefter at 100 % nedbørssannsynlighet bruker `precipMax`, men 101 % faller
+tilbake til observert rate. Swift-parsing/typekontroll og diffkontroll består;
+XCTest er ikke kjørt fordi CoreSimulator mangler fungerende runtime.
 
 **AUTO-311 · ÅPEN** — Legg til test som bekrefter at temperaturvarsler ikke
 treffer når målingen er nøyaktig lik valgt over-/under-terskel.
 
 **AUTO-312 · ÅPEN** — Test at snøestimatets nedre 4,179:1-grense holder ved
 varme temperaturer, og at estimatet skalerer lineært med vannmengden.
+
+**AUTO-313 · ÅPEN** — Kontroller at temperaturvarsler forkaster ikke-endelige
+temperaturverdier i stedet for å behandle dem som gyldige treff.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

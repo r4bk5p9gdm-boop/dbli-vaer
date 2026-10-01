@@ -1838,6 +1838,20 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(belowBoundary.precipitationRiskRate, 0.2)
     }
 
+    func testOneHundredPercentPrecipitationProbabilityUsesPrecipMaxButOverOneHundredDoesNot() {
+        let atMaximum = ForecastHour(
+            time: base, temp: 8, precip: 0.2, wind: 1, cloud: 60, dew: 7,
+            precipMax: 2, precipProbability: 100
+        )
+        let overMaximum = ForecastHour(
+            time: base, temp: 8, precip: 0.2, wind: 1, cloud: 60, dew: 7,
+            precipMax: 2, precipProbability: 101
+        )
+
+        XCTAssertEqual(atMaximum.precipitationRiskRate, 2)
+        XCTAssertEqual(overMaximum.precipitationRiskRate, 0.2)
+    }
+
     func testNominalPrecipitationIntervalUsesSmallestPositiveGapForUnsortedSamples() {
         let times = [20, 0, 10, 10, 5].map { base.addingTimeInterval(Double($0 * 60)) }
         let samples = times.map { PrecipitationSample(time: $0, rate: 0.4) }
