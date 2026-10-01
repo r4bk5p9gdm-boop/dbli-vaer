@@ -1677,6 +1677,29 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(hour.precipitationOnset(atOrAbove: 0.5), earliest)
     }
 
+    func testPrecipitationOnsetReturnsNilWhenRadarSamplesAreMissingOrEmpty() {
+        let missingSamples = ForecastHour(
+            time: base,
+            temp: 8,
+            precip: 0,
+            wind: 2,
+            cloud: 90,
+            dew: 6
+        )
+        let emptySamples = ForecastHour(
+            time: base,
+            temp: 8,
+            precip: 0,
+            wind: 2,
+            cloud: 90,
+            dew: 6,
+            radarSamples: []
+        )
+
+        XCTAssertNil(missingSamples.precipitationOnset(atOrAbove: 0.5))
+        XCTAssertNil(emptySamples.precipitationOnset(atOrAbove: 0.5))
+    }
+
     func testPrecipitationOnsetIgnoresNonFiniteRadarRatesAndThresholds() {
         let invalidRates = [Double.nan, .infinity, -.infinity]
         let invalidRateHour = ForecastHour(

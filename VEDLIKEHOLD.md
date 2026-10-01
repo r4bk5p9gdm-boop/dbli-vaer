@@ -1097,8 +1097,10 @@ akkurat lik `now`, ikke den tidligere eller framtidige. Swift-parsing/
 typekontroll og diffkontroll består; XCTest er ikke kjørt fordi CoreSimulator
 mangler fungerende runtime.
 
-**AUTO-303 · ÅPEN** — Legg til test for at `precipitationOnset` returnerer
-`nil` når radarprøver mangler eller listen er tom.
+**AUTO-303 · FULLFØRT 2026-10-01** — La til test som bekrefter at
+`precipitationOnset` returnerer `nil` både når radarfeltet mangler og når det
+er en tom liste. Swift-parsing/typekontroll og diffkontroll består; XCTest er
+ikke kjørt fordi CoreSimulator mangler fungerende runtime.
 
 **AUTO-304 · ÅPEN** — Legg til test for at `PrecipitationSample.nominalInterval`
 regner faktisk forløpt tid over overgangen til sommertid, ikke forskjellen
@@ -1107,6 +1109,10 @@ mellom lokale klokkeslett.
 **AUTO-305 · ÅPEN** — Utvid gjeldende-time-regresjonen slik at duplikater med
 tidsstempel nøyaktig lik `now` velges deterministisk ut fra værinnhold uansett
 inputrekkefølge.
+
+**AUTO-306 · ÅPEN** — Legg til regresjonstest som bekrefter at
+`precipitationOnset` bare finner radarbasert starttid og ikke utleder et
+klokkeslett fra Yr-timeverdien alene når radarmålinger mangler.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
