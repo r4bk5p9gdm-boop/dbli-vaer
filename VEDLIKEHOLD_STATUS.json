@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-01T22:06:25Z",
+  "lastScheduledStart": "2026-10-01T22:36:25Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-326 fullført: test dekker temperaturdetaljer når samtlige prognoser er NaN, +infinity eller -infinity; både framtidig detalj og NÅ-detalj utelates. AUTO-329 lagt til for kontroll av ikke-endelige temperaturer i Planner.statusDetail. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-327 fullført: ForecastDay.make dedupliserer nå eksakte prognosetidspunkter før timekortene sampler dagstimer, og test bekrefter sorterte unike timer med første kildemåling beholdt. AUTO-330 lagt til for DST-gjentatt lokal time i daggruppering. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

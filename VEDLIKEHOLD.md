@@ -1239,14 +1239,22 @@ NÅ-detalj utelates i stedet for å vise en meningsløs verdi. Swift-parsing/
 typekontroll og diffkontroll består; XCTest ble ikke kjørt fordi CoreSimulator
 er utilgjengelig.
 
-**AUTO-327 · ÅPEN** — Undersøk og test at kalenderdags-/timekortvisningen ikke
-tegner eksakte duplikate prognosetidspunkter mer enn én gang.
+**AUTO-327 · FULLFØRT 2026-10-01** — `ForecastDay.make` fjerner nå eksakte
+tidsduplikater før timekortene sampler `day.hours`; første kildemåling for
+tidspunktet beholdes. Testen bruker usorterte timer og en konfliktduplikat, og
+bekrefter at prøverekkefølgen og temperaturene blir unike/sorterte. Swift-
+parsing/typekontroll og diffkontroll består; XCTest ble ikke kjørt fordi
+CoreSimulator er utilgjengelig.
 
 **AUTO-328 · ÅPEN** — Kontroller om aggregater for temperatur, vind og dugg i
 pushdetaljer velger samme entydige prognoseprøver som varselplanleggeren.
 
 **AUTO-329 · ÅPEN** — Undersøk om `Planner.statusDetail` trenger samme vern mot
 ikke-endelige temperaturmålinger som den rullerende detaljen.
+
+**AUTO-330 · ÅPEN** — Test at daggrupperingen beholder begge virkelige
+tidspunktene for en gjentatt lokaltime ved høstens DST-overgang, men fjerner et
+eksakt duplikat av ett av tidspunktene.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

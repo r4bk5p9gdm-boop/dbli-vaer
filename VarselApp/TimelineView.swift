@@ -71,7 +71,11 @@ struct ForecastDay: Identifiable {
         // 07–15–23–07, so the overnight segment remains visually connected.
         let grouped = Dictionary(grouping: forecast) { calendar.startOfDay(for: $0.time) }
         return grouped.keys.sorted().map { date in
-            ForecastDay(date: date, hours: grouped[date, default: []].sorted { $0.time < $1.time })
+            var seenTimestamps = Set<Date>()
+            let uniqueHours = grouped[date, default: []]
+                .filter { seenTimestamps.insert($0.time).inserted }
+                .sorted { $0.time < $1.time }
+            return ForecastDay(date: date, hours: uniqueHours)
         }
     }
 }

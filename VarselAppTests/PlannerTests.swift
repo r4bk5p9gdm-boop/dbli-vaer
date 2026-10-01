@@ -4835,6 +4835,27 @@ final class PlannerTests: XCTestCase {
         ])
     }
 
+    func testForecastDayRemovesExactTimestampDuplicatesBeforeTimeCardSampling() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 0))
+        let day = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 5, day: 10)))
+        let atEight = try XCTUnwrap(calendar.date(bySettingHour: 8, minute: 0, second: 0, of: day))
+        let atNine = try XCTUnwrap(calendar.date(bySettingHour: 9, minute: 0, second: 0, of: day))
+        let atTen = try XCTUnwrap(calendar.date(bySettingHour: 10, minute: 0, second: 0, of: day))
+        let firstEight = ForecastHour(time: atEight, temp: 6, precip: 0, wind: 1, cloud: 20, dew: 2)
+        let conflictingEight = ForecastHour(time: atEight, temp: 99, precip: 4, wind: 9, cloud: 90, dew: 8)
+        let nine = ForecastHour(time: atNine, temp: 9, precip: 0, wind: 1, cloud: 30, dew: 3)
+        let ten = ForecastHour(time: atTen, temp: 10, precip: 0, wind: 1, cloud: 40, dew: 4)
+
+        let days = ForecastDay.make(
+            from: [nine, firstEight, conflictingEight, ten], calendar: calendar
+        )
+
+        XCTAssertEqual(days.count, 1)
+        XCTAssertEqual(days[0].hours.map(\.time), [atEight, atNine, atTen])
+        XCTAssertEqual(days[0].hours.map(\.temp), [6, 9, 10])
+    }
+
     func testVisibleForecastSkipsOlderCacheDayAndKeepsThreeFutureDays() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
