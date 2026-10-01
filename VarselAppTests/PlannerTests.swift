@@ -3147,6 +3147,35 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testDuplicateForecastTimestampDoesNotSplitOrDuplicateAlertRun() {
+        var rule = Rule(type: .regn)
+        rule.threshold = 0.5
+        rule.durationHours = 4
+        rule.count = 1
+        let uniqueHours = forecast(values: [
+            (8, 1, 1, 80, 5),
+            (8, 1, 1, 80, 5),
+            (8, 1, 1, 80, 5),
+            (8, 1, 1, 80, 5),
+        ])
+        let duplicateForecast = [
+            uniqueHours[0], uniqueHours[1], uniqueHours[1], uniqueHours[2], uniqueHours[3]
+        ]
+        let now = base.addingTimeInterval(-2 * 3_600)
+
+        let withoutDuplicate = Planner.plan(
+            rule: rule, forecast: uniqueHours, placeName: "på Klinga", now: now
+        )
+        let withDuplicate = Planner.plan(
+            rule: rule, forecast: duplicateForecast, placeName: "på Klinga", now: now
+        )
+
+        XCTAssertEqual(withoutDuplicate.alerts.count, 1)
+        XCTAssertEqual(withDuplicate.alerts.count, withoutDuplicate.alerts.count)
+        XCTAssertEqual(withDuplicate.alerts.first?.eventAt, withoutDuplicate.alerts.first?.eventAt)
+        XCTAssertTrue(withDuplicate.alerts.first?.eventDetail?.contains("i 4 timer") == true)
+    }
+
     func testLocalFrostMarginCreatesPossibleFrostAlertWithoutChangingForecastTemperature() {
         var rule = Rule(type: .frost)
         rule.threshold = 0

@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-01T19:36:24Z",
+  "lastScheduledStart": "2026-10-01T20:06:25Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-321 fullført: DST-test for Oslo 2024-10-27 bekrefter at begge ulike tidspunkter kl. 02:30 beholdes, mens et eksakt duplikat fjernes. AUTO-324 lagt til for duplikat ved værbåndgrense. Swift-parsing, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-322 fullført: Planner.status og Planner.plan dedupliserer nå eksakte prognosetidspunkter før serie-/varighetsberegning; test bekrefter at en firetimersregnserie med et tidsduplikat gir samme ene varsel og fire timers varighet. AUTO-325 lagt til for konfliktverdi i nedbørssammendrag. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

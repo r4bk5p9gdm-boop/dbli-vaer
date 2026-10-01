@@ -1205,9 +1205,12 @@ beholdes i værbåndet, mens en eksakt tidsduplikat fjernes. Swift-parsing og
 diffkontroll består; XCTest ble ikke kjørt fordi CoreSimulator er
 utilgjengelig.
 
-**AUTO-322 · ÅPEN** — Undersøk om eksakte duplikater i prognosen kan påvirke
-`Planner.matchingRuns`; test at de ikke forlenger en varighetsserie eller
-skaper et ekstra varsel.
+**AUTO-322 · FULLFØRT 2026-10-01** — `Planner.status` og `Planner.plan`
+dedupliserer nå eksakte prognosetidspunkter før serie-/varighetsberegning,
+med første kildeprøve som vinner. Integrasjonstest sammenligner fire unike
+regntimer med samme serie pluss et duplikat; begge gir ett varsel med fire
+timers varighet. Swift-parsing/typekontroll og diffkontroll består; XCTest ble
+ikke kjørt fordi CoreSimulator er utilgjengelig.
 
 **AUTO-323 · ÅPEN** — Sørg for at et rullerende temperaturkort ikke viser
 NaN/±uendelig når selve nærmeste hendelsesprøven har ugyldig temperatur, selv
@@ -1215,6 +1218,10 @@ om senere dagsprøver er gyldige.
 
 **AUTO-324 · ÅPEN** — Test at duplikat utenfor værbåndets 07–07-intervall
 ikke skygger for en prøve med samme tidsstempel som ligger innenfor intervallet.
+
+**AUTO-325 · ÅPEN** — Test at et konfliktduplikat med en avvikende
+nedbørsmengde ikke skjevfordeler mengdesammendraget i det planlagte varselet;
+første prognoseprøve for tidspunktet skal være kilden.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

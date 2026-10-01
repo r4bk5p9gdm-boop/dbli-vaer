@@ -38,6 +38,16 @@ enum Planner {
         abs(later.time.timeIntervalSince(earlier.time) - 3_600) < 60
     }
 
+    /// A refresh can leave overlapping samples at identical instants. Keep
+    /// the first source value and sort before run/duration calculations, so a
+    /// duplicate neither splits nor lengthens a weather run.
+    private static func uniqueForecastSamples(_ forecast: [ForecastHour]) -> [ForecastHour] {
+        var seenTimestamps = Set<Date>()
+        return forecast
+            .filter { seenTimestamps.insert($0.time).inserted }
+            .sorted { $0.time < $1.time }
+    }
+
     struct Result {
         var eventAt: Date?
         var alerts: [PlannedAlert] = []
@@ -224,6 +234,7 @@ enum Planner {
                 latitude: latitude, longitude: longitude, calendar: calendar
             )
         })
+        let forecast = uniqueForecastSamples(forecast)
 
         let runs = matchingRuns(
             rule: rule, forecast: forecast, frostMargin: frostMargin,
@@ -581,6 +592,7 @@ enum Planner {
         longitude: Double? = nil,
         now: Date = Date()
     ) -> WeatherStatus? {
+        let forecast = uniqueForecastSamples(forecast)
         guard !forecast.isEmpty else { return nil }
         let radar = radarEvent(rule: rule, forecast: forecast, now: now)
         if let radar, radar.isNow {
