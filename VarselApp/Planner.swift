@@ -475,9 +475,10 @@ enum Planner {
                     calendar.isDate($0.time, inSameDayAs: hour.time) && $0.time >= hour.time
                 }
                 let dayHours = restOfDay.isEmpty ? [hour] : restOfDay
+                let finiteTemperatures = dayHours.map(\.temp).filter(\.isFinite)
                 let extreme = rule.temperatureDirection == .above
-                    ? dayHours.map(\.temp).max()
-                    : dayHours.map(\.temp).min()
+                    ? finiteTemperatures.max()
+                    : finiteTemperatures.min()
                 if let extreme {
                     let label = rule.temperatureDirection == .above ? "Høyeste temperatur" : "Laveste temperatur"
                     return "\(label) i dag blir \(extreme.formatted(.number.precision(.fractionLength(0))))°C."

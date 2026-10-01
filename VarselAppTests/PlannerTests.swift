@@ -2706,6 +2706,44 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testRotatingTemperatureExtremesIgnoreNonFiniteRemainingSamples() throws {
+        let calendar = Calendar.current
+        let dayStart = calendar.startOfDay(for: base)
+        let eventAt = try XCTUnwrap(calendar.date(bySettingHour: 23, minute: 0, second: 0, of: dayStart))
+        let at2315 = try XCTUnwrap(calendar.date(bySettingHour: 23, minute: 15, second: 0, of: dayStart))
+        let at2330 = try XCTUnwrap(calendar.date(bySettingHour: 23, minute: 30, second: 0, of: dayStart))
+        let at2345 = try XCTUnwrap(calendar.date(bySettingHour: 23, minute: 45, second: 0, of: dayStart))
+        let at2350 = try XCTUnwrap(calendar.date(bySettingHour: 23, minute: 50, second: 0, of: dayStart))
+        var below = Rule(type: .temperatur)
+        below.threshold = 10
+        var above = Rule(type: .temperatur)
+        above.threshold = 20
+        above.temperatureDirection = .above
+        let place = Place(name: "Klinga", lat: 64, lon: 11, rules: [below, above])
+        let forecast = [
+            ForecastHour(time: at2315, temp: .nan, precip: 0, wind: 1, cloud: 0, dew: 0),
+            ForecastHour(time: at2330, temp: -.infinity, precip: 0, wind: 1, cloud: 0, dew: 0),
+            ForecastHour(time: eventAt, temp: 6, precip: 0, wind: 1, cloud: 0, dew: 0),
+            ForecastHour(time: at2345, temp: .infinity, precip: 0, wind: 1, cloud: 0, dew: 0),
+            ForecastHour(time: at2350, temp: 4, precip: 0, wind: 1, cloud: 0, dew: 0),
+        ]
+
+        XCTAssertEqual(
+            Planner.rotatingStatusDetail(
+                for: WeatherStatus(ruleID: below.id, type: .temperatur, text: "", eventAt: eventAt, isNow: true),
+                place: place, forecast: forecast
+            ),
+            "Laveste temperatur i dag blir 4°C."
+        )
+        XCTAssertEqual(
+            Planner.rotatingStatusDetail(
+                for: WeatherStatus(ruleID: above.id, type: .temperatur, text: "", eventAt: eventAt, isNow: true),
+                place: place, forecast: forecast
+            ),
+            "Høyeste temperatur i dag blir 6°C."
+        )
+    }
+
     func testWindStrengthUsesEverydayBeaufortNames() {
         XCTAssertEqual(windStrengthLabel(for: 0), "stille")
         XCTAssertEqual(windStrengthLabel(for: 4), "lett bris")

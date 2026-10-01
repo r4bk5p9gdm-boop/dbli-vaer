@@ -1192,9 +1192,12 @@ Testen bekrefter at hver kombinasjon gir verken treff eller pushvarsel.
 Swift-parsing/typekontroll og diffkontroll består; XCTest ble ikke kjørt fordi
 CoreSimulator er utilgjengelig.
 
-**AUTO-320 · ÅPEN** — Kontroller at rullerende temperaturmin/maks ignorerer
-ikke-endelige temperaturverdier i gjenværende dagsprøver når gyldige prøver
-også finnes.
+**AUTO-320 · FULLFØRT 2026-10-01** — Rullerende temperaturmin/maks filtrerer
+nå NaN og ±uendelig fra gjenværende prøver før ekstremverdien beregnes. Testen
+dekker gyldig hendelsesprøve og senere gyldige verdier sammen med alle tre
+ikke-endelige verdier i samme lokale dag. Swift-parsing/typekontroll og
+diffkontroll består; XCTest ble ikke kjørt fordi CoreSimulator er
+utilgjengelig.
 
 **AUTO-321 · ÅPEN** — Test at høstens gjentatte lokale klokktime beholder begge
 ulike absolutte prognosetidspunkter, samtidig som et eksakt tidsduplikat
@@ -1203,6 +1206,10 @@ fjernes.
 **AUTO-322 · ÅPEN** — Undersøk om eksakte duplikater i prognosen kan påvirke
 `Planner.matchingRuns`; test at de ikke forlenger en varighetsserie eller
 skaper et ekstra varsel.
+
+**AUTO-323 · ÅPEN** — Sørg for at et rullerende temperaturkort ikke viser
+NaN/±uendelig når selve nærmeste hendelsesprøven har ugyldig temperatur, selv
+om senere dagsprøver er gyldige.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
