@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-01T15:06:24Z",
+  "lastScheduledStart": "2026-10-01T15:36:24Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-312 fullført: snøestimatet holder nedre 4,179:1-grense ved 5°C og dobles når vannmengden dobles. AUTO-315 lagt til for dupliserte timer i WeatherBandHours. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-313 fullført: temperaturregler avviser NaN og begge uendeligheter i målinger; lagt til regresjonstest for begge temperaturretninger. AUTO-316 lagt til for ikke-endelige temperaturterskler. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

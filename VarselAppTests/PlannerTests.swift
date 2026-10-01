@@ -718,6 +718,20 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testTemperatureRuleRejectsNonFiniteMeasurementsInEitherDirection() {
+        for temperature in [Double.nan, .infinity, -.infinity] {
+            let sample = ForecastHour(
+                time: base, temp: temperature, precip: 0, wind: 1, cloud: 0, dew: 5
+            )
+            for direction in Rule.TemperatureDirection.allCases {
+                var rule = Rule(type: .temperatur)
+                rule.threshold = 10
+                rule.temperatureDirection = direction
+                XCTAssertFalse(rule.matches(sample), "\(direction.label) must reject \(temperature).")
+            }
+        }
+    }
+
     func testDisplayThresholdsAndDialectSeparator() throws {
         XCTAssertEqual(WeatherLanguage.text("om 2 timer", style: .inntrondersk), "om 2 tima")
         XCTAssertEqual(WeatherLanguage.text("om tre timer", style: .inntrondersk), "om tre tima")

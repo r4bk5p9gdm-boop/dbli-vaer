@@ -1148,14 +1148,20 @@ temperatur som treffer nedre 4,179:1-grense, og dobbel vannmengde som skal gi
 dobbelt estimat. Swift-parsing/typekontroll og diffkontroll består; XCTest er
 ikke kjørt fordi CoreSimulator mangler fungerende runtime.
 
-**AUTO-313 · ÅPEN** — Kontroller at temperaturvarsler forkaster ikke-endelige
-temperaturverdier i stedet for å behandle dem som gyldige treff.
+**AUTO-313 · FULLFØRT 2026-10-01** — Temperaturregler avviser nå ikke-endelige
+målte temperaturer før retningsterskelen sjekkes. La til regresjonstest for NaN
+og begge uendeligheter i over- og undervarsel. Swift-parsing/typekontroll og
+diffkontroll består; XCTest er ikke kjørt fordi CoreSimulator mangler
+fungerende runtime.
 
 **AUTO-314 · ÅPEN** — Kontroller at rullerende minimums-/maksimumstemperatur
 bruker bare prøver innenfor lokalt kalenderdøgn, også ved midnatt.
 
 **AUTO-315 · ÅPEN** — Undersøk og test at `WeatherBandHours.make` håndterer
 dupliserte tidsstempler deterministisk uten å tegne samme time flere ganger.
+
+**AUTO-316 · ÅPEN** — Kontroller at temperaturvarsler avviser ikke-endelige
+terskelverdier selv når prognosetemperaturen er gyldig.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
