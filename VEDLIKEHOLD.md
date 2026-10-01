@@ -1123,15 +1123,19 @@ nedbørsrate eller radarhastighet, ikke `precipMax`. Swift-parsing/typekontroll
 og diffkontroll består; XCTest er ikke kjørt fordi CoreSimulator mangler
 fungerende runtime.
 
-**AUTO-308 · ÅPEN** — Test den inklusive 20 %-grensen for at
-`precipitationRiskRate` kan bruke `precipMax`, inkludert at verdien like under
-grensen ikke gjør det.
+**AUTO-308 · FULLFØRT 2026-10-01** — La til grenseverditest som bekrefter at
+20 % sannsynlighet inkluderer `precipMax`, mens 19 % faller tilbake til
+observert rate. Swift-parsing/typekontroll og diffkontroll består; XCTest er
+ikke kjørt fordi CoreSimulator mangler fungerende runtime.
 
 **AUTO-309 · ÅPEN** — Utvid snøestimatets regresjonstest slik at den øvre
 13:1-konverteringsgrensen er eksplisitt låst ved svært lave temperaturer.
 
 **AUTO-310 · ÅPEN** — Test at 100 % nedbørssannsynlighet fortsatt kan bruke
 `precipMax`, mens ugyldige verdier over 100 % ikke gjør det.
+
+**AUTO-311 · ÅPEN** — Legg til test som bekrefter at temperaturvarsler ikke
+treffer når målingen er nøyaktig lik valgt over-/under-terskel.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

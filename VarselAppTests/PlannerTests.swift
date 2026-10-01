@@ -1823,6 +1823,20 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(radarFallback.precipitationRiskRate, 0.6)
     }
 
+    func testTwentyPercentPrecipitationProbabilityActivatesPrecipMaxInclusively() {
+        let atBoundary = ForecastHour(
+            time: base, temp: 8, precip: 0.2, wind: 1, cloud: 60, dew: 7,
+            precipMax: 2, precipProbability: 20
+        )
+        let belowBoundary = ForecastHour(
+            time: base, temp: 8, precip: 0.2, wind: 1, cloud: 60, dew: 7,
+            precipMax: 2, precipProbability: 19
+        )
+
+        XCTAssertEqual(atBoundary.precipitationRiskRate, 2)
+        XCTAssertEqual(belowBoundary.precipitationRiskRate, 0.2)
+    }
+
     func testNominalPrecipitationIntervalUsesSmallestPositiveGapForUnsortedSamples() {
         let times = [20, 0, 10, 10, 5].map { base.addingTimeInterval(Double($0 * 60)) }
         let samples = times.map { PrecipitationSample(time: $0, rate: 0.4) }
