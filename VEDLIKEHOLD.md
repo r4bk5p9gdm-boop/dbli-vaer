@@ -1233,14 +1233,20 @@ uten duplikatet, i stedet for å bli feilaktig oppgradert til «Kraftig regn».
 Swift-parsing/typekontroll og diffkontroll består; XCTest ble ikke kjørt fordi
 CoreSimulator er utilgjengelig.
 
-**AUTO-326 · ÅPEN** — Legg til regresjonstest som sikrer at temperaturdetaljen
-blir utelatt når prognosen ikke inneholder noen måling med endelig temperatur.
+**AUTO-326 · FULLFØRT 2026-10-01** — La til regresjonstest der alle
+temperaturmålingene er NaN, +∞ eller −∞. Både framtidig temperaturdetalj og
+NÅ-detalj utelates i stedet for å vise en meningsløs verdi. Swift-parsing/
+typekontroll og diffkontroll består; XCTest ble ikke kjørt fordi CoreSimulator
+er utilgjengelig.
 
 **AUTO-327 · ÅPEN** — Undersøk og test at kalenderdags-/timekortvisningen ikke
 tegner eksakte duplikate prognosetidspunkter mer enn én gang.
 
 **AUTO-328 · ÅPEN** — Kontroller om aggregater for temperatur, vind og dugg i
 pushdetaljer velger samme entydige prognoseprøver som varselplanleggeren.
+
+**AUTO-329 · ÅPEN** — Undersøk om `Planner.statusDetail` trenger samme vern mot
+ikke-endelige temperaturmålinger som den rullerende detaljen.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

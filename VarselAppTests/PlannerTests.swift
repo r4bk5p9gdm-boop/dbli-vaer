@@ -2780,6 +2780,31 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testRotatingTemperatureDetailIsOmittedWithoutFiniteForecastTemperature() throws {
+        let calendar = Calendar.current
+        let dayStart = calendar.startOfDay(for: base)
+        let eventAt = try XCTUnwrap(calendar.date(bySettingHour: 8, minute: 0, second: 0, of: dayStart))
+        let nextHour = try XCTUnwrap(calendar.date(byAdding: .hour, value: 1, to: eventAt))
+        var rule = Rule(type: .temperatur)
+        rule.threshold = 10
+        let place = Place(name: "Klinga", lat: 64, lon: 11, rules: [rule])
+        let forecast = [Double.nan, .infinity, -.infinity].enumerated().map { index, temperature in
+            ForecastHour(
+                time: eventAt.addingTimeInterval(Double(index) * 3_600),
+                temp: temperature, precip: 0, wind: 1, cloud: 0, dew: 0
+            )
+        }
+        let future = WeatherStatus(
+            ruleID: rule.id, type: .temperatur, text: "", eventAt: eventAt, isNow: false
+        )
+        let current = WeatherStatus(
+            ruleID: rule.id, type: .temperatur, text: "", eventAt: nextHour, isNow: true
+        )
+
+        XCTAssertNil(Planner.rotatingStatusDetail(for: future, place: place, forecast: forecast))
+        XCTAssertNil(Planner.rotatingStatusDetail(for: current, place: place, forecast: forecast))
+    }
+
     func testWindStrengthUsesEverydayBeaufortNames() {
         XCTAssertEqual(windStrengthLabel(for: 0), "stille")
         XCTAssertEqual(windStrengthLabel(for: 4), "lett bris")
