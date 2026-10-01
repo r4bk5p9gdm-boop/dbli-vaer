@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-01T11:58:32Z",
+  "lastScheduledStart": "2026-10-01T12:28:32Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-306 fullført: Yr-times nedbørsrate beholdes, men precipitationOnset utleder ikke starttid uten radarmålinger. AUTO-309 lagt til for eksplisitt 13:1-snowratio cap-test. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-307 fullført: manglende precipitationProbability gir observert/radarbasert nedbørsrate som risk fallback og ignorerer precipMax. AUTO-310 lagt til for 100 %-grense i sannsynlighetsfeltet. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

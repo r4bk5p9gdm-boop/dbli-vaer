@@ -1807,6 +1807,22 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(validEstimate.isPossiblePrecipitation(atOrAbove: 1))
     }
 
+    func testMissingPrecipitationProbabilityFallsBackToObservedAndRadarRates() {
+        let observedFallback = ForecastHour(
+            time: base, temp: 8, precip: 0.2, wind: 1, cloud: 60, dew: 7,
+            precipMax: 2
+        )
+        let radarFallback = ForecastHour(
+            time: base, temp: 8, precip: 0.1, wind: 1, cloud: 60, dew: 7,
+            precipMax: 2,
+            radarSamples: [PrecipitationSample(time: base, rate: 0.6)]
+        )
+
+        XCTAssertEqual(observedFallback.precipitationRiskRate, 0.2)
+        XCTAssertEqual(radarFallback.precipitationRate, 0.6)
+        XCTAssertEqual(radarFallback.precipitationRiskRate, 0.6)
+    }
+
     func testNominalPrecipitationIntervalUsesSmallestPositiveGapForUnsortedSamples() {
         let times = [20, 0, 10, 10, 5].map { base.addingTimeInterval(Double($0 * 60)) }
         let samples = times.map { PrecipitationSample(time: $0, rate: 0.4) }
