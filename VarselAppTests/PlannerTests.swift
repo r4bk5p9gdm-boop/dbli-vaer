@@ -5041,6 +5041,22 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(selected.precipitationRate, 0.7)
     }
 
+    func testCurrentForecastSelectionBreaksExactNowTiesIndependentlyOfInputOrder() {
+        let now = Date(timeIntervalSince1970: 1_900_000_000)
+        let lighter = ForecastHour(
+            time: now, temp: 8, precip: 0.2, wind: 1, cloud: 60, dew: 7
+        )
+        let heavier = ForecastHour(
+            time: now, temp: 8, precip: 0.8, wind: 1, cloud: 60, dew: 7
+        )
+
+        for input in [[lighter, heavier], [heavier, lighter]] {
+            let selected = ForecastHourSelection.current(in: input, at: now)
+            XCTAssertEqual(selected?.time, now)
+            XCTAssertEqual(selected?.precipitationRate, 0.8)
+        }
+    }
+
     func testCurrentForecastSelectionReturnsNilForEmptyForecast() {
         XCTAssertNil(ForecastHourSelection.current(in: [], at: Date()))
     }

@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-01T08:04:01Z",
+  "lastScheduledStart": "2026-10-01T11:28:32Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-304 fullført: Europe/Oslo-test bekrefter ti minutters faktisk tidsavstand mellom 01:55 og 03:05 ved vårens sommertidsskifte. AUTO-307 lagt til for fallback når nedbørssannsynlighet mangler. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-305 fullført: tie-break ved duplisert tidsstempel nøyaktig lik now velger høyeste nedbørsrate i begge inputrekkefølger. AUTO-308 lagt til for inklusiv 20 %-grense i nedbørsrisiko. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }
