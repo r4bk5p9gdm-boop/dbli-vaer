@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-01T23:06:26Z",
+  "lastScheduledStart": "2026-10-01T23:36:26Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-328 fullført: planleggerintegrasjonstest bekrefter at eksakte konfliktduplikater ikke endrer temperatur-, vind- eller duggdetaljer; varighet og aggregater kommer fra de entydige prognoseprøvene. AUTO-331 lagt til for samspill mellom planAll-varsler på tvers av værtyper. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-329 fullført: Planner.statusDetail filtrerer nå bort ikke-endelige temperaturer før nærmeste prøve velges; test dekker NaN/±infinity, gyldig reserveprøve og ingen gyldige prøver. AUTO-332 lagt til for temperaturavhengige frost-, snø- og duggdetaljer. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

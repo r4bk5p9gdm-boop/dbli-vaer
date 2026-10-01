@@ -2371,6 +2371,28 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testTemperatureStatusDetailSkipsNonFiniteSamplesAndOmitsAllInvalidForecasts() {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let status = WeatherStatus(
+            ruleID: UUID(), type: .temperatur, text: "", eventAt: base, isNow: false
+        )
+        let laterValid = ForecastHour(
+            time: base.addingTimeInterval(3_600), temp: 6, precip: 0, wind: 1, cloud: 0, dew: 0
+        )
+
+        for invalidTemperature in [Double.nan, .infinity, -.infinity] {
+            let invalid = ForecastHour(
+                time: base, temp: invalidTemperature, precip: 0, wind: 1, cloud: 0, dew: 0
+            )
+
+            XCTAssertEqual(
+                Planner.statusDetail(for: status, place: place, forecast: [invalid, laterValid]),
+                "Yr melder: 6°."
+            )
+            XCTAssertNil(Planner.statusDetail(for: status, place: place, forecast: [invalid]))
+        }
+    }
+
     func testWindGustLevelsProduceDifferentNotificationTitles() {
         var standard = Rule(type: .vind)
         standard.threshold = 12
