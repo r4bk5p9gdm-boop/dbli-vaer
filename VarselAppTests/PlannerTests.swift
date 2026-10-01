@@ -4819,6 +4819,42 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(band.map(\.temp), [8, 9, 10])
     }
 
+    func testWeatherBandKeepsBothInstantsOfRepeatedLocalHour() throws {
+        var oslo = Calendar(identifier: .gregorian)
+        oslo.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        var utc = Calendar(identifier: .gregorian)
+        utc.timeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 0))
+        let visualDay = try XCTUnwrap(utc.date(from: DateComponents(year: 2024, month: 10, day: 26)))
+        let firstLocal0230 = try XCTUnwrap(utc.date(from: DateComponents(
+            year: 2024, month: 10, day: 27, hour: 0, minute: 30
+        )))
+        let secondLocal0230 = try XCTUnwrap(utc.date(from: DateComponents(
+            year: 2024, month: 10, day: 27, hour: 1, minute: 30
+        )))
+        XCTAssertEqual(oslo.component(.hour, from: firstLocal0230), 2)
+        XCTAssertEqual(oslo.component(.hour, from: secondLocal0230), 2)
+        XCTAssertEqual(oslo.component(.minute, from: firstLocal0230), 30)
+        XCTAssertEqual(oslo.component(.minute, from: secondLocal0230), 30)
+
+        let laterInstant = ForecastHour(
+            time: secondLocal0230, temp: 7, precip: 0, wind: 1, cloud: 30, dew: 3
+        )
+        let firstInstant = ForecastHour(
+            time: firstLocal0230, temp: 6, precip: 0, wind: 1, cloud: 20, dew: 2
+        )
+        let exactDuplicate = ForecastHour(
+            time: firstLocal0230, temp: 99, precip: 0, wind: 1, cloud: 20, dew: 2
+        )
+
+        let band = WeatherBandHours.make(
+            for: visualDay, from: [laterInstant, firstInstant, exactDuplicate], calendar: oslo
+        )
+
+        XCTAssertEqual(band.map(\.time), [firstLocal0230, secondLocal0230])
+        XCTAssertEqual(band.map(\.temp), [6, 7])
+        XCTAssertEqual(secondLocal0230.timeIntervalSince(firstLocal0230), 3_600)
+    }
+
     func testWeatherBandWallClockIntervalsHandleBothDaylightSavingTransitions() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))

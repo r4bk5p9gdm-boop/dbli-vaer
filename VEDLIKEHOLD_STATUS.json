@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-01T19:06:24Z",
+  "lastScheduledStart": "2026-10-01T19:36:24Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-320 fullført: rullerende temperaturkort filtrerer NaN/±uendelig fra dagsprøver før minimum/maksimum; regresjonstest bekrefter gyldige ekstremer på tvers av ugyldige prøver. AUTO-323 lagt til for ugyldig nærmesteprøve. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-321 fullført: DST-test for Oslo 2024-10-27 bekrefter at begge ulike tidspunkter kl. 02:30 beholdes, mens et eksakt duplikat fjernes. AUTO-324 lagt til for duplikat ved værbåndgrense. Swift-parsing, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

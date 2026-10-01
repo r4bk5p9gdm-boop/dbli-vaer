@@ -1199,9 +1199,11 @@ ikke-endelige verdier i samme lokale dag. Swift-parsing/typekontroll og
 diffkontroll består; XCTest ble ikke kjørt fordi CoreSimulator er
 utilgjengelig.
 
-**AUTO-321 · ÅPEN** — Test at høstens gjentatte lokale klokktime beholder begge
-ulike absolutte prognosetidspunkter, samtidig som et eksakt tidsduplikat
-fjernes.
+**AUTO-321 · FULLFØRT 2026-10-01** — La til DST-regresjonstest for Oslo 27.
+oktober 2024. De to ulike absolutte tidspunktene som begge vises som kl. 02:30
+beholdes i værbåndet, mens en eksakt tidsduplikat fjernes. Swift-parsing og
+diffkontroll består; XCTest ble ikke kjørt fordi CoreSimulator er
+utilgjengelig.
 
 **AUTO-322 · ÅPEN** — Undersøk om eksakte duplikater i prognosen kan påvirke
 `Planner.matchingRuns`; test at de ikke forlenger en varighetsserie eller
@@ -1210,6 +1212,9 @@ skaper et ekstra varsel.
 **AUTO-323 · ÅPEN** — Sørg for at et rullerende temperaturkort ikke viser
 NaN/±uendelig når selve nærmeste hendelsesprøven har ugyldig temperatur, selv
 om senere dagsprøver er gyldige.
+
+**AUTO-324 · ÅPEN** — Test at duplikat utenfor værbåndets 07–07-intervall
+ikke skygger for en prøve med samme tidsstempel som ligger innenfor intervallet.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
