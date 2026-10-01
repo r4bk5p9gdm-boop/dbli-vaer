@@ -1818,6 +1818,24 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testNominalPrecipitationIntervalUsesElapsedTimeAcrossSpringDSTChange() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let beforeJump = try XCTUnwrap(calendar.date(from: DateComponents(
+            year: 2024, month: 3, day: 31, hour: 1, minute: 55
+        )))
+        let afterJump = try XCTUnwrap(calendar.date(from: DateComponents(
+            year: 2024, month: 3, day: 31, hour: 3, minute: 5
+        )))
+        let samples = [
+            PrecipitationSample(time: afterJump, rate: 0.4),
+            PrecipitationSample(time: beforeJump, rate: 0.4)
+        ]
+
+        XCTAssertEqual(afterJump.timeIntervalSince(beforeJump), 10 * 60)
+        XCTAssertEqual(PrecipitationSample.nominalInterval(in: samples), 10 * 60)
+    }
+
     func testNominalPrecipitationIntervalClampsShortAndLongGaps() {
         let shortGap = [0.0, 30.0].map {
             PrecipitationSample(time: base.addingTimeInterval($0), rate: 0.4)

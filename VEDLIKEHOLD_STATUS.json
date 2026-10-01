@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-01T04:03:00Z",
+  "lastScheduledStart": "2026-10-01T08:04:01Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-303 fullført: test bekrefter nil onset både for manglende og tom radarprøveliste. AUTO-306 lagt til for å skille radarbasert starttid fra Yr-timeverdier uten radar. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-304 fullført: Europe/Oslo-test bekrefter ti minutters faktisk tidsavstand mellom 01:55 og 03:05 ved vårens sommertidsskifte. AUTO-307 lagt til for fallback når nedbørssannsynlighet mangler. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }
