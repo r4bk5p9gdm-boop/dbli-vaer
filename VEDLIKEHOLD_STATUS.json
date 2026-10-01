@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-01T21:06:25Z",
+  "lastScheduledStart": "2026-10-01T21:36:25Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-324 fullført: test bekrefter at prøve kl. 06 før lokal 07-grense ikke påvirker værbåndet, mens neste dags 06-prøve beholdes og eksakt duplikat fjernes. Oppgavepresiseringen skiller klokktime fra identisk absolutt tidsstempel. AUTO-327 lagt til for kalenderdags-/timekortduplikater. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-325 fullført: regresjonstest viser at konfliktduplikat med 5 mm ikke oppjusterer varselets sammendrag fra tre entydige timer à 0,6 mm; detaljen samsvarer med prognosen uten duplikat. AUTO-328 lagt til for kontroll av aggregater i nedbør/vind/dugg-pushdetaljer. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

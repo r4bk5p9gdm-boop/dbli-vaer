@@ -1226,15 +1226,21 @@ før båndets 07-grense ignoreres, mens neste dags 06-prøve beholdes og dens
 eksakte duplikat fjernes. Swift-parsing/typekontroll og diffkontroll består;
 XCTest ble ikke kjørt fordi CoreSimulator er utilgjengelig.
 
-**AUTO-325 · ÅPEN** — Test at et konfliktduplikat med en avvikende
-nedbørsmengde ikke skjevfordeler mengdesammendraget i det planlagte varselet;
-første prognoseprøve for tidspunktet skal være kilden.
+**AUTO-325 · FULLFØRT 2026-10-01** — La til en regresjonstest med tre
+regntimer à 0,6 mm og et konfliktduplikat på 5 mm for én av timene. Det
+planlagte varselet beholder sammendraget «Regn» og samme detalj som prognosen
+uten duplikatet, i stedet for å bli feilaktig oppgradert til «Kraftig regn».
+Swift-parsing/typekontroll og diffkontroll består; XCTest ble ikke kjørt fordi
+CoreSimulator er utilgjengelig.
 
 **AUTO-326 · ÅPEN** — Legg til regresjonstest som sikrer at temperaturdetaljen
 blir utelatt når prognosen ikke inneholder noen måling med endelig temperatur.
 
 **AUTO-327 · ÅPEN** — Undersøk og test at kalenderdags-/timekortvisningen ikke
 tegner eksakte duplikate prognosetidspunkter mer enn én gang.
+
+**AUTO-328 · ÅPEN** — Kontroller om aggregater for temperatur, vind og dugg i
+pushdetaljer velger samme entydige prognoseprøver som varselplanleggeren.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

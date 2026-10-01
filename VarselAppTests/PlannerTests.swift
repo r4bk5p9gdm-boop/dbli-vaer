@@ -3212,6 +3212,38 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(withDuplicate.alerts.first?.eventDetail?.contains("i 4 timer") == true)
     }
 
+    func testConflictingDuplicateForecastTimestampDoesNotInflateRainSummary() {
+        var rule = Rule(type: .regn)
+        rule.threshold = 0.5
+        rule.durationHours = 3
+        rule.leadMinutes = 60
+        rule.count = 1
+        let uniqueHours = forecast(values: [
+            (8, 0.6, 1, 80, 5),
+            (8, 0.6, 1, 80, 5),
+            (8, 0.6, 1, 80, 5),
+        ])
+        let conflictingDuplicate = ForecastHour(
+            time: uniqueHours[1].time, temp: 8, precip: 5, wind: 1, cloud: 80, dew: 5
+        )
+        let now = base.addingTimeInterval(-2 * 3_600)
+
+        let withoutDuplicate = Planner.plan(
+            rule: rule, forecast: uniqueHours, placeName: "på Klinga", now: now
+        )
+        let withDuplicate = Planner.plan(
+            rule: rule,
+            forecast: [uniqueHours[0], uniqueHours[1], conflictingDuplicate, uniqueHours[2]],
+            placeName: "på Klinga",
+            now: now
+        )
+
+        XCTAssertEqual(withoutDuplicate.alerts.count, 1)
+        XCTAssertEqual(withDuplicate.alerts.count, 1)
+        XCTAssertEqual(withDuplicate.alerts.first?.eventDetail, withoutDuplicate.alerts.first?.eventDetail)
+        XCTAssertEqual(withDuplicate.alerts.first?.eventDetail, "Regn {tid} — i 3 timer.")
+    }
+
     func testLocalFrostMarginCreatesPossibleFrostAlertWithoutChangingForecastTemperature() {
         var rule = Rule(type: .frost)
         rule.threshold = 0
