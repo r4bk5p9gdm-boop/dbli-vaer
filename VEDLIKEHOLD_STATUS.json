@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-01T17:36:24Z",
+  "lastScheduledStart": "2026-10-01T18:06:24Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-317 fullført: la til test ved kl. 23 der bare én prøve gjenstår i lokalt døgn; laveste/høyeste vises fra prøven og ekstreme verdier tidligere i dagen/i morgen påvirker ikke teksten. AUTO-320 lagt til for ikke-endelige restverdier. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-318 fullført: test med usorterte værprøver og konfliktduplikat bekrefter én sample per eksakt tidsstempel i stigende rekkefølge, med første forekomst beholdt. AUTO-321 lagt til for gjentatt lokal DST-time. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

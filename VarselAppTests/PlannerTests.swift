@@ -4738,6 +4738,26 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(band.first, first)
     }
 
+    func testWeatherBandSortsUnorderedSamplesAfterDeduplicating() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let day = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 9, day: 22)))
+        let atEight = try XCTUnwrap(calendar.date(bySettingHour: 8, minute: 0, second: 0, of: day))
+        let atNine = try XCTUnwrap(calendar.date(bySettingHour: 9, minute: 0, second: 0, of: day))
+        let atTen = try XCTUnwrap(calendar.date(bySettingHour: 10, minute: 0, second: 0, of: day))
+        let eight = ForecastHour(time: atEight, temp: 8, precip: 0, wind: 1, cloud: 20, dew: 2)
+        let nine = ForecastHour(time: atNine, temp: 9, precip: 0, wind: 1, cloud: 30, dew: 3)
+        let duplicateNine = ForecastHour(time: atNine, temp: 99, precip: 0, wind: 1, cloud: 30, dew: 3)
+        let ten = ForecastHour(time: atTen, temp: 10, precip: 0, wind: 1, cloud: 40, dew: 4)
+
+        let band = WeatherBandHours.make(
+            for: day, from: [ten, nine, eight, duplicateNine], calendar: calendar
+        )
+
+        XCTAssertEqual(band.map(\.time), [atEight, atNine, atTen])
+        XCTAssertEqual(band.map(\.temp), [8, 9, 10])
+    }
+
     func testWeatherBandWallClockIntervalsHandleBothDaylightSavingTransitions() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))

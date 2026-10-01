@@ -1180,9 +1180,11 @@ dag og morgendagens verdi ikke påvirker teksten. Swift-parsing/typekontroll og
 diffkontroll består; XCTest ble ikke kjørt fordi CoreSimulator er
 utilgjengelig.
 
-**AUTO-318 · ÅPEN** — Test at `WeatherBandHours.make` håndterer
-ikke-sorterte tidsstempler i samme celle og returnerer dem i stigende
-tidsrekkefølge etter deduplisering.
+**AUTO-318 · FULLFØRT 2026-10-01** — La til regresjonstest med usorterte
+08–09–10-prøver og konfliktduplikat kl. 09. Værbåndet returnerer nå én prøve
+per tidspunkt i stigende rekkefølge, med første prøve som vinner. Swift-
+parsing/typekontroll og diffkontroll består; XCTest ble ikke kjørt fordi
+CoreSimulator er utilgjengelig.
 
 **AUTO-319 · ÅPEN** — Legg til en planleggerregresjon som sikrer at en
 temperaturregel med NaN eller ±uendelig terskel ikke produserer pushvarsel
@@ -1191,6 +1193,10 @@ selv om prognosetemperaturen ellers ville passert sammenligningen.
 **AUTO-320 · ÅPEN** — Kontroller at rullerende temperaturmin/maks ignorerer
 ikke-endelige temperaturverdier i gjenværende dagsprøver når gyldige prøver
 også finnes.
+
+**AUTO-321 · ÅPEN** — Test at høstens gjentatte lokale klokktime beholder begge
+ulike absolutte prognosetidspunkter, samtidig som et eksakt tidsduplikat
+fjernes.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
