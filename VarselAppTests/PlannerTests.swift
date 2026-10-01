@@ -732,6 +732,23 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testTemperatureRuleRejectsNonFiniteThresholdsWithValidMeasurement() {
+        let sample = ForecastHour(time: base, temp: 20, precip: 0, wind: 1, cloud: 0, dew: 5)
+
+        for threshold in [Double.nan, .infinity, -.infinity] {
+            for direction in Rule.TemperatureDirection.allCases {
+                var rule = Rule(type: .temperatur)
+                rule.threshold = threshold
+                rule.temperatureDirection = direction
+
+                XCTAssertFalse(
+                    rule.matches(sample),
+                    "\(direction.label) must reject the non-finite threshold \(threshold)."
+                )
+            }
+        }
+    }
+
     func testDisplayThresholdsAndDialectSeparator() throws {
         XCTAssertEqual(WeatherLanguage.text("om 2 timer", style: .inntrondersk), "om 2 tima")
         XCTAssertEqual(WeatherLanguage.text("om tre timer", style: .inntrondersk), "om tre tima")

@@ -683,7 +683,7 @@ struct Rule: Codable, Identifiable, Hashable {
         // untouched for display, storage and later calibration.
         let effectiveThreshold = type == .frost ? threshold + max(0, frostMargin) : threshold
         if type == .temperatur {
-            guard hour.temp.isFinite else { return false }
+            guard hour.temp.isFinite, threshold.isFinite else { return false }
             return temperatureDirection == .above ? hour.temp > threshold : hour.temp < threshold
         }
         return type.matches(hour, threshold: effectiveThreshold)

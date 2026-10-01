@@ -1167,8 +1167,11 @@ deduplisering og at første prøve vinner ved motstridende verdier. Swift-parsin
 og diffkontroll består; XCTest er ikke kjørt fordi CoreSimulator mangler
 fungerende runtime.
 
-**AUTO-316 · ÅPEN** — Kontroller at temperaturvarsler avviser ikke-endelige
-terskelverdier selv når prognosetemperaturen er gyldig.
+**AUTO-316 · FULLFØRT 2026-10-01** — Temperaturregler avviser nå både
+ikke-endelig måleverdi og ikke-endelig terskel før retningssammenligningen.
+Regresjonstesten bruker gyldig 20 °C-måling og NaN/±uendelig terskel i begge
+retninger. Swift-parsing/typekontroll og diffkontroll består; XCTest ble ikke
+kjørt fordi CoreSimulator-tjenesten er utilgjengelig.
 
 **AUTO-317 · ÅPEN** — Legg til regresjonstest for rullerende temperaturkort
 som bare har én gjenværende prøve i det lokale døgnet.
@@ -1176,6 +1179,10 @@ som bare har én gjenværende prøve i det lokale døgnet.
 **AUTO-318 · ÅPEN** — Test at `WeatherBandHours.make` håndterer
 ikke-sorterte tidsstempler i samme celle og returnerer dem i stigende
 tidsrekkefølge etter deduplisering.
+
+**AUTO-319 · ÅPEN** — Legg til en planleggerregresjon som sikrer at en
+temperaturregel med NaN eller ±uendelig terskel ikke produserer pushvarsel
+selv om prognosetemperaturen ellers ville passert sammenligningen.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
