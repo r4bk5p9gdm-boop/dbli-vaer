@@ -2616,6 +2616,42 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(futureDetail, "Laveste temperatur blir 8°C.")
     }
 
+    func testRotatingTemperatureExtremesStayWithinLocalDayAcrossMidnight() throws {
+        let calendar = Calendar.current
+        let dayStart = calendar.startOfDay(for: base)
+        let previousDay = try XCTUnwrap(calendar.date(byAdding: .second, value: -1, to: dayStart))
+        let eventAt = try XCTUnwrap(calendar.date(bySettingHour: 23, minute: 0, second: 0, of: dayStart))
+        let laterToday = try XCTUnwrap(calendar.date(bySettingHour: 23, minute: 30, second: 0, of: dayStart))
+        let nextDay = try XCTUnwrap(calendar.date(byAdding: .day, value: 1, to: dayStart))
+        var below = Rule(type: .temperatur)
+        below.threshold = 10
+        var above = Rule(type: .temperatur)
+        above.threshold = 20
+        above.temperatureDirection = .above
+        let place = Place(name: "Klinga", lat: 64, lon: 11, rules: [below, above])
+        let forecast = [
+            ForecastHour(time: previousDay, temp: -20, precip: 0, wind: 1, cloud: 0, dew: 0),
+            ForecastHour(time: eventAt, temp: 6, precip: 0, wind: 1, cloud: 0, dew: 0),
+            ForecastHour(time: laterToday, temp: 4, precip: 0, wind: 1, cloud: 0, dew: 0),
+            ForecastHour(time: nextDay, temp: 100, precip: 0, wind: 1, cloud: 0, dew: 0),
+        ]
+
+        XCTAssertEqual(
+            Planner.rotatingStatusDetail(
+                for: WeatherStatus(ruleID: below.id, type: .temperatur, text: "", eventAt: eventAt, isNow: true),
+                place: place, forecast: forecast
+            ),
+            "Laveste temperatur i dag blir 4°C."
+        )
+        XCTAssertEqual(
+            Planner.rotatingStatusDetail(
+                for: WeatherStatus(ruleID: above.id, type: .temperatur, text: "", eventAt: eventAt, isNow: true),
+                place: place, forecast: forecast
+            ),
+            "Høyeste temperatur i dag blir 6°C."
+        )
+    }
+
     func testWindStrengthUsesEverydayBeaufortNames() {
         XCTAssertEqual(windStrengthLabel(for: 0), "stille")
         XCTAssertEqual(windStrengthLabel(for: 4), "lett bris")

@@ -1154,14 +1154,20 @@ og begge uendeligheter i over- og undervarsel. Swift-parsing/typekontroll og
 diffkontroll består; XCTest er ikke kjørt fordi CoreSimulator mangler
 fungerende runtime.
 
-**AUTO-314 · ÅPEN** — Kontroller at rullerende minimums-/maksimumstemperatur
-bruker bare prøver innenfor lokalt kalenderdøgn, også ved midnatt.
+**AUTO-314 · FULLFØRT 2026-10-01** — La til `Calendar.current`-regresjonstest
+ved 23:00 med ekstreme prøver rett før lokalt døgn og ved neste midnatt;
+rullerende min/maks skal bare bruke gjenværende timeprøver samme dag.
+Swift-parsing/typekontroll og diffkontroll består; XCTest er ikke kjørt fordi
+CoreSimulator mangler fungerende runtime.
 
 **AUTO-315 · ÅPEN** — Undersøk og test at `WeatherBandHours.make` håndterer
 dupliserte tidsstempler deterministisk uten å tegne samme time flere ganger.
 
 **AUTO-316 · ÅPEN** — Kontroller at temperaturvarsler avviser ikke-endelige
 terskelverdier selv når prognosetemperaturen er gyldig.
+
+**AUTO-317 · ÅPEN** — Legg til regresjonstest for rullerende temperaturkort
+som bare har én gjenværende prøve i det lokale døgnet.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

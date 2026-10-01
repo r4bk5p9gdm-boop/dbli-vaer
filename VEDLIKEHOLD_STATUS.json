@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-01T15:36:24Z",
+  "lastScheduledStart": "2026-10-01T16:06:24Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-313 fullført: temperaturregler avviser NaN og begge uendeligheter i målinger; lagt til regresjonstest for begge temperaturretninger. AUTO-316 lagt til for ikke-endelige temperaturterskler. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-314 fullført: rullerende temperaturmin/maks målt ved 23:00 bruker bare prøver samme lokale kalenderdag, ikke ekstreme verdier fra før midnatt eller neste dag. AUTO-317 lagt til for én gjenværende dagsprøve. Swift-parsing/typekontroll, JSON-validering og diff-check bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }
