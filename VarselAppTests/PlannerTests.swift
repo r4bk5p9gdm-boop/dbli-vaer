@@ -3820,6 +3820,52 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(alerts.filter { $0.rule.type == .temperatur }.count, 1)
     }
 
+    func testPlanAllKeepsWindAlertBetweenDeduplicatedRainAlerts() {
+        var firstRain = Rule(type: .regn)
+        firstRain.threshold = 0.5
+        firstRain.leadMinutes = 60
+        var wind = Rule(type: .vind)
+        wind.threshold = 9
+        wind.leadMinutes = 60
+        var secondRain = Rule(type: .regn)
+        secondRain.threshold = 0.5
+        secondRain.leadMinutes = 60
+
+        let firstRainAt = base.addingTimeInterval(2 * 3_600)
+        let windAt = base.addingTimeInterval(4 * 3_600)
+        let secondRainAt = base.addingTimeInterval(5 * 3_600)
+        let calendar = Calendar.current
+        func isolateRule(_ rule: inout Rule, at time: Date) {
+            let hour = calendar.component(.hour, from: time)
+            rule.activeFromHour = hour
+            rule.activeToHour = (hour + 1) % 24
+        }
+        isolateRule(&firstRain, at: firstRainAt)
+        isolateRule(&wind, at: windAt)
+        isolateRule(&secondRain, at: secondRainAt)
+
+        var hours = (0...5).map { offset in
+            ForecastHour(
+                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
+                temp: 8,
+                precip: offset == 2 || offset == 5 ? 1 : 0,
+                wind: 1,
+                cloud: 60,
+                dew: 7
+            )
+        }
+        hours[4].gust = 12
+        let place = Place(name: "Klinga", lat: 64.5, lon: 11.5, rules: [firstRain, wind, secondRain])
+
+        let alerts = Planner.planAll(
+            places: [place], forecasts: [place.id: hours], now: base
+        )
+
+        XCTAssertEqual(alerts.count, 2)
+        XCTAssertEqual(Set(alerts.map(\.rule.id)), Set([firstRain.id, wind.id]))
+        XCTAssertEqual(Set(alerts.map(\.eventAt)), Set([firstRainAt, windAt]))
+    }
+
     func testRainDeduplicationUsesEventTimeInsteadOfNotificationTime() {
         var eveningRule = Rule(type: .regn)
         eveningRule.leadMinutes = 12 * 60

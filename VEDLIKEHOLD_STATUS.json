@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-02T06:37:33Z",
+  "lastScheduledStart": "2026-10-02T07:07:33Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-343 fullført: regresjonstest bekrefter at radarbasert regndeduplisering bruker eventAt når hendelsene ligger fem timer fra hverandre selv om ulike varslingsfrister plasserer pushene seks timer eller mer fra hverandre. AUTO-346 lagt til for motsatt forskjell mellom radar- og prognosetid. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt fordi CoreSimulator-tjenesten fortsatt er utilgjengelig."
+  "lastProgress": "AUTO-344 fullført: planAll-test med regn, vind og regn bekrefter at vindvarselet beholdes, men ikke nullstiller lokal regndeduplisering. AUTO-347 lagt til for å sikre at cooldown ikke undertrykker snøvarsler. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt fordi CoreSimulator-tjenesten fortsatt er utilgjengelig."
 }
