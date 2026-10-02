@@ -1260,9 +1260,11 @@ dekker NaN og begge uendeligheter, gyldig reserveprøve og utelatt detalj når
 ingen gyldig prøve finnes. Swift-parsing/typekontroll og diffkontroll består;
 XCTest ble ikke kjørt fordi CoreSimulator er utilgjengelig.
 
-**AUTO-330 · ÅPEN** — Test at daggrupperingen beholder begge virkelige
-tidspunktene for en gjentatt lokaltime ved høstens DST-overgang, men fjerner et
-eksakt duplikat av ett av tidspunktene.
+**AUTO-330 · FULLFØRT 2026-10-02** — La til regresjonstest for Oslo-overgangen
+27. oktober 2024: daggrupperingen beholder begge ulike 02:30-instanser med én
+times mellomrom, men fjerner et eksakt duplikat av den første. Swift-parsing/
+typekontroll og diffkontroll består; XCTest ble ikke kjørt fordi CoreSimulator
+er utilgjengelig.
 
 **AUTO-331 · ÅPEN** — Test at `Planner.planAll` bevarer separate vind-, dugg-
 og temperaturvarsler selv når regnregler for samme sted dedupliseres mot
@@ -1270,6 +1272,9 @@ hverandre.
 
 **AUTO-332 · ÅPEN** — Kontroller temperaturavhengige detaljer for frost, snø
 og dugg for ugyldige eller ikke-endelige temperatur-/duggpunktverdier.
+
+**AUTO-333 · ÅPEN** — Vurder hvordan timekort og VoiceOver skiller de to
+ulike, gjentatte lokaltimeetikettene under høstens DST-overgang.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

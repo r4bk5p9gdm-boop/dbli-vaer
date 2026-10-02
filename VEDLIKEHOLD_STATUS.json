@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-01T23:36:26Z",
+  "lastScheduledStart": "2026-10-02T00:06:26Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-329 fullført: Planner.statusDetail filtrerer nå bort ikke-endelige temperaturer før nærmeste prøve velges; test dekker NaN/±infinity, gyldig reserveprøve og ingen gyldige prøver. AUTO-332 lagt til for temperaturavhengige frost-, snø- og duggdetaljer. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-330 fullført: ForecastDay.make-regresjonstest bekrefter at begge reelle Oslo 02:30-instansene ved høstens DST-overgang beholdes, mens et eksakt duplikat fjernes. AUTO-333 lagt til for gjennomgang av gjentatte lokaltimeetiketter i timekort/VoiceOver. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }
