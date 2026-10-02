@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-02T00:06:26Z",
+  "lastScheduledStart": "2026-10-02T00:36:26Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-330 fullført: ForecastDay.make-regresjonstest bekrefter at begge reelle Oslo 02:30-instansene ved høstens DST-overgang beholdes, mens et eksakt duplikat fjernes. AUTO-333 lagt til for gjennomgang av gjentatte lokaltimeetiketter i timekort/VoiceOver. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
+  "lastProgress": "AUTO-331 fullført: planAll-integrasjonstest bekrefter at to overlappende regnregler gir ett regnvarsel uten å fjerne separate vind-, dugg- eller temperaturvarsler; dugg kommer etter tre regnfrie timer. AUTO-334 lagt til for den eksakte seks timers regnvarselgrensen. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt grunnet utilgjengelig CoreSimulator."
 }

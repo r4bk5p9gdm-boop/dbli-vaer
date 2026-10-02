@@ -3575,6 +3575,47 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(alerts.first?.placeID, place.id)
     }
 
+    func testPlanAllDeduplicatesRainWithoutDroppingOtherWeatherAlerts() {
+        var firstRain = Rule(type: .regn)
+        firstRain.threshold = 0.5
+        firstRain.leadMinutes = 60
+        var secondRain = Rule(type: .regn)
+        secondRain.threshold = 0.5
+        secondRain.leadMinutes = 60
+        secondRain.customName = "Ta med paraply"
+        var wind = Rule(type: .vind)
+        wind.threshold = 9
+        wind.leadMinutes = 60
+        var dew = Rule(type: .dugg)
+        dew.threshold = 1
+        dew.leadMinutes = 60
+        var temperature = Rule(type: .temperatur)
+        temperature.threshold = 10
+        temperature.leadMinutes = 60
+
+        let place = Place(
+            name: "Klinga", lat: 64.5, lon: 11.5,
+            rules: [firstRain, secondRain, wind, dew, temperature]
+        )
+        var hours = forecast(values: [
+            (8, 1, 3, 80, 7),
+            (8, 0, 3, 80, 7),
+            (8, 0, 3, 80, 7),
+            (8, 0, 3, 80, 7),
+            (8, 0, 3, 80, 7),
+        ])
+        for index in hours.indices { hours[index].gust = 10 }
+
+        let alerts = Planner.planAll(
+            places: [place], forecasts: [place.id: hours], now: base.addingTimeInterval(-3 * 3_600)
+        )
+
+        XCTAssertEqual(alerts.filter { $0.rule.type == .regn }.count, 1)
+        XCTAssertEqual(alerts.filter { $0.rule.type == .vind }.count, 1)
+        XCTAssertEqual(alerts.filter { $0.rule.type == .dugg }.count, 1)
+        XCTAssertEqual(alerts.filter { $0.rule.type == .temperatur }.count, 1)
+    }
+
     func testRainDeduplicationUsesEventTimeInsteadOfNotificationTime() {
         var eveningRule = Rule(type: .regn)
         eveningRule.leadMinutes = 12 * 60
