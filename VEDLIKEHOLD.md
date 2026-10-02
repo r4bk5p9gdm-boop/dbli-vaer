@@ -1345,14 +1345,21 @@ samme avstand. Begge varsler beholdes ved den åpne `< 6 t`-grensen. Swift-
 parsing/typekontroll og diffkontroll består; XCTest ble ikke kjørt fordi
 CoreSimulator-tjenesten fortsatt er utilgjengelig.
 
-**AUTO-343 · ÅPEN** — Verifiser at radardeduplisering bruker hendelsestid også
-når ulike varslingstider gjør at pushenes `fireAt`-avstand er seks timer eller mer.
+**AUTO-343 · FULLFØRT 2026-10-02** — La til `planAll`-regresjonstest med
+radarhendelser fem timer fra hverandre, men varslingstider som legger de
+individuelle pushene minst seks timer fra hverandre. `planAll` beholder bare
+den første basert på `eventAt`. Swift-parsing/typekontroll og diffkontroll
+består; XCTest ble ikke kjørt fordi CoreSimulator-tjenesten fortsatt er
+utilgjengelig.
 
 **AUTO-344 · ÅPEN** — Test at en vindvarsling mellom to regnhendelser ikke
 nullstiller regndeduplisering innen samme sted, samtidig som vindvarselet beholdes.
 
 **AUTO-345 · ÅPEN** — Test to steder med hver sine par av regnhendelser innenfor
 seks timer; deduplisering skal beholde én regnvarsling per sted, ikke én globalt.
+
+**AUTO-346 · ÅPEN** — Test at radarhendelser minst seks timer fra hverandre
+beholdes selv når timeprognosens run-start ligger nærmere enn seks timer.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

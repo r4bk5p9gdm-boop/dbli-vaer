@@ -3964,6 +3964,64 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(alerts.first?.eventAt, firstRadarEventAt)
     }
 
+    func testPlanAllDeduplicatesRadarRainByEventTimeWhenPushTimesAreFarApart() throws {
+        var firstRule = Rule(type: .regn)
+        firstRule.threshold = 0.5
+        firstRule.leadMinutes = 12 * 60
+        var secondRule = Rule(type: .regn)
+        secondRule.threshold = 0.5
+        secondRule.leadMinutes = 60
+
+        let firstForecastEventAt = base.addingTimeInterval(2 * 3_600)
+        let secondForecastEventAt = firstForecastEventAt.addingTimeInterval(5 * 3_600)
+        let firstRadarEventAt = firstForecastEventAt.addingTimeInterval(4 * 60)
+        let secondRadarEventAt = secondForecastEventAt.addingTimeInterval(4 * 60)
+        let calendar = Calendar.current
+        func isolateRule(_ rule: inout Rule, at time: Date) {
+            let hour = calendar.component(.hour, from: time)
+            rule.activeFromHour = hour
+            rule.activeToHour = (hour + 1) % 24
+        }
+        isolateRule(&firstRule, at: firstRadarEventAt)
+        isolateRule(&secondRule, at: secondRadarEventAt)
+
+        var hours = (0...7).map { offset in
+            ForecastHour(
+                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
+                temp: 8,
+                precip: offset == 2 || offset == 7 ? 1 : 0,
+                wind: 1,
+                cloud: 60,
+                dew: 7
+            )
+        }
+        hours[2].radarSamples = [PrecipitationSample(time: firstRadarEventAt, rate: 0.8)]
+        hours[7].radarSamples = [PrecipitationSample(time: secondRadarEventAt, rate: 0.8)]
+        let place = Place(name: "Klinga", lat: 64.5, lon: 11.5, rules: [firstRule, secondRule])
+        let now = base.addingTimeInterval(-24 * 3_600)
+        let firstPlannedAlert = try XCTUnwrap(Planner.plan(
+            rule: firstRule, forecast: hours, placeName: place.name,
+            placeID: place.id, latitude: place.lat, longitude: place.lon, now: now
+        ).alerts.first)
+        let secondPlannedAlert = try XCTUnwrap(Planner.plan(
+            rule: secondRule, forecast: hours, placeName: place.name,
+            placeID: place.id, latitude: place.lat, longitude: place.lon, now: now
+        ).alerts.first)
+
+        let alerts = Planner.planAll(
+            places: [place], forecasts: [place.id: hours], now: now
+        )
+
+        XCTAssertEqual(secondRadarEventAt.timeIntervalSince(firstRadarEventAt), 5 * 3_600)
+        XCTAssertGreaterThanOrEqual(
+            abs(secondPlannedAlert.fireAt.timeIntervalSince(firstPlannedAlert.fireAt)),
+            6 * 3_600
+        )
+        XCTAssertEqual(alerts.count, 1)
+        XCTAssertEqual(alerts.first?.rule.id, firstRule.id)
+        XCTAssertEqual(alerts.first?.eventAt, firstRadarEventAt)
+    }
+
     func testPlanAllKeepsRainAlertsAtExactSixHourRadarBoundary() {
         var firstRule = Rule(type: .regn)
         firstRule.threshold = 0.5
