@@ -1292,9 +1292,12 @@ Aktive timevinduer isolerer hendelsene; testen krever at begge varslene beholdes
 ved den strenge grensen. Swift-parsing/typekontroll og diffkontroll består;
 XCTest ble ikke kjørt fordi CoreSimulator-tjenesten er utilgjengelig.
 
-**AUTO-335 · ÅPEN** — Kontroller pushdetaljer for frost, snø og dugg mot
-NaN/uendelige temperatur- og duggpunktverdier; filtrer ugyldige prøver og utelat
-detaljen når ingen gyldig måling finnes.
+**AUTO-335 · FULLFØRT 2026-10-02** — Pushdetaljer for frost og snø bruker nå
+bare prøver med endelig temperatur (og gyldig vannmengde for snø); dugg krever
+endelig temperatur og duggpunkt. Regresjonstester dekker NaN og ±∞, gyldig
+reserveprøve og utelatt detalj når alle prøver er ugyldige. Swift-parsing,
+typekontroll av modell/planlegger og diffkontroll består; XCTest ble ikke kjørt
+fordi CoreSimulator-tjenesten fortsatt er utilgjengelig.
 
 **AUTO-336 · ÅPEN** — Dekk den andre siden av nedbørskjølegrensen: regnvarsler
 med hendelser like under seks timers avstand skal dedupliseres, mens AUTO-334
@@ -1303,6 +1306,10 @@ dekker nøyaktig seks timer.
 **AUTO-337 · ÅPEN** — Test at deduplisering av en mellomliggende regnhendelse
 ikke også skjuler en senere hendelse mer enn seks timer fra siste beholdte
 varsel (for eksempel hendelser med fire timers mellomrom).
+
+**AUTO-338 · ÅPEN** — Kontroller pushdetaljer for vindkast med NaN eller
+uendelige verdier; bruk høyeste endelige vindkast, eller «Vindkast ikke oppgitt»
+når ingen gyldig verdi finnes.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

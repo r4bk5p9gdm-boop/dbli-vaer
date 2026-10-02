@@ -744,24 +744,33 @@ enum Planner {
             }
             return withTime(PrecipitationCopy.rain(amount / Double(duration)))
         case .sno:
-            let amount = hours.reduce(0.0) { total, hour in
+            let validHours = hours.filter { hour in
+                let water = possible ? hour.precipitationRiskRate : hour.precipitationRate
+                return hour.temp.isFinite && water.isFinite
+            }
+            guard !validHours.isEmpty else { return nil }
+            let amount = validHours.reduce(0.0) { total, hour in
                 let water = possible ? hour.precipitationRiskRate : hour.precipitationRate
                 return total + estimatedFreshSnowMillimeters(waterEquivalent: water, temperature: hour.temp)
             }
-            return withTime(PrecipitationCopy.snow(amount / Double(duration)))
+            return withTime(PrecipitationCopy.snow(amount / Double(validHours.count)))
         case .vind:
             let gust = hours.compactMap(\.gust).max()
             guard let gust else { return withTime("Vindkast ikke oppgitt") }
             return withTime(windStrengthHeadline(for: gust) + " — vindkast opptil \(number(gust)) m/s")
         case .frost:
-            let lowest = hours.map(\.temp).min() ?? 0
+            guard let lowest = hours.map(\.temp).filter(\.isFinite).min() else { return nil }
             let description = possible || (frostMargin > 0 && lowest > 0) ? "Fare for frost" : "Frost"
             return withTime("\(description) ved \(number(lowest))°")
         case .temperatur:
             let relation = rule.temperatureDirection == .above ? "Over" : "Under"
             return withTime("\(relation) \(number(rule.threshold))°")
         case .dugg:
-            let temperature = hours.min { abs($0.temp - $0.dew) < abs($1.temp - $1.dew) }?.temp ?? 0
+            let validHours = hours.filter { $0.temp.isFinite && $0.dew.isFinite }
+            guard let closest = validHours.min(by: {
+                abs($0.temp - $0.dew) < abs($1.temp - $1.dew)
+            }) else { return nil }
+            let temperature = closest.temp
             return withTime("\(possible ? "Mulig duggfall" : "Duggfall") ved \(number(temperature))°")
         case .sol:
             return withTime("Sol")

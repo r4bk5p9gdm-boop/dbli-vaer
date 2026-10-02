@@ -3099,6 +3099,67 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testFrostAndSnowPushDetailsSkipNonFiniteTemperatures() {
+        let valid = ForecastHour(
+            time: base.addingTimeInterval(3_600), temp: -1, precip: 0.6,
+            wind: 1, cloud: 80, dew: -2
+        )
+        var frost = Rule(type: .frost)
+        frost.threshold = 0
+        var snow = Rule(type: .sno)
+        snow.threshold = 0.5
+
+        for invalidTemperature in [Double.nan, .infinity, -.infinity] {
+            let invalid = ForecastHour(
+                time: base, temp: invalidTemperature, precip: 0.6,
+                wind: 1, cloud: 80, dew: -2
+            )
+            for rule in [frost, snow] {
+                let reference = Planner.notificationEventDetail(
+                    rule: rule, hours: [valid], possible: false
+                )?.components(separatedBy: " {tid}").first
+                let mixed = Planner.notificationEventDetail(
+                    rule: rule, hours: [invalid, valid], possible: false
+                )
+                XCTAssertEqual(mixed?.components(separatedBy: " {tid}").first, reference)
+                XCTAssertNil(Planner.notificationEventDetail(
+                    rule: rule, hours: [invalid], possible: false
+                ))
+            }
+        }
+    }
+
+    func testDewPushDetailsSkipNonFiniteTemperatureAndDewPoint() {
+        let valid = ForecastHour(
+            time: base.addingTimeInterval(3_600), temp: 8, precip: 0,
+            wind: 1, cloud: 60, dew: 7
+        )
+        let rule = Rule(type: .dugg)
+
+        for invalidValue in [Double.nan, .infinity, -.infinity] {
+            let invalidTemperature = ForecastHour(
+                time: base, temp: invalidValue, precip: 0,
+                wind: 1, cloud: 60, dew: 7
+            )
+            let invalidDewPoint = ForecastHour(
+                time: base, temp: 8, precip: 0,
+                wind: 1, cloud: 60, dew: invalidValue
+            )
+            for invalid in [invalidTemperature, invalidDewPoint] {
+                let reference = Planner.notificationEventDetail(
+                    rule: rule, hours: [valid], possible: false
+                )?.components(separatedBy: " {tid}").first
+                let mixed = Planner.notificationEventDetail(
+                    rule: rule, hours: [invalid, valid], possible: false
+                )
+                XCTAssertEqual(mixed?.components(separatedBy: " {tid}").first, reference)
+                XCTAssertNil(Planner.notificationEventDetail(
+                    rule: rule, hours: [invalid], possible: false
+                ))
+            }
+        }
+    }
+
     func testEveryAlertTypeHasAUsablePushTitleInBothActiveNorwegianStyles() {
         for language in [AlertLanguageStyle.bokmal, .inntrondersk] {
             for type in AlertType.allCases {
