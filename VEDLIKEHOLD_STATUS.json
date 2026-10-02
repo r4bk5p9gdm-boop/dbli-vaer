@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-02T10:07:34Z",
+  "lastScheduledStart": "2026-10-02T10:37:34Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-350 fullført: rain cooldown kjøres nå i eventAt-rekkefølge, og regresjonstesten beholder tidligste værhendelse selv når dens fireAt er senere. AUTO-353 lagt til for invers fireAt-rekkefølge ved nøyaktig seks forløpte timer. Swift-parsing/typekontroll og diffkontroll bestått; XCTest ikke kjørt i denne lettvektskjøringen."
+  "lastProgress": "AUTO-351 fullført: test bekrefter at to regnhendelser med lik fireAt og ulik eventAt beholder den tidligste eventAt uavhengig av regelrekkefølge. AUTO-354 lagt til for flere planlagte varsler per samme regnhendelse. Swift-parsing/typekontroll og diffkontroll bestått; XCTest ikke kjørt i denne lettvektskjøringen."
 }

@@ -4184,6 +4184,68 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(alerts.first?.eventAt, firstEventAt)
     }
 
+    func testPlanAllRainCooldownIsDeterministicForTiedFireTimes() throws {
+        let firstEventAt = base.addingTimeInterval(2 * 3_600)
+        let secondEventAt = base.addingTimeInterval(5 * 3_600)
+        let calendar = Calendar.current
+        func rainRule(at eventAt: Date, leadMinutes: Int) -> Rule {
+            var rule = Rule(type: .regn)
+            rule.threshold = 0.5
+            rule.leadMinutes = leadMinutes
+            let hour = calendar.component(.hour, from: eventAt)
+            rule.activeFromHour = hour
+            rule.activeToHour = (hour + 1) % 24
+            return rule
+        }
+
+        let earlierFirst = rainRule(at: firstEventAt, leadMinutes: 60)
+        let laterSecond = rainRule(at: secondEventAt, leadMinutes: 240)
+        let laterFirst = rainRule(at: secondEventAt, leadMinutes: 240)
+        let earlierSecond = rainRule(at: firstEventAt, leadMinutes: 60)
+        let earlierPlace = Place(
+            name: "Namsos", lat: 64.5, lon: 11.5,
+            rules: [laterSecond, earlierFirst]
+        )
+        let reversedPlace = Place(
+            name: "Klinga", lat: 64.6, lon: 11.6,
+            rules: [earlierSecond, laterFirst]
+        )
+        let forecast = (0...5).map { offset in
+            ForecastHour(
+                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
+                temp: 8,
+                precip: offset == 2 || offset == 5 ? 1 : 0,
+                wind: 1,
+                cloud: 60,
+                dew: 7
+            )
+        }
+        let now = base
+        let earlyFireAt = try XCTUnwrap(Planner.plan(
+            rule: earlierFirst, forecast: forecast, placeName: earlierPlace.name,
+            now: now, calendar: calendar
+        ).alerts.first?.fireAt)
+        let lateFireAt = try XCTUnwrap(Planner.plan(
+            rule: laterSecond, forecast: forecast, placeName: earlierPlace.name,
+            now: now, calendar: calendar
+        ).alerts.first?.fireAt)
+        XCTAssertEqual(earlyFireAt, lateFireAt)
+
+        let alerts = Planner.planAll(
+            places: [earlierPlace, reversedPlace],
+            forecasts: [earlierPlace.id: forecast, reversedPlace.id: forecast],
+            now: now,
+            calendar: calendar
+        )
+
+        XCTAssertEqual(alerts.count, 2)
+        for place in [earlierPlace, reversedPlace] {
+            let placeAlerts = alerts.filter { $0.placeID == place.id }
+            XCTAssertEqual(placeAlerts.count, 1)
+            XCTAssertEqual(placeAlerts.first?.eventAt, firstEventAt)
+        }
+    }
+
     func testPlanAllUsesPreciseRadarTimesJustBelowRainCooldown() {
         var firstRule = Rule(type: .regn)
         firstRule.threshold = 0.5
