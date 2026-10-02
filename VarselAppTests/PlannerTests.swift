@@ -3863,6 +3863,47 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(alerts.filter { $0.rule.type == .temperatur }.count, 1)
     }
 
+    func testPlanAllRainCooldownDoesNotDropNearbySnowAlert() {
+        var rain = Rule(type: .regn)
+        rain.threshold = 0.5
+        rain.leadMinutes = 60
+        var snow = Rule(type: .sno)
+        snow.threshold = 0.5
+        snow.leadMinutes = 60
+
+        let rainAt = base.addingTimeInterval(2 * 3_600)
+        let snowAt = base.addingTimeInterval(5 * 3_600)
+        let calendar = Calendar.current
+        let rainHour = calendar.component(.hour, from: rainAt)
+        rain.activeFromHour = rainHour
+        rain.activeToHour = (rainHour + 1) % 24
+        let snowHour = calendar.component(.hour, from: snowAt)
+        snow.activeFromHour = snowHour
+        snow.activeToHour = (snowHour + 1) % 24
+
+        let place = Place(name: "Klinga", lat: 64.5, lon: 11.5, rules: [rain, snow])
+        let forecast = (0...5).map { offset in
+            ForecastHour(
+                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
+                temp: offset == 5 ? 0 : 8,
+                precip: offset == 2 || offset == 5 ? 1 : 0,
+                wind: 1,
+                cloud: 60,
+                dew: 7
+            )
+        }
+
+        let alerts = Planner.planAll(
+            places: [place], forecasts: [place.id: forecast]
+        )
+
+        XCTAssertEqual(alerts.count, 2)
+        XCTAssertEqual(alerts.filter { $0.rule.type == .regn }.count, 1)
+        XCTAssertEqual(alerts.filter { $0.rule.type == .sno }.count, 1)
+        XCTAssertEqual(Set(alerts.map(\.rule.id)), Set([rain.id, snow.id]))
+        XCTAssertEqual(Set(alerts.map(\.eventAt)), Set([rainAt, snowAt]))
+    }
+
     func testPlanAllKeepsWindAlertBetweenDeduplicatedRainAlerts() {
         var firstRain = Rule(type: .regn)
         firstRain.threshold = 0.5

@@ -1370,14 +1370,21 @@ Begge varsler beholdes, og resultatene peker på radarens eventAt. Swift-
 parsing/typekontroll og diffkontroll består; XCTest ble ikke kjørt fordi
 CoreSimulator-tjenesten fortsatt er utilgjengelig.
 
-**AUTO-347 · ÅPEN** — Bekreft at regndeduplisering innenfor seks timer ikke
-undertrykker en egen snøvarsling for samme sted.
+**AUTO-347 · FULLFØRT 2026-10-02** — La til en `planAll`-regresjonstest med
+regn og snø på samme sted tre timer fra hverandre. Testen bekrefter at
+seks-timers regndeduplisering beholder snøvarslet og begge hendelsestidene.
+Swift-parsing/typekontroll og diffkontroll består; XCTest ble ikke kjørt fordi
+denne kjøringen holder seg til lettvektskontroller uten simulator.
 
 **AUTO-348 · ÅPEN** — Test at regndeduplisering måler seks timer som forløpt
 tid over en sommertidsovergang, ikke som veggklokketimer.
 
 **AUTO-349 · ÅPEN** — Test at regn/snø-deduplisering er lokal per sted også
 når én regnhendelse på ett sted ligger nærmere en hendelse på et annet sted.
+
+**AUTO-350 · ÅPEN** — Test at regndeduplisering beholder den tidligste
+værhendelsen (`eventAt`) selv når ulik varslingstid gjør at en senere
+regnhendelse får tidligere `fireAt`.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
