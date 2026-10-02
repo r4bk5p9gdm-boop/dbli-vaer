@@ -755,7 +755,7 @@ enum Planner {
             }
             return withTime(PrecipitationCopy.snow(amount / Double(validHours.count)))
         case .vind:
-            let gust = hours.compactMap(\.gust).max()
+            let gust = hours.compactMap(\.gust).filter(\.isFinite).max()
             guard let gust else { return withTime("Vindkast ikke oppgitt") }
             return withTime(windStrengthHeadline(for: gust) + " — vindkast opptil \(number(gust)) m/s")
         case .frost:

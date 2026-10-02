@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-02T03:36:27Z",
+  "lastScheduledStart": "2026-10-02T04:06:27Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-337 fullført: planAll-test med regnhendelser fire timer fra hverandre fjerner mellomste varsel, men beholder hendelsen åtte timer fra sist beholdte; cooldown måles dermed ikke transitive mot forkastede hendelser. AUTO-340 lagt til for å sikre uavhengig deduplisering mellom steder. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt fordi CoreSimulator-tjenesten fortsatt er utilgjengelig."
+  "lastProgress": "AUTO-338 fullført: pushdetaljer for vindkast filtrerer NaN og ±∞; regresjonstest dekker ugyldige kast sammen med gyldig måling og når alle kast er ugyldige. AUTO-341 lagt til for rullerende vinddetaljer. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt fordi CoreSimulator-tjenesten fortsatt er utilgjengelig."
 }

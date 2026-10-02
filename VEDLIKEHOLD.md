@@ -1313,9 +1313,12 @@ testen låser dermed at kjølegrensen måles fra sist beholdte hendelse. Swift-
 parsing/typekontroll og diffkontroll består; XCTest ble ikke kjørt fordi
 CoreSimulator-tjenesten fortsatt er utilgjengelig.
 
-**AUTO-338 · ÅPEN** — Kontroller pushdetaljer for vindkast med NaN eller
-uendelige verdier; bruk høyeste endelige vindkast, eller «Vindkast ikke oppgitt»
-når ingen gyldig verdi finnes.
+**AUTO-338 · FULLFØRT 2026-10-02** — Pushdetaljer for vindkast filtrerer nå bort
+NaN og ±∞ før maksimum beregnes. Regresjonstest dekker at gyldig vindkast
+fortsatt brukes sammen med ugyldige prøver, og at bare ugyldige verdier gir
+«Vindkast ikke oppgitt». Swift-parsing/typekontroll, JSON-validering og
+diffkontroll består; XCTest ble ikke kjørt fordi CoreSimulator-tjenesten fortsatt
+er utilgjengelig.
 
 **AUTO-339 · ÅPEN** — Test regndeduplisering like under seks timer med radarens
 undertimehendelser, slik at grensen testes tettere enn hele timeprognosens
@@ -1324,6 +1327,10 @@ femtimers tilnærming.
 **AUTO-340 · ÅPEN** — Bekreft at identiske regnhendelser for to forskjellige
 steder begge beholdes; kjølegrensen skal bare deduplisere regler innen samme
 sted.
+
+**AUTO-341 · ÅPEN** — Kontroller rullerende vinddetaljer for vindkast med NaN
+eller ±∞; ignorer ikke-endelige kast og vis «Vindkast ikke oppgitt» når ingen
+endelig verdi finnes.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

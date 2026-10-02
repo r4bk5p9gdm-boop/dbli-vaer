@@ -1042,6 +1042,26 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(text, "Sterk kuling — vindkast opptil 20 m/s {tid} — i 2 timer.")
     }
 
+    func testWindPushDetailIgnoresNonFiniteGusts() throws {
+        let rule = Rule(type: .vind)
+        var valid = ForecastHour(time: base, temp: 10, precip: 0, wind: 3, cloud: 20, dew: 4)
+        valid.gust = 12
+        let expected = try XCTUnwrap(Planner.notificationEventDetail(rule: rule, hours: [valid], possible: false))
+
+        for invalidGust in [Double.nan, .infinity, -.infinity] {
+            var invalid = valid
+            invalid.gust = invalidGust
+            let withInvalidSample = try XCTUnwrap(Planner.notificationEventDetail(rule: rule, hours: [invalid, valid], possible: false))
+            XCTAssertTrue(withInvalidSample.hasPrefix("Liten kuling — vindkast opptil 12 m/s"))
+            XCTAssertTrue(withInvalidSample.hasSuffix("{tid} — i 2 timer."))
+
+            let onlyInvalid = try XCTUnwrap(Planner.notificationEventDetail(rule: rule, hours: [invalid], possible: false))
+            XCTAssertEqual(onlyInvalid, "Vindkast ikke oppgitt {tid} — i en time.")
+        }
+
+        XCTAssertEqual(expected, "Liten kuling — vindkast opptil 12 m/s {tid} — i en time.")
+    }
+
     func testWindStatusSeparatesWindAndGust() throws {
         var rule = Rule(type: .vind)
         rule.threshold = 9
