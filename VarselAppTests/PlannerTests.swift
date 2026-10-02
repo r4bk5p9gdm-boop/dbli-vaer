@@ -3904,6 +3904,49 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(Set(alerts.map(\.eventAt)), Set([rainAt, snowAt]))
     }
 
+    func testPlanAllDoesNotDeduplicateRainAgainstNearbySnowAtAnotherPlace() {
+        let rainAt = base.addingTimeInterval(2 * 3_600)
+        let snowAt = base.addingTimeInterval(5 * 3_600)
+        let calendar = Calendar.current
+        var rain = Rule(type: .regn)
+        rain.threshold = 0.5
+        rain.leadMinutes = 60
+        let rainHour = calendar.component(.hour, from: rainAt)
+        rain.activeFromHour = rainHour
+        rain.activeToHour = (rainHour + 1) % 24
+
+        var snow = Rule(type: .sno)
+        snow.threshold = 0.5
+        snow.leadMinutes = 60
+        let snowHour = calendar.component(.hour, from: snowAt)
+        snow.activeFromHour = snowHour
+        snow.activeToHour = (snowHour + 1) % 24
+
+        let rainPlace = Place(name: "Namsos", lat: 64.5, lon: 11.5, rules: [rain])
+        let snowPlace = Place(name: "Klinga", lat: 64.6, lon: 11.6, rules: [snow])
+        let forecast = (0...5).map { offset in
+            ForecastHour(
+                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
+                temp: offset == 5 ? 0 : 8,
+                precip: offset == 2 || offset == 5 ? 1 : 0,
+                wind: 1,
+                cloud: 60,
+                dew: 7
+            )
+        }
+
+        let alerts = Planner.planAll(
+            places: [rainPlace, snowPlace],
+            forecasts: [rainPlace.id: forecast, snowPlace.id: forecast],
+            now: base
+        )
+
+        XCTAssertEqual(alerts.count, 2)
+        XCTAssertEqual(Set(alerts.map(\.placeID)), Set([rainPlace.id, snowPlace.id]))
+        XCTAssertEqual(alerts.filter { $0.rule.type == .regn }.map(\.eventAt), [rainAt])
+        XCTAssertEqual(alerts.filter { $0.rule.type == .sno }.map(\.eventAt), [snowAt])
+    }
+
     func testPlanAllKeepsWindAlertBetweenDeduplicatedRainAlerts() {
         var firstRain = Rule(type: .regn)
         firstRain.threshold = 0.5

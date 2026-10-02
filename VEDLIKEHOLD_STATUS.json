@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-02T09:07:33Z",
+  "lastScheduledStart": "2026-10-02T09:37:34Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-348 fullført: la til Oslo-vårskiftetest som bekrefter at 01:00 til 07:00 er fem forløpte timer og dedupliseres, med injiserbar kalender/tid i planAll. AUTO-351 lagt til for stabil håndtering av lik fireAt og ulik eventAt. Swift-parsing/typekontroll og diffkontroll bestått; XCTest ikke kjørt i denne lettvektskjøringen."
+  "lastProgress": "AUTO-349 fullført: la til test som beholder et regnvarsel i Namsos og et nærliggende snøvarsel i Klinga; begge stedene og eventAt-tidene består. AUTO-352 lagt til for å teste at filtrerte regler ikke påvirker cooldown. Swift-parsing/typekontroll og diffkontroll bestått; XCTest ikke kjørt i denne lettvektskjøringen."
 }

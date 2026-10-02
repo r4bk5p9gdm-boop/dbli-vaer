@@ -1382,8 +1382,11 @@ er bare fem timer fra hverandre selv om veggklokken viser seks. Deduplisering
 beholder den første hendelsen. Swift-parsing/typekontroll og diffkontroll
 består; XCTest ble ikke kjørt i denne lettvektskjøringen.
 
-**AUTO-349 · ÅPEN** — Test at regn/snø-deduplisering er lokal per sted også
-når én regnhendelse på ett sted ligger nærmere en hendelse på et annet sted.
+**AUTO-349 · FULLFØRT 2026-10-02** — La til `planAll`-test med regnvarsel på
+Namsos og snøvarsel på Klinga tre timer senere. Begge stedene og
+værhendelsene beholdes; ingen kryss-sted regn/snø-deduplisering skjer.
+Swift-parsing/typekontroll og diffkontroll består; XCTest ble ikke kjørt i
+denne lettvektskjøringen.
 
 **AUTO-350 · ÅPEN** — Test at regndeduplisering beholder den tidligste
 værhendelsen (`eventAt`) selv når ulik varslingstid gjør at en senere
@@ -1392,6 +1395,9 @@ regnhendelse får tidligere `fireAt`.
 **AUTO-351 · ÅPEN** — Gjør regndeduplisering deterministisk når to ulike
 regnhendelser har lik `fireAt`, men ulik `eventAt` innenfor cooldown-vinduet;
 behold den tidligste værhendelsen uavhengig av regelrekkefølge.
+
+**AUTO-352 · ÅPEN** — Test at en deaktivert eller ikke-nærstående regnregel
+ikke påvirker cooldown-deduplisering av gyldige regnvarsler på et sted.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
