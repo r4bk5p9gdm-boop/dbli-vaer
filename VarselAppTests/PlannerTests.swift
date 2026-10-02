@@ -1075,6 +1075,44 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(weatherAlertText(for: rule, eventAt: base.addingTimeInterval(3600), referenceAt: base).hasPrefix("Vindkast "))
     }
 
+    func testWindStatusDetailsIgnoreNonFiniteGusts() {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let status = WeatherStatus(ruleID: UUID(), type: .vind, text: "", eventAt: base, isNow: true)
+        let valid = ForecastHour(
+            time: base.addingTimeInterval(3_600), temp: 10, precip: 0,
+            wind: 3, cloud: 20, dew: 4, gust: 12
+        )
+
+        for invalidGust in [Double.nan, .infinity, -.infinity] {
+            let invalid = ForecastHour(
+                time: base, temp: 10, precip: 0, wind: 3,
+                cloud: 20, dew: 4, gust: invalidGust
+            )
+            XCTAssertEqual(
+                Planner.statusDetail(for: status, place: place, forecast: [invalid, valid]),
+                "Liten kuling — vindkast opptil 12 m/s."
+            )
+            XCTAssertEqual(
+                Planner.rotatingStatusDetail(
+                    for: status, place: place, forecast: [invalid, valid],
+                    headlineDescribesTime: true
+                ),
+                "Liten kuling."
+            )
+            XCTAssertEqual(
+                Planner.statusDetail(for: status, place: place, forecast: [invalid]),
+                "Vindkast ikke oppgitt."
+            )
+            XCTAssertEqual(
+                Planner.rotatingStatusDetail(
+                    for: status, place: place, forecast: [invalid],
+                    headlineDescribesTime: true
+                ),
+                "Vindkast ikke oppgitt."
+            )
+        }
+    }
+
     func testRotatingWindDetailUsesStrengthAndActualDuration() {
         var rule = Rule(type: .vind)
         rule.threshold = 9

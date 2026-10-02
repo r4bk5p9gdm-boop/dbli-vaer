@@ -380,9 +380,16 @@ enum Planner {
     }
 
     static func statusDetail(for status: WeatherStatus, place: Place, forecast: [ForecastHour]) -> String? {
-        let detailForecast = [.temperatur, .frost, .sno, .dugg].contains(status.type)
-            ? forecast.filter { $0.temp.isFinite }
-            : forecast
+        let detailForecast: [ForecastHour]
+        switch status.type {
+        case .temperatur, .frost, .sno, .dugg:
+            detailForecast = forecast.filter { $0.temp.isFinite }
+        case .vind:
+            let finiteGusts = forecast.filter { $0.gust?.isFinite == true }
+            detailForecast = finiteGusts.isEmpty ? forecast : finiteGusts
+        default:
+            detailForecast = forecast
+        }
         guard let hour = detailForecast.min(by: {
             abs($0.time.timeIntervalSince(status.eventAt)) < abs($1.time.timeIntervalSince(status.eventAt))
         }) else { return nil }
@@ -412,7 +419,7 @@ enum Planner {
         case .temperatur:
             return "\(hour.yrTemperature == nil ? "Yr melder" : "Lokalt anslag"): \(number(hour.temp))°."
         case .vind:
-            if let gust = hour.gust {
+            if let gust = hour.gust, gust.isFinite {
                 if let duration = matchingDuration(for: status, place: place, forecast: forecast) {
                     let unit = duration == 1 ? "time" : "timer"
                     return "\(windStrengthHeadline(for: gust)) i \(duration) \(unit)."
@@ -438,6 +445,9 @@ enum Planner {
         switch status.type {
         case .temperatur, .frost, .sno:
             detailForecast = forecast.filter { $0.temp.isFinite }
+        case .vind:
+            let finiteGusts = forecast.filter { $0.gust?.isFinite == true }
+            detailForecast = finiteGusts.isEmpty ? forecast : finiteGusts
         case .dugg where status.isNow:
             detailForecast = forecast.filter { $0.dew.isFinite }
         default:
@@ -470,7 +480,7 @@ enum Planner {
         case .temperatur:
             base = "Lokalt anslag \(number)°"
         case .vind:
-            guard let gust = hour.gust else { return "Vindkast ikke oppgitt." }
+            guard let gust = hour.gust, gust.isFinite else { return "Vindkast ikke oppgitt." }
             base = windStrengthHeadline(for: gust)
         case .sol:
             base = hour.cloud <= 20 ? "Sol" : "Solgløtt"
