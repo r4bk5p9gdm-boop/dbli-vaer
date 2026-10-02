@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-02T02:36:26Z",
+  "lastScheduledStart": "2026-10-02T03:06:26Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-335 fullført: pushdetaljer for frost/snø avviser ikke-endelig temperatur, og dugg avviser ikke-endelig temperatur eller duggpunkt; regresjonstester dekker NaN/±∞, reserveprøver og utelatt detalj uten gyldige data. AUTO-338 lagt til for ugyldige vindkastverdier. Swift-parsing, modell/planlegger-typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt fordi CoreSimulator-tjenesten fortsatt er utilgjengelig."
+  "lastProgress": "AUTO-336 fullført: planAll-integrasjonstest bekrefter at to regnhendelser fem timer fra hverandre dedupliseres til den tidligste varslingen, mens AUTO-334 dekker at nøyaktig seks timer beholder begge. AUTO-339 lagt til for å teste tettere subtimegrense med radarhendelser. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt fordi CoreSimulator-tjenesten fortsatt er utilgjengelig."
 }

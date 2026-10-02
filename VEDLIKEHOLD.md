@@ -1299,9 +1299,12 @@ reserveprøve og utelatt detalj når alle prøver er ugyldige. Swift-parsing,
 typekontroll av modell/planlegger og diffkontroll består; XCTest ble ikke kjørt
 fordi CoreSimulator-tjenesten fortsatt er utilgjengelig.
 
-**AUTO-336 · ÅPEN** — Dekk den andre siden av nedbørskjølegrensen: regnvarsler
-med hendelser like under seks timers avstand skal dedupliseres, mens AUTO-334
-dekker nøyaktig seks timer.
+**AUTO-336 · FULLFØRT 2026-10-02** — La til `planAll`-regresjonstest der to
+regnregler finner hver sin hendelse fem timer fra hverandre. Ulike aktive
+timevinduer isolerer hendelsene; testen bekrefter at bare den tidligste
+regnvarslingen beholdes innenfor den seks timer lange kjølegrensen. Swift-
+parsing/typekontroll og diffkontroll består; XCTest ble ikke kjørt fordi
+CoreSimulator-tjenesten fortsatt er utilgjengelig.
 
 **AUTO-337 · ÅPEN** — Test at deduplisering av en mellomliggende regnhendelse
 ikke også skjuler en senere hendelse mer enn seks timer fra siste beholdte
@@ -1310,6 +1313,10 @@ varsel (for eksempel hendelser med fire timers mellomrom).
 **AUTO-338 · ÅPEN** — Kontroller pushdetaljer for vindkast med NaN eller
 uendelige verdier; bruk høyeste endelige vindkast, eller «Vindkast ikke oppgitt»
 når ingen gyldig verdi finnes.
+
+**AUTO-339 · ÅPEN** — Test regndeduplisering like under seks timer med radarens
+undertimehendelser, slik at grensen testes tettere enn hele timeprognosens
+femtimers tilnærming.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

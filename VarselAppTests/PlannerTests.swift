@@ -3796,6 +3796,47 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(Set(alerts.map(\.eventAt)), Set([firstEventAt, secondEventAt]))
     }
 
+    func testPlanAllDeduplicatesRainAlertsWithinSixHourCooldown() {
+        var firstRule = Rule(type: .regn)
+        firstRule.threshold = 0.5
+        firstRule.leadMinutes = 60
+        var secondRule = Rule(type: .regn)
+        secondRule.threshold = 0.5
+        secondRule.leadMinutes = 60
+
+        let firstEventAt = base.addingTimeInterval(2 * 3_600)
+        let secondEventAt = firstEventAt.addingTimeInterval(5 * 3_600)
+        let calendar = Calendar.current
+        func isolateRule(_ rule: inout Rule, at time: Date) {
+            let hour = calendar.component(.hour, from: time)
+            rule.activeFromHour = hour
+            rule.activeToHour = (hour + 1) % 24
+        }
+        isolateRule(&firstRule, at: firstEventAt)
+        isolateRule(&secondRule, at: secondEventAt)
+
+        let hours = (0...7).map { offset in
+            ForecastHour(
+                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
+                temp: 8,
+                precip: offset == 2 || offset == 7 ? 1 : 0,
+                wind: 1,
+                cloud: 60,
+                dew: 7
+            )
+        }
+        let place = Place(name: "Klinga", lat: 64.5, lon: 11.5, rules: [firstRule, secondRule])
+
+        let alerts = Planner.planAll(
+            places: [place], forecasts: [place.id: hours], now: base
+        )
+
+        XCTAssertEqual(secondEventAt.timeIntervalSince(firstEventAt), 5 * 3_600)
+        XCTAssertEqual(alerts.count, 1)
+        XCTAssertEqual(alerts.first?.rule.id, firstRule.id)
+        XCTAssertEqual(alerts.first?.eventAt, firstEventAt)
+    }
+
     func testNotificationLimitKeepsNearestUniqueFutureAlerts() {
         let rule = Rule(type: .regn)
         let placeID = UUID()
