@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-02T08:37:33Z",
+  "lastScheduledStart": "2026-10-02T09:07:33Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-347 fullført: la til test som bekrefter at regndeduplisering på samme sted ikke undertrykker en egen snøvarsling tre timer senere. AUTO-350 lagt til for å teste valg av tidligste eventAt når ulik lead time snur fireAt-rekkefølgen. Swift-parsing/typekontroll og diffkontroll bestått; XCTest ikke kjørt i denne lettvektskjøringen."
+  "lastProgress": "AUTO-348 fullført: la til Oslo-vårskiftetest som bekrefter at 01:00 til 07:00 er fem forløpte timer og dedupliseres, med injiserbar kalender/tid i planAll. AUTO-351 lagt til for stabil håndtering av lik fireAt og ulik eventAt. Swift-parsing/typekontroll og diffkontroll bestått; XCTest ikke kjørt i denne lettvektskjøringen."
 }

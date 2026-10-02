@@ -4007,6 +4007,51 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(Set(alerts.map(\.eventAt)), Set([firstEventAt, secondEventAt]))
     }
 
+    func testPlanAllRainCooldownUsesElapsedTimeAcrossSpringDSTTransition() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let firstEventAt = try XCTUnwrap(calendar.date(from: DateComponents(
+            year: 2030, month: 3, day: 31, hour: 1
+        )))
+        let secondEventAt = firstEventAt.addingTimeInterval(5 * 3_600)
+        XCTAssertEqual(calendar.component(.hour, from: firstEventAt), 1)
+        XCTAssertEqual(calendar.component(.hour, from: secondEventAt), 7)
+        XCTAssertEqual(secondEventAt.timeIntervalSince(firstEventAt), 5 * 3_600)
+
+        var firstRule = Rule(type: .regn)
+        firstRule.threshold = 0.5
+        firstRule.leadMinutes = 60
+        var secondRule = Rule(type: .regn)
+        secondRule.threshold = 0.5
+        secondRule.leadMinutes = 60
+        firstRule.activeFromHour = 1
+        firstRule.activeToHour = 2
+        secondRule.activeFromHour = 7
+        secondRule.activeToHour = 8
+
+        let forecastStart = firstEventAt.addingTimeInterval(-3_600)
+        let hours = (0...7).map { offset in
+            ForecastHour(
+                time: forecastStart.addingTimeInterval(TimeInterval(offset * 3_600)),
+                temp: 8,
+                precip: offset == 1 || offset == 6 ? 1 : 0,
+                wind: 1,
+                cloud: 60,
+                dew: 7
+            )
+        }
+        let place = Place(name: "Klinga", lat: 64.5, lon: 11.5, rules: [firstRule, secondRule])
+
+        let alerts = Planner.planAll(
+            places: [place], forecasts: [place.id: hours],
+            now: forecastStart.addingTimeInterval(-3_600), calendar: calendar
+        )
+
+        XCTAssertEqual(alerts.count, 1)
+        XCTAssertEqual(alerts.first?.rule.id, firstRule.id)
+        XCTAssertEqual(alerts.first?.eventAt, firstEventAt)
+    }
+
     func testPlanAllDeduplicatesRainAlertsWithinSixHourCooldown() {
         var firstRule = Rule(type: .regn)
         firstRule.threshold = 0.5

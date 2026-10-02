@@ -1376,8 +1376,11 @@ seks-timers regndeduplisering beholder snøvarslet og begge hendelsestidene.
 Swift-parsing/typekontroll og diffkontroll består; XCTest ble ikke kjørt fordi
 denne kjøringen holder seg til lettvektskontroller uten simulator.
 
-**AUTO-348 · ÅPEN** — Test at regndeduplisering måler seks timer som forløpt
-tid over en sommertidsovergang, ikke som veggklokketimer.
+**AUTO-348 · FULLFØRT 2026-10-02** — Utvidet `Planner.planAll` med injiserbar
+`now` og `calendar`, og la til en test for Oslo-vårskiftet: hendelser 01 og 07
+er bare fem timer fra hverandre selv om veggklokken viser seks. Deduplisering
+beholder den første hendelsen. Swift-parsing/typekontroll og diffkontroll
+består; XCTest ble ikke kjørt i denne lettvektskjøringen.
 
 **AUTO-349 · ÅPEN** — Test at regn/snø-deduplisering er lokal per sted også
 når én regnhendelse på ett sted ligger nærmere en hendelse på et annet sted.
@@ -1385,6 +1388,10 @@ når én regnhendelse på ett sted ligger nærmere en hendelse på et annet sted
 **AUTO-350 · ÅPEN** — Test at regndeduplisering beholder den tidligste
 værhendelsen (`eventAt`) selv når ulik varslingstid gjør at en senere
 regnhendelse får tidligere `fireAt`.
+
+**AUTO-351 · ÅPEN** — Gjør regndeduplisering deterministisk når to ulike
+regnhendelser har lik `fireAt`, men ulik `eventAt` innenfor cooldown-vinduet;
+behold den tidligste værhendelsen uavhengig av regelrekkefølge.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

@@ -697,7 +697,9 @@ enum Planner {
     static func planAll(
         places: [Place],
         forecasts: [UUID: [ForecastHour]],
-        nearbyPlaceIDs: Set<UUID> = []
+        nearbyPlaceIDs: Set<UUID> = [],
+        now: Date = Date(),
+        calendar: Calendar = .current
     ) -> [PlannedAlert] {
         places.filter(\.areNotificationsEnabled).flatMap { p in
             let placeAlerts = p.rules.filter { rule in
@@ -712,7 +714,9 @@ enum Planner {
                     placeID: p.id,
                     frostMargin: p.localFrostMargin,
                     latitude: p.lat,
-                    longitude: p.lon
+                    longitude: p.lon,
+                    now: now,
+                    calendar: calendar
                 ).alerts
             }
             return removingDuplicateRainAlerts(placeAlerts)
