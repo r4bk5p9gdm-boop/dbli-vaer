@@ -5070,6 +5070,21 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(days[0].hours.map(\.time), [firstLocal0230, secondLocal0230])
         XCTAssertEqual(days[0].hours.map(\.temp), [6, 7])
         XCTAssertEqual(secondLocal0230.timeIntervalSince(firstLocal0230), 3_600)
+
+        let firstLabel = ForecastHourLabel.make(
+            for: firstLocal0230,
+            among: [firstLocal0230, secondLocal0230, exactDuplicate.time],
+            calendar: oslo
+        )
+        let secondLabel = ForecastHourLabel.make(
+            for: secondLocal0230,
+            among: [firstLocal0230, secondLocal0230, exactDuplicate.time],
+            calendar: oslo
+        )
+        XCTAssertEqual(firstLabel.display, "02a")
+        XCTAssertEqual(secondLabel.display, "02b")
+        XCTAssertEqual(firstLabel.accessibility, "Klokken 02, første forekomst")
+        XCTAssertEqual(secondLabel.accessibility, "Klokken 02, andre forekomst")
     }
 
     func testVisibleForecastSkipsOlderCacheDayAndKeepsThreeFutureDays() throws {

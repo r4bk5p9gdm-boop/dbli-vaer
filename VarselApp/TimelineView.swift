@@ -261,8 +261,12 @@ private struct TimeCardsForecast: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(alignment: .top, spacing: 7) {
                 ForEach(sampled) { hour in
+                    let label = ForecastHourLabel.make(
+                        for: hour.time,
+                        among: day.hours.map(\.time)
+                    )
                     VStack(spacing: 6) {
-                        Text(hourClock(hour.time))
+                        Text(label.display)
                             .font(.caption.weight(.semibold))
                         Image(systemName: forecastSymbol(hour))
                             .font(.title3)
@@ -284,7 +288,7 @@ private struct TimeCardsForecast: View {
                     }
                     .frame(width: 45)
                     .accessibilityElement(children: .combine)
-                    .accessibilityLabel("Klokken \(hourClock(hour.time)), \(Int(hour.temp.rounded())) grader, \(hour.precip.formatted()) millimeter nedbør")
+                    .accessibilityLabel("\(label.accessibility), \(Int(hour.temp.rounded())) grader, \(hour.precip.formatted()) millimeter nedbør")
                 }
             }
         }
@@ -990,6 +994,28 @@ private func forecastEvents(for rule: Rule, hours: [ForecastHour], frostMargin: 
 
 private func hourClock(_ date: Date) -> String {
     String(format: "%02d", localHourComponent(date))
+}
+
+enum ForecastHourLabel {
+    static func make(
+        for time: Date,
+        among times: [Date],
+        calendar: Calendar = .autoupdatingCurrent
+    ) -> (display: String, accessibility: String) {
+        let clock = String(format: "%02d", calendar.component(.hour, from: time))
+        let wallHour = calendar.dateComponents([.era, .year, .month, .day, .hour], from: time)
+        let sameWallHour = Array(Set(times.filter {
+            calendar.dateComponents([.era, .year, .month, .day, .hour], from: $0) == wallHour
+        })).sorted()
+        guard sameWallHour.count > 1,
+              let occurrence = sameWallHour.firstIndex(of: time) else {
+            return (clock, "Klokken \(clock)")
+        }
+
+        let suffix = occurrence == 0 ? "a" : "b"
+        let ordinal = occurrence == 0 ? "første" : "andre"
+        return ("\(clock)\(suffix)", "Klokken \(clock), \(ordinal) forekomst")
+    }
 }
 
 /// Uses the user's current calendar/time zone, so forecast labels do not drift

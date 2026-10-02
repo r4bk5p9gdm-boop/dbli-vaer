@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-02T01:06:26Z",
+  "lastScheduledStart": "2026-10-02T01:36:26Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-332 fullført: statusdetaljer for frost og snø filtrerer NaN/uendelig temperatur, og dugg-NÅ filtrerer ugyldige duggpunkter; regresjonstester dekker gyldig reserveprøve og utelatt detalj. AUTO-335 lagt til for pushdetaljer med ugyldige målinger. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt fordi CoreSimulator-tjenesten er utilgjengelig."
+  "lastProgress": "AUTO-333 fullført: repeterte lokale timer i høstens DST-overgang vises som 02a/02b og VoiceOver sier første/andre forekomst; test bekrefter at eksakte duplikater ikke endrer merkingen. AUTO-336 lagt til for nedbørskjølegrensen like under seks timer. Swift-parsing, modell/planlegger-typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt fordi CoreSimulator-tjenesten er utilgjengelig."
 }
