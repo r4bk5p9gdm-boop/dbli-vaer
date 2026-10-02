@@ -1358,14 +1358,20 @@ dedupliseres, mens vindvarselet beholdes. Swift-parsing/typekontroll og
 diffkontroll består; XCTest ble ikke kjørt fordi CoreSimulator-tjenesten
 fortsatt er utilgjengelig.
 
-**AUTO-345 · ÅPEN** — Test to steder med hver sine par av regnhendelser innenfor
-seks timer; deduplisering skal beholde én regnvarsling per sted, ikke én globalt.
+**AUTO-345 · FULLFØRT 2026-10-02** — La til test med to regnhendelser tre
+timer fra hverandre på hvert av to steder. Deduplisering beholder den tidligste
+regnvarslingen per sted, og begge stedene representeres i resultatet. Swift-
+parsing/typekontroll og diffkontroll består; XCTest ble ikke kjørt fordi
+CoreSimulator-tjenesten fortsatt er utilgjengelig.
 
 **AUTO-346 · ÅPEN** — Test at radarhendelser minst seks timer fra hverandre
 beholdes selv når timeprognosens run-start ligger nærmere enn seks timer.
 
 **AUTO-347 · ÅPEN** — Bekreft at regndeduplisering innenfor seks timer ikke
 undertrykker en egen snøvarsling for samme sted.
+
+**AUTO-348 · ÅPEN** — Test at regndeduplisering måler seks timer som forløpt
+tid over en sommertidsovergang, ikke som veggklokketimer.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

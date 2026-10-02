@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-02T07:07:33Z",
+  "lastScheduledStart": "2026-10-02T07:37:33Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-344 fullført: planAll-test med regn, vind og regn bekrefter at vindvarselet beholdes, men ikke nullstiller lokal regndeduplisering. AUTO-347 lagt til for å sikre at cooldown ikke undertrykker snøvarsler. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt fordi CoreSimulator-tjenesten fortsatt er utilgjengelig."
+  "lastProgress": "AUTO-345 fullført: planAll-test med to regnhendelser per sted bekrefter deduplisering separat for to steder og beholder ett varsel per sted. AUTO-348 lagt til for forløpt cooldown-tid over sommertid. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt fordi CoreSimulator-tjenesten fortsatt er utilgjengelig."
 }

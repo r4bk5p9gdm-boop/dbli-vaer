@@ -3779,6 +3779,49 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(Set(alerts.map(\.eventAt)), Set([eventAt]))
     }
 
+    func testPlanAllDeduplicatesRainIndependentlyAcrossPlaces() {
+        let firstEventAt = base.addingTimeInterval(2 * 3_600)
+        let secondEventAt = base.addingTimeInterval(5 * 3_600)
+        let calendar = Calendar.current
+        func rainRule(at eventAt: Date) -> Rule {
+            var rule = Rule(type: .regn)
+            rule.threshold = 0.5
+            rule.leadMinutes = 60
+            let hour = calendar.component(.hour, from: eventAt)
+            rule.activeFromHour = hour
+            rule.activeToHour = (hour + 1) % 24
+            return rule
+        }
+        let firstPlaceRules = [rainRule(at: firstEventAt), rainRule(at: secondEventAt)]
+        let secondPlaceRules = [rainRule(at: firstEventAt), rainRule(at: secondEventAt)]
+        let firstPlace = Place(name: "Namsos", lat: 64.5, lon: 11.5, rules: firstPlaceRules)
+        let secondPlace = Place(name: "Klinga", lat: 64.6, lon: 11.6, rules: secondPlaceRules)
+        let forecast = (0...5).map { offset in
+            ForecastHour(
+                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
+                temp: 8,
+                precip: offset == 2 || offset == 5 ? 1 : 0,
+                wind: 1,
+                cloud: 60,
+                dew: 7
+            )
+        }
+
+        let alerts = Planner.planAll(
+            places: [firstPlace, secondPlace],
+            forecasts: [firstPlace.id: forecast, secondPlace.id: forecast],
+            now: base
+        )
+
+        XCTAssertEqual(alerts.count, 2)
+        XCTAssertEqual(Set(alerts.map(\.placeID)), Set([firstPlace.id, secondPlace.id]))
+        XCTAssertEqual(Set(alerts.map(\.eventAt)), Set([firstEventAt]))
+        XCTAssertEqual(
+            Set(alerts.map(\.rule.id)),
+            Set([firstPlaceRules[0].id, secondPlaceRules[0].id])
+        )
+    }
+
     func testPlanAllDeduplicatesRainWithoutDroppingOtherWeatherAlerts() {
         var firstRain = Rule(type: .regn)
         firstRain.threshold = 0.5
