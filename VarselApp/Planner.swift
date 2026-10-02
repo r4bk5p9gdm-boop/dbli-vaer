@@ -726,7 +726,7 @@ enum Planner {
     private static func removingDuplicateRainAlerts(_ alerts: [PlannedAlert]) -> [PlannedAlert] {
         var result: [PlannedAlert] = []
 
-        for alert in alerts.sorted(by: { $0.fireAt < $1.fireAt }) {
+        for alert in alerts.sorted(by: { $0.eventAt < $1.eventAt }) {
             if alert.rule.type == .regn {
                 let duplicatesAnotherRule = result.contains { previous in
                     previous.rule.type == .regn

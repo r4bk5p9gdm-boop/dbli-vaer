@@ -4136,6 +4136,54 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(alerts.first?.eventAt, firstEventAt)
     }
 
+    func testPlanAllRainCooldownKeepsEarlierEventWhenItFiresLater() throws {
+        let firstEventAt = base.addingTimeInterval(2 * 3_600)
+        let secondEventAt = base.addingTimeInterval(5 * 3_600)
+        let calendar = Calendar.current
+        var firstRule = Rule(type: .regn)
+        firstRule.threshold = 0.5
+        firstRule.leadMinutes = 30
+        let firstHour = calendar.component(.hour, from: firstEventAt)
+        firstRule.activeFromHour = firstHour
+        firstRule.activeToHour = (firstHour + 1) % 24
+        var secondRule = Rule(type: .regn)
+        secondRule.threshold = 0.5
+        secondRule.leadMinutes = 300
+        let secondHour = calendar.component(.hour, from: secondEventAt)
+        secondRule.activeFromHour = secondHour
+        secondRule.activeToHour = (secondHour + 1) % 24
+
+        let place = Place(name: "Klinga", lat: 64.5, lon: 11.5, rules: [firstRule, secondRule])
+        let forecast = (0...5).map { offset in
+            ForecastHour(
+                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
+                temp: 8,
+                precip: offset == 2 || offset == 5 ? 1 : 0,
+                wind: 1,
+                cloud: 60,
+                dew: 7
+            )
+        }
+        let now = base.addingTimeInterval(-3_600)
+        let firstFireAt = try XCTUnwrap(Planner.plan(
+            rule: firstRule, forecast: forecast, placeName: place.name,
+            now: now, calendar: calendar
+        ).alerts.first?.fireAt)
+        let secondFireAt = try XCTUnwrap(Planner.plan(
+            rule: secondRule, forecast: forecast, placeName: place.name,
+            now: now, calendar: calendar
+        ).alerts.first?.fireAt)
+        XCTAssertLessThan(secondFireAt, firstFireAt)
+
+        let alerts = Planner.planAll(
+            places: [place], forecasts: [place.id: forecast], now: now
+        )
+
+        XCTAssertEqual(alerts.count, 1)
+        XCTAssertEqual(alerts.first?.rule.id, firstRule.id)
+        XCTAssertEqual(alerts.first?.eventAt, firstEventAt)
+    }
+
     func testPlanAllUsesPreciseRadarTimesJustBelowRainCooldown() {
         var firstRule = Rule(type: .regn)
         firstRule.threshold = 0.5

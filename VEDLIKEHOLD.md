@@ -1388,9 +1388,11 @@ værhendelsene beholdes; ingen kryss-sted regn/snø-deduplisering skjer.
 Swift-parsing/typekontroll og diffkontroll består; XCTest ble ikke kjørt i
 denne lettvektskjøringen.
 
-**AUTO-350 · ÅPEN** — Test at regndeduplisering beholder den tidligste
-værhendelsen (`eventAt`) selv når ulik varslingstid gjør at en senere
-regnhendelse får tidligere `fireAt`.
+**AUTO-350 · FULLFØRT 2026-10-02** — Regnvarsler vurderes nå i
+`eventAt`-rekkefølge før cooldown-deduplisering. La til regresjonstest der den
+senere regnhendelsen får tidligere `fireAt` på grunn av lengre lead time; det
+tidligste værvarselet beholdes. Swift-parsing/typekontroll og diffkontroll
+består; XCTest ble ikke kjørt i denne lettvektskjøringen.
 
 **AUTO-351 · ÅPEN** — Gjør regndeduplisering deterministisk når to ulike
 regnhendelser har lik `fireAt`, men ulik `eventAt` innenfor cooldown-vinduet;
@@ -1398,6 +1400,10 @@ behold den tidligste værhendelsen uavhengig av regelrekkefølge.
 
 **AUTO-352 · ÅPEN** — Test at en deaktivert eller ikke-nærstående regnregel
 ikke påvirker cooldown-deduplisering av gyldige regnvarsler på et sted.
+
+**AUTO-353 · ÅPEN** — Test at ulik lead time ikke endrer seks-timersgrensen:
+to regnhendelser nøyaktig seks forløpte timer fra hverandre beholdes selv om
+varslenes `fireAt`-rekkefølge er motsatt.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
