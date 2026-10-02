@@ -4246,6 +4246,56 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testPlanAllIgnoresFilteredRainRulesDuringCooldownDeduplication() {
+        let ignoredEventAt = base.addingTimeInterval(2 * 3_600)
+        let validEventAt = base.addingTimeInterval(5 * 3_600)
+        let calendar = Calendar.current
+        func rainRule(at eventAt: Date) -> Rule {
+            var rule = Rule(type: .regn)
+            rule.threshold = 0.5
+            rule.leadMinutes = 60
+            let hour = calendar.component(.hour, from: eventAt)
+            rule.activeFromHour = hour
+            rule.activeToHour = (hour + 1) % 24
+            return rule
+        }
+        let forecast = (0...5).map { offset in
+            ForecastHour(
+                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
+                temp: 8,
+                precip: offset == 2 || offset == 5 ? 1 : 0,
+                wind: 1,
+                cloud: 60,
+                dew: 7
+            )
+        }
+        func plan(with ignoredRule: Rule) -> (alerts: [PlannedAlert], validRuleID: UUID) {
+            let validRule = rainRule(at: validEventAt)
+            let place = Place(
+                name: "Klinga", lat: 64.5, lon: 11.5,
+                rules: [ignoredRule, validRule]
+            )
+            let alerts = Planner.planAll(
+                places: [place], forecasts: [place.id: forecast], now: base
+            )
+            return (alerts, validRule.id)
+        }
+
+        var disabledRule = rainRule(at: ignoredEventAt)
+        disabledRule.enabled = false
+        let disabledResult = plan(with: disabledRule)
+        XCTAssertEqual(disabledResult.alerts.count, 1)
+        XCTAssertEqual(disabledResult.alerts.first?.rule.id, disabledResult.validRuleID)
+        XCTAssertEqual(disabledResult.alerts.first?.eventAt, validEventAt)
+
+        var notNearbyRule = rainRule(at: ignoredEventAt)
+        notNearbyRule.onlyWhenNearby = true
+        let notNearbyResult = plan(with: notNearbyRule)
+        XCTAssertEqual(notNearbyResult.alerts.count, 1)
+        XCTAssertEqual(notNearbyResult.alerts.first?.rule.id, notNearbyResult.validRuleID)
+        XCTAssertEqual(notNearbyResult.alerts.first?.eventAt, validEventAt)
+    }
+
     func testPlanAllUsesPreciseRadarTimesJustBelowRainCooldown() {
         var firstRule = Rule(type: .regn)
         firstRule.threshold = 0.5

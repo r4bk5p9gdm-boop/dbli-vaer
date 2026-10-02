@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-02T10:37:34Z",
+  "lastScheduledStart": "2026-10-02T11:07:34Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-351 fullført: test bekrefter at to regnhendelser med lik fireAt og ulik eventAt beholder den tidligste eventAt uavhengig av regelrekkefølge. AUTO-354 lagt til for flere planlagte varsler per samme regnhendelse. Swift-parsing/typekontroll og diffkontroll bestått; XCTest ikke kjørt i denne lettvektskjøringen."
+  "lastProgress": "AUTO-352 fullført: tester dekker deaktivert og ikke-nærstående regnregel; begge filtreres før cooldown så gyldig senere varsel ikke undertrykkes. AUTO-355 lagt til for positiv nearbyPlaceIDs-vei. Swift-parsing/typekontroll og diffkontroll bestått; XCTest ikke kjørt i denne lettvektskjøringen."
 }
