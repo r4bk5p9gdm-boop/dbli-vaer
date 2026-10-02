@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-02T04:06:27Z",
+  "lastScheduledStart": "2026-10-02T04:36:27Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-338 fullført: pushdetaljer for vindkast filtrerer NaN og ±∞; regresjonstest dekker ugyldige kast sammen med gyldig måling og når alle kast er ugyldige. AUTO-341 lagt til for rullerende vinddetaljer. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt fordi CoreSimulator-tjenesten fortsatt er utilgjengelig."
+  "lastProgress": "AUTO-339 fullført: regresjonstest holder timesprognosehendelser nøyaktig seks timer fra hverandre, men radarens eventAt ett minutt innenfor grensen utløser deduplisering. AUTO-342 lagt til for den eksakte radargrensen. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt fordi CoreSimulator-tjenesten fortsatt er utilgjengelig."
 }

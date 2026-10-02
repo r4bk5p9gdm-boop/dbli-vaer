@@ -1320,9 +1320,12 @@ fortsatt brukes sammen med ugyldige prøver, og at bare ugyldige verdier gir
 diffkontroll består; XCTest ble ikke kjørt fordi CoreSimulator-tjenesten fortsatt
 er utilgjengelig.
 
-**AUTO-339 · ÅPEN** — Test regndeduplisering like under seks timer med radarens
-undertimehendelser, slik at grensen testes tettere enn hele timeprognosens
-femtimers tilnærming.
+**AUTO-339 · FULLFØRT 2026-10-02** — La til regresjonstest der
+timeprognosehendelsene ligger nøyaktig seks timer fra hverandre, mens radarens
+presise hendelsestider ligger ett minutt innenfor kjølegrensen. `planAll` beholder
+bare den første varslingen basert på radarens eventAt. Swift-parsing/typekontroll
+og diffkontroll består; XCTest ble ikke kjørt fordi CoreSimulator-tjenesten
+fortsatt er utilgjengelig.
 
 **AUTO-340 · ÅPEN** — Bekreft at identiske regnhendelser for to forskjellige
 steder begge beholdes; kjølegrensen skal bare deduplisere regler innen samme
@@ -1331,6 +1334,9 @@ sted.
 **AUTO-341 · ÅPEN** — Kontroller rullerende vinddetaljer for vindkast med NaN
 eller ±∞; ignorer ikke-endelige kast og vis «Vindkast ikke oppgitt» når ingen
 endelig verdi finnes.
+
+**AUTO-342 · ÅPEN** — Test nøyaktig seks timers avstand mellom presise radar-
+regnhendelser; begge varsler skal beholdes ved kjølegrensens åpne `< 6 t`-regel.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
