@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-02T04:36:27Z",
+  "lastScheduledStart": "2026-10-02T05:06:27Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-339 fullført: regresjonstest holder timesprognosehendelser nøyaktig seks timer fra hverandre, men radarens eventAt ett minutt innenfor grensen utløser deduplisering. AUTO-342 lagt til for den eksakte radargrensen. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt fordi CoreSimulator-tjenesten fortsatt er utilgjengelig."
+  "lastProgress": "AUTO-340 fullført: planAll-test sikrer at samme regnhendelse varsles for to steder med forskjellige regnregel-ID-er; deduplisering begrenses til hvert sted. AUTO-343 lagt til for å låse at radar-kjølegrense måler eventAt, ikke planlagt push-tid. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt fordi CoreSimulator-tjenesten fortsatt er utilgjengelig."
 }

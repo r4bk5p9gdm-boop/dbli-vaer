@@ -3718,6 +3718,29 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(alerts.first?.placeID, place.id)
     }
 
+    func testPlanAllKeepsSameRainEventForDifferentPlaces() {
+        var firstRule = Rule(type: .regn)
+        firstRule.threshold = 0.5
+        firstRule.leadMinutes = 60
+        var secondRule = Rule(type: .regn)
+        secondRule.threshold = 0.5
+        secondRule.leadMinutes = 60
+
+        let firstPlace = Place(name: "Namsos", lat: 64.5, lon: 11.5, rules: [firstRule])
+        let secondPlace = Place(name: "Klinga", lat: 64.6, lon: 11.6, rules: [secondRule])
+        let eventAt = base.addingTimeInterval(3 * 3_600)
+        let forecast = [ForecastHour(time: eventAt, temp: 8, precip: 1, wind: 1, cloud: 60, dew: 7)]
+
+        let alerts = Planner.planAll(
+            places: [firstPlace, secondPlace],
+            forecasts: [firstPlace.id: forecast, secondPlace.id: forecast]
+        )
+
+        XCTAssertEqual(alerts.count, 2)
+        XCTAssertEqual(Set(alerts.map(\.placeID)), Set([firstPlace.id, secondPlace.id]))
+        XCTAssertEqual(Set(alerts.map(\.eventAt)), Set([eventAt]))
+    }
+
     func testPlanAllDeduplicatesRainWithoutDroppingOtherWeatherAlerts() {
         var firstRain = Rule(type: .regn)
         firstRain.threshold = 0.5
