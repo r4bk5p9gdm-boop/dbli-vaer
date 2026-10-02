@@ -4053,6 +4053,51 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(alerts.first?.eventAt, firstRadarEventAt)
     }
 
+    func testPlanAllKeepsSeparatedRadarEventsWhenForecastRunsAreCloser() {
+        var firstRule = Rule(type: .regn)
+        firstRule.threshold = 0.5
+        firstRule.leadMinutes = 60
+        var secondRule = Rule(type: .regn)
+        secondRule.threshold = 0.5
+        secondRule.leadMinutes = 60
+
+        let firstForecastEventAt = base.addingTimeInterval(2 * 3_600)
+        let secondForecastEventAt = firstForecastEventAt.addingTimeInterval(5 * 3_600)
+        let firstRadarEventAt = firstForecastEventAt.addingTimeInterval(4 * 60)
+        let secondRadarEventAt = firstRadarEventAt.addingTimeInterval(6 * 3_600)
+        let calendar = Calendar.current
+        let firstHour = calendar.component(.hour, from: firstForecastEventAt)
+        firstRule.activeFromHour = firstHour
+        firstRule.activeToHour = (firstHour + 1) % 24
+        let secondHour = calendar.component(.hour, from: secondForecastEventAt)
+        secondRule.activeFromHour = secondHour
+        secondRule.activeToHour = (secondHour + 2) % 24
+
+        var hours = (0...7).map { offset in
+            ForecastHour(
+                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
+                temp: 8,
+                precip: offset == 2 || offset == 7 ? 1 : 0,
+                wind: 1,
+                cloud: 60,
+                dew: 7
+            )
+        }
+        hours[2].radarSamples = [PrecipitationSample(time: firstRadarEventAt, rate: 0.8)]
+        hours[7].radarSamples = [PrecipitationSample(time: secondRadarEventAt, rate: 0.8)]
+        let place = Place(name: "Klinga", lat: 64.5, lon: 11.5, rules: [firstRule, secondRule])
+
+        let alerts = Planner.planAll(
+            places: [place], forecasts: [place.id: hours], now: base
+        )
+
+        XCTAssertEqual(secondForecastEventAt.timeIntervalSince(firstForecastEventAt), 5 * 3_600)
+        XCTAssertEqual(secondRadarEventAt.timeIntervalSince(firstRadarEventAt), 6 * 3_600)
+        XCTAssertEqual(alerts.count, 2)
+        XCTAssertEqual(Set(alerts.map(\.rule.id)), Set([firstRule.id, secondRule.id]))
+        XCTAssertEqual(Set(alerts.map(\.eventAt)), Set([firstRadarEventAt, secondRadarEventAt]))
+    }
+
     func testPlanAllDeduplicatesRadarRainByEventTimeWhenPushTimesAreFarApart() throws {
         var firstRule = Rule(type: .regn)
         firstRule.threshold = 0.5
