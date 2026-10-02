@@ -3964,6 +3964,52 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(alerts.first?.eventAt, firstRadarEventAt)
     }
 
+    func testPlanAllKeepsRainAlertsAtExactSixHourRadarBoundary() {
+        var firstRule = Rule(type: .regn)
+        firstRule.threshold = 0.5
+        firstRule.leadMinutes = 60
+        var secondRule = Rule(type: .regn)
+        secondRule.threshold = 0.5
+        secondRule.leadMinutes = 60
+
+        let firstForecastEventAt = base.addingTimeInterval(2 * 3_600)
+        let secondForecastEventAt = firstForecastEventAt.addingTimeInterval(6 * 3_600)
+        let firstRadarEventAt = firstForecastEventAt.addingTimeInterval(4 * 60)
+        let secondRadarEventAt = firstRadarEventAt.addingTimeInterval(6 * 3_600)
+        let calendar = Calendar.current
+        func isolateRule(_ rule: inout Rule, at time: Date) {
+            let hour = calendar.component(.hour, from: time)
+            rule.activeFromHour = hour
+            rule.activeToHour = (hour + 1) % 24
+        }
+        isolateRule(&firstRule, at: firstRadarEventAt)
+        isolateRule(&secondRule, at: secondRadarEventAt)
+
+        var hours = (0...8).map { offset in
+            ForecastHour(
+                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
+                temp: 8,
+                precip: offset == 2 || offset == 8 ? 1 : 0,
+                wind: 1,
+                cloud: 60,
+                dew: 7
+            )
+        }
+        hours[2].radarSamples = [PrecipitationSample(time: firstRadarEventAt, rate: 0.8)]
+        hours[8].radarSamples = [PrecipitationSample(time: secondRadarEventAt, rate: 0.8)]
+        let place = Place(name: "Klinga", lat: 64.5, lon: 11.5, rules: [firstRule, secondRule])
+
+        let alerts = Planner.planAll(
+            places: [place], forecasts: [place.id: hours], now: base
+        )
+
+        XCTAssertEqual(secondForecastEventAt.timeIntervalSince(firstForecastEventAt), 6 * 3_600)
+        XCTAssertEqual(secondRadarEventAt.timeIntervalSince(firstRadarEventAt), 6 * 3_600)
+        XCTAssertEqual(alerts.count, 2)
+        XCTAssertEqual(Set(alerts.map(\.rule.id)), Set([firstRule.id, secondRule.id]))
+        XCTAssertEqual(Set(alerts.map(\.eventAt)), Set([firstRadarEventAt, secondRadarEventAt]))
+    }
+
     func testPlanAllMeasuresRainCooldownFromLastKeptAlert() {
         let eventOffsets = [2, 6, 10]
         let eventTimes = eventOffsets.map { base.addingTimeInterval(TimeInterval($0 * 3_600)) }
