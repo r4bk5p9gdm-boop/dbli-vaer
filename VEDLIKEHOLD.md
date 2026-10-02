@@ -1272,14 +1272,22 @@ og dugg fra første time etter tre regnfrie timer. `Planner.planAll` beholder
 ett regnvarsel og ett varsel av hver annen type. Swift-parsing/typekontroll og
 diffkontroll består; XCTest ble ikke kjørt fordi CoreSimulator er utilgjengelig.
 
-**AUTO-332 · ÅPEN** — Kontroller temperaturavhengige detaljer for frost, snø
-og dugg for ugyldige eller ikke-endelige temperatur-/duggpunktverdier.
+**AUTO-332 · FULLFØRT 2026-10-02** — Frost- og snødetaljer filtrerer nå bort
+prøver med NaN eller uendelig temperatur før nærmeste tidspunkt velges; dugg-
+NÅ filtrerer tilsvarende på et endelig duggpunkt. Regresjonstestene bekrefter
+at gyldig reserveprøve brukes og at detaljen utelates når alle aktuelle målinger
+er ugyldige. Swift-parsing/typekontroll og diffkontroll består; XCTest ble ikke
+kjørt fordi CoreSimulator-tjenesten ikke er tilgjengelig.
 
 **AUTO-333 · ÅPEN** — Vurder hvordan timekort og VoiceOver skiller de to
 ulike, gjentatte lokaltimeetikettene under høstens DST-overgang.
 
 **AUTO-334 · ÅPEN** — Test at to regnvarsler med hendelser nøyaktig seks timer
 fra hverandre ikke dedupliseres av den strenge nedbørskjølegrensen.
+
+**AUTO-335 · ÅPEN** — Kontroller pushdetaljer for frost, snø og dugg mot
+NaN/uendelige temperatur- og duggpunktverdier; filtrer ugyldige prøver og utelat
+detaljen når ingen gyldig måling finnes.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

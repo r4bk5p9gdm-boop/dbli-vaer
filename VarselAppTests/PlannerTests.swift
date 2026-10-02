@@ -2393,6 +2393,68 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testFrostSnowAndDewStatusDetailsSkipNonFiniteTemperatures() {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let valid = ForecastHour(
+            time: base.addingTimeInterval(3_600), temp: -2, precip: 0.2,
+            wind: 1, cloud: 0, dew: -4
+        )
+        let statuses: [WeatherStatus] = [
+            WeatherStatus(ruleID: UUID(), type: .frost, text: "", eventAt: base, isNow: false),
+            WeatherStatus(ruleID: UUID(), type: .sno, text: "", eventAt: base, isNow: false),
+            WeatherStatus(ruleID: UUID(), type: .dugg, text: "", eventAt: base, isNow: false),
+        ]
+
+        for status in statuses {
+            let expected = Planner.statusDetail(for: status, place: place, forecast: [valid])
+            XCTAssertNotNil(expected, "Valid detail missing for \(status.type)")
+
+            for invalidTemperature in [Double.nan, .infinity, -.infinity] {
+                let invalid = ForecastHour(
+                    time: base, temp: invalidTemperature, precip: 0.2,
+                    wind: 1, cloud: 0, dew: -4
+                )
+                XCTAssertEqual(
+                    Planner.statusDetail(for: status, place: place, forecast: [invalid, valid]),
+                    expected,
+                    "Invalid temperature selected for \(status.type)"
+                )
+                XCTAssertNil(
+                    Planner.statusDetail(for: status, place: place, forecast: [invalid]),
+                    "A detail must be omitted when \(status.type) has no finite temperature"
+                )
+            }
+        }
+    }
+
+    func testCurrentRotatingDewDetailSkipsNonFiniteDewPoints() {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let status = WeatherStatus(
+            ruleID: UUID(), type: .dugg, text: "", eventAt: base, isNow: true
+        )
+        let valid = ForecastHour(
+            time: base.addingTimeInterval(3_600), temp: 8, precip: 0,
+            wind: 1, cloud: 0, dew: 4.3
+        )
+
+        XCTAssertEqual(
+            Planner.rotatingStatusDetail(for: status, place: place, forecast: [
+                ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 0, dew: .nan),
+                valid,
+            ]),
+            "Duggpunkt ved 4,3°C."
+        )
+        for invalidDewPoint in [Double.nan, .infinity, -.infinity] {
+            XCTAssertNil(Planner.rotatingStatusDetail(
+                for: status,
+                place: place,
+                forecast: [ForecastHour(
+                    time: base, temp: 8, precip: 0, wind: 1, cloud: 0, dew: invalidDewPoint
+                )]
+            ))
+        }
+    }
+
     func testWindGustLevelsProduceDifferentNotificationTitles() {
         var standard = Rule(type: .vind)
         standard.threshold = 12
