@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-02T03:06:26Z",
+  "lastScheduledStart": "2026-10-02T03:36:27Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-336 fullført: planAll-integrasjonstest bekrefter at to regnhendelser fem timer fra hverandre dedupliseres til den tidligste varslingen, mens AUTO-334 dekker at nøyaktig seks timer beholder begge. AUTO-339 lagt til for å teste tettere subtimegrense med radarhendelser. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt fordi CoreSimulator-tjenesten fortsatt er utilgjengelig."
+  "lastProgress": "AUTO-337 fullført: planAll-test med regnhendelser fire timer fra hverandre fjerner mellomste varsel, men beholder hendelsen åtte timer fra sist beholdte; cooldown måles dermed ikke transitive mot forkastede hendelser. AUTO-340 lagt til for å sikre uavhengig deduplisering mellom steder. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt fordi CoreSimulator-tjenesten fortsatt er utilgjengelig."
 }
