@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-02T01:36:26Z",
+  "lastScheduledStart": "2026-10-02T02:06:26Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-333 fullført: repeterte lokale timer i høstens DST-overgang vises som 02a/02b og VoiceOver sier første/andre forekomst; test bekrefter at eksakte duplikater ikke endrer merkingen. AUTO-336 lagt til for nedbørskjølegrensen like under seks timer. Swift-parsing, modell/planlegger-typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt fordi CoreSimulator-tjenesten er utilgjengelig."
+  "lastProgress": "AUTO-334 fullført: planAll-test med aktive timevinduer bekrefter at regnhendelser nøyaktig seks timer fra hverandre begge beholdes av den strenge nedbørskjølegrensen. AUTO-337 lagt til for å verifisere at en deduplisert mellomliggende hendelse ikke skjuler en senere, tilstrekkelig fjern hendelse. Swift-parsing/typekontroll, JSON-validering og diffkontroll bestått; XCTest ikke kjørt fordi CoreSimulator-tjenesten er utilgjengelig."
 }
