@@ -6340,6 +6340,42 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testCancelledAddingPlaceKeepsPersistedSelectionWithoutForecastOrNetworkError() async throws {
+        let persistenceKey = "varsel.test.add-cancelled-place.\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
+        let fetchStarted = expectation(description: "First forecast fetch started")
+        let place = Place(name: "Hytte", lat: 64.0, lon: 11.0, preposition: .pa)
+        let hour = ForecastHour(time: base, temp: 8, precip: 0, wind: 2, cloud: 40, dew: 4)
+        let store = Store(
+            forecastFetcher: { _, _ in
+                fetchStarted.fulfill()
+                try await Task.sleep(nanoseconds: 60_000_000_000)
+                return [hour]
+            },
+            persistenceKey: persistenceKey
+        )
+        let addTask = Task { @MainActor in await store.add(place) }
+        await fulfillment(of: [fetchStarted], timeout: 5)
+
+        addTask.cancel()
+        await addTask.value
+
+        let data = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
+        let persisted = try JSONDecoder().decode(PersistedStoreState.self, from: data)
+        XCTAssertTrue(persisted.places.contains(where: { $0.id == place.id }))
+        XCTAssertEqual(persisted.selectedID, place.id)
+        XCTAssertTrue(persisted.forecasts[place.id, default: []].isEmpty)
+        XCTAssertNil(persisted.forecastUpdatedAt[place.id])
+        XCTAssertNil(store.forecastErrors[place.id], "Cancellation must not be shown as a network failure")
+
+        let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        XCTAssertTrue(restored.places.contains(where: { $0.id == place.id }))
+        XCTAssertEqual(restored.selectedID, place.id)
+        XCTAssertTrue(restored.forecasts[place.id, default: []].isEmpty)
+        XCTAssertNil(restored.forecastErrors[place.id])
+    }
+
+    @MainActor
     func testAddingPlacePersistsSelectionWhenFirstForecastIsEmpty() async throws {
         let persistenceKey = "varsel.test.add-empty-forecast-place.\(UUID().uuidString)"
         defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }

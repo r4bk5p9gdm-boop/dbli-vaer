@@ -1610,9 +1610,12 @@ forklaringstekst og symbolnavn for hvert kort. Swift-parsing, diffkontroll og
 iOS `build-for-testing` består; XCTest kunne ikke kjøres uten
 CoreSimulator-/enhetstjenesten.
 
-**AUTO-379 · ÅPEN** — Legg til regresjon for at et avbrutt `Store.add` fortsatt
-beholder stedet og valgt-ID som ble lagret før Yr-forespørselen, uten å lagre
-en ugyldig prognose eller vise en feil som om nettverket feilet.
+**AUTO-379 · FULLFØRT 2026-10-09** — La til regresjon der første
+værhenting avbrytes etter at `Store.add` har lagret det nye stedet. Testen
+kontrollerer at sted og valgt-ID fortsatt overlever omstart, at ingen prognose
+eller oppdateringstid blir lagret, og at avbruddet ikke vises som nettverksfeil.
+Swift-parsing, diffkontroll og iOS `build-for-testing` består; XCTest kunne ikke
+kjøres fordi CoreSimulator-/enhetstjenesten er utilgjengelig.
 
 **AUTO-380 · ÅPEN** — Trekk veiviserens valgte varsel-ID-er per sted og
 kategori ut i en liten modell. Legg til regresjon som bekrefter at å slå et
@@ -1623,6 +1626,10 @@ når samme preset finnes i begge standardlistene.
 testbar kilde og bruk den også i kortvisningen. Utvid regresjonen slik at hver
 kategori viser minst ett forslag, og at ingen vist presets værtype faller
 utenfor kategorien.
+
+**AUTO-382 · ÅPEN** — Legg til persistensregresjon for oppstartsveiviserens
+stedsspesifikke regler: hyttevarsel med `onlyWhenNearby` skal overleve
+Store-gjenoppretting uten å endre hjemstedets regler eller nærhetsvalg.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
