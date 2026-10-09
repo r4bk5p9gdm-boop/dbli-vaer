@@ -183,6 +183,7 @@ struct HomeView: View {
     @State private var editing: Rule?
     @State private var showingSettings = false
     @State private var transitionDirection: Edge = .trailing
+    @GestureState private var liveSwipeOffset: CGFloat = 0
 
     private var forecastHeaderTitle: String {
         let formatter = DateFormatter()
@@ -308,7 +309,9 @@ struct HomeView: View {
                             description: Text("Legg til et sted under Steder for å hente værvarsel.")
                         )
                     }
-                }.padding()
+                }
+                .offset(x: liveSwipeOffset)
+                .padding()
                     .id(store.selectedID)
                     .transition(.asymmetric(
                         insertion: .move(edge: transitionDirection),
@@ -326,7 +329,16 @@ struct HomeView: View {
             }
             .refreshable { _ = await store.refreshAll() }
             .contentShape(Rectangle())
-            .highPriorityGesture(DragGesture(minimumDistance: 45).onEnded { value in
+            .highPriorityGesture(DragGesture(minimumDistance: 8)
+                .updating($liveSwipeOffset) { value, offset, transaction in
+                    guard abs(value.translation.width) > abs(value.translation.height) else {
+                        offset = 0
+                        return
+                    }
+                    transaction.animation = .interactiveSpring(response: 0.24, dampingFraction: 0.86)
+                    offset = value.translation.width
+                }
+                .onEnded { value in
                 let uniqueIDs = swipePlaces.map(\.id)
                 guard let current = store.selected,
                       let next = HomeSwipeSelection.nextIndex(

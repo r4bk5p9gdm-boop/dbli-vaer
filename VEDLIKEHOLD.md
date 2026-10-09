@@ -54,6 +54,12 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-137 · FULLFØRT 2026-10-09** — Hjeminnholdet følger nå en horisontal
+fingersveipning mens den pågår, i stedet for å stå stille til fingeren løftes.
+Vertikal bevegelse brukes fortsatt til vanlig scrolling og velger ikke et nytt
+sted. Swift-parsing og diffkontroll består; full iPhone-bygging ble utsatt
+fordi disken bare hadde omtrent 8 GB ledig.
+
 **BRUKER-136 · FULLFØRT 2026-10-09** — I «Tilpass» heter innstillingen nå
 «Frostfare over grensen» i stedet for «Frostmargin», og valgene viser °C.
 Oppsummeringen viser både vanlig frostgrense og beregnet temperaturgrense for
