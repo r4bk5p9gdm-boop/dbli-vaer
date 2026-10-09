@@ -6203,6 +6203,13 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(persisted.places.map(\.id), [place.id])
         XCTAssertEqual(persisted.selectedID, place.id)
         XCTAssertNotNil(store.forecastErrors[place.id])
+
+        let restored = Store(
+            forecastFetcher: { _, _ in throw URLError(.notConnectedToInternet) },
+            persistenceKey: persistenceKey
+        )
+        XCTAssertTrue(restored.places.contains(where: { $0.id == place.id }))
+        XCTAssertEqual(restored.selectedID, place.id)
     }
 
     func testEmptyForecastCreatesNoSnowAlert() {

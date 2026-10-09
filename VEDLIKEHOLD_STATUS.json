@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-09T13:27:16Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-366 delvis fullført: utvidet varselsorteringstesten til fire værtyper med samme fireAt, inkludert lik alvorlighet, og flere inputrekkefølger. Swift-parsing og diffkontroll består, men testkjøring er PÅ VENT på grunn av tidligere SwiftUIMacros.StateMacro-feil i Xcode. AUTO-004 køvurdering la til AUTO-369 etter at 366 ble satt PÅ VENT, slik at tre åpne AUTO-oppgaver står i kø. Neste: AUTO-367/368/369."
+  "lastProgress": "AUTO-367 delvis fullført: utvidet eksisterende offline-regresjon med gjenoppretting av ny Store fra samme lagring og kontroll av sted/valg etter omstart. Swift-parsing og diffkontroll består, men testkjøring er PÅ VENT på grunn av tidligere SwiftUIMacros.StateMacro-feil i Xcode. AUTO-004 køvurdering la til AUTO-370 etter at 367 ble satt PÅ VENT; åpne oppgaver: AUTO-368/369/370."
 }

@@ -1535,9 +1535,16 @@ flere inputrekkefølger. Swift-parsing og diffkontroll består, men testkjøring
 kan ikke bekreftes: Xcode stoppet tidligere før testkompilering med
 `SwiftUIMacros.StateMacro`-feil. Gjenta når Xcode-testmiljøet er friskt.
 
-**AUTO-367 · ÅPEN** — Legg til regresjon som bekrefter at valg av nytt sted
-lagres også når første prognosehenting feiler, slik at oppstartsveiviseren kan
-fortsette uten nett og stedet finnes etter omstart.
+**AUTO-367 · PÅ VENT 2026-10-09** — Eksisterende offline-testen bekreftet
+allerede at stedet og valget lagres før en kastet nettverksfeil; utvidet den nå
+til å gjenopprette en ny `Store` fra samme lagring og kontrollere at stedet og
+valget finnes etter omstart. Swift-parsing og diffkontroll består, men testkjøring
+står PÅ VENT på grunn av tidligere `SwiftUIMacros.StateMacro`-feil i Xcode.
+
+**AUTO-370 · ÅPEN** — Legg til regresjon for at et tomt første Yr-svar etter
+`Store.add` ikke fjerner det allerede lagrede stedet eller valget. Gjenopprett
+en ny `Store` fra samme lagringsnøkkel og kontroller at oppsettet kan fortsette
+selv om første svar ikke inneholder prognosetimer.
 
 **AUTO-368 · ÅPEN** — Legg til en lett regresjonstest som sikrer at alle
 konteksthjelpene på Hjem, Steder, Varsler, Innstillinger og oppstartsveiviseren
