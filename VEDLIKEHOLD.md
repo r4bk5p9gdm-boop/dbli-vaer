@@ -54,6 +54,13 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-143 · FULLFØRT 2026-10-10** — Bygget Debug for den sammenkoblede
+iPhone 13 Pro Max med prosjektets eksisterende automatiske utviklersignering,
+og installerte `no.mathias.VarselApp` på enheten. Xcode `build` bestod; ingen
+signeringsinnstillinger ble endret. Bygget tok med arbeidskopiens allerede
+eksisterende lokale endringer, som ble stående urørt og ucommittet.
+Neste kø er AUTO-428, AUTO-429 og AUTO-430.
+
 **BRUKER-142 · FULLFØRT 2026-10-09** — Endret GPS-snarveiens menynavn fra
 «Nå» til «Her!», som tydelig peker på brukerens aktuelle posisjonssted og
 fungerer som et lite hint i menyen. Ved sammenslåing vises «Her! · Hjem».
