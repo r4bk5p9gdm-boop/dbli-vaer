@@ -1473,7 +1473,7 @@ final class PlannerTests: XCTestCase {
         XCTAssertNil(restored.forecasts[deletedCabin.id])
     }
 
-    func testRemovingLastPlaceRestoresAndPersistsLaunchPlaces() throws {
+    func testRemovingLastPlaceByIndexRestoresFallbackSelectionAndDropsItsAlerts() throws {
         let persistenceKey = "varsel.test.remove-last-place.\(UUID().uuidString)"
         let launchVersionKey = "varsel.launchPlacesVersion"
         let previousLaunchVersion = UserDefaults.standard.object(forKey: launchVersionKey)
@@ -1489,8 +1489,10 @@ final class PlannerTests: XCTestCase {
 
         var rule = Rule(type: .regn)
         rule.templateTitle = "Regn på siste sted"
+        rule.threshold = 0.5
+        rule.leadMinutes = 60
         let lastPlace = Place(name: "Siste sted", lat: 64.4, lon: 11.4, rules: [rule])
-        let hour = ForecastHour(time: base, temp: 8, precip: 1, wind: 2, cloud: 40, dew: 4)
+        let hour = ForecastHour(time: base.addingTimeInterval(3 * 3_600), temp: 8, precip: 1, wind: 2, cloud: 40, dew: 4)
         UserDefaults.standard.set(try JSONEncoder().encode(PersistedStoreState(
             places: [lastPlace], selectedID: lastPlace.id, log: [],
             forecasts: [lastPlace.id: [hour]],
@@ -1499,12 +1501,23 @@ final class PlannerTests: XCTestCase {
         )), forKey: persistenceKey)
 
         let store = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
-        store.removePlaces(ids: [lastPlace.id])
+        XCTAssertEqual(
+            Planner.planAll(places: store.places, forecasts: store.forecasts, now: base)
+                .filter { $0.placeID == lastPlace.id }.count,
+            1,
+            "Fixture must start with a notification for the place being removed"
+        )
+        store.removePlaces(at: IndexSet(integer: 0))
 
         XCTAssertEqual(store.places.map(\.name), Store.launchPlaces.map(\.name))
         let selectedID = try XCTUnwrap(store.selectedID)
         XCTAssertTrue(store.places.contains { $0.id == selectedID })
+        let selectedIndex = try XCTUnwrap(store.places.firstIndex { $0.id == selectedID })
+        XCTAssertEqual(store.places[selectedIndex].id, store.selected?.id)
         XCTAssertNil(store.forecasts[lastPlace.id])
+        XCTAssertFalse(store.places.flatMap(\.rules).contains { $0.id == rule.id })
+        XCTAssertFalse(Planner.planAll(places: store.places, forecasts: store.forecasts, now: base)
+            .contains { $0.placeID == lastPlace.id })
 
         let persistedData = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
         let persisted = try JSONDecoder().decode(PersistedStoreState.self, from: persistedData)
@@ -1516,7 +1529,12 @@ final class PlannerTests: XCTestCase {
         let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
         XCTAssertEqual(restored.places.map(\.id), store.places.map(\.id))
         XCTAssertEqual(restored.selectedID, selectedID)
+        let restoredSelectedIndex = try XCTUnwrap(restored.places.firstIndex { $0.id == restored.selectedID })
+        XCTAssertEqual(restored.places[restoredSelectedIndex].id, restored.selected?.id)
         XCTAssertNil(restored.forecasts[lastPlace.id])
+        XCTAssertFalse(restored.places.flatMap(\.rules).contains { $0.id == rule.id })
+        XCTAssertFalse(Planner.planAll(places: restored.places, forecasts: restored.forecasts, now: base)
+            .contains { $0.placeID == lastPlace.id })
     }
 
     func testWizardRuleUpdatePreservesExistingCabinSettingsAndForecasts() throws {

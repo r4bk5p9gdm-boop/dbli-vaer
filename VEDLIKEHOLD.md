@@ -1760,9 +1760,12 @@ første sted og beholder sted-ID-ene ved neste oppstart. Swift-parsing,
 diffkontroll og iOS `build-for-testing` består; XCTest kunne ikke kjøres uten
 simulator.
 
-**AUTO-398 · ÅPEN** — Dekk siste-sted-sletting via `removePlaces(at:)` i
-regresjon, og bekreft at UI-indekser etter fallback fortsatt peker på samme
-valgte sted og at varslingsplanen ikke beholder regler for det slettede stedet.
+**AUTO-398 · FULLFØRT 2026-10-09** — Utvidet siste-sted-regresjonen til å
+kalle `removePlaces(at:)` direkte. Den bekrefter at valgt UI-indeks viser
+Store-stedet etter fallback og etter gjenoppretting, og at slettede steds regler
+og varsler ikke blir med videre. Regresjonsoppsettet bekrefter også at stedet
+hadde et planlagt varsel før sletting. Swift-parsing, diffkontroll og iOS
+`build-for-testing` består; XCTest kunne ikke kjøres uten simulator.
 
 **AUTO-399 · ÅPEN** — Test at massesletting ikke etterlater slettede sted-ID-er
 i `homeFavorites`; oppløste swipe-favoritter skal bare inneholde steder som
@@ -1771,6 +1774,10 @@ fortsatt finnes, også etter Store-gjenoppretting.
 **AUTO-400 · ÅPEN** — Når gyldig lagret Store-data har en `selectedID` som ikke
 finnes i stedlisten, kontroller at fallback-valget både persisteres og overlever
 neste oppstart.
+
+**AUTO-401 · ÅPEN** — Test at Store gjenoppretter gyldige steder og prognoser
+når én lagret prognosepost er feilformet, og at neste oppstart ikke får med
+feilaktige eller ukjente prognose-ID-er.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

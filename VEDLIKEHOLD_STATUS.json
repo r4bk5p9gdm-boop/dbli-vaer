@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T17:04:31Z",
+  "lastScheduledStart": "2026-10-09T17:09:31Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-397 fullført: la til regresjon som gjenoppretter Store fra korrupte bytes, kontrollerer at gyldige startsteder og valgt ID skrives tilbake, og at ID-ene består neste oppstart. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-400; neste: AUTO-398/399/400."
+  "lastProgress": "AUTO-398 fullført: utvidet siste-sted-slettetesten til å bruke removePlaces(at:), bevise at slettet sted hadde en planlagt varsling, og kontrollere valgt UI-indeks, regler, prognoser og varslingsplan før og etter Store-gjenoppretting. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-401; neste: AUTO-399/400/401."
 }
