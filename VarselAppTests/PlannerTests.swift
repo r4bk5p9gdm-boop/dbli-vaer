@@ -6833,6 +6833,21 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(importedPlace.rules.first?.threshold, 4.5)
     }
 
+    func testConfigurationDocumentFileRoundTripPreservesEmptyPlacesAndLanguage() throws {
+        let document = WeatherConfigurationDocument(
+            places: [], selectedPlaceID: nil, alertLanguageStyle: .english
+        )
+
+        let file = try document.fileWrapper(configuration: .init(contentType: .json, existingFile: nil))
+        let imported = try WeatherConfigurationDocument(
+            configuration: .init(file: file, contentType: .json)
+        ).configuration
+
+        XCTAssertEqual(imported.places, [])
+        XCTAssertNil(imported.selectedPlaceID)
+        XCTAssertEqual(imported.alertLanguageStyle, .english)
+    }
+
     func testConfigurationDocumentRejectsInvalidJSONFileContents() {
         let file = FileWrapper(regularFileWithContents: Data("this is not JSON".utf8))
 

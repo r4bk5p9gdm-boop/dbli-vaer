@@ -1981,8 +1981,10 @@ WeatherConfigurationDocument-filimporten. Swift-parsing og diffkontroll består;
 Xcode-testbygg er blokkert av SwiftUIMacros.StateMacro-feilen, og CoreSimulatorService
 er utilgjengelig.
 
-**AUTO-426 · ÅPEN** — Regresjonstest gjennom FileDocument-filflyten at gyldig
-konfigurasjon med null steder beholder tom liste, nil valgt-ID og språk.
+**AUTO-426 · FULLFØRT 2026-10-09** — La til FileDocument-rundtur for en gyldig
+konfigurasjon med null steder og nil valgt-ID. Tom liste, nil valgt-ID og valgt
+språk bevares gjennom eksport til fil og import fra fil. Swift-parsing og
+diffkontroll består; XCTest er ikke kjørt i denne kjøringen.
 
 **AUTO-427 · ÅPEN** — Regresjonstest FileDocument-import av eldre JSON uten
 valgfrie metadata: standardverdier brukes mens sted og valgt-ID beholdes.
