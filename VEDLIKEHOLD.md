@@ -1777,7 +1777,8 @@ ikke kjøres uten simulator.
 **AUTO-400 · FULLFØRT 2026-10-09** — Utvidet regresjonen for en lagret
 `selectedID` som mangler i stedlisten. Første sted velges, valget lagres uten å
 miste prognosecache eller tidsstempel, og stedene, valget og cachen består en ny
-Store-oppstart.
+Store-oppstart. Swift-parsing, diffkontroll og iOS `build-for-testing` består;
+XCTest kunne ikke kjøres uten simulator.
 
 **AUTO-401 · ÅPEN** — Test at Store gjenoppretter gyldige steder og prognoser
 når én lagret prognosepost er feilformet, og at neste oppstart ikke får med
