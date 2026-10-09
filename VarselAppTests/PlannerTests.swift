@@ -1431,6 +1431,38 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(relaunched.selectedID, selectedID)
     }
 
+    func testCurrentLaunchPlaceVersionDoesNotRestoreRemovedDefaultPlace() throws {
+        let persistenceKey = "varsel.test.current-version-removed-default-place.\(UUID().uuidString)"
+        let launchVersionKey = "varsel.launchPlacesVersion"
+        let previousLaunchVersion = UserDefaults.standard.object(forKey: launchVersionKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousLaunchVersion {
+                UserDefaults.standard.set(previousLaunchVersion, forKey: launchVersionKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: launchVersionKey)
+            }
+        }
+        UserDefaults.standard.set(9, forKey: launchVersionKey)
+
+        let hytte = Place(name: "Hytte", lat: 64.2, lon: 11.4, preposition: .pa)
+        let naust = Place(name: "Naust", lat: 64.1, lon: 11.6, preposition: .inni)
+        UserDefaults.standard.set(try JSONEncoder().encode(PersistedStoreState(
+            places: [hytte, naust], selectedID: naust.id, log: []
+        )), forKey: persistenceKey)
+
+        let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+
+        XCTAssertEqual(restored.places.map(\.id), [hytte.id, naust.id])
+        XCTAssertFalse(restored.places.contains { $0.name == "Klinga" })
+        XCTAssertEqual(restored.selectedID, naust.id)
+
+        let relaunched = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        XCTAssertEqual(relaunched.places.map(\.id), [hytte.id, naust.id])
+        XCTAssertFalse(relaunched.places.contains { $0.name == "Klinga" })
+        XCTAssertEqual(relaunched.selectedID, naust.id)
+    }
+
     func testRemovingUnselectedCabinPreservesHomeAcrossStoreRestore() throws {
         let persistenceKey = "varsel.test.remove-unselected-cabin.\(UUID().uuidString)"
         let launchVersionKey = "varsel.launchPlacesVersion"
