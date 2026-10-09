@@ -6323,6 +6323,35 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(restored.selectedID, place.id)
     }
 
+    @MainActor
+    func testAddingPlaceDoesNotRestoreSelectionAfterUserChangesItDuringFetch() async throws {
+        let persistenceKey = "varsel.test.add-place-selection-race.\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
+        var resumeFetch: CheckedContinuation<[ForecastHour], Error>?
+        let fetchStarted = expectation(description: "New place forecast fetch started")
+        let hour = ForecastHour(time: base, temp: 8, precip: 0, wind: 2, cloud: 40, dew: 4)
+        let store = Store(
+            forecastFetcher: { _, _ in
+                try await withCheckedThrowingContinuation { continuation in
+                    resumeFetch = continuation
+                    fetchStarted.fulfill()
+                }
+            },
+            persistenceKey: persistenceKey
+        )
+        let newPlace = Place(name: "Hytte", lat: 64.0, lon: 11.0, preposition: .på)
+        let task = Task { @MainActor in await store.add(newPlace) }
+        await fulfillment(of: [fetchStarted], timeout: 5)
+
+        let otherPlace = try XCTUnwrap(store.places.first(where: { $0.id != newPlace.id }))
+        store.select(otherPlace)
+        resumeFetch?.resume(returning: [hour])
+        await task.value
+
+        XCTAssertEqual(store.selectedID, otherPlace.id)
+        XCTAssertEqual(store.forecasts[newPlace.id], [hour])
+    }
+
     func testEmptyForecastCreatesNoSnowAlert() {
         let rule = Rule(type: .sno)
         let result = Planner.plan(rule: rule, forecast: [], placeName: "Klinga", now: base)

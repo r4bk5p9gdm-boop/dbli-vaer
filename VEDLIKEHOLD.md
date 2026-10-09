@@ -1578,10 +1578,11 @@ fra samme lagringsnøkkel etter ny `Store`. Swift-parsing og diffkontroll bestå
 men testkjøring står PÅ VENT på grunn av tidligere
 `SwiftUIMacros.StateMacro`-feil i Xcode.
 
-**AUTO-374 · ÅPEN** — Legg til regresjon med kontrollert, forsinket prognose-
-henting i `Store.add`: hvis brukeren velger et annet sted mens hentingen pågår,
-skal den fullførte hentingen lagre prognosen for det nye stedet uten å stjele
-det aktive stedsvalget tilbake.
+**AUTO-374 · PÅ VENT 2026-10-09** — La til regresjon med kontrollert,
+forsinket prognosehenting: et annet stedsvalg mens `Store.add` venter skal
+overleve en vellykket henting, samtidig som den nye prognosen lagres på riktig
+sted. Swift-parsing og diffkontroll består, men testkjøring står PÅ VENT på
+grunn av tidligere `SwiftUIMacros.StateMacro`-feil i Xcode.
 
 **AUTO-375 · ÅPEN** — Legg til regresjon som sikrer at hver
 `WizardAlertCategory` har minst ett passende `RulePreset`, og at ingen
@@ -1591,6 +1592,11 @@ forhåndsdefinerte varseltyper dermed blir utilgjengelige når kategorier endres
 annet sted allerede har lagret prognose: første hentingen for det nye stedet
 skal oppdatere bare dets cache og tidspunkt, og bevare det eksisterende stedets
 prognose gjennom lagring og gjenoppretting.
+
+**AUTO-377 · ÅPEN** — Trekk veiviserens forvalgte hjemsted- og hyttevarsel-ID-er
+ut i en ren, testbar modell og legg til kontroll som hvert valgt ID finnes i
+`RulePreset.all`, ikke er duplisert, og at bare hytteoppsettet kan markere
+forslagene som «bare når jeg er i nærheten».
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
