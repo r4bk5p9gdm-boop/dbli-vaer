@@ -6750,6 +6750,37 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(reimported.selectedPlaceID, firstValidPlace.id)
     }
 
+    func testConfigurationImportWithOnlyMalformedPlacesKeepsLanguageAndNoSelection() throws {
+        let place = Place(name: "Namsos", lat: 64.5, lon: 11.5)
+        let source = WeatherConfigurationExport(
+            places: [place], selectedPlaceID: place.id, alertLanguageStyle: .english
+        )
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: encoder.encode(source)) as? [String: Any])
+        object["places"] = ["not a place", 42, NSNull()]
+
+        let importedData = try JSONSerialization.data(withJSONObject: object)
+        let imported = try decoder.decode(WeatherConfigurationExport.self, from: importedData)
+
+        XCTAssertTrue(imported.places.isEmpty)
+        XCTAssertNil(imported.selectedPlaceID)
+        XCTAssertEqual(imported.alertLanguageStyle, .english)
+
+        let reexported = try encoder.encode(WeatherConfigurationExport(
+            places: imported.places,
+            selectedPlaceID: imported.selectedPlaceID,
+            alertLanguageStyle: imported.alertLanguageStyle ?? .bokmal
+        ))
+        let reimported = try decoder.decode(WeatherConfigurationExport.self, from: reexported)
+        XCTAssertTrue(reimported.places.isEmpty)
+        XCTAssertNil(reimported.selectedPlaceID)
+        XCTAssertEqual(reimported.alertLanguageStyle, .english)
+    }
+
     @MainActor
     func testCancellingActiveRefreshDoesNotCancelFollowingRefresh() async {
         let queue = ForecastRefreshQueue()

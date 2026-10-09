@@ -1858,9 +1858,12 @@ Store-oppstart. Swift-parsing, diffkontroll og generisk iOS
 `build-for-testing` med signering slått av består. XCTest kunne ikke kjøres
 fordi CoreSimulatorService ikke er tilgjengelig.
 
-**AUTO-409 · ÅPEN** — Regresjonstest at import der alle stedsoppføringer er
-feilformede trygt gir en tom stedsliste og intet valgt sted, samtidig som gyldig
-språkinnstilling beholdes.
+**AUTO-409 · FULLFØRT 2026-10-09** — La til importregresjon for en fil der
+alle stedsoppføringene er feilformede. Importen gir trygt tom stedsliste og
+intet valgt sted, mens engelsk språkvalg beholdes gjennom eksport og ny import.
+Swift-parsing, diffkontroll og generisk iOS `build-for-testing` med signering
+slått av består; XCTest kunne ikke kjøres fordi CoreSimulatorService er
+utilgjengelig.
 
 **AUTO-410 · ÅPEN** — Regresjonstest at launch-place-migrering gjenkjenner et
 lagret standardsted uavhengig av store/små bokstaver og diakritiske tegn, og
@@ -1869,6 +1872,9 @@ oppdaterer det uten å lage en duplikat eller forkaste stedets ID/cache.
 **AUTO-411 · ÅPEN** — Regresjonstest at gjeldende launch-place-versjon ikke
 overskriver brukerens tilpassede preposisjon eller regler for et standardsted
 ved gjentatt Store-oppstart.
+
+**AUTO-412 · ÅPEN** — Regresjonstest at en feilformet varselregel i import
+forkastes isolert, mens det gyldige stedet, øvrige regler og valgt-ID beholdes.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

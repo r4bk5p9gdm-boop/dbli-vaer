@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T18:06:31Z",
+  "lastScheduledStart": "2026-10-09T18:11:31Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-408 fullført: la til regresjonstest som sikrer at et fjernet standardsted ikke gjeninnføres når launch-place-versjonen er gjeldende, inkludert stedrekkefølge og valgt sted etter Store-omstart. Swift-parsing, diffkontroll og generisk iOS build-for-testing med signering slått av bestod; XCTest kunne ikke kjøres fordi CoreSimulatorService ikke er tilgjengelig. AUTO-004 opprettet AUTO-411 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-409/410/411."
+  "lastProgress": "AUTO-409 fullført: importtest viser at bare feilformede stedsoppføringer gir tom liste og intet valgt sted, samtidig som engelsk språkvalg overlever eksport og ny import. Swift-parsing, diffkontroll og generisk iOS build-for-testing med signering slått av bestod; XCTest kunne ikke kjøres fordi CoreSimulatorService ikke er tilgjengelig. AUTO-004 opprettet AUTO-412 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-410/411/412."
 }
