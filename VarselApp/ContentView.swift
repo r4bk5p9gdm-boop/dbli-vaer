@@ -971,6 +971,9 @@ struct RulesView: View {
     @State private var creating = false
     @State private var testAlertMessage: String?
     @State private var pushFilter: AlertType?
+    @State private var expandedDisplayType: AlertType? = .temperatur
+    @State private var showingLocalTemperatureSettings = false
+    @State private var showingPushRules = false
 
     var body: some View {
         NavigationStack {
@@ -1011,7 +1014,8 @@ struct RulesView: View {
                         Text("Trykk på stedet for å bytte.")
                             .font(.caption2).foregroundStyle(.secondary)
                     }
-                    Section("Lokal temperatur") {
+                    Section {
+                        DisclosureGroup(isExpanded: $showingLocalTemperatureSettings) {
                         if let hour = store.selectedForecast.last(where: { $0.time <= Date() && $0.time > Date().addingTimeInterval(-3600) }) {
                             HStack {
                                 Text("Yr")
@@ -1033,33 +1037,23 @@ struct RulesView: View {
                         NavigationLink("Registrer temperatur eller frost") {
                             LocalCalibrationView(placeID: p.id)
                         }
+                        } label: {
+                            Label("Lokal temperatur", systemImage: "thermometer.medium")
+                        }
                     }
                     Section {
+                        Text("Velg hvilke rader Hjem skal vise. Trykk på en værtype for å endre markeringene. Pushvarsler styres separat.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                         ForEach([AlertType.regn, .dugg, .sno, .frost, .temperatur, .vind, .sol]) { type in
-                            VStack(alignment: .leading, spacing: 8) {
-                                HStack(spacing: 8) {
-                                    Image(systemName: type.systemImage)
-                                        .foregroundStyle(type.color)
-                                        .frame(width: 24)
-                                    Text(type.label)
-                                        .font(.subheadline.weight(.semibold))
-                                    Spacer(minLength: 4)
-                                    Toggle("Vis \(type.label)", isOn: Binding(
-                                        get: { p.isAlertTypeVisible(type) },
-                                        set: { visible in
-                                            var hidden = p.hiddenAlertTypes ?? []
-                                            if visible { hidden.remove(type) } else { hidden.insert(type) }
-                                            p.hiddenAlertTypes = hidden
-                                            store.update(p)
-                                        }
-                                    ))
-                                    .labelsHidden()
-                                }
-
+                            DisclosureGroup(isExpanded: Binding(
+                                get: { expandedDisplayType == type },
+                                set: { expandedDisplayType = $0 ? type : nil }
+                            )) {
                                 if [.temperatur, .dugg, .sol, .vind].contains(type) {
                                     VStack(alignment: .leading, spacing: 5) {
                                         HStack(spacing: 6) {
-                                            Text(type == .temperatur ? "Under" : type == .dugg ? "Duggfare" : type == .vind ? "Vindkast fra" : "Hovedgrense")
+                                            Text(type == .temperatur ? "Kaldere enn" : type == .dugg ? "Duggfare" : type == .vind ? "Vindkast fra" : "Hel sol til")
                                                 .font(.caption.weight(.medium))
                                                 .foregroundStyle(.secondary)
                                             Picker("Grense for \(type.label)", selection: Binding(
@@ -1089,10 +1083,10 @@ struct RulesView: View {
 
                                         if type == .temperatur {
                                             HStack(spacing: 6) {
-                                                Text("Over")
+                                                Text("Varmere enn")
                                                     .font(.caption.weight(.medium))
                                                     .foregroundStyle(.secondary)
-                                                Picker("Temp over", selection: Binding(
+                                                Picker("Varmere enn", selection: Binding(
                                                     get: { p.resolvedDisplayTemperatureHighThreshold },
                                                     set: { p.displayTemperatureHighThreshold = $0; store.update(p) }
                                                 )) {
@@ -1107,7 +1101,7 @@ struct RulesView: View {
 
                                         if type == .sol {
                                             HStack(spacing: 6) {
-                                                Text("Solgløtt")
+                                                Text("Skravert delvis sol til")
                                                     .font(.caption.weight(.medium))
                                                     .foregroundStyle(.secondary)
                                                 Picker("Solgløttgrense", selection: Binding(
@@ -1147,21 +1141,40 @@ struct RulesView: View {
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                                     .fixedSize(horizontal: false, vertical: true)
-                                    .padding(.leading, 32)
-
-                                HStack(spacing: 8) {
-                                    Button("Push \(p.rules.filter { $0.type == type }.count)") {
-                                        pushFilter = type
-                                    }
-                                    .font(.caption2.weight(.semibold))
-                                    .buttonStyle(.bordered)
-                                    .accessibilityLabel("Pushvarsler for \(type.label)")
-                                    .accessibilityValue("\(p.rules.filter { $0.type == type }.count) oppsatt")
+                                Button {
+                                    pushFilter = type
+                                    showingPushRules = true
+                                } label: {
+                                    Label("Pushvarsler · \(p.rules.filter { $0.type == type }.count)", systemImage: "bell.badge")
+                                        .font(.caption)
                                 }
-                                .padding(.leading, 32)
+                            } label: {
+                                HStack(spacing: 10) {
+                                    Image(systemName: type.systemImage)
+                                        .font(.subheadline.weight(.semibold))
+                                        .foregroundStyle(type.color)
+                                        .frame(width: 22)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(type.label)
+                                            .font(.subheadline.weight(.semibold))
+                                        displayThresholdSummaryView(for: type, place: p)
+                                    }
+                                    Spacer(minLength: 2)
+                                    Toggle("Vis \(type.label)", isOn: Binding(
+                                        get: { p.isAlertTypeVisible(type) },
+                                        set: { visible in
+                                            var hidden = p.hiddenAlertTypes ?? []
+                                            if visible { hidden.remove(type) } else { hidden.insert(type) }
+                                            p.hiddenAlertTypes = hidden
+                                            store.update(p)
+                                        }
+                                    ))
+                                    .labelsHidden()
+                                    .fixedSize()
+                                    .accessibilityLabel("Vis \(type.label) på Hjem")
+                                }
                             }
-                            .padding(10)
-                            .background(type.color.opacity(0.08), in: RoundedRectangle(cornerRadius: 10))
+                            .padding(.vertical, 3)
                         }
                     } header: {
                         HStack {
@@ -1176,6 +1189,7 @@ struct RulesView: View {
                         Text("Dette er visningsgrenser for radene på Hjem. De bestemmer når celler får markering, men slår ikke pushvarsler av eller på. Push-reglene redigeres under hver type.")
                     }
                     Section {
+                        DisclosureGroup(isExpanded: $showingPushRules) {
                         ForEach(visibleRules) { r in
                         HStack {
                             RoundedRectangle(cornerRadius: 2).fill(r.type.color).frame(width: 4, height: 40)
@@ -1225,8 +1239,16 @@ struct RulesView: View {
                         } label: {
                             Label("Send testvarsel", systemImage: "bell.badge.fill")
                         }
+                        } label: {
+                            HStack {
+                                Label("Pushvarsler", systemImage: "bell.badge")
+                                Spacer()
+                                Text("\(visibleRules.count)")
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
                     } header: {
-                        Text("Varselinnstillinger for \(p.displayName)")
+                        Text("Varsler for \(p.displayName)")
                     }
                 }
             }
@@ -1288,13 +1310,89 @@ struct RulesView: View {
                 ? "Frost markeres ved \(number(threshold))°C eller kaldere."
                 : "Frost markeres ved \(number(threshold))°C eller kaldere, og fare for frost også opptil +\(margin)°C. Dette endrer ikke Yr-temperaturen."
         case .temperatur:
-            return "Blå markering under \(number(place.resolvedDisplayTemperatureThreshold))°C og varm markering over \(number(place.resolvedDisplayTemperatureHighThreshold))°C."
+            return "Blå markering ved temperaturer under \(number(place.resolvedDisplayTemperatureThreshold))°C. Oransje markering ved temperaturer over \(number(place.resolvedDisplayTemperatureHighThreshold))°C. Dette endrer ikke pushvarslene."
         case .vind:
             let threshold = place.displayThreshold(for: .vind)
             return "Markeres ved vindkast fra \(number(threshold)) m/s (\(windStrengthLabel(for: threshold))). Middelvind brukes ikke."
         case .sol:
-            return "Hel gul sol ved maks \(number(place.displayThreshold(for: .sol)))% skydekke. Skravert gul delvis sol fram til \(number(place.resolvedDisplaySunThreshold2))%."
+            return "Hel gul sol ved maks \(number(place.displayThreshold(for: .sol)))% skydekke. Skravert gul markering for delvis sol fram til \(number(place.resolvedDisplaySunThreshold2))%. Dette endrer ikke pushvarslene."
         }
+    }
+
+    private func displayThresholdSummary(for type: AlertType, place: Place) -> String {
+        let number: (Double) -> String = { $0.formatted(.number.precision(.fractionLength(0...1))) }
+        switch type {
+        case .regn:
+            let threshold = place.rulesForDisplay.first(where: { $0.type == .regn })?.threshold ?? AlertType.regn.defaultThreshold
+            return "Nedbør fra \(number(threshold)) mm/t"
+        case .sno:
+            let threshold = place.rulesForDisplay.first(where: { $0.type == .sno })?.threshold ?? AlertType.sno.defaultThreshold
+            return "Snø fra \(number(threshold)) mm vann/t"
+        case .dugg:
+            return "Duggfare ved avvik på \(number(place.displayThreshold(for: .dugg)))°C"
+        case .frost:
+            let threshold = place.rulesForDisplay.first(where: { $0.type == .frost })?.threshold ?? AlertType.frost.defaultThreshold
+            return "Frost ved \(number(threshold))°C · margin +\(number(place.localFrostMargin))°"
+        case .temperatur:
+            return "Blå under \(number(place.resolvedDisplayTemperatureThreshold))° · oransje over \(number(place.resolvedDisplayTemperatureHighThreshold))°"
+        case .vind:
+            return "Vindkast fra \(number(place.displayThreshold(for: .vind))) m/s"
+        case .sol:
+            return "Hel sol til \(number(place.displayThreshold(for: .sol)))% · delvis til \(number(place.resolvedDisplaySunThreshold2))%"
+        }
+    }
+
+    @ViewBuilder
+    private func displayThresholdSummaryView(for type: AlertType, place: Place) -> some View {
+        HStack(spacing: 4) {
+            switch type {
+            case .temperatur:
+                markerSwatch(AlertType.temperatur.color)
+                Text("under \(place.resolvedDisplayTemperatureThreshold.formatted(.number.precision(.fractionLength(0...1))))°")
+                markerSwatch(.orange)
+                    .padding(.leading, 3)
+                Text("over \(place.resolvedDisplayTemperatureHighThreshold.formatted(.number.precision(.fractionLength(0...1))))°")
+            case .sol:
+                markerSwatch(AlertType.sol.color)
+                Text("hel ≤ \(place.displayThreshold(for: .sol).formatted(.number.precision(.fractionLength(0...1))))%")
+                markerSwatch(AlertType.sol.color, hatched: true)
+                    .padding(.leading, 3)
+                Text("skravert ≤ \(place.resolvedDisplaySunThreshold2.formatted(.number.precision(.fractionLength(0...1))))%")
+            case .frost:
+                Image(systemName: AlertType.frost.systemImage)
+                    .font(.system(size: 8, weight: .semibold))
+                    .foregroundStyle(.blue)
+                Text(displayThresholdSummary(for: type, place: place))
+            default:
+                markerSwatch(type.color)
+                Text(displayThresholdSummary(for: type, place: place))
+            }
+        }
+        .font(.caption2)
+        .foregroundStyle(.secondary)
+        .lineLimit(2)
+    }
+
+    private func markerSwatch(_ color: Color, hatched: Bool = false) -> some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 2).fill(color.opacity(hatched ? 0.48 : 0.78))
+            if hatched {
+                GeometryReader { proxy in
+                    Path { path in
+                        var x = -proxy.size.height
+                        while x < proxy.size.width {
+                            path.move(to: CGPoint(x: x, y: proxy.size.height))
+                            path.addLine(to: CGPoint(x: x + proxy.size.height, y: 0))
+                            x += 4
+                        }
+                    }
+                    .stroke(Color(red: 0.72, green: 0.42, blue: 0.08).opacity(0.7), lineWidth: 0.8)
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 2))
+            }
+        }
+        .frame(width: 12, height: 8)
+        .accessibilityHidden(true)
     }
 }
 

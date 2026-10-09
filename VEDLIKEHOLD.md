@@ -54,6 +54,15 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-121 · FULLFØRT 2026-10-09** — Gjorde «Tilpass» kortere og
+mer oversiktlig ved å samle værtypene, lokal temperatur og pushvarsler i
+sammenleggbare grupper. Hver værtype viser nå en kompakt oppsummering av
+grensen og et fargefelt som svarer til cellemarkeringen: temperatur viser blå
+under- og oransje over-grense, mens sol viser helgul og skravert gul delvis
+sol. De andre typene viser sine markeringer med tilhørende farge, og forklaring
+og pushregler vises når gruppen åpnes. Byttet temperaturtekst til «Kaldere enn»
+og «Varmere enn».
+
 **BRUKER-120 · FULLFØRT 2026-10-09** — Frost bruker nå et tydelig
 snøfnuggikon. Solgrensene styrer hver sin visning: celler under hovedgrensen
 er helgule, og celler fram til solgløttgrensen er lysere gule med skravur.

@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-09T13:27:16Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-120 fullført: frost fikk snøfnuggikon, delvis sol fikk skravert gul celle med separat hoved-/solgløttgrense opp til 90 %, soloppgang/-nedgang fikk større maskerende symboler, og skoddeprognose fikk eget ikon. Swift-parsing og diffkontroll bestått; xcodebuild build for generisk iOS-enhet bestått. XCTest ikke kjørt fordi simulatorruntime ikke er tilgjengelig; tidligere kjente testkildekompileringsfeil står fortsatt uavklart. AUTO-359/360/361 er neste køpunkter."
+  "lastProgress": "BRUKER-121 fullført: Tilpass-siden ble komprimert med sammenleggbare værtyper, lokal temperatur og pushregler. Alle værtyper viser nå den faktiske cellemarkeringens farge; temperatur viser blå/oransje grenser og sol helgul/skravert gul med verdiene. Tekstene er tydeligere om hva innstillingen endrer. Swift-parsing, diffkontroll og generisk iOS-build bestått. Simulatorruntime utilgjengelig; ingen visuell iPhone-gjennomgang. AUTO-359/360/361 er neste køpunkter."
 }
