@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T16:42:57Z",
+  "lastScheduledStart": "2026-10-09T16:44:43Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-126 fullført: solikonet bruker faktisk nåtid og rullerende solstatus undertrykker 'sol nå' når siste værprøve er før solnedgang, men klokken nå er etter. Regresjon dekker Klinga ved solnedgangen 2026-10-09. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. Neste: AUTO-393/394/395."
+  "lastProgress": "AUTO-393 fullført: Store-regresjon for sletting av valgt hytte bekrefter automatisk valg av hjemsted, gyldig persisted selectedID og bevart hjemmeregel/prognose umiddelbart og etter Store-gjenoppretting; hytteprognosen fjernes. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-396; neste: AUTO-394/395/396."
 }

@@ -1713,9 +1713,12 @@ prognosecache beholdes både umiddelbart og etter Store-gjenoppretting, mens
 hytteprognosen fjernes. Swift-parsing, diffkontroll og iOS `build-for-testing`
 består; XCTest kunne ikke kjøres uten simulator.
 
-**AUTO-393 · ÅPEN** — Legg til regresjon der den valgte hytta slettes mens
-hjemstedet fortsatt finnes. Bekreft at Store automatisk velger hjemstedet,
-persisterer gyldig `selectedID` og beholder hjemstedets prognose.
+**AUTO-393 · FULLFØRT 2026-10-09** — La til regresjon for sletting av valgt
+hytte mens hjemstedet fortsatt finnes. Store velger hjemstedet, persisterer
+gyldig `selectedID` og beholder hjemstedets varselregel og prognose både
+umiddelbart og etter gjenoppretting; hytteprognosen fjernes.
+Swift-parsing, diffkontroll og iOS `build-for-testing` består; XCTest kunne
+ikke kjøres uten simulator.
 
 **AUTO-394 · ÅPEN** — Når Store faller tilbake til startstedene etter en tom
 lagret stedsliste, lagre fallback-listen. Legg til regresjon som oppretter
@@ -1724,6 +1727,11 @@ Store to ganger og bekrefter at sted-ID-ene forblir stabile mellom oppstartene.
 **AUTO-395 · ÅPEN** — Legg til regresjon for sletting av siste lagrede sted.
 Bekreft at Store velger et gyldig fallback-sted, fjerner foreldreløs
 prognosecache og gjenoppretter samme gyldige tilstand ved neste oppstart.
+
+**AUTO-396 · ÅPEN** — Test sletting av flere steder samtidig når det valgte
+stedet slettes. Bekreft at valgt-ID faller tilbake til første gjenværende sted,
+at bare prognoser for gjenværende steder beholdes, og at tilstanden overlever
+Store-gjenoppretting.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
