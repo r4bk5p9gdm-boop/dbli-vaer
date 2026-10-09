@@ -6828,6 +6828,16 @@ final class PlannerTests: XCTestCase {
         ))
     }
 
+    func testConfigurationDocumentRejectsJSONWithNonObjectTopLevelValue() {
+        for json in ["null", "[]", "42", "\"configuration\""] {
+            let file = FileWrapper(regularFileWithContents: Data(json.utf8))
+
+            XCTAssertThrowsError(try WeatherConfigurationDocument(
+                configuration: .init(file: file, contentType: .json)
+            ), "Expected top-level JSON value to be rejected: \(json)")
+        }
+    }
+
     func testConfigurationDocumentRejectsDirectoryInsteadOfJSONFile() {
         let directory = FileWrapper(directoryWithFileWrappers: [:])
 

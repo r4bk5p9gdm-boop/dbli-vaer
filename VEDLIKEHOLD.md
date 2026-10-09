@@ -1944,14 +1944,20 @@ gyldige steder, språk og valgt-ID bevares, og dataene overlever ny fil-eksport
 og import. Swift-parsing og diffkontroll består; Xcode-testbygg er blokkert av
 SwiftUIMacros.StateMacro-feilen, og CoreSimulatorService er utilgjengelig.
 
-**AUTO-422 · ÅPEN** — Regresjonstest at syntaktisk gyldig JSON med feil
-toppnivåtype (for eksempel `null`) avvises som korrupt værkonfigurasjonsfil.
+**AUTO-422 · FULLFØRT 2026-10-09** — La til filimportregresjon for gyldig
+JSON med toppnivåverdier som ikke er konfigurasjonsobjekter (`null`, array,
+tall og tekst). Alle avvises i stedet for å tolkes som tom konfigurasjon.
+Swift-parsing og diffkontroll består; Xcode-testbygg er blokkert av
+SwiftUIMacros.StateMacro-feilen, og CoreSimulatorService er utilgjengelig.
 
 **AUTO-423 · ÅPEN** — Regresjonstest gjennom FileDocument at manglende eller
 ukjent valgt-sted-ID faller tilbake til første gyldige sted ved import.
 
 **AUTO-424 · ÅPEN** — Regresjonstest FileDocument-filflyten at en feilformet
 regel hoppes over mens øvrige regler på stedet beholdes etter ny eksport/import.
+
+**AUTO-425 · ÅPEN** — Regresjonstest at eksport fra en eldre appversjon med
+større formatVersion avvises tydelig, så nyere konfigurasjonsdata ikke feiltolkes.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
