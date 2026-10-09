@@ -1553,9 +1553,11 @@ før alvorlighet, også med grense `limit: 1`. Tre inputrekkefølger er dekket.
 Swift-parsing og diffkontroll består, men testkjøring står PÅ VENT på grunn av
 tidligere `SwiftUIMacros.StateMacro`-feil i Xcode.
 
-**AUTO-371 · ÅPEN** — Legg til lett regresjonstest for at hvert
-`RulePreset` har unik ID og ikke-tom tittel, forklaring og huskeforslag, og at
-regelens malnavn og huskeforslag samsvarer med teksten som vises i veiviseren.
+**AUTO-371 · PÅ VENT 2026-10-09** — La til lett regresjonstest for at alle
+`RulePreset`-ID-er er unike, synlig tekst ikke er tom, og regelens malnavn og
+huskeforslag samsvarer med teksten i veiviseren. Swift-parsing og diffkontroll
+består, men testkjøring står PÅ VENT på grunn av tidligere
+`SwiftUIMacros.StateMacro`-feil i Xcode.
 
 **AUTO-372 · ÅPEN** — Gjør den rene `WizardAlertCategory`-mappingen
 tilgjengelig internt for tester (uten å gjøre den offentlig), og legg til
@@ -1571,6 +1573,11 @@ i Xcode.
 **AUTO-373 · ÅPEN** — Legg til regresjon for vellykket første prognosehenting
 i `Store.add`: prognosetimer og oppdateringstid for det nye stedet skal være
 lagret og komme tilbake fra samme lagringsnøkkel etter at en ny Store opprettes.
+
+**AUTO-374 · ÅPEN** — Legg til regresjon med kontrollert, forsinket prognose-
+henting i `Store.add`: hvis brukeren velger et annet sted mens hentingen pågår,
+skal den fullførte hentingen lagre prognosen for det nye stedet uten å stjele
+det aktive stedsvalget tilbake.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

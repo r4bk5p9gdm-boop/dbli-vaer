@@ -1094,6 +1094,20 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testEveryRulePresetHasCompleteAndConsistentDisplayCopy() {
+        let presets = RulePreset.all
+        XCTAssertFalse(presets.isEmpty)
+        XCTAssertEqual(presets.map(\.id).count, Set(presets.map(\.id)).count)
+
+        for preset in presets {
+            XCTAssertFalse(preset.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            XCTAssertFalse(preset.detail.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            XCTAssertFalse(preset.suggestion.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            XCTAssertEqual(preset.rule.templateTitle, preset.title)
+            XCTAssertEqual(preset.rule.memoSuggestion, preset.suggestion)
+        }
+    }
+
     func testCompactWindDoesNotInventMissingGust() {
         var hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 3, cloud: 20, dew: 4)
         XCTAssertEqual(hour.compactWindAndGust, "– m/s")

@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-09T13:27:16Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-370 delvis fullført: la til regresjon som bekrefter at nytt sted og valgt-ID overlever når første prognosesvar er tomt, også etter Store-gjenoppretting, uten å lagre tom prognose. Swift-parsing og diffkontroll består, men testkjøring er PÅ VENT på grunn av tidligere SwiftUIMacros.StateMacro-feil i Xcode. AUTO-004 køvurdering la til AUTO-373 etter at 370 ble satt PÅ VENT; åpne oppgaver: AUTO-371/372/373."
+  "lastProgress": "AUTO-371 delvis fullført: la til regresjonstest som kontrollerer unike ID-er og komplett, konsistent visningstekst for alle RulePreset. Swift-parsing og diffkontroll består, men testkjøring er PÅ VENT på grunn av tidligere SwiftUIMacros.StateMacro-feil i Xcode. AUTO-004 køvurdering la til AUTO-374 etter at 371 ble satt PÅ VENT; åpne oppgaver: AUTO-372/373/374."
 }
