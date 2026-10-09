@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T16:23:30Z",
+  "lastScheduledStart": "2026-10-09T16:28:30Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-389 fullført: la til Store-regresjon for veiviseroppdatering av eksisterende hjemsted. Gjenoppretting bevarer identitet, egendefinert visningsnavn, varsler av, eksisterende avslått vindregel og ny hjemmeregel uten nærhetsstyring. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-392; neste: AUTO-390/391/392."
+  "lastProgress": "AUTO-390 fullført: utvidet hytteoppdateringsregresjonen med hiddenAlertTypes, rulesOnlyDisplay, frostMargin og displaytemperaturgrenser og bekreftet Store-gjenoppretting av verdiene. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-393; neste: AUTO-391/392/393."
 }

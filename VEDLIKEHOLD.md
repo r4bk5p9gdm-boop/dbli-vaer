@@ -1686,10 +1686,12 @@ egendefinert avslått vindregel og grense; nye hjemmeregler legges til uten
 nærhetsstyring eller duplikater. Swift-parsing, diffkontroll og iOS
 `build-for-testing` består; XCTest kunne ikke kjøres uten simulator.
 
-**AUTO-390 · ÅPEN** — Utvid stedsspesifikk veiviseroppdateringsregresjon med
-egendefinert `hiddenAlertTypes`, `frostMargin` og displaytemperaturgrenser.
-Bekreft at alle bevares uendret etter at nye preset-regler er lagret og Store
-er gjenopprettet.
+**AUTO-390 · FULLFØRT 2026-10-09** — Utvidet hytteoppdateringsregresjonen
+med egendefinerte skjulte værtyper, regelbasert visning, frostmargin og lave
+og høye displaytemperaturgrenser. Alle verdiene bevares etter at preset-regler
+er lagt til, Store lagret og deretter gjenopprettet. Swift-parsing,
+diffkontroll og iOS `build-for-testing` består; XCTest kunne ikke kjøres uten
+simulator.
 
 **AUTO-391 · ÅPEN** — Legg til Store-regresjon med en gyldig lagret tilstand
 som har tom `places`-liste. Bekreft at appen faller tilbake til startstedene,
@@ -1698,6 +1700,10 @@ velger et sted fra den gjenopprettede listen og ikke krasjer ved oppstart.
 **AUTO-392 · ÅPEN** — Legg til regresjon for sletting av ikke-valgt hytte etter
 oppsett. Bekreft at hjemstedets ID, varselregler, valgt status og prognosecache
 består både umiddelbart og etter Store-gjenoppretting.
+
+**AUTO-393 · ÅPEN** — Legg til regresjon der den valgte hytta slettes mens
+hjemstedet fortsatt finnes. Bekreft at Store automatisk velger hjemstedet,
+persisterer gyldig `selectedID` og beholder hjemstedets prognose.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

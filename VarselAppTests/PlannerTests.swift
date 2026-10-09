@@ -1307,6 +1307,11 @@ final class PlannerTests: XCTestCase {
             preposition: .pa, rules: [existingRule], notificationsEnabled: false
         )
         cabin.temperatureOffset = 2.5
+        cabin.rulesOnlyDisplay = true
+        cabin.hiddenAlertTypes = [.regn, .vind]
+        cabin.frostMargin = 1.25
+        cabin.displayTemperatureThreshold = 3
+        cabin.displayTemperatureHighThreshold = 24
         let homeHour = ForecastHour(time: base, temp: 8, precip: 0, wind: 2, cloud: 40, dew: 4)
         let cabinHour = ForecastHour(time: base.addingTimeInterval(3_600), temp: 3, precip: 0, wind: 1, cloud: 75, dew: 1)
         UserDefaults.standard.set(try JSONEncoder().encode(PersistedStoreState(
@@ -1336,6 +1341,11 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(restoredCabin.customName, cabin.customName)
         XCTAssertFalse(restoredCabin.areNotificationsEnabled)
         XCTAssertEqual(restoredCabin.localTemperatureOffset, 2.5)
+        XCTAssertTrue(restoredCabin.showsOnlyRuleAlerts)
+        XCTAssertEqual(restoredCabin.hiddenAlertTypes, [.regn, .vind])
+        XCTAssertEqual(restoredCabin.localFrostMargin, 1.25)
+        XCTAssertEqual(restoredCabin.displayTemperatureThreshold, 3)
+        XCTAssertEqual(restoredCabin.displayTemperatureHighThreshold, 24)
         XCTAssertFalse(preservedRule.enabled)
         XCTAssertEqual(preservedRule.threshold, 13)
         XCTAssertTrue(restoredCabin.rules.contains { $0.type == .frost && $0.onlyWhenNearby })
