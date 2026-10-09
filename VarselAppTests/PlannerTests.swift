@@ -1094,6 +1094,25 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testWizardCategoriesCoverEveryAlertTypeExactlyOnce() {
+        let expected: [WizardAlertCategory: Set<AlertType>] = [
+            .rain: [.regn],
+            .wind: [.vind],
+            .winter: [.sno, .frost],
+            .sun: [.sol],
+            .moisture: [.temperatur, .dugg]
+        ]
+        let categories = WizardAlertCategory.allCases
+        let categorizedTypes = categories.flatMap { Array($0.types) }
+
+        XCTAssertEqual(categories.count, expected.count)
+        XCTAssertEqual(categorizedTypes.count, AlertType.allCases.count)
+        XCTAssertEqual(Set(categorizedTypes), Set(AlertType.allCases))
+        for category in categories {
+            XCTAssertEqual(category.types, expected[category] ?? [])
+        }
+    }
+
     func testEveryRulePresetHasCompleteAndConsistentDisplayCopy() {
         let presets = RulePreset.all
         XCTAssertFalse(presets.isEmpty)

@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-09T13:27:16Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-371 delvis fullført: la til regresjonstest som kontrollerer unike ID-er og komplett, konsistent visningstekst for alle RulePreset. Swift-parsing og diffkontroll består, men testkjøring er PÅ VENT på grunn av tidligere SwiftUIMacros.StateMacro-feil i Xcode. AUTO-004 køvurdering la til AUTO-374 etter at 371 ble satt PÅ VENT; åpne oppgaver: AUTO-372/373/374."
+  "lastProgress": "AUTO-372 delvis fullført: gjorde WizardAlertCategory intern for testtilgang og la til regresjon som bekrefter korrekt, fullstendig og uten overlappende kategoridekning av AlertType. Swift-parsing og diffkontroll består, men testkjøring er PÅ VENT på grunn av tidligere SwiftUIMacros.StateMacro-feil i Xcode. AUTO-004 køvurdering la til AUTO-375 etter at 372 ble satt PÅ VENT; åpne oppgaver: AUTO-373/374/375."
 }

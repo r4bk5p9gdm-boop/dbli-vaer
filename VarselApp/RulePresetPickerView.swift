@@ -114,7 +114,7 @@ struct RulePresetPickerView: View {
     }
 }
 
-private enum WizardAlertCategory: String, CaseIterable, Identifiable {
+enum WizardAlertCategory: String, CaseIterable, Identifiable {
     case rain, wind, winter, sun, moisture
 
     var id: String { rawValue }

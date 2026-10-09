@@ -1559,10 +1559,12 @@ huskeforslag samsvarer med teksten i veiviseren. Swift-parsing og diffkontroll
 består, men testkjøring står PÅ VENT på grunn av tidligere
 `SwiftUIMacros.StateMacro`-feil i Xcode.
 
-**AUTO-372 · ÅPEN** — Gjør den rene `WizardAlertCategory`-mappingen
-tilgjengelig internt for tester (uten å gjøre den offentlig), og legg til
-regresjon som bekrefter at kategoriene dekker alle `AlertType`-verdier én gang
-og grupperer regn, vind, snø/frost, sol og temperatur/dugg riktig.
+**AUTO-372 · PÅ VENT 2026-10-09** — Gjorde den rene
+`WizardAlertCategory`-mappingen intern for testtilgang, og la til regresjon
+som bekrefter at de fem kategoriene dekker alle `AlertType`-verdier nøyaktig
+én gang med riktige grupper. Swift-parsing og diffkontroll består, men
+testkjøring står PÅ VENT på grunn av tidligere `SwiftUIMacros.StateMacro`-feil
+i Xcode.
 
 **AUTO-370 · PÅ VENT 2026-10-09** — La til regresjon for tomt første Yr-svar:
 sted og valgt-ID blir stående i Store og finnes igjen etter gjenoppretting, mens
@@ -1578,6 +1580,10 @@ lagret og komme tilbake fra samme lagringsnøkkel etter at en ny Store opprettes
 henting i `Store.add`: hvis brukeren velger et annet sted mens hentingen pågår,
 skal den fullførte hentingen lagre prognosen for det nye stedet uten å stjele
 det aktive stedsvalget tilbake.
+
+**AUTO-375 · ÅPEN** — Legg til regresjon som sikrer at hver
+`WizardAlertCategory` har minst ett passende `RulePreset`, og at ingen
+forhåndsdefinerte varseltyper dermed blir utilgjengelige når kategorier endres.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
