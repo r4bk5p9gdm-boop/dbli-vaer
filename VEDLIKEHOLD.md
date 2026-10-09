@@ -54,6 +54,13 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-134 · FULLFØRT 2026-10-09** — Skodde vises nå i solradens aktuelle
+timeceller uten egen sirkel eller bakplate. Nøytrale celler bruker dempet
+skoddesymbol; når solraden ellers viser helgul eller stripet sol, brukes
+sol-gjennom-dis-symbolet på den eksisterende cellebakgrunnen. La til regresjon
+for skoddegrensen, manglende verdi og valg av symbolvariant. Swift-parsing og
+diffkontroll består.
+
 **BRUKER-133 · FULLFØRT 2026-10-09** — Gjorde de gule skråstripene for
 delvis sol tydeligere ved å øke linjebredden fra 1 til 1,6 punkter. Samme
 stil brukes både i timecellene og fargeprøven i «Tilpass», så forklaringen

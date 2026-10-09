@@ -552,6 +552,9 @@ private struct CombinedHourBandCell: View {
                 latitude: latitude, longitude: longitude
             )
             : .neutral
+        if type == .sol, let fog = solarBandFogLevel(hour) {
+            return 600 + fog
+        }
         if type == .sol, (solarAppearance == .sunlit || solarAppearance == .partlySunlit) {
             return 500 + max(0, sunThreshold2 - hour.cloud)
         }
@@ -614,6 +617,8 @@ private struct CombinedHourBandCell: View {
                     // Boundary cells show a marker instead of a yellow sun fill.
                     let solarTransition = solarAppearance.transition
                     let hourCellWidth = proxy.size.width / CGFloat(period.hours)
+                    let fogLevel = type == .sol ? solarBandFogLevel(hour) : nil
+                    let fogSymbol = fogLevel.map { _ in solarBandFogSymbol(for: solarAppearance) }
                     let matchesSunPreview = type == .sol && solarAppearance == .sunlit
                     let matchesPartialSunPreview = type == .sol && solarAppearance == .partlySunlit
                     let matchesTemperaturePreview = type == .temperatur && (hour.temp <= temperatureLowThreshold || hour.temp >= temperatureHighThreshold)
@@ -650,7 +655,19 @@ private struct CombinedHourBandCell: View {
                                 )
                         }
                     }
-                    if offset < period.hours, let solarTransition {
+                    if offset < period.hours, let fogLevel, let fogSymbol {
+                        Image(systemName: fogSymbol)
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundStyle(fogSymbol == "sun.haze.fill"
+                                ? Color.orange
+                                : Color(red: 0.38, green: 0.45, blue: 0.52))
+                            .frame(width: hourCellWidth, height: proxy.size.height)
+                            .position(
+                                x: proxy.size.width * CGFloat(offset) / CGFloat(period.hours) + hourCellWidth / 2,
+                                y: proxy.size.height / 2
+                            )
+                            .accessibilityLabel("Skodde, styrke \(Int(fogLevel.rounded())) prosent")
+                    } else if offset < period.hours, let solarTransition {
                         Image(systemName: solarTransition.systemImage)
                             .resizable()
                             .foregroundStyle(Color.orange)
@@ -1044,6 +1061,18 @@ func forecastSymbol(_ hour: ForecastHour) -> String {
     if hour.cloud <= 20 { return "sun.max.fill" }
     if hour.cloud <= 65 { return "cloud.sun.fill" }
     return "cloud.fill"
+}
+
+func solarBandFogLevel(_ hour: ForecastHour) -> Double? {
+    guard let fog = hour.fog, fog.isFinite, fog >= 50 else { return nil }
+    return fog
+}
+
+func solarBandFogSymbol(for appearance: SolarCycle.RowAppearance) -> String {
+    switch appearance {
+    case .sunlit, .partlySunlit: "sun.haze.fill"
+    case .sunrise, .sunset, .neutral: "cloud.fog.fill"
+    }
 }
 
 private struct SolarHatchMark: View {

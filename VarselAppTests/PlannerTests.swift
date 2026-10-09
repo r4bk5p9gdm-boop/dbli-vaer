@@ -980,6 +980,19 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(AlertType.frost.systemImage, "snowflake")
     }
 
+    func testFogMarkerInSolarBandUsesSunHazeOnlyWhenSolarCellShowsSun() {
+        let foggy = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 95, dew: 7, fog: 50)
+        let clearVisibility = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 95, dew: 7, fog: 49.9)
+        let unavailable = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 95, dew: 7)
+
+        XCTAssertEqual(solarBandFogLevel(foggy), 50)
+        XCTAssertNil(solarBandFogLevel(clearVisibility))
+        XCTAssertNil(solarBandFogLevel(unavailable))
+        XCTAssertEqual(solarBandFogSymbol(for: .neutral), "cloud.fog.fill")
+        XCTAssertEqual(solarBandFogSymbol(for: .sunlit), "sun.haze.fill")
+        XCTAssertEqual(solarBandFogSymbol(for: .partlySunlit), "sun.haze.fill")
+    }
+
     func testDialectWeekdaysKeepBokmalUnchanged() {
         XCTAssertEqual(WeatherLanguage.text("Regn denne timen", style: .inntrondersk), "Regn herre tima")
         XCTAssertEqual(WeatherLanguage.text("Regn denne timen", style: .bokmal), "Regn denne timen")

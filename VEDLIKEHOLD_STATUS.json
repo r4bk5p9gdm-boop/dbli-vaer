@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T19:39:00Z",
+  "lastScheduledStart": "2026-10-09T19:54:24Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-133 fullført: økte bredden på de delvise soltimene gule skråstriper fra 1 til 1,6 punkter. Den delte SolarCellMarkerStyle gjør også prøven i Tilpass tydeligere. Swift-parsing og diffkontroll består. Neste åpne kø: AUTO-426/427/428."
+  "lastProgress": "BRUKER-134 fullført: skodde vises i solradens timeceller uten egen bakplate. Nøytrale celler viser dempet cloud.fog, mens helgule/stripete solceller bruker sun.haze på samme cellebakgrunn. Ved duplikatforecast prioriteres sterkere skodde. Regresjon dekker terskel og symbolvalg; Swift-parsing og diffkontroll består. Neste åpne kø: AUTO-426/427/428."
 }
