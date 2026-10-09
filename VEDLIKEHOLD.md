@@ -1431,16 +1431,29 @@ lettvektskjøringen.
 alle tre push-kandidatene for beholdt regnhendelse overlever mens en annen
 regels nærliggende hendelse dedupliseres. Ingen redundant test ble lagt til.
 
-**AUTO-357 · ÅPEN** — Test at `planAll` fortsatt returnerer varsler sortert
-kronologisk etter `fireAt` etter at cooldown-deduplisering internt sorterer
-regnhendelser etter `eventAt`.
+**AUTO-357 · PÅ VENT 2026-10-09** — La til en rekkefølgeassert på
+`fireAt`, men testmålet kan ikke bygges i denne kjøringen: Xcode rapporterer
+eksisterende kompileringsfeil i `PlannerTests.swift` ved linje 2117, 2145,
+2171 og 3885 (manglende `precip`-argument/typekontroll). Filens Swift-parsing
+består; gjenoppta når testmålets eksisterende kompileringsfeil er rettet.
 
-**AUTO-358 · ÅPEN** — Test at `onlyWhenNearby`-filtrering er uavhengig per
-sted når flere steder planlegges samtidig og bare ett sted er i nærheten.
+**AUTO-358 · FULLFØRT 2026-10-09** — La til
+`testNearbyOnlyRulesAreFilteredIndependentlyPerPlace`: med to steder og bare
+ett i `nearbyPlaceIDs` planlegges varslet bare for stedet som er nær. Swift-
+parsing og diffkontroll består. XCTest er ikke kjørt fordi testmålet fortsatt
+har de urelaterte kompileringsfeilene notert under AUTO-357.
 
 **AUTO-359 · ÅPEN** — Test at to separate regnperioder innen seks timer fra
 samme regel begge beholdes; cooldown skal bare deduplisere mellom ulike
 regler, ikke fjerne senere hendelser fra samme regel.
+
+**AUTO-360 · ÅPEN** — Test at regnvarsler for to forskjellige steder ikke
+dedupliseres mot hverandre når hendelsene ligger innen seks timers cooldown,
+inkludert når bare det ene stedet har en `onlyWhenNearby`-regel.
+
+**AUTO-361 · ÅPEN** — Test at samlet `planAll`-resultat på tvers av steder
+sorteres etter `fireAt` selv når stedsrekkefølge, regelrekkefølge og
+hendelsestid gir en annen rekkefølge.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

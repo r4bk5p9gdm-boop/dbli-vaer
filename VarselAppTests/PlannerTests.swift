@@ -4342,6 +4342,7 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(alerts.count, 2)
         XCTAssertEqual(Set(alerts.map(\.rule.id)), Set([firstRule.id, secondRule.id]))
         XCTAssertEqual(Set(alerts.map(\.eventAt)), Set([firstEventAt, secondEventAt]))
+        XCTAssertEqual(alerts.map(\.fireAt), [secondFireAt, firstFireAt])
     }
 
     func testPlanAllKeepsEveryRepeatForTheRetainedRainEvent() {
@@ -5187,6 +5188,30 @@ final class PlannerTests: XCTestCase {
             Planner.planAll(places: [place], forecasts: forecasts, nearbyPlaceIDs: [place.id]).count,
             1
         )
+    }
+
+    func testNearbyOnlyRulesAreFilteredIndependentlyPerPlace() {
+        var nearbyRule = Rule(type: .regn)
+        nearbyRule.onlyWhenNearby = true
+        nearbyRule.leadMinutes = 60
+        let distantRule = nearbyRule
+
+        let nearbyPlace = Place(name: "Nær", lat: 64.5, lon: 11.5, rules: [nearbyRule])
+        let distantPlace = Place(name: "Fjern", lat: 65.5, lon: 12.5, rules: [distantRule])
+        let hours = forecast(values: [
+            (5, 0, 2, 80, 2),
+            (5, 1, 2, 80, 2),
+        ])
+
+        let alerts = Planner.planAll(
+            places: [distantPlace, nearbyPlace],
+            forecasts: [distantPlace.id: hours, nearbyPlace.id: hours],
+            nearbyPlaceIDs: [nearbyPlace.id]
+        )
+
+        XCTAssertEqual(alerts.count, 1)
+        XCTAssertEqual(alerts.first?.placeID, nearbyPlace.id)
+        XCTAssertEqual(alerts.first?.rule.id, nearbyRule.id)
     }
 
     func testOrdinaryRuleIsPlannedWhileAwayFromPlace() {

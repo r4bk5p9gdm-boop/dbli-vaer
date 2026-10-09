@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T12:50:12Z",
+  "lastScheduledStart": "2026-10-09T13:27:16Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-356 lukket som redundant: AUTO-354-testen dekker allerede alle push-kandidater for beholdt regnhendelse mens nærliggende duplikatregel fjernes. AUTO-359 lagt til for separate regnperioder fra samme regel innen cooldown. JSON-validering og diffkontroll bestått."
+  "lastProgress": "AUTO-357 satt PÅ VENT etter xcodebuild build-for-testing fant eksisterende testkildekompileringsfeil (linje 2117, 2145, 2171 og 3885). AUTO-358 fullført med test for nearby-only-filtrering per sted; Swift-parsing og diffkontroll bestått, XCTest blokkert av samme feil. AUTO-360 og AUTO-361 lagt til; no-progress nullstilt etter blokkering."
 }
