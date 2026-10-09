@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T19:16:31Z",
+  "lastScheduledStart": "2026-10-09T19:21:31Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-422 fullført: filimportregresjon avviser gyldig JSON med feil toppnivåtype (null, array, tall og tekst) i stedet for å tolke det som tom konfigurasjon. Swift-parsing og diffkontroll består; Xcode-testbygg er blokkert av SwiftUIMacros.StateMacro-feilen, og CoreSimulatorService er utilgjengelig. AUTO-004 opprettet AUTO-425 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-423/424/425."
+  "lastProgress": "AUTO-423 fullført: FileDocument-filflyten reparerer manglende/ukjent valgt sted til første gyldige sted; reimport etter eksport beholder valgt-ID og rekkefølge. Swift-parsing og diffkontroll består; Xcode-testbygg er blokkert av SwiftUIMacros.StateMacro-feilen, og CoreSimulatorService er utilgjengelig. AUTO-004 opprettet AUTO-426 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-424/425/426."
 }

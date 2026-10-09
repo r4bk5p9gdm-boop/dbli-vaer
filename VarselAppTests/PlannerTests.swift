@@ -6932,8 +6932,6 @@ final class PlannerTests: XCTestCase {
         )
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
         let validData = try encoder.encode(source)
 
         var invalidSelectionObject = try XCTUnwrap(JSONSerialization.jsonObject(with: validData) as? [String: Any])
@@ -6944,17 +6942,26 @@ final class PlannerTests: XCTestCase {
 
         for sourceObject in [invalidSelectionObject, missingSelection] {
             let importedData = try JSONSerialization.data(withJSONObject: sourceObject)
-            let imported = try decoder.decode(WeatherConfigurationExport.self, from: importedData)
+            let importedDocument = try WeatherConfigurationDocument(configuration: .init(
+                file: FileWrapper(regularFileWithContents: importedData), contentType: .json
+            ))
+            let imported = importedDocument.configuration
 
             XCTAssertEqual(imported.selectedPlaceID, firstPlace.id)
             XCTAssertEqual(imported.places.map(\.id), [firstPlace.id, secondPlace.id])
 
-            let exportedAgain = try encoder.encode(WeatherConfigurationExport(
+            let exportedAgain = WeatherConfigurationDocument(
                 places: imported.places,
                 selectedPlaceID: imported.selectedPlaceID,
                 alertLanguageStyle: imported.alertLanguageStyle ?? .bokmal
+            )
+            let exportedFile = try exportedAgain.fileWrapper(configuration: .init(
+                contentType: .json, existingFile: nil
             ))
-            let reimported = try decoder.decode(WeatherConfigurationExport.self, from: exportedAgain)
+            let reimportedDocument = try WeatherConfigurationDocument(configuration: .init(
+                file: exportedFile, contentType: .json
+            ))
+            let reimported = reimportedDocument.configuration
             XCTAssertEqual(reimported.selectedPlaceID, firstPlace.id)
             XCTAssertEqual(reimported.places.map(\.id), [firstPlace.id, secondPlace.id])
         }
