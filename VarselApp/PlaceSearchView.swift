@@ -169,10 +169,10 @@ struct PlaceSearchView: View {
                                 lon: result.longitude,
                                 preposition: preposition
                             )
-                            Task {
-                                await store.add(place)
-                                dismiss()
-                            }
+                            // Let the wizard continue as soon as the place is selected;
+                            // fetching its first forecast can take a while or fail offline.
+                            dismiss()
+                            Task { await store.add(place) }
                         } label: {
                             VStack(alignment: .leading, spacing: 3) {
                                 Text("\(preposition.rawValue) \(result.name)").foregroundStyle(.primary)

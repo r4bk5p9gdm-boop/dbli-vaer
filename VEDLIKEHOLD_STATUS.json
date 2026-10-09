@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-09T13:27:16Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-357 og AUTO-359–362 fullført: la til regnperioder-samme-regel, cross-place/onlyWhenNearby og fireAt-sorteringsregresjoner. Reparerte testmålets manglende precip-argumenter og typecheck-flaskehalser; xcodebuild build-for-testing nå bestått. XCTest ikke kjørt fordi simulatorruntime mangler. Neste åpne AUTO-kø: 363/364/365."
+  "lastProgress": "BRUKER-123 fullført: stedsøket i oppstartsveiviseren lukkes før første prognosehenting og varselplanlegging, så langsomt nett ikke låser veiviseren. AUTO-363 er i arbeid: gjør planAll-sortering deterministisk ved like fireAt med delt varslingsalvorlighet. Neste kø: AUTO-363/364/365. Testbygget har en Xcode SwiftUIMacros.StateMacro malformed-response/sandbox-feil; simulatorruntime utilgjengelig."
 }

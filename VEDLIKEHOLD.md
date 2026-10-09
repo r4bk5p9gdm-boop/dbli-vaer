@@ -54,6 +54,11 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-123 · FULLFØRT 2026-10-09** — Gjennomgått oppstartsveiviserens
+stedsvalg. Valg fra stedsøket lukker nå søkevinduet med én gang i stedet for
+å vente på første værhenting og varselplanlegging; dette hindret veiviseren i
+å gå videre når nettverksarbeidet tok tid.
+
 **BRUKER-122 · FULLFØRT 2026-10-09** — Gjorde også bolken «Lokal
 temperatur» tydeligere: den sammenleggbare overskriften viser nå Yr-verdi,
 lokalt justert verdi og valgt avvik. Innholdet viser Yr og lokal temperatur
