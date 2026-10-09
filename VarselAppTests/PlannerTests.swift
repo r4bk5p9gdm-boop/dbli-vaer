@@ -1358,6 +1358,46 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(relaunched.forecastUpdatedAt(for: first.id), base)
     }
 
+    func testLaunchPlaceMigrationPersistsFallbackSelectionAndReusesItOnRestart() throws {
+        let persistenceKey = "varsel.test.migration-persists-fallback-selection.\(UUID().uuidString)"
+        let launchVersionKey = "varsel.launchPlacesVersion"
+        let previousLaunchVersion = UserDefaults.standard.object(forKey: launchVersionKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousLaunchVersion {
+                UserDefaults.standard.set(previousLaunchVersion, forKey: launchVersionKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: launchVersionKey)
+            }
+        }
+        UserDefaults.standard.set(8, forKey: launchVersionKey)
+
+        let firstStoredPlace = Place(name: "Hytte", lat: 64.2, lon: 11.4, preposition: .pa)
+        let secondStoredPlace = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let thirdStoredPlace = Place(name: "Naust", lat: 64.1, lon: 11.6)
+        let missingSelection = UUID()
+        UserDefaults.standard.set(try JSONEncoder().encode(PersistedStoreState(
+            places: [firstStoredPlace, secondStoredPlace, thirdStoredPlace],
+            selectedID: missingSelection,
+            log: []
+        )), forKey: persistenceKey)
+
+        let migrated = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+
+        XCTAssertEqual(migrated.selectedID, firstStoredPlace.id)
+        XCTAssertNotEqual(migrated.places.first?.id, firstStoredPlace.id)
+        let persistedData = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
+        let persisted = try JSONDecoder().decode(PersistedStoreState.self, from: persistedData)
+        XCTAssertEqual(persisted.selectedID, firstStoredPlace.id)
+        XCTAssertTrue(persisted.places.contains { $0.id == firstStoredPlace.id })
+
+        let restarted = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        XCTAssertEqual(restarted.selectedID, firstStoredPlace.id)
+        XCTAssertEqual(restarted.selected?.id, firstStoredPlace.id)
+        XCTAssertTrue(restarted.places.contains { $0.id == secondStoredPlace.id })
+        XCTAssertTrue(restarted.places.contains { $0.id == thirdStoredPlace.id })
+    }
+
     func testStoreFallsBackToLaunchPlacesWhenPersistedListIsEmpty() throws {
         let persistenceKey = "varsel.test.empty-persisted-places.\(UUID().uuidString)"
         let launchVersionKey = "varsel.launchPlacesVersion"

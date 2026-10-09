@@ -314,7 +314,7 @@ final class Store: ObservableObject {
         var restoredForecasts: [UUID: [ForecastHour]] = [:]
         var restoredForecastUpdatedAt: [UUID: Date] = [:]
         var restoredLastUpdate: Date?
-        var needsForecastCacheRepair = false
+        var needsPersistedStateRepair = false
         let restoredSavedPlaces: Bool
         if let d = UserDefaults.standard.data(forKey: key),
            let p = try? JSONDecoder().decode(PersistedStoreState.self, from: d),
@@ -336,15 +336,17 @@ final class Store: ObservableObject {
         forecastUpdatedAt = restoredForecastUpdatedAt.filter {
             knownPlaceIDs.contains($0.key) && rawForecasts[$0.key]?.isEmpty == false
         }
-        needsForecastCacheRepair = rawForecasts.count != restoredForecasts.count
+        needsPersistedStateRepair = rawForecasts.count != restoredForecasts.count
             || forecastUpdatedAt.count != restoredForecastUpdatedAt.count
         lastUpdate = restoredLastUpdate
 
         if selectedID.map({ id in places.contains { $0.id == id } }) != true {
             selectedID = places.first?.id
+            needsPersistedStateRepair = true
         }
 
         if UserDefaults.standard.integer(forKey: launchPlacesVersionKey) < launchPlacesVersion {
+            needsPersistedStateRepair = true
             for launchPlace in Self.launchPlaces {
                 if let index = places.firstIndex(where: {
                     $0.name.compare(launchPlace.name, options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame
@@ -441,7 +443,7 @@ final class Store: ObservableObject {
             Task { await self.replan() }
         }
         monitor.configure(for: places)
-        if !restoredSavedPlaces || needsForecastCacheRepair { save() }
+        if !restoredSavedPlaces || needsPersistedStateRepair { save() }
     }
 
     var selected: Place? { places.first { $0.id == selectedID } ?? places.first }

@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T17:56:31Z",
+  "lastScheduledStart": "2026-10-09T18:01:31Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-406 fullført: la til importregresjon der feilformet første stedsoppføring forkastes, gyldige steder beholdes og valgt-ID faller tilbake til første gyldige sted, med språkinnstilling og eksport/import-roundtrip kontrollert. Swift-parsing, diffkontroll og iOS build-for-testing bestod; XCTest ble ikke kjørt fordi CoreSimulatorService ikke er tilgjengelig. AUTO-004 opprettet AUTO-409 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-407/408/409."
+  "lastProgress": "AUTO-407 fullført: Store persisterer nå ugyldig-valg-fallback og launch-place-migrering. Regresjonen bekrefter at første lagrede egendefinerte sted forblir valgt selv når migreringen flytter standardsteder foran det, og at valget overlever ny Store-oppstart. Swift-parsing, diffkontroll og iOS build-for-testing bestod; XCTest ble ikke kjørt fordi CoreSimulatorService ikke er tilgjengelig. AUTO-004 opprettet AUTO-410 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-408/409/410."
 }
