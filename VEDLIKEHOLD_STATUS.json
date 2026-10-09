@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T16:33:30Z",
+  "lastScheduledStart": "2026-10-09T16:38:30Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-391 fullført: la til Store-regresjon for gyldig, tom lagret stedsliste. Store faller tilbake til startstedene og velger et sted i fallback-listen uten å krasje. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-394; neste: AUTO-392/393/394."
+  "lastProgress": "AUTO-392 fullført: regresjon for sletting av ikke-valgt hytte bekrefter at hjemstedets ID, valgte status, varselregel og prognose består umiddelbart og etter Store-gjenoppretting, mens hytteprognosen fjernes. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-395; neste: AUTO-393/394/395."
 }
