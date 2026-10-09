@@ -54,6 +54,12 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-139 · FULLFØRT 2026-10-09** — Fjernet «Varsler» fra
+bunnmenyen, slik at navigasjonen nå har Hjem, Steder og Innstillinger.
+Kommende pushvarsler for valgt sted vises under værdagene på Hjem, og
+varselreglene er fortsatt tilgjengelige fra værkortet/Tilpass. Swift-parsing
+og diffkontroll består.
+
 **BRUKER-138 · FULLFØRT 2026-10-09** — Fjernet den kompakte
 varslingsoversikten under tredagersradene og la i stedet kommende, faktiske
 pushvarsler for valgt sted nederst på Hjem. Listen bruker `Planner.planAll`

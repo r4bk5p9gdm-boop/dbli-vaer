@@ -128,7 +128,7 @@ struct LocalCalibrationView: View {
 }
 
 struct ContentView: View {
-    private enum Tab: Hashable { case home, queue, places, settings }
+    private enum Tab: Hashable { case home, places, settings }
 
     @EnvironmentObject var store: Store
     @AppStorage("varsel.onboardingCompleted") private var onboardingCompleted = false
@@ -143,7 +143,6 @@ struct ContentView: View {
                 onOpen: { place in store.select(place); selectedTab = .home }
             )
             .tabItem { Label("Steder", systemImage: "mappin.and.ellipse") }.tag(Tab.places)
-            AlertQueueView().tabItem { Label("Varsler", systemImage: "bell.and.waves.left.and.right") }.tag(Tab.queue)
             GlobalSettingsView(showsDoneButton: false)
                 .tabItem { Label("Innstillinger", systemImage: "gearshape") }
                 .tag(Tab.settings)
