@@ -957,6 +957,32 @@ final class PlannerTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(localHour.temp, 20)
     }
 
+    @MainActor
+    func testLocalTemperatureOffsetIsAppliedOnlyToItsPlaceDisplay() throws {
+        let persistenceKey = "varsel.test.place-temperature-offset.\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
+        var home = Place(name: "Klinga", lat: 64, lon: 11)
+        home.temperatureOffset = 2
+        var cabin = Place(name: "Hytte", lat: 64.2, lon: 11.2)
+        cabin.temperatureOffset = -1
+        let homeYr = ForecastHour(time: base, temp: 4, precip: 0, wind: 1, cloud: 20, dew: 2)
+        let cabinYr = ForecastHour(time: base, temp: 12, precip: 0, wind: 1, cloud: 20, dew: 8)
+        let store = Store(persistenceKey: persistenceKey)
+        store.places = [home, cabin]
+        store.selectedID = home.id
+        store.forecasts = [home.id: [homeYr], cabin.id: [cabinYr]]
+
+        let displayedHome = try XCTUnwrap(store.selectedForecast.first)
+        let displayedCabin = try XCTUnwrap(store.forecasts[cabin.id]?.first)
+
+        XCTAssertEqual(displayedHome.temp, 6)
+        XCTAssertEqual(displayedHome.yrTemperature, 4)
+        XCTAssertEqual(displayedCabin.temp, 11)
+        XCTAssertEqual(displayedCabin.yrTemperature, 12)
+        XCTAssertEqual(homeYr.temp, 4)
+        XCTAssertEqual(cabinYr.temp, 12)
+    }
+
     func testCompactTemperatureTextUsesSharedWholeDegreeFormat() {
         XCTAssertEqual(compactTemperatureText(12.6), "13°")
         XCTAssertEqual(compactTemperatureText(-0.4), "0°")

@@ -1522,9 +1522,17 @@ fargeprøven i «Tilpass» og skravuren i værbåndet bruker nå samme kilde.
 Swift-parsing og diffkontroll består; full byggkontroll er blokkert av samme
 Xcode Swift-makrofeil som AUTO-363.
 
-**AUTO-365 · ÅPEN** — Legg til modellregresjon som bekrefter at
-stedsspesifikk temperaturjustering endrer viste temperaturmarkeringer for det
-valgte stedet uten å overskrive Yr-originalverdien eller et annet steds data.
+**AUTO-365 · PÅ VENT 2026-10-09** — La til regresjonstest for to steder med
+ulike lokale temperaturavvik: hjemstedets og hyttas viste temperaturer får
+hvert sitt avvik, mens Yr-originalene forblir uendret. Swift-parsing består,
+men testkjøring kan ikke bekreftes: tidligere Xcode-testbygg stoppet før
+testkompilering med `SwiftUIMacros.StateMacro`-feil. Fullt bygg er utsatt med
+11 GB ledig diskplass; testkjøringen må gjentas når byggmiljøet er friskt.
+
+**AUTO-368 · ÅPEN** — Legg til en lett regresjonstest som sikrer at alle
+konteksthjelpene på Hjem, Steder, Varsler, Innstillinger og oppstartsveiviseren
+har ikke-tomme overskrifter, forklaringer og trinn, slik at ingen av de gule
+spørsmålstegnknappene åpner en tom hjelpeside.
 
 **AUTO-366 · ÅPEN** — Utvid varselsorteringstesten til å låse at
 `NotificationScheduler.alertsToSchedule` beholder samme alvorlighetsrekkefølge
