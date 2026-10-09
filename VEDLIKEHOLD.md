@@ -54,6 +54,11 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-131 · FULLFØRT 2026-10-09** — Den mellomliggende soltypen vises nå
+som gule skråstriper på nøytral cellebakgrunn, uten helgul fyll under. Bare
+timene over første og til andre skydekketerskel får stripene. iPhone-
+build-for-testing bestod, og oppdateringen er installert på iPhone 13 Pro Max.
+
 **BRUKER-130 · FULLFØRT 2026-10-09** — Lavtemperaturceller forblir blå også
 under null i stedet for å bli hvite og forsvinne mot bakgrunnen. Frost vises
 separat som et hvitt snøfnugg med lett kontrastskygge oppå cellen. Swift-parsing,
