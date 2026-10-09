@@ -1547,14 +1547,20 @@ innledning og alle forklaringstrinn må være synlige tekster. Swift-parsing og
 diffkontroll består, men testkjøring står PÅ VENT på grunn av tidligere
 `SwiftUIMacros.StateMacro`-feil i Xcode.
 
-**AUTO-369 · ÅPEN** — Legg til regresjonstest for to varsler med lik
-`fireAt`, men ulik `eventAt`, som bekrefter at det nærmeste værhendelsestidspunktet
-prioriteres før alvorlighet. Test flere inputrekkefølger slik at en mer alvorlig,
-men fjernere hendelse ikke skyver ut varselet for den nærmeste hendelsen.
+**AUTO-369 · PÅ VENT 2026-10-09** — La til regresjon med regn, vind og frost
+som deler `fireAt` men har ulik `eventAt`; nærmeste hendelse skal prioriteres
+før alvorlighet, også med grense `limit: 1`. Tre inputrekkefølger er dekket.
+Swift-parsing og diffkontroll består, men testkjøring står PÅ VENT på grunn av
+tidligere `SwiftUIMacros.StateMacro`-feil i Xcode.
 
 **AUTO-371 · ÅPEN** — Legg til lett regresjonstest for at hvert
 `RulePreset` har unik ID og ikke-tom tittel, forklaring og huskeforslag, og at
 regelens malnavn og huskeforslag samsvarer med teksten som vises i veiviseren.
+
+**AUTO-372 · ÅPEN** — Gjør den rene `WizardAlertCategory`-mappingen
+tilgjengelig internt for tester (uten å gjøre den offentlig), og legg til
+regresjon som bekrefter at kategoriene dekker alle `AlertType`-verdier én gang
+og grupperer regn, vind, snø/frost, sol og temperatur/dugg riktig.
 
 **AUTO-370 · ÅPEN** — Legg til regresjon for at et tomt første Yr-svar etter
 `Store.add` ikke fjerner det allerede lagrede stedet eller valget. Gjenopprett

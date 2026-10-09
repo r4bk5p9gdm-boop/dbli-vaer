@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-09T13:27:16Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-368 delvis fullført: la til regresjonstest som sjekker ikke-tomme overskrifter, introduksjoner og trinn for alle fem hjelpekontekster. Swift-parsing og diffkontroll består, men testkjøring er PÅ VENT på grunn av tidligere SwiftUIMacros.StateMacro-feil i Xcode. AUTO-004 køvurdering la til AUTO-371 etter at 368 ble satt PÅ VENT; åpne oppgaver: AUTO-369/370/371."
+  "lastProgress": "AUTO-369 delvis fullført: la til regresjonstest som låser at eventAt prioriteres før alvorlighet for varsler med samme fireAt, uavhengig av inputrekkefølge, også ved limit 1. Swift-parsing og diffkontroll består, men testkjøring er PÅ VENT på grunn av tidligere SwiftUIMacros.StateMacro-feil i Xcode. AUTO-004 køvurdering la til AUTO-372 etter at 369 ble satt PÅ VENT; åpne oppgaver: AUTO-370/371/372."
 }

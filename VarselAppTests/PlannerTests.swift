@@ -5082,6 +5082,33 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testNotificationQueuePrioritizesNearestEventBeforeSeverityRegardlessOfInputOrder() {
+        let fireAt = base.addingTimeInterval(3_600)
+        let placeID = UUID()
+        func alert(_ type: AlertType, eventOffset: TimeInterval) -> PlannedAlert {
+            PlannedAlert(rule: Rule(type: type), placeID: placeID, placeName: "Klinga",
+                         eventAt: base.addingTimeInterval(eventOffset), fireAt: fireAt,
+                         index: 1, total: 1, quiet: false, possible: false, eventDetail: nil)
+        }
+        let rain = alert(.regn, eventOffset: 7_200)
+        let wind = alert(.vind, eventOffset: 10_800)
+        let frost = alert(.frost, eventOffset: 14_400)
+        let inputOrders = [
+            [frost, wind, rain],
+            [rain, frost, wind],
+            [wind, rain, frost]
+        ]
+
+        for input in inputOrders {
+            let scheduled = NotificationScheduler.alertsToSchedule(input, now: base)
+            XCTAssertEqual(scheduled.map(\.id), [rain.id, wind.id, frost.id])
+            XCTAssertEqual(
+                NotificationScheduler.alertsToSchedule(input, now: base, limit: 1).first?.id,
+                rain.id
+            )
+        }
+    }
+
     func testLanguageCatalogRejectsEmptyTranslation() {
         XCTAssertEqual(LanguageCatalog.value("missing.key", language: "en", fallback: "Weather"), "Weather")
         XCTAssertFalse(LanguageCatalog.value("missing.key", language: "en", fallback: "Weather").isEmpty)
