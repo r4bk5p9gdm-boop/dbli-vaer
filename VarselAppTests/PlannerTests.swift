@@ -1191,6 +1191,46 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(selections.ids(for: .cabin).contains(sharedPresetID))
     }
 
+    func testWizardCabinNearbyRulesPersistWithoutChangingHomeRules() throws {
+        let persistenceKey = "varsel.test.wizard-cabin-nearby-rules.\(UUID().uuidString)"
+        let launchVersionKey = "varsel.launchPlacesVersion"
+        let previousLaunchVersion = UserDefaults.standard.object(forKey: launchVersionKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousLaunchVersion {
+                UserDefaults.standard.set(previousLaunchVersion, forKey: launchVersionKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: launchVersionKey)
+            }
+        }
+        UserDefaults.standard.set(9, forKey: launchVersionKey)
+
+        let homeRules = WizardPresetConfiguration.rules(
+            selectedIDs: ["regn-neste", "frost-natt"],
+            for: .home,
+            cabinOnlyWhenNearby: true
+        )
+        let cabinRules = WizardPresetConfiguration.rules(
+            selectedIDs: ["frost-natt", "vind-kraftig"],
+            for: .cabin,
+            cabinOnlyWhenNearby: true
+        )
+        let home = Place(name: "Klinga", lat: 64.4, lon: 11.4, rules: homeRules)
+        let cabin = Place(name: "Hytte", lat: 64.2, lon: 11.4, preposition: .pa, rules: cabinRules)
+        let state = PersistedStoreState(places: [home, cabin], selectedID: home.id, log: [])
+        UserDefaults.standard.set(try JSONEncoder().encode(state), forKey: persistenceKey)
+
+        let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+
+        let restoredHome = try XCTUnwrap(restored.places.first { $0.id == home.id })
+        let restoredCabin = try XCTUnwrap(restored.places.first { $0.id == cabin.id })
+        XCTAssertEqual(restored.selectedID, home.id)
+        XCTAssertEqual(restoredHome.rules.map(\.templateTitle), homeRules.map(\.templateTitle))
+        XCTAssertTrue(restoredHome.rules.allSatisfy { !$0.onlyWhenNearby })
+        XCTAssertEqual(restoredCabin.rules.map(\.templateTitle), cabinRules.map(\.templateTitle))
+        XCTAssertTrue(restoredCabin.rules.allSatisfy(\.onlyWhenNearby))
+    }
+
     func testEveryRulePresetHasCompleteAndConsistentDisplayCopy() {
         let presets = RulePreset.all
         XCTAssertFalse(presets.isEmpty)

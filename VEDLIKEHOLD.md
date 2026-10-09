@@ -1632,9 +1632,12 @@ kategoriens værtyper og ingen dupliserte preset-ID-er. Swift-parsing,
 diffkontroll og iOS `build-for-testing` består; XCTest kunne ikke kjøres fordi
 CoreSimulator-/enhetstjenesten ikke er tilgjengelig.
 
-**AUTO-382 · ÅPEN** — Legg til persistensregresjon for oppstartsveiviserens
-stedsspesifikke regler: hyttevarsel med `onlyWhenNearby` skal overleve
-Store-gjenoppretting uten å endre hjemstedets regler eller nærhetsvalg.
+**AUTO-382 · FULLFØRT 2026-10-09** — La til persistensregresjon for
+oppstartsveiviserens stedsspesifikke regler. Testen lagrer hjemsted og hytte i
+Store-formatet, gjenoppretter Store og bekrefter at hyttas `onlyWhenNearby`
+bevares uten å endre hjemstedets regler eller valgte sted. Swift-parsing,
+diffkontroll og iOS `build-for-testing` består; XCTest kunne ikke kjøres fordi
+CoreSimulator-/enhetstjenesten ikke er tilgjengelig.
 
 **AUTO-383 · ÅPEN** — Trekk veiviserens kontroll av allerede eksisterende
 regler inn i en testbar hjelpefunksjon. Legg til regresjon som sikrer at valg
@@ -1645,6 +1648,10 @@ beholder andre regler for stedet.
 som sender inn både kjente og ukjente preset-ID-er. Bekreft at ukjente ID-er
 ignoreres, kjente regler beholdes i `RulePreset.all`-rekkefølge, og samme
 regel ikke returneres flere ganger.
+
+**AUTO-385 · ÅPEN** — Legg til regresjon som gjenoppretter en Store der
+`selectedID` peker på et sted som ikke finnes. Bekreft at Store velger et gyldig
+sted og at den gjenopprettede tilstanden persisterer dette valget.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

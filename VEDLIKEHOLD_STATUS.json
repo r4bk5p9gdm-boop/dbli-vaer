@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T15:43:30Z",
+  "lastScheduledStart": "2026-10-09T15:48:30Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-381 fullført: samlet veiviserens kategori→preset-filtrering i WizardAlertCategory.presets og bruker den i oversikt, detaljvisning og test. Regresjonen dekker ikke-tomme kategorier, bare gyldige værtyper og unike preset-ID-er. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-384; neste: AUTO-382/383/384."
+  "lastProgress": "AUTO-382 fullført: la til persistensregresjon som lagrer Store med hjemsted og hytte, gjenoppretter den og kontrollerer at bare hyttas regler beholder onlyWhenNearby. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-385; neste: AUTO-383/384/385."
 }
