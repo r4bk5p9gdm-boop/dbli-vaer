@@ -4344,6 +4344,53 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(Set(alerts.map(\.eventAt)), Set([firstEventAt, secondEventAt]))
     }
 
+    func testPlanAllKeepsEveryRepeatForTheRetainedRainEvent() {
+        let firstEventAt = base.addingTimeInterval(2 * 3_600)
+        let duplicateEventAt = base.addingTimeInterval(5 * 3_600)
+        let calendar = Calendar.current
+        func rainRule(at eventAt: Date, leadMinutes: Int) -> Rule {
+            var rule = Rule(type: .regn)
+            rule.threshold = 0.5
+            rule.leadMinutes = leadMinutes
+            let hour = calendar.component(.hour, from: eventAt)
+            rule.activeFromHour = hour
+            rule.activeToHour = (hour + 1) % 24
+            return rule
+        }
+        var retainedRule = rainRule(at: firstEventAt, leadMinutes: 120)
+        retainedRule.repeatsEnabled = true
+        retainedRule.count = 3
+        retainedRule.intervalMinutes = 30
+        let duplicateRule = rainRule(at: duplicateEventAt, leadMinutes: 60)
+        let place = Place(
+            name: "Klinga", lat: 64.5, lon: 11.5,
+            rules: [retainedRule, duplicateRule]
+        )
+        let forecast = (0...5).map { offset in
+            ForecastHour(
+                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
+                temp: 8,
+                precip: offset == 2 || offset == 5 ? 1 : 0,
+                wind: 1,
+                cloud: 60,
+                dew: 7
+            )
+        }
+
+        let alerts = Planner.planAll(
+            places: [place], forecasts: [place.id: forecast],
+            now: base.addingTimeInterval(-3_600), calendar: calendar
+        )
+
+        XCTAssertEqual(alerts.count, 3)
+        XCTAssertEqual(Set(alerts.map(\.rule.id)), Set([retainedRule.id]))
+        XCTAssertEqual(Set(alerts.map(\.eventAt)), Set([firstEventAt]))
+        XCTAssertEqual(
+            Set(alerts.map(\.fireAt)),
+            Set([base, base.addingTimeInterval(30 * 60), base.addingTimeInterval(60 * 60)])
+        )
+    }
+
     func testPlanAllUsesPreciseRadarTimesJustBelowRainCooldown() {
         var firstRule = Rule(type: .regn)
         firstRule.threshold = 0.5

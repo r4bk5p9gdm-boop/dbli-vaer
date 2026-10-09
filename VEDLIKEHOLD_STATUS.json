@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T11:15:01Z",
+  "lastScheduledStart": "2026-10-09T11:49:49Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-353 fullført: test viser at regnhendelser nøyaktig seks forløpte timer fra hverandre begge beholdes selv når lead time snur fireAt-rekkefølgen. AUTO-356 lagt til for alle push-kandidater på beholdt hendelse. Swift-parsing/typekontroll og diffkontroll bestått; XCTest ikke kjørt i denne lettvektskjøringen."
+  "lastProgress": "AUTO-354 fullført: test bekrefter at alle tre push-kandidatene for beholdt tidligste regnhendelse overlever når nærliggende duplikatregel dedupliseres. AUTO-357 lagt til for sorteringsrekkefølge i planAll-resultatet. Swift-parsing/typekontroll og diffkontroll bestått; XCTest ikke kjørt i denne lettvektskjøringen."
 }
