@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T16:48:46Z",
+  "lastScheduledStart": "2026-10-09T16:49:31Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-128 fullført: fjernet den hvite sirkelbakgrunnen på soloppgangs- og solnedgangsikonene i værbåndet, slik at bare det oransje ikonet vises i cellen. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. Neste: AUTO-394/395/396."
+  "lastProgress": "AUTO-394 fullført: Store persisterer fallback-stedene etter tom eller ugyldig lagret stedsliste. Regresjonen kontrollerer lagret fallback og stabil sted-ID etter ny Store-oppstart. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-397; neste: AUTO-395/396/397."
 }

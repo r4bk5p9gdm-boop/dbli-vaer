@@ -310,6 +310,7 @@ final class Store: ObservableObject {
         var restoredForecasts: [UUID: [ForecastHour]] = [:]
         var restoredForecastUpdatedAt: [UUID: Date] = [:]
         var restoredLastUpdate: Date?
+        let restoredSavedPlaces: Bool
         if let d = UserDefaults.standard.data(forKey: key),
            let p = try? JSONDecoder().decode(PersistedStoreState.self, from: d),
            !p.places.isEmpty {
@@ -319,9 +320,11 @@ final class Store: ObservableObject {
             restoredForecasts = p.forecasts
             restoredForecastUpdatedAt = p.forecastUpdatedAt
             restoredLastUpdate = p.lastUpdate
+            restoredSavedPlaces = true
         } else {
             places = Self.launchPlaces; selectedID = places.first?.id; log = []
             UserDefaults.standard.set(launchPlacesVersion, forKey: launchPlacesVersionKey)
+            restoredSavedPlaces = false
         }
         let knownPlaceIDs = Set(places.map(\.id))
         rawForecasts = restoredForecasts.filter { knownPlaceIDs.contains($0.key) }
@@ -421,6 +424,7 @@ final class Store: ObservableObject {
             Task { await self.replan() }
         }
         monitor.configure(for: places)
+        if !restoredSavedPlaces { save() }
     }
 
     var selected: Place? { places.first { $0.id == selectedID } ?? places.first }

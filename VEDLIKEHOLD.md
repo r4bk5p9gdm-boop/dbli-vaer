@@ -1734,9 +1734,11 @@ umiddelbart og etter gjenoppretting; hytteprognosen fjernes.
 Swift-parsing, diffkontroll og iOS `build-for-testing` består; XCTest kunne
 ikke kjøres uten simulator.
 
-**AUTO-394 · ÅPEN** — Når Store faller tilbake til startstedene etter en tom
-lagret stedsliste, lagre fallback-listen. Legg til regresjon som oppretter
-Store to ganger og bekrefter at sted-ID-ene forblir stabile mellom oppstartene.
+**AUTO-394 · FULLFØRT 2026-10-09** — Store persisterer nå fallback-stedene
+når den gjenoppretter fra en tom eller ugyldig lagret stedsliste. Regresjonen
+bekrefter at fallback-listen og valgt ID er lagret, og at sted-ID-ene fortsatt
+er identiske etter en ny Store-oppstart. Swift-parsing, diffkontroll og iOS
+`build-for-testing` består; XCTest kunne ikke kjøres uten simulator.
 
 **AUTO-395 · ÅPEN** — Legg til regresjon for sletting av siste lagrede sted.
 Bekreft at Store velger et gyldig fallback-sted, fjerner foreldreløs
@@ -1746,6 +1748,10 @@ prognosecache og gjenoppretter samme gyldige tilstand ved neste oppstart.
 stedet slettes. Bekreft at valgt-ID faller tilbake til første gjenværende sted,
 at bare prognoser for gjenværende steder beholdes, og at tilstanden overlever
 Store-gjenoppretting.
+
+**AUTO-397 · ÅPEN** — Legg til regresjon for skadede bytes i lagret Store-data.
+Bekreft at Store oppretter og persisterer gyldige startsteder og at sted-ID-ene
+overlever neste oppstart.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

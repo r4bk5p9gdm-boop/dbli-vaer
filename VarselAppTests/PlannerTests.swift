@@ -1307,6 +1307,15 @@ final class PlannerTests: XCTestCase {
         let selectedID = try XCTUnwrap(restored.selectedID)
         XCTAssertTrue(restored.places.contains { $0.id == selectedID })
         XCTAssertEqual(restored.selected?.id, selectedID)
+
+        let savedFallbackData = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
+        let savedFallback = try JSONDecoder().decode(PersistedStoreState.self, from: savedFallbackData)
+        XCTAssertEqual(savedFallback.places.map(\.id), restored.places.map(\.id))
+        XCTAssertEqual(savedFallback.selectedID, selectedID)
+
+        let relaunched = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        XCTAssertEqual(relaunched.places.map(\.id), restored.places.map(\.id))
+        XCTAssertEqual(relaunched.selectedID, selectedID)
     }
 
     func testRemovingUnselectedCabinPreservesHomeAcrossStoreRestore() throws {
