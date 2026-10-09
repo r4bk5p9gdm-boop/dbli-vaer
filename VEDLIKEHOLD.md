@@ -54,6 +54,13 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-132 · FULLFØRT 2026-10-09** — Alle ekspanderte værtyper viser nå
+markeringens farge ved tilhørende valg: blå/oransje ved temperaturgrensene,
+gul helfarge og gule striper ved solgrensene, og egne prøver for dugg, vind,
+regn og snø. Frostmarginen står ved snøfnuggsymbolet som faktisk vises i cellen.
+Regn- og snøprøvene står ved de aktive regelgrensene uten å endre pushreglene.
+Den dupliserte solforklaringen er fjernet; korte forklaringer står samlet under.
+
 **BRUKER-131 · FULLFØRT 2026-10-09** — Den mellomliggende soltypen vises nå
 som gule skråstriper på nøytral cellebakgrunn, uten helgul fyll under. Bare
 timene over første og til andre skydekketerskel får stripene. iPhone-
@@ -1811,10 +1818,6 @@ sletting følger samme regel; omrekkefølge beholder favorittene. Regresjonen
 kontrollerer direkte listeerstatning, omrekkefølge, vedvarende favoritter og
 ny Store-oppstart. Swift-parsing, diffkontroll og iOS `build-for-testing`
 består; XCTest kunne ikke kjøres uten simulator.
-
-**AUTO-403 · ÅPEN** — Regresjonstest at import med en ugyldig eller manglende
-`selectedPlaceID` velger første importerte sted og bevarer dette valget ved
-eksport og ny import.
 
 **AUTO-403 · FULLFØRT 2026-10-09** — Importdekoding velger nå første importerte
 sted når `selectedPlaceID` mangler eller ikke finnes i listen. Regresjonen

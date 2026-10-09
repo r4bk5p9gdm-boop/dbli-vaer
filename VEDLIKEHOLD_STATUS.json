@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T17:37:31Z",
+  "lastScheduledStart": "2026-10-09T17:44:01Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-403 fullført: importdekoding faller tilbake til første importerte sted når selectedPlaceID mangler eller er ugyldig, med regresjon for ny eksport/import. Swift-parsing, diffkontroll og iOS build-for-testing består. XCTest ble ikke kjørt. AUTO-004 opprettet AUTO-406; neste: AUTO-404/405/406. BRUKER-131 er separat installert og committet."
+  "lastProgress": "BRUKER-132 fullført: alle ekspanderte værtyper viser nå markeringens farge ved valget/regelgrensen; solprøvene er samlet med sine terskelvelgere, og temperatur, regn, snø, dugg, frost og vind forklares med tilhørende farge eller cellesymbol. Pushregler er uendret. Swift-parsing, diffkontroll og iPhone-bygg bestod; oppdateringen er installert på iPhone 13 Pro Max. AUTO-403 er fullført; neste åpne AUTO: 404/405/406."
 }

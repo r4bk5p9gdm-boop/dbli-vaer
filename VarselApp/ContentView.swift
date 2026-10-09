@@ -1094,6 +1094,17 @@ struct RulesView: View {
                                 if [.temperatur, .dugg, .sol, .vind].contains(type) {
                                     VStack(alignment: .leading, spacing: 5) {
                                         HStack(spacing: 6) {
+                                            if type == .sol {
+                                                markerSwatch(
+                                                    AlertType.sol.color,
+                                                    opacity: SolarCellMarkerStyle.solidFillOpacity,
+                                                    size: CGSize(width: 14, height: 9)
+                                                )
+                                            } else if type == .temperatur {
+                                                markerSwatch(AlertType.temperatur.color)
+                                            } else {
+                                                markerSwatch(type.color)
+                                            }
                                             Text(type == .temperatur ? "Kaldere enn" : type == .dugg ? "Duggfare" : type == .vind ? "Vindkast fra" : "Helgul celle til")
                                                 .font(.caption.weight(.medium))
                                                 .foregroundStyle(.secondary)
@@ -1124,6 +1135,7 @@ struct RulesView: View {
 
                                         if type == .temperatur {
                                             HStack(spacing: 6) {
+                                                markerSwatch(.orange)
                                                 Text("Varmere enn")
                                                     .font(.caption.weight(.medium))
                                                     .foregroundStyle(.secondary)
@@ -1142,6 +1154,12 @@ struct RulesView: View {
 
                                         if type == .sol {
                                             HStack(spacing: 6) {
+                                                markerSwatch(
+                                                    AlertType.sol.color,
+                                                    opacity: SolarCellMarkerStyle.partialFillOpacity,
+                                                    hatched: true,
+                                                    size: CGSize(width: 14, height: 9)
+                                                )
                                                 Text("Skravert gul til")
                                                     .font(.caption.weight(.medium))
                                                     .foregroundStyle(.secondary)
@@ -1158,12 +1176,14 @@ struct RulesView: View {
                                                 .labelsHidden()
                                                 .pickerStyle(.menu)
                                             }
-                                            solarThresholdLegendView(for: p)
                                         }
                                     }
                                     .padding(.leading, 32)
                                 } else if type == .frost {
                                     HStack(spacing: 6) {
+                                        Image(systemName: AlertType.frost.systemImage)
+                                            .font(.system(size: 10, weight: .semibold))
+                                            .foregroundStyle(.blue)
                                         Text("Frostmargin")
                                             .font(.caption.weight(.medium))
                                             .foregroundStyle(.secondary)
@@ -1177,6 +1197,14 @@ struct RulesView: View {
                                         }
                                         .labelsHidden()
                                         .pickerStyle(.menu)
+                                    }
+                                    .padding(.leading, 32)
+                                } else {
+                                    HStack(spacing: 6) {
+                                        markerSwatch(type.color)
+                                        Text(displayThresholdSummary(for: type, place: p))
+                                            .font(.caption.weight(.medium))
+                                            .foregroundStyle(.secondary)
                                     }
                                     .padding(.leading, 32)
                                 }
@@ -1378,11 +1406,9 @@ struct RulesView: View {
         }
         switch type {
         case .regn:
-            let threshold = place.rulesForDisplay.first(where: { $0.type == .regn })?.threshold ?? AlertType.regn.defaultThreshold
-            return "Nedbør markeres fra \(number(threshold)) mm/t. Dette er en visningsgrense; push-regler kan ha egne grenser."
+            return "Fargen viser nedbør i værbåndet. Push-regler og varselgrenser redigeres under."
         case .sno:
-            let threshold = place.rulesForDisplay.first(where: { $0.type == .sno })?.threshold ?? AlertType.sno.defaultThreshold
-            return "Snø markeres fra \(number(threshold)) mm vann/t fra Yr. Det er ikke det samme som ferdig nysnø på bakken."
+            return "Fargen viser snø i værbåndet; mengden er nedbør som Yr oppgir som snø. Pushregler redigeres under."
         case .dugg:
             return "Markeres når lufttemperaturen er høyst \(number(place.displayThreshold(for: .dugg)))°C fra duggpunktet. Yr-verdien endres ikke."
         case .frost:
@@ -1397,7 +1423,7 @@ struct RulesView: View {
             let threshold = place.displayThreshold(for: .vind)
             return "Markeres ved vindkast fra \(number(threshold)) m/s (\(windStrengthLabel(for: threshold))). Middelvind brukes ikke."
         case .sol:
-            return "I dagslys markeres 0–\(number(place.displayThreshold(for: .sol)))% skydekke med helgul celle. Over denne grensen og til \(number(place.resolvedDisplaySunThreshold2))% vises skravert gult. Dette styrer bare værbåndet, ikke pushvarslene."
+            return "Gule markeringer vises bare i dagslys. Disse grensene endrer ikke pushvarslene."
         }
     }
 
@@ -1461,32 +1487,6 @@ struct RulesView: View {
 
     private func displayTypeTitle(_ type: AlertType) -> String {
         type == .sol ? "Sollys / skydekke" : type.label
-    }
-
-    private func solarThresholdLegendView(for place: Place) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 8) {
-                markerSwatch(
-                    AlertType.sol.color,
-                    opacity: SolarCellMarkerStyle.solidFillOpacity,
-                    size: CGSize(width: 24, height: 14)
-                )
-                Text("Helgul celle · 0–\(place.displayThreshold(for: .sol).formatted(.number.precision(.fractionLength(0...1))))% skydekke")
-            }
-            HStack(spacing: 8) {
-                markerSwatch(
-                    AlertType.sol.color,
-                    opacity: SolarCellMarkerStyle.partialFillOpacity,
-                    hatched: true,
-                    size: CGSize(width: 24, height: 14)
-                )
-                Text("Skravert gul celle · over \(place.displayThreshold(for: .sol).formatted(.number.precision(.fractionLength(0...1))))% til \(place.resolvedDisplaySunThreshold2.formatted(.number.precision(.fractionLength(0...1))))% skydekke")
-            }
-        }
-        .font(.caption)
-        .foregroundStyle(.secondary)
-        .fixedSize(horizontal: false, vertical: true)
-        .accessibilityElement(children: .combine)
     }
 
     private func markerSwatch(
