@@ -5039,15 +5039,33 @@ final class PlannerTests: XCTestCase {
         )
     }
 
-    func testNotificationQueueSortsEqualTimesByWeatherSeverity() {
+    func testNotificationQueueSortsEqualTimesByWeatherSeverityRegardlessOfInputOrder() {
         let fireAt = base.addingTimeInterval(3_600)
-        let rain = PlannedAlert(rule: Rule(type: .regn), placeID: UUID(), placeName: "Klinga",
+        let placeID = UUID()
+        func alert(_ type: AlertType, id: String) -> PlannedAlert {
+            var rule = Rule(type: type)
+            rule.id = UUID(uuidString: id)!
+            return PlannedAlert(rule: rule, placeID: placeID, placeName: "Klinga",
                                 eventAt: fireAt, fireAt: fireAt, index: 1, total: 1,
                                 quiet: false, possible: false, eventDetail: nil)
-        let frost = PlannedAlert(rule: Rule(type: .frost), placeID: UUID(), placeName: "Namsos",
-                                 eventAt: fireAt, fireAt: fireAt, index: 1, total: 1,
-                                 quiet: false, possible: false, eventDetail: nil)
-        XCTAssertEqual(NotificationScheduler.alertsToSchedule([rain, frost], now: base, limit: 1).first?.rule.type, .frost)
+        }
+        let frost = alert(.frost, id: "00000000-0000-0000-0000-000000000001")
+        let snow = alert(.sno, id: "00000000-0000-0000-0000-000000000002")
+        let wind = alert(.vind, id: "00000000-0000-0000-0000-000000000003")
+        let rain = alert(.regn, id: "00000000-0000-0000-0000-000000000004")
+        let expectedIDs = [frost.id, snow.id, wind.id, rain.id]
+        let inputOrders = [
+            [rain, wind, snow, frost],
+            [frost, snow, wind, rain],
+            [snow, rain, frost, wind],
+            [wind, frost, rain, snow]
+        ]
+
+        for input in inputOrders {
+            let scheduled = NotificationScheduler.alertsToSchedule(input, now: base)
+            XCTAssertEqual(scheduled.map(\.id), expectedIDs)
+            XCTAssertEqual(scheduled.map(\.rule.type), [.frost, .sno, .vind, .regn])
+        }
     }
 
     func testLanguageCatalogRejectsEmptyTranslation() {

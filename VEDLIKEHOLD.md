@@ -1529,18 +1529,25 @@ men testkjøring kan ikke bekreftes: tidligere Xcode-testbygg stoppet før
 testkompilering med `SwiftUIMacros.StateMacro`-feil. Fullt bygg er utsatt med
 11 GB ledig diskplass; testkjøringen må gjentas når byggmiljøet er friskt.
 
+**AUTO-366 · PÅ VENT 2026-10-09** — Utvidet varselsorteringstesten med fire
+værtyper som deler branntidspunkt, inkludert to typer med lik alvorlighet, og
+flere inputrekkefølger. Swift-parsing og diffkontroll består, men testkjøring
+kan ikke bekreftes: Xcode stoppet tidligere før testkompilering med
+`SwiftUIMacros.StateMacro`-feil. Gjenta når Xcode-testmiljøet er friskt.
+
+**AUTO-367 · ÅPEN** — Legg til regresjon som bekrefter at valg av nytt sted
+lagres også når første prognosehenting feiler, slik at oppstartsveiviseren kan
+fortsette uten nett og stedet finnes etter omstart.
+
 **AUTO-368 · ÅPEN** — Legg til en lett regresjonstest som sikrer at alle
 konteksthjelpene på Hjem, Steder, Varsler, Innstillinger og oppstartsveiviseren
 har ikke-tomme overskrifter, forklaringer og trinn, slik at ingen av de gule
 spørsmålstegnknappene åpner en tom hjelpeside.
 
-**AUTO-366 · ÅPEN** — Utvid varselsorteringstesten til å låse at
-`NotificationScheduler.alertsToSchedule` beholder samme alvorlighetsrekkefølge
-ved like branntidspunkter og ulik inputrekkefølge.
-
-**AUTO-367 · ÅPEN** — Legg til regresjon som bekrefter at valg av nytt sted
-lagres også når første prognosehenting feiler, slik at oppstartsveiviseren kan
-fortsette uten nett og stedet finnes etter omstart.
+**AUTO-369 · ÅPEN** — Legg til regresjonstest for to varsler med lik
+`fireAt`, men ulik `eventAt`, som bekrefter at det nærmeste værhendelsestidspunktet
+prioriteres før alvorlighet. Test flere inputrekkefølger slik at en mer alvorlig,
+men fjernere hendelse ikke skyver ut varselet for den nærmeste hendelsen.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
