@@ -1125,9 +1125,10 @@ final class PlannerTests: XCTestCase {
 
     func testEveryWizardAlertCategoryHasMatchingPresetChoices() {
         for category in WizardAlertCategory.allCases {
-            let presets = RulePreset.all.filter { category.types.contains($0.rule.type) }
+            let presets = category.presets
             XCTAssertFalse(presets.isEmpty, "\(category.title) must offer at least one preset")
             XCTAssertTrue(presets.allSatisfy { category.types.contains($0.rule.type) })
+            XCTAssertEqual(Set(presets.map(\.id)).count, presets.count, "\(category.title) should not repeat a preset")
         }
     }
 

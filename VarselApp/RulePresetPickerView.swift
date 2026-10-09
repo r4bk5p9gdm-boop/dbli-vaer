@@ -163,6 +163,10 @@ enum WizardAlertCategory: String, CaseIterable, Identifiable {
         case .moisture: [.temperatur, .dugg]
         }
     }
+
+    var presets: [RulePreset] {
+        RulePreset.all.filter { types.contains($0.rule.type) }
+    }
 }
 
 enum WizardPlaceKind: Equatable {
@@ -399,7 +403,7 @@ struct OnboardingWizardView: View {
                                 Text(category.detail).font(.caption).foregroundStyle(.secondary)
                             }
                             Spacer()
-                            let count = RulePreset.all.filter { category.types.contains($0.rule.type) && activePresetIDs.contains($0.id) }.count
+                            let count = category.presets.filter { activePresetIDs.contains($0.id) }.count
                             if count > 0 {
                                 Text("\(count) valgt")
                                     .font(.caption2.weight(.semibold))
@@ -426,7 +430,7 @@ struct OnboardingWizardView: View {
             Section {
                 Text("Velg ett eller flere forslag. Hvert forslag har et rolig standardtidspunkt som kan endres senere.")
                     .font(.subheadline).foregroundStyle(.secondary)
-                ForEach(RulePreset.all.filter { category.types.contains($0.rule.type) }) { preset in
+                ForEach(category.presets) { preset in
                     Toggle(isOn: presetBinding(for: preset.id)) {
                         Label {
                             VStack(alignment: .leading, spacing: 3) {

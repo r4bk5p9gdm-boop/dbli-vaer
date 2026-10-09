@@ -1624,10 +1624,13 @@ av/på-bindinger og lagring til modellen. Regresjonstesten slår det delte
 andre stedet ikke endres. Swift-parsing, diffkontroll og iOS
 `build-for-testing` består; XCTest kunne ikke kjøres uten simulator.
 
-**AUTO-381 · ÅPEN** — Samle veiviserens kategori→preset-filtrering i én
-testbar kilde og bruk den også i kortvisningen. Utvid regresjonen slik at hver
-kategori viser minst ett forslag, og at ingen vist presets værtype faller
-utenfor kategorien.
+**AUTO-381 · FULLFØRT 2026-10-09** — Samlet veiviserens
+kategori→preset-filtrering i `WizardAlertCategory.presets` og brukte samme
+utvalg i kategorioversikten, detaljvisningen og regresjonstesten. Testen
+bekrefter at hver kategori tilbyr minst ett forslag, bare forslag av
+kategoriens værtyper og ingen dupliserte preset-ID-er. Swift-parsing,
+diffkontroll og iOS `build-for-testing` består; XCTest kunne ikke kjøres fordi
+CoreSimulator-/enhetstjenesten ikke er tilgjengelig.
 
 **AUTO-382 · ÅPEN** — Legg til persistensregresjon for oppstartsveiviserens
 stedsspesifikke regler: hyttevarsel med `onlyWhenNearby` skal overleve
@@ -1637,6 +1640,11 @@ Store-gjenoppretting uten å endre hjemstedets regler eller nærhetsvalg.
 regler inn i en testbar hjelpefunksjon. Legg til regresjon som sikrer at valg
 av et preset ikke lager duplikat med samme `templateTitle`, og samtidig
 beholder andre regler for stedet.
+
+**AUTO-384 · ÅPEN** — Legg til regresjon for `WizardPresetConfiguration.rules`
+som sender inn både kjente og ukjente preset-ID-er. Bekreft at ukjente ID-er
+ignoreres, kjente regler beholdes i `RulePreset.all`-rekkefølge, og samme
+regel ikke returneres flere ganger.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

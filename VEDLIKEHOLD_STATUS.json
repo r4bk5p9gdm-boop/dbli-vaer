@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T15:38:30Z",
+  "lastScheduledStart": "2026-10-09T15:43:30Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-380 fullført: samlet veiviserens valgte regel-ID-er for hjemsted og hytte i WizardPresetSelections og brukte modellen i bindinger og lagring. Regresjonstest bekrefter at av/på-endring av delt frost-natt-preset ikke endrer det andre stedet. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-383; neste: AUTO-381/382/383."
+  "lastProgress": "AUTO-381 fullført: samlet veiviserens kategori→preset-filtrering i WizardAlertCategory.presets og bruker den i oversikt, detaljvisning og test. Regresjonen dekker ikke-tomme kategorier, bare gyldige værtyper og unike preset-ID-er. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-384; neste: AUTO-382/383/384."
 }
