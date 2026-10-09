@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T16:47:25Z",
+  "lastScheduledStart": "2026-10-09T16:48:46Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-127 fullført: Tilpass viser nå større helgul og skravert gul prøve ved sollys/skydekke; intervallene er 0–første grense og over første–andre grense, og øvre grense holdes minst like høy som den første. La til modellregresjon for grenseordningen. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. Neste: AUTO-394/395/396."
+  "lastProgress": "BRUKER-128 fullført: fjernet den hvite sirkelbakgrunnen på soloppgangs- og solnedgangsikonene i værbåndet, slik at bare det oransje ikonet vises i cellen. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. Neste: AUTO-394/395/396."
 }

@@ -54,6 +54,11 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-128 · FULLFØRT 2026-10-09** — Gjorde soloppgangs- og
+solnedgangsikonene i værbåndet transparente ved å fjerne den hvite sirkelen.
+Bare det oransje symbolet vises nå i cellen. Swift-parsing, diffkontroll og
+iOS `build-for-testing` består; XCTest kunne ikke kjøres uten simulator.
+
 **BRUKER-127 · FULLFØRT 2026-10-09** — I «Tilpass» heter solraden nå
 «Sollys / skydekke». Den ekspanderte visningen viser større helgule og
 skraverte gule eksempelceller og forklarer intervallene nøyaktig: helgul fra

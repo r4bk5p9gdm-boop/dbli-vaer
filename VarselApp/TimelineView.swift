@@ -655,8 +655,6 @@ private struct CombinedHourBandCell: View {
                             .font(.system(size: 12, weight: .bold))
                             .foregroundStyle(Color.orange)
                             .frame(width: 21, height: 21)
-                            // The opaque badge masks yellow sun fill at sunrise/sunset.
-                            .background(Color.white, in: Circle())
                             .position(
                                 x: proxy.size.width * CGFloat(offset) / CGFloat(period.hours) + proxy.size.width / CGFloat(period.hours * 2),
                                 y: proxy.size.height / 2
