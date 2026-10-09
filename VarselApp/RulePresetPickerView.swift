@@ -653,9 +653,9 @@ struct ContextHelpButton: View {
     var body: some View {
         Button { showingHelp = true } label: {
             Image(systemName: "questionmark.circle.fill")
-                .font(.title3)
+                .font(.body)
                 .foregroundStyle(Color(red: 0.91, green: 0.62, blue: 0.08))
-                .shadow(color: .yellow.opacity(0.35), radius: 5)
+                .shadow(color: .yellow.opacity(0.28), radius: 3)
         }
         .buttonStyle(.plain)
         .accessibilityLabel("Hjelp: \(topic.title)")

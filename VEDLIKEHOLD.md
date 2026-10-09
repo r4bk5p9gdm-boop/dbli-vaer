@@ -54,6 +54,15 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-135 · FULLFØRT 2026-10-09** — La til en kompakt,
+trykkbar varslingsoversikt under den tredje værdagen på Hjem og i den
+ekspanderte Steder-visningen. Den viser unike, aktive push-varseltyper med
+symbol og navn for valgt sted; display-only-regler og varsler som er slått av
+vises ikke. Trykk åpner Varsler-fanen. Fjernet de små bjellene foran
+værbåndene og gjorde spørsmålstegnknappen mer kompakt. La til regresjonstest
+for filtrering og deduplisering. Swift-parsing og diffkontroll består; XCTest
+er ikke kjørt på grunn av den kjente SwiftUIMacros-feilen i Xcode.
+
 **BRUKER-134 · FULLFØRT 2026-10-09** — Skodde vises nå i solradens aktuelle
 timeceller uten egen sirkel eller bakplate. Nøytrale celler bruker dempet
 skoddesymbol; når solraden ellers viser helgul eller stripet sol, brukes
@@ -1993,6 +2002,11 @@ valgfrie metadata: standardverdier brukes mens sted og valgt-ID beholdes.
 deterministisk testbar, og dekk at denied/restricted (og ukjent status)
 avslutter posisjonsforespørselen umiddelbart med avvist-feil i stedet for å
 vente på timeout. Bevar eksisterende oppførsel for uavklart og autorisert status.
+
+**AUTO-429 · ÅPEN** — Utvid tilgjengelighetstesten for timekort slik at
+VoiceOver-labelen inkluderer den lokaliserte værtilstanden i tillegg til tid,
+temperatur og nedbør. Nåværende label utelater værtypen som symbolene formidler,
+noe som særlig gjør regn, snø og skodde vanskeligere å skille uten syn.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

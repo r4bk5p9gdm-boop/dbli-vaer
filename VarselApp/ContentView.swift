@@ -137,8 +137,13 @@ struct ContentView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            HomeView().tabItem { Label("Hjem", systemImage: "cloud.sun") }.tag(Tab.home)
-            PlacesView(onOpen: { place in store.select(place); selectedTab = .home }).tabItem { Label("Steder", systemImage: "mappin.and.ellipse") }.tag(Tab.places)
+            HomeView(onOpenAlerts: { selectedTab = .queue })
+                .tabItem { Label("Hjem", systemImage: "cloud.sun") }.tag(Tab.home)
+            PlacesView(
+                onOpen: { place in store.select(place); selectedTab = .home },
+                onOpenAlerts: { selectedTab = .queue }
+            )
+            .tabItem { Label("Steder", systemImage: "mappin.and.ellipse") }.tag(Tab.places)
             AlertQueueView().tabItem { Label("Varsler", systemImage: "bell.and.waves.left.and.right") }.tag(Tab.queue)
             GlobalSettingsView(showsDoneButton: false)
                 .tabItem { Label("Innstillinger", systemImage: "gearshape") }
@@ -173,6 +178,7 @@ struct ContentView: View {
 }
 
 struct HomeView: View {
+    var onOpenAlerts: () -> Void = {}
     @EnvironmentObject var store: Store
     @State private var editing: Rule?
     @State private var showingSettings = false
@@ -258,7 +264,11 @@ struct HomeView: View {
                                     todayTitle: forecastHeaderTitle,
                                     updatedAt: forecastUpdatedAt,
                                     isRefreshing: store.isRefreshing,
-                                    isStale: Store.isForecastStale(forecastUpdatedAt)
+                                    isStale: Store.isForecastStale(forecastUpdatedAt),
+                                    placeName: p.displayName,
+                                    notificationsEnabled: p.areNotificationsEnabled,
+                                    languageStyle: store.alertLanguageStyle,
+                                    onOpenAlerts: onOpenAlerts
                                 )
                                 .padding(.horizontal, 12)
                                 .padding(.top, 16)
@@ -1646,6 +1656,7 @@ private enum PlaceSortMode: String, CaseIterable, Identifiable {
 
 struct PlacesView: View {
     var onOpen: (Place) -> Void = { Store.shared.select($0) }
+    var onOpenAlerts: () -> Void = {}
     @EnvironmentObject var store: Store
     @StateObject private var loc = LocationManager()
     @State private var busy = false
@@ -1873,7 +1884,11 @@ struct PlacesView: View {
             todayTitle: "Resten av i dag",
             updatedAt: store.forecastUpdatedAt(for: place.id),
             isRefreshing: store.isRefreshing,
-            isStale: Store.isForecastStale(store.forecastUpdatedAt(for: place.id))
+            isStale: Store.isForecastStale(store.forecastUpdatedAt(for: place.id)),
+            placeName: place.displayName,
+            notificationsEnabled: place.areNotificationsEnabled,
+            languageStyle: store.alertLanguageStyle,
+            onOpenAlerts: onOpenAlerts
         )
         .padding(.horizontal, 12)
         .padding(.top, 16)
