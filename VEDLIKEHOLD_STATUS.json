@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-09T13:27:16Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-367 delvis fullført: utvidet eksisterende offline-regresjon med gjenoppretting av ny Store fra samme lagring og kontroll av sted/valg etter omstart. Swift-parsing og diffkontroll består, men testkjøring er PÅ VENT på grunn av tidligere SwiftUIMacros.StateMacro-feil i Xcode. AUTO-004 køvurdering la til AUTO-370 etter at 367 ble satt PÅ VENT; åpne oppgaver: AUTO-368/369/370."
+  "lastProgress": "AUTO-368 delvis fullført: la til regresjonstest som sjekker ikke-tomme overskrifter, introduksjoner og trinn for alle fem hjelpekontekster. Swift-parsing og diffkontroll består, men testkjøring er PÅ VENT på grunn av tidligere SwiftUIMacros.StateMacro-feil i Xcode. AUTO-004 køvurdering la til AUTO-371 etter at 368 ble satt PÅ VENT; åpne oppgaver: AUTO-369/370/371."
 }

@@ -1080,6 +1080,20 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(WindGustLevel.looseObjects.threshold, 12)
     }
 
+    func testEveryContextHelpTopicHasReadableContentAndAtLeastOneStep() {
+        let topics: [ContextHelpTopic] = [.home, .places, .alerts, .settings, .wizard]
+
+        XCTAssertEqual(topics.count, 5)
+        for topic in topics {
+            XCTAssertFalse(topic.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            XCTAssertFalse(topic.introduction.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            XCTAssertFalse(topic.steps.isEmpty)
+            XCTAssertTrue(topic.steps.allSatisfy {
+                !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            })
+        }
+    }
+
     func testCompactWindDoesNotInventMissingGust() {
         var hour = ForecastHour(time: base, temp: 10, precip: 0, wind: 3, cloud: 20, dew: 4)
         XCTAssertEqual(hour.compactWindAndGust, "– m/s")

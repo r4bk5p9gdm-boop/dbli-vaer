@@ -1541,20 +1541,25 @@ til å gjenopprette en ny `Store` fra samme lagring og kontrollere at stedet og
 valget finnes etter omstart. Swift-parsing og diffkontroll består, men testkjøring
 står PÅ VENT på grunn av tidligere `SwiftUIMacros.StateMacro`-feil i Xcode.
 
-**AUTO-370 · ÅPEN** — Legg til regresjon for at et tomt første Yr-svar etter
-`Store.add` ikke fjerner det allerede lagrede stedet eller valget. Gjenopprett
-en ny `Store` fra samme lagringsnøkkel og kontroller at oppsettet kan fortsette
-selv om første svar ikke inneholder prognosetimer.
-
-**AUTO-368 · ÅPEN** — Legg til en lett regresjonstest som sikrer at alle
-konteksthjelpene på Hjem, Steder, Varsler, Innstillinger og oppstartsveiviseren
-har ikke-tomme overskrifter, forklaringer og trinn, slik at ingen av de gule
-spørsmålstegnknappene åpner en tom hjelpeside.
+**AUTO-368 · PÅ VENT 2026-10-09** — La til en lett regresjonstest for alle
+fem hjelpekontekster (fire hovedfaner og oppstartsveiviseren): overskrift,
+innledning og alle forklaringstrinn må være synlige tekster. Swift-parsing og
+diffkontroll består, men testkjøring står PÅ VENT på grunn av tidligere
+`SwiftUIMacros.StateMacro`-feil i Xcode.
 
 **AUTO-369 · ÅPEN** — Legg til regresjonstest for to varsler med lik
 `fireAt`, men ulik `eventAt`, som bekrefter at det nærmeste værhendelsestidspunktet
 prioriteres før alvorlighet. Test flere inputrekkefølger slik at en mer alvorlig,
 men fjernere hendelse ikke skyver ut varselet for den nærmeste hendelsen.
+
+**AUTO-371 · ÅPEN** — Legg til lett regresjonstest for at hvert
+`RulePreset` har unik ID og ikke-tom tittel, forklaring og huskeforslag, og at
+regelens malnavn og huskeforslag samsvarer med teksten som vises i veiviseren.
+
+**AUTO-370 · ÅPEN** — Legg til regresjon for at et tomt første Yr-svar etter
+`Store.add` ikke fjerner det allerede lagrede stedet eller valget. Gjenopprett
+en ny `Store` fra samme lagringsnøkkel og kontroller at oppsettet kan fortsette
+selv om første svar ikke inneholder prognosetimer.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
