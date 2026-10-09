@@ -1825,9 +1825,11 @@ dekker begge tilfeller og bekrefter at fallback-valget består en ny eksport og
 import. Swift-parsing, diffkontroll og iOS `build-for-testing` består; XCTest
 ble ikke kjørt i denne kjøringen.
 
-**AUTO-404 · ÅPEN** — Regresjonstest at Store-migrering beholder prognosecache
-for egendefinerte steder, men fjerner cache og tidsstempel for en standardplass
-som ikke lenger finnes i den migrerte stedlisten.
+**AUTO-404 · FULLFØRT 2026-10-09** — La til regresjonstest for
+launch-place-migrering: prognose og hentetid beholdes for et egendefinert sted,
+mens cache og tidsstempel for en fjernet standardplass ryddes bort og dette
+persisteres. iOS `build-for-testing`, Swift-parsing og diffkontroll består;
+XCTest kunne ikke kjøres fordi CoreSimulatorService ikke er tilgjengelig.
 
 **AUTO-405 · ÅPEN** — Kontroller at lagrede `homeFavorites` som peker på
 steder fjernet før appstart, blir ryddet og persistert under Store-gjenoppretting,
@@ -1836,6 +1838,10 @@ og ikke bare filtrert midlertidig i visningen.
 **AUTO-406 · ÅPEN** — Regresjonstest at import med enkelte feilformede
 stedposter beholder de gyldige stedene og velger første gyldige sted dersom
 valgt-ID peker på en post som ble forkastet.
+
+**AUTO-407 · ÅPEN** — Regresjonstest at en foreldet valgt-ID under launch-place-
+migrering faller tilbake til første lagrede sted, og at dette valget beholdes
+etter at migreringen er persistert og Store startes på nytt.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

@@ -6893,6 +6893,47 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testLaunchPlaceMigrationKeepsCustomForecastAndDropsRemovedPlaceCache() throws {
+        let persistenceKey = "varsel.test.launch-place-migration-cache.\(UUID().uuidString)"
+        let migrationVersionKey = "varsel.launchPlacesVersion"
+        let previousVersion = UserDefaults.standard.object(forKey: migrationVersionKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousVersion {
+                UserDefaults.standard.set(previousVersion, forKey: migrationVersionKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: migrationVersionKey)
+            }
+        }
+
+        UserDefaults.standard.set(8, forKey: migrationVersionKey)
+        let customPlace = Place(name: "Hytte", lat: 64.2, lon: 11.2, preposition: .pa)
+        let removedStandardPlace = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let hour = ForecastHour(time: base, temp: 7, precip: 0, wind: 1, cloud: 40, dew: 3)
+        let fetchedAt = base.addingTimeInterval(-1_800)
+        let savedState = PersistedStoreState(
+            places: [customPlace], selectedID: customPlace.id, log: [],
+            forecasts: [customPlace.id: [hour], removedStandardPlace.id: [hour]],
+            forecastUpdatedAt: [customPlace.id: fetchedAt, removedStandardPlace.id: fetchedAt]
+        )
+        UserDefaults.standard.set(try JSONEncoder().encode(savedState), forKey: persistenceKey)
+
+        let migrated = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+
+        XCTAssertTrue(migrated.places.contains(where: { $0.id == customPlace.id }))
+        XCTAssertTrue(migrated.places.contains(where: { $0.name == "Klinga" }))
+        XCTAssertEqual(migrated.forecasts[customPlace.id], [hour])
+        XCTAssertEqual(migrated.forecastUpdatedAt(for: customPlace.id), fetchedAt)
+        XCTAssertNil(migrated.forecasts[removedStandardPlace.id])
+        XCTAssertNil(migrated.forecastUpdatedAt(for: removedStandardPlace.id))
+
+        let persistedData = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
+        let repairedState = try JSONDecoder().decode(PersistedStoreState.self, from: persistedData)
+        XCTAssertEqual(repairedState.forecasts.keys.sorted(by: { $0.uuidString < $1.uuidString }), [customPlace.id])
+        XCTAssertEqual(repairedState.forecastUpdatedAt.keys.sorted(by: { $0.uuidString < $1.uuidString }), [customPlace.id])
+    }
+
+    @MainActor
     func testPreservedAndNewNotificationsShareChronologicalCapacity() {
         let dates = (0..<80).reversed().map { (id: "request-\($0)", date: base.addingTimeInterval(Double($0))) }
         let ids = NotificationScheduler.nearestRequestIDs(dates)

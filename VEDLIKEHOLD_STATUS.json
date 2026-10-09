@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T17:44:01Z",
+  "lastScheduledStart": "2026-10-09T17:46:31Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-132 fullført: alle ekspanderte værtyper viser nå markeringens farge ved valget/regelgrensen; solprøvene er samlet med sine terskelvelgere, og temperatur, regn, snø, dugg, frost og vind forklares med tilhørende farge eller cellesymbol. Pushregler er uendret. Swift-parsing, diffkontroll og iPhone-bygg bestod; oppdateringen er installert på iPhone 13 Pro Max. AUTO-403 er fullført; neste åpne AUTO: 404/405/406."
+  "lastProgress": "AUTO-404 fullført: la til Store-regresjon som bekrefter at migrering beholder prognosecache og tidsstempel for egendefinerte steder, men fjerner cache for en slettet standardplass og persisterer oppryddingen. Swift-parsing, diffkontroll og iOS build-for-testing bestod; XCTest ble ikke kjørt fordi CoreSimulatorService ikke er tilgjengelig. AUTO-004 opprettet AUTO-407 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-405/406/407."
 }
