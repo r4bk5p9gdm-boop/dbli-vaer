@@ -1780,9 +1780,12 @@ miste prognosecache eller tidsstempel, og stedene, valget og cachen består en n
 Store-oppstart. Swift-parsing, diffkontroll og iOS `build-for-testing` består;
 XCTest kunne ikke kjøres uten simulator.
 
-**AUTO-401 · ÅPEN** — Test at Store gjenoppretter gyldige steder og prognoser
-når én lagret prognosepost er feilformet, og at neste oppstart ikke får med
-feilaktige eller ukjente prognose-ID-er.
+**AUTO-401 · FULLFØRT 2026-10-09** — Store filtrerer nå prognoser for
+ukjente sted-ID-er og tidsstempler som ikke har en tilsvarende gyldig prognose.
+Når én lagret prognosepost er feilformet, beholdes de friske prognosene; den
+reparerte cachen lagres og er fortsatt ren etter ny oppstart. La til en
+Store-regresjon for dette. Swift-parsing, diffkontroll og iOS
+`build-for-testing` består; XCTest kunne ikke kjøres uten simulator.
 
 **AUTO-402 · ÅPEN** — Kontroller at når hele stedlisten erstattes eller
 importeres, fjernes slettede ID-er fra `homeFavorites`, mens ren omrekkefølge
@@ -1791,6 +1794,10 @@ beholder de samme stjernefavorittene.
 **AUTO-403 · ÅPEN** — Regresjonstest at import med en ugyldig eller manglende
 `selectedPlaceID` velger første importerte sted og bevarer dette valget ved
 eksport og ny import.
+
+**AUTO-404 · ÅPEN** — Regresjonstest at Store-migrering beholder prognosecache
+for egendefinerte steder, men fjerner cache og tidsstempel for en standardplass
+som ikke lenger finnes i den migrerte stedlisten.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

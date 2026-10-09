@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T17:19:31Z",
+  "lastScheduledStart": "2026-10-09T17:24:31Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-400 fullført: regresjonen for manglende lagret selectedID kontrollerer nå også at valg, steder, prognosecache og tidsstempel består reparasjon og neste Store-oppstart. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-403; neste: AUTO-401/402/403."
+  "lastProgress": "AUTO-401 fullført: Store fjerner nå ukjente prognose-ID-er og tidsstempler uten gyldig prognose, og persisterer oppryddingen. Regresjonen bekrefter at friske data overlever korrupt cachepost og ny Store-oppstart. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-404; neste: AUTO-402/403/404."
 }

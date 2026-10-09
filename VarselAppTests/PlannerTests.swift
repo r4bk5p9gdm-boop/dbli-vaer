@@ -420,6 +420,66 @@ final class PlannerTests: XCTestCase {
         XCTAssertNil(decoded.forecasts[second.id])
     }
 
+    @MainActor
+    func testStoreRestoresHealthyForecastsAroundCorruptAndUnknownEntries() throws {
+        let persistenceKey = "varsel.test.store-corrupt-forecast-entry.\(UUID().uuidString)"
+        let launchVersionKey = "varsel.launchPlacesVersion"
+        let previousLaunchVersion = UserDefaults.standard.object(forKey: launchVersionKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousLaunchVersion {
+                UserDefaults.standard.set(previousLaunchVersion, forKey: launchVersionKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: launchVersionKey)
+            }
+        }
+        UserDefaults.standard.set(9, forKey: launchVersionKey)
+
+        let first = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let second = Place(name: "Hytte", lat: 64.2, lon: 11.4)
+        let unknownID = UUID()
+        let healthyHour = ForecastHour(time: base, temp: 7, precip: 0, wind: 1, cloud: 30, dew: 4)
+        let state = PersistedStoreState(
+            places: [first, second], selectedID: first.id, log: [],
+            forecasts: [
+                first.id: [healthyHour],
+                second.id: [healthyHour],
+                unknownID: [healthyHour],
+            ],
+            forecastUpdatedAt: [first.id: base, second.id: base, unknownID: base]
+        )
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(state)) as? [String: Any])
+        var forecasts = try XCTUnwrap(object["forecasts"] as? [String: Any])
+        forecasts[second.id.uuidString] = ["broken": "forecast"]
+        object["forecasts"] = forecasts
+        UserDefaults.standard.set(try JSONSerialization.data(withJSONObject: object), forKey: persistenceKey)
+
+        let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        XCTAssertEqual(restored.places.map(\.id), [first.id, second.id])
+        XCTAssertEqual(restored.selectedID, first.id)
+        XCTAssertEqual(restored.forecasts[first.id], [healthyHour])
+        XCTAssertNil(restored.forecasts[second.id])
+        XCTAssertNil(restored.forecasts[unknownID])
+        XCTAssertEqual(restored.forecastUpdatedAt(for: first.id), base)
+        XCTAssertNil(restored.forecastUpdatedAt(for: second.id))
+        XCTAssertNil(restored.forecastUpdatedAt(for: unknownID))
+
+        let repairedData = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
+        let repairedState = try JSONDecoder().decode(PersistedStoreState.self, from: repairedData)
+        XCTAssertEqual(Set(repairedState.forecasts.keys), Set([first.id]))
+        XCTAssertEqual(Set(repairedState.forecastUpdatedAt.keys), Set([first.id]))
+
+        let relaunched = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        XCTAssertEqual(relaunched.places.map(\.id), [first.id, second.id])
+        XCTAssertEqual(relaunched.selectedID, first.id)
+        XCTAssertEqual(relaunched.forecasts[first.id], [healthyHour])
+        XCTAssertNil(relaunched.forecasts[second.id])
+        XCTAssertNil(relaunched.forecasts[unknownID])
+        XCTAssertEqual(relaunched.forecastUpdatedAt(for: first.id), base)
+        XCTAssertNil(relaunched.forecastUpdatedAt(for: second.id))
+        XCTAssertNil(relaunched.forecastUpdatedAt(for: unknownID))
+    }
+
     func testPersistedCacheCanBeFilteredToKnownPlaces() throws {
         let known = Place(name: "Klinga", lat: 64, lon: 11)
         let deletedID = UUID()
