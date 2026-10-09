@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T16:59:31Z",
+  "lastScheduledStart": "2026-10-09T17:04:31Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-396 fullført: massesletting som fjerner valgt hytte og et annet sted velger første gjenværende sted, fjerner begge slettede prognosene og bevarer gjenværende regler/prognoser etter Store-gjenoppretting. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-399; neste: AUTO-397/398/399."
+  "lastProgress": "AUTO-397 fullført: la til regresjon som gjenoppretter Store fra korrupte bytes, kontrollerer at gyldige startsteder og valgt ID skrives tilbake, og at ID-ene består neste oppstart. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-400; neste: AUTO-398/399/400."
 }

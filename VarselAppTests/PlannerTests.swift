@@ -6859,6 +6859,27 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testCorruptedStoreBytesAreReplacedWithStableLaunchPlaces() throws {
+        let persistenceKey = "varsel.test.corrupted-store-bytes.\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
+        UserDefaults.standard.set(Data([0xFF, 0x00, 0x7B, 0xC3]), forKey: persistenceKey)
+
+        let recovered = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        let recoveredIDs = recovered.places.map(\.id)
+        XCTAssertFalse(recovered.places.isEmpty)
+        XCTAssertEqual(recovered.selectedID, recovered.places.first?.id)
+
+        let repairedData = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
+        let repairedState = try JSONDecoder().decode(PersistedStoreState.self, from: repairedData)
+        XCTAssertEqual(repairedState.places.map(\.id), recoveredIDs)
+        XCTAssertEqual(repairedState.selectedID, recovered.selectedID)
+
+        let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        XCTAssertEqual(restored.places.map(\.id), recoveredIDs)
+        XCTAssertEqual(restored.selectedID, recovered.selectedID)
+    }
+
+    @MainActor
     func testCancelledAddingPlaceKeepsPersistedSelectionWithoutForecastOrNetworkError() async throws {
         let persistenceKey = "varsel.test.add-cancelled-place.\(UUID().uuidString)"
         defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
