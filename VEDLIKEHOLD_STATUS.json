@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T20:03:15Z",
+  "lastScheduledStart": "2026-10-09T20:06:26Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-135 fullført: la til trykkbar varslingsoversikt under tredje værdag med unike aktive push-varseltyper, fjernet radbjeller og gjort hjelpesymbolet mer kompakt. Swift-parsing og diffkontroll består; XCTest ikke kjørt på grunn av kjent SwiftUIMacros-feil i Xcode. Åpne AUTO-oppgaver: AUTO-427, AUTO-428 og AUTO-429."
+  "lastProgress": "BRUKER-136 fullført: erstattet Frostmargin med Frostfare over grensen, viste °C i valgene og viste beregnet frostfarereferanse tydeligere uten å endre beregning eller Yr-temperatur. Swift-parsing og diffkontroll består. Åpne AUTO-oppgaver etter full skanning: AUTO-427, AUTO-428 og AUTO-429."
 }

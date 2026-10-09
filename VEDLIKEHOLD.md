@@ -54,6 +54,13 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-136 · FULLFØRT 2026-10-09** — I «Tilpass» heter innstillingen nå
+«Frostfare over grensen» i stedet for «Frostmargin», og valgene viser °C.
+Oppsummeringen viser både vanlig frostgrense og beregnet temperaturgrense for
+mulig frostfare; forklaringsteksten sier tydelig at Yr-temperaturen ikke
+endres. Selve grenseberegningen og lagringsformatet er uendret. Swift-parsing
+og diffkontroll består.
+
 **BRUKER-135 · FULLFØRT 2026-10-09** — La til en kompakt,
 trykkbar varslingsoversikt under den tredje værdagen på Hjem og i den
 ekspanderte Steder-visningen. Den viser unike, aktive push-varseltyper med

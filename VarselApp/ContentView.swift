@@ -1194,15 +1194,15 @@ struct RulesView: View {
                                         Image(systemName: AlertType.frost.systemImage)
                                             .font(.system(size: 10, weight: .semibold))
                                             .foregroundStyle(.blue)
-                                        Text("Frostmargin")
+                                        Text("Frostfare over grensen")
                                             .font(.caption.weight(.medium))
                                             .foregroundStyle(.secondary)
-                                        Picker("Frostmargin", selection: Binding(
+                                        Picker("Frostfare over grensen", selection: Binding(
                                             get: { p.localFrostMargin },
                                             set: { p.frostMargin = $0; store.update(p); Task { await store.replan() } }
                                         )) {
                                             ForEach(Array(stride(from: 0.0, through: 5.0, by: 0.5)), id: \.self) { value in
-                                                Text("+\(value.formatted())°").tag(value)
+                                                Text("+\(value.formatted())°C").tag(value)
                                             }
                                         }
                                         .labelsHidden()
@@ -1422,11 +1422,10 @@ struct RulesView: View {
         case .dugg:
             return "Markeres når lufttemperaturen er høyst \(number(place.displayThreshold(for: .dugg)))°C fra duggpunktet. Yr-verdien endres ikke."
         case .frost:
-            let margin = number(place.localFrostMargin)
             let threshold = place.rulesForDisplay.first(where: { $0.type == .frost })?.threshold ?? AlertType.frost.defaultThreshold
             return place.localFrostMargin == 0
                 ? "Frost markeres ved \(number(threshold))°C eller kaldere."
-                : "Frost markeres ved \(number(threshold))°C eller kaldere, og fare for frost også opptil +\(margin)°C. Dette endrer ikke Yr-temperaturen."
+                : "Frost markeres ved \(number(threshold))°C eller kaldere. Mulig frostfare regnes også opptil \(number(threshold + place.localFrostMargin))°C. Dette endrer ikke Yr-temperaturen."
         case .temperatur:
             return "Blå markering ved temperaturer under \(number(place.resolvedDisplayTemperatureThreshold))°C. Oransje markering ved temperaturer over \(number(place.resolvedDisplayTemperatureHighThreshold))°C. Dette endrer ikke pushvarslene."
         case .vind:
@@ -1450,7 +1449,8 @@ struct RulesView: View {
             return "Duggfare ved avvik på \(number(place.displayThreshold(for: .dugg)))°C"
         case .frost:
             let threshold = place.rulesForDisplay.first(where: { $0.type == .frost })?.threshold ?? AlertType.frost.defaultThreshold
-            return "Frost ved \(number(threshold))°C · margin +\(number(place.localFrostMargin))°"
+            let frostRiskLimit = threshold + place.localFrostMargin
+            return "Frost ved \(number(threshold))°C · frostfare opptil \(number(frostRiskLimit))°C"
         case .temperatur:
             return "Blå under \(number(place.resolvedDisplayTemperatureThreshold))° · oransje over \(number(place.resolvedDisplayTemperatureHighThreshold))°"
         case .vind:
