@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T18:41:31Z",
+  "lastScheduledStart": "2026-10-09T18:46:31Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-415 fullført: migrering med to stedsnavn som bare skiller seg i aksent/store bokstaver beholder én plass, reparerer valgt-ID og fjerner bare slått-sammen ID sin prognosecache; annen steds cache består omstart. Swift-parsing og diffkontroll består; XCTest kunne ikke kjøres fordi CoreSimulatorService ikke er tilgjengelig. AUTO-004 opprettet AUTO-418 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-416/417/418."
+  "lastProgress": "AUTO-416 fullført: feilformede valgfrie eksportmetadata får trygge standardverdier uten å miste gyldige steder eller valgt-ID; ny eksport/import beholder disse. Swift-parsing og diffkontroll består; iOS-testbygg er blokkert av SwiftUIMacros.StateMacro-feilen, og CoreSimulatorService er utilgjengelig. AUTO-004 opprettet AUTO-419 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-417/418/419."
 }

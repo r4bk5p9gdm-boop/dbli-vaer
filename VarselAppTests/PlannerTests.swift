@@ -6818,6 +6818,40 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(reimported.alertLanguageStyle, .bokmal)
     }
 
+    func testMalformedOptionalConfigurationMetadataKeepsValidPlacesAndSelection() throws {
+        let place = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let source = WeatherConfigurationExport(
+            places: [place], selectedPlaceID: place.id, alertLanguageStyle: .english
+        )
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: encoder.encode(source)) as? [String: Any])
+        object["formatVersion"] = "version one"
+        object["exportedAt"] = "not-an-ISO-8601-date"
+        object["alertLanguageStyle"] = 42
+
+        let importedData = try JSONSerialization.data(withJSONObject: object)
+        let imported = try decoder.decode(WeatherConfigurationExport.self, from: importedData)
+
+        XCTAssertEqual(imported.formatVersion, 1)
+        XCTAssertEqual(imported.exportedAt, .distantPast)
+        XCTAssertNil(imported.alertLanguageStyle)
+        XCTAssertEqual(imported.places.map(\.id), [place.id])
+        XCTAssertEqual(imported.selectedPlaceID, place.id)
+
+        let normalizedExport = WeatherConfigurationExport(
+            places: imported.places,
+            selectedPlaceID: imported.selectedPlaceID,
+            alertLanguageStyle: imported.alertLanguageStyle ?? .bokmal
+        )
+        let restored = try decoder.decode(WeatherConfigurationExport.self, from: encoder.encode(normalizedExport))
+        XCTAssertEqual(restored.places.map(\.id), [place.id])
+        XCTAssertEqual(restored.selectedPlaceID, place.id)
+        XCTAssertEqual(restored.alertLanguageStyle, .bokmal)
+    }
+
     func testConfigurationImportFallsBackToFirstPlaceForMissingOrUnknownSelection() throws {
         let firstPlace = Place(name: "Klinga", lat: 64.4, lon: 11.4)
         let secondPlace = Place(name: "Namsos", lat: 64.5, lon: 11.5)

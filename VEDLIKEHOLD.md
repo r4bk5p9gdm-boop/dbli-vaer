@@ -1906,9 +1906,12 @@ stedet og fjerner bare prognose/hentetid for ID-en som ble slått sammen.
 Hyttecache beholdes også etter omstart. Swift-parsing og diffkontroll består;
 XCTest er blokkert fordi CoreSimulatorService ikke er tilgjengelig.
 
-**AUTO-416 · ÅPEN** — Regresjonstest at feilformede valgfrie
-versjons-, eksporttids- eller språkverdier i en konfigurasjonsfil faller tilbake
-trygt uten at gyldige steder og valgt-ID forkastes.
+**AUTO-416 · FULLFØRT 2026-10-09** — La til eksport/import-regresjon med
+feilformede valgfrie versjons-, eksporttids- og språkverdier. De får trygge
+standarder (versjon 1, fjern fortid og manglende språk), mens gyldig sted og
+valgt-ID beholdes gjennom import og ny eksport. Swift-parsing og diffkontroll
+består; Xcode-testbygg er blokkert av SwiftUIMacros.StateMacro-feilen, og
+CoreSimulatorService er utilgjengelig.
 
 **AUTO-417 · ÅPEN** — Regresjonstest at den faktiske
 WeatherConfigurationDocument-filflyten bevarer ISO-8601-tidspunkt, språk,
@@ -1917,6 +1920,9 @@ valgt sted og terskelinnstillinger ved fil-eksport og -import.
 **AUTO-418 · ÅPEN** — Regresjonstest at WeatherConfigurationDocument avviser
 ugyldig JSON som korrupt fil, i stedet for å importere en tom
 værkonfigurasjon som om den var gyldig.
+
+**AUTO-419 · ÅPEN** — Regresjonstest at WeatherConfigurationDocument avviser
+en katalog/FileWrapper uten vanlige JSON-fildata som korrupt fil.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
