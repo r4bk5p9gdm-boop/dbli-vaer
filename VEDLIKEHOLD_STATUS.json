@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T19:34:34Z",
+  "lastScheduledStart": "2026-10-09T19:39:00Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-425 fullført: fremtidig formatVersion avvises med tydelig DecodingError gjennom WeatherConfigurationDocument-filimport; la til regresjonstest. Swift-parsing og diffkontroll består; full Xcode-testkjøring er blokkert av kjent SwiftUIMacros.StateMacro-feil, og CoreSimulatorService er utilgjengelig. Bred gjennomgang av LocationManager avdekket at denied/restricted bør ha deterministisk regresjonsdekning; AUTO-428 opprettet. Neste: AUTO-426/427/428."
+  "lastProgress": "BRUKER-133 fullført: økte bredden på de delvise soltimene gule skråstriper fra 1 til 1,6 punkter. Den delte SolarCellMarkerStyle gjør også prøven i Tilpass tydeligere. Swift-parsing og diffkontroll består. Neste åpne kø: AUTO-426/427/428."
 }

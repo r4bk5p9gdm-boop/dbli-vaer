@@ -54,6 +54,11 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-133 · FULLFØRT 2026-10-09** — Gjorde de gule skråstripene for
+delvis sol tydeligere ved å øke linjebredden fra 1 til 1,6 punkter. Samme
+stil brukes både i timecellene og fargeprøven i «Tilpass», så forklaringen
+fortsatt samsvarer med visningen. Swift-parsing og diffkontroll består.
+
 **BRUKER-132 · FULLFØRT 2026-10-09** — Alle ekspanderte værtyper viser nå
 markeringens farge ved tilhørende valg: blå/oransje ved temperaturgrensene,
 gul helfarge og gule striper ved solgrensene, og egne prøver for dugg, vind,

@@ -7,7 +7,7 @@ enum SolarCellMarkerStyle {
     static let hatchColor = Color(red: 1, green: 0.84, blue: 0)
     static let hatchOpacity = 0.95
     static let hatchSpacing: CGFloat = 5
-    static let hatchLineWidth: CGFloat = 1
+    static let hatchLineWidth: CGFloat = 1.6
 }
 
 enum PlaceOrderingSettings {
