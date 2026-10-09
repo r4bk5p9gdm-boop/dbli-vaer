@@ -54,6 +54,12 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-432 · ÅPEN** — Trekk «her [preposisjon] [stedsnavn]» for GPS-steds-
+overskriften ut i en liten, deterministisk presentasjonsverdi og test alle
+preposisjonene. Lås at bare «her » settes foran preposisjonen, at stedsnavnet
+returneres uendret, og at ikke-GPS-steder ikke får prefikset. Dette beskytter
+typografifiksens tekstgrunnlag uten SwiftUI-snapshot eller simulator.
+
 **BRUKER-144 · FULLFØRT 2026-10-10** — Rettet GPS-stedsoverskriften på
 Hjem etter presisering: teksten er nå «her [preposisjon] [sted]», der bare
 `her` er lagt til foran den eksisterende preposisjonen. Preposisjonen beholder
@@ -2080,10 +2086,14 @@ status gir umiddelbar CLError.denied. La til tester for begge grenene.
 Swift-parsing, typekontroll av beslutningsfunksjonen og diffkontroll består;
 XCTest ble utsatt etter ressurskontroll på grunn av svært lite ledig minne.
 
-**AUTO-429 · ÅPEN** — Utvid tilgjengelighetstesten for timekort slik at
-VoiceOver-labelen inkluderer den lokaliserte værtilstanden i tillegg til tid,
-temperatur og nedbør. Nåværende label utelater værtypen som symbolene formidler,
-noe som særlig gjør regn, snø og skodde vanskeligere å skille uten syn.
+**AUTO-429 · FULLFØRT 2026-10-10** — Timekortenes VoiceOver-etikett sier nå
+værtilstanden i tillegg til tidspunkt, temperatur og nedbør. Tilstanden følger
+samme nedbørsgrense som det synlige symbolet, slik at en mulig, men ikke aktiv,
+byge ikke leses opp som regn. Værtilstanden får en eksplisitt engelsk etikett
+når engelsk er valgt. Regresjonstesten dekker regn, snø og tåke på bokmål,
+regn og tåke på engelsk og mulig nedbør uten aktivt regnsymbol. Swift-parsing
+og diffkontroll består; XCTest ble ikke kjørt etter ressurskontroll viste
+svært lite ledig minne.
 
 **AUTO-430 · ÅPEN** — Oppdater `notificationsAuthorized` når appen kommer
 tilbake i forgrunnen, ikke bare etter tillatelsesforespørselen ved oppstart.

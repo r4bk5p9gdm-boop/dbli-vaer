@@ -546,6 +546,20 @@ enum CurrentWeatherCondition: Equatable {
         }
     }
 
+    func accessibilityLabel(languageStyle: AlertLanguageStyle) -> String {
+        guard languageStyle == .english else {
+            return WeatherLanguage.text(label, style: languageStyle)
+        }
+        return switch self {
+        case .snow: "Snow"
+        case .rain: "Rain"
+        case .fog: "Fog"
+        case .clear: "Clear"
+        case .partlyCloudy: "Partly cloudy"
+        case .cloudy: "Cloudy"
+        }
+    }
+
     var systemImage: String {
         switch self {
         case .snow: AlertType.sno.systemImage

@@ -18,6 +18,7 @@ enum ForecastDisplayMode: Int, CaseIterable, Identifiable {
 struct ForecastVariantsView: View {
     let forecast: [ForecastHour]
     let rules: [Rule]
+    var languageStyle: AlertLanguageStyle = .bokmal
     let frostMargin: Double
     let mode: ForecastDisplayMode
     let sunThreshold: Double
@@ -48,7 +49,7 @@ struct ForecastVariantsView: View {
                 ) {
                     switch mode {
                     case .timeCards:
-                        TimeCardsForecast(day: day, allForecast: forecast, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold)
+                        TimeCardsForecast(day: day, allForecast: forecast, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, languageStyle: languageStyle)
                     case .weatherBands:
                         SwiftUI.TimelineView(.periodic(from: .now, by: 60)) { timeline in
                             WeatherBandsForecast(day: day, allForecast: forecast, rules: rules, frostMargin: frostMargin, sunThreshold: sunThreshold, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, now: timeline.date)
@@ -250,6 +251,7 @@ private struct TimeCardsForecast: View {
     let allForecast: [ForecastHour]
     let temperatureLowThreshold: Double
     let temperatureHighThreshold: Double
+    let languageStyle: AlertLanguageStyle
 
     private var sampled: [ForecastHour] {
         day.hours.enumerated().compactMap { index, hour in index % 3 == 0 ? hour : nil }
@@ -265,6 +267,10 @@ private struct TimeCardsForecast: View {
                     let label = ForecastHourLabel.make(
                         for: hour.time,
                         among: day.hours.map(\.time)
+                    )
+                    let condition = CurrentWeatherCondition.resolve(
+                        hour,
+                        precipitationIsFalling: hour.precipitationRate >= 0.1
                     )
                     VStack(spacing: 6) {
                         Text(label.display)
@@ -289,7 +295,7 @@ private struct TimeCardsForecast: View {
                     }
                     .frame(width: 45)
                     .accessibilityElement(children: .combine)
-                    .accessibilityLabel("\(label.accessibility), \(Int(hour.temp.rounded())) grader, \(hour.precip.formatted()) millimeter nedbør")
+                    .accessibilityLabel("\(label.accessibility), \(condition.accessibilityLabel(languageStyle: languageStyle)), \(Int(hour.temp.rounded())) grader, \(hour.precip.formatted()) millimeter nedbør")
                 }
             }
         }

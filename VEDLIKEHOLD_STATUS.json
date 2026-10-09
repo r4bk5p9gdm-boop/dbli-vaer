@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-09T22:11:02Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-144 fullført: GPS-stedsoverskriften viser nå «her [preposisjon] [sted]»; bare «her » er lagt foran preposisjonen, dens stil/plassering og stedsnavnet er bevart, og «↑ GPS» legges over uten layout-høyde med diskret pilfade. Swift-parsing og diffkontroll består; full iPhone-bygging/installasjon er ikke kjørt. Neste kø: AUTO-429, AUTO-430 og AUTO-431."
+  "lastProgress": "AUTO-429 fullført: Timekortenes VoiceOver-etikett inkluderer lokalisert værtilstand og følger samme nedbørsgrense som synlig symbol; mulig, men ikke aktiv, nedbør omtales ikke som regn. Regresjonstester dekker regn, snø, tåke, engelsk tekst og mulig nedbør. Swift-parsing og diffkontroll består; XCTest ble utsatt etter ressurskontroll viste ca. 94 MB frie minnesider. AUTO-432 ble opprettet etter bred køgjennomgang. Neste kø: AUTO-430, AUTO-431 og AUTO-432."
 }

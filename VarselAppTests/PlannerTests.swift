@@ -3535,6 +3535,21 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(CurrentWeatherCondition.resolve(clear), .clear)
         XCTAssertEqual(CurrentWeatherCondition.resolve(partlyCloudy), .partlyCloudy)
         XCTAssertEqual(CurrentWeatherCondition.resolve(rain, precipitationIsFalling: false), .cloudy)
+        XCTAssertEqual(CurrentWeatherCondition.resolve(rain).accessibilityLabel(languageStyle: .bokmal), "Regn")
+        XCTAssertEqual(CurrentWeatherCondition.resolve(snow).accessibilityLabel(languageStyle: .bokmal), "Snø")
+        XCTAssertEqual(CurrentWeatherCondition.resolve(fog).accessibilityLabel(languageStyle: .bokmal), "Tåke")
+        XCTAssertEqual(CurrentWeatherCondition.resolve(rain).accessibilityLabel(languageStyle: .english), "Rain")
+        XCTAssertEqual(CurrentWeatherCondition.resolve(fog).accessibilityLabel(languageStyle: .english), "Fog")
+
+        let possibleRain = ForecastHour(
+            time: base, temp: 8, precip: 0, wind: 3, cloud: 80, dew: 5,
+            precipMax: 2, precipProbability: 50
+        )
+        let displayedCondition = CurrentWeatherCondition.resolve(
+            possibleRain,
+            precipitationIsFalling: possibleRain.precipitationRate >= 0.1
+        )
+        XCTAssertEqual(displayedCondition, .cloudy)
     }
 
     func testRotatingStatusDetailsDescribeWeatherWithoutRepeatingTime() {

@@ -375,6 +375,7 @@ struct HomeView: View {
                                 ForecastVariantsView(
                                     forecast: visibleForecast,
                                     rules: p.rulesForDisplay,
+                                    languageStyle: store.alertLanguageStyle,
                                     frostMargin: p.localFrostMargin,
                                     mode: .weatherBands,
                                     sunThreshold: p.displayThreshold(for: .sol),
@@ -2196,6 +2197,7 @@ struct PlacesView: View {
         ForecastVariantsView(
             forecast: forecast,
             rules: place.rulesForDisplay,
+            languageStyle: store.alertLanguageStyle,
             frostMargin: place.localFrostMargin,
             mode: .weatherBands,
             sunThreshold: place.displayThreshold(for: .sol),
