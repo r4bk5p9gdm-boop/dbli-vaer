@@ -1932,15 +1932,20 @@ spesifikke `.fileReadCorruptFile`-feilen. Swift-parsing og diffkontroll består;
 Xcode-testbygg er blokkert av SwiftUIMacros.StateMacro-feilen, og
 CoreSimulatorService er utilgjengelig.
 
-**AUTO-420 · ÅPEN** — Regresjonstest at WeatherConfigurationDocument avviser
-en tom, men ellers gyldig JSON-fil som korrupt i stedet for å lage en tom
-værkonfigurasjon.
+**AUTO-420 · FULLFØRT 2026-10-09** — La til filimportregresjon med en tom,
+vanlig JSON-fil. JSON-dekoderen avviser manglende innhold i stedet for å lage
+en tom værkonfigurasjon. Swift-parsing og diffkontroll består; Xcode-testbygg
+er blokkert av SwiftUIMacros.StateMacro-feilen, og CoreSimulatorService er
+utilgjengelig.
 
 **AUTO-421 · ÅPEN** — Regresjonstest gjennom FileDocument-importen at én
 feilformet stedspost hoppes over mens gyldig sted, språk og valgt-ID beholdes.
 
 **AUTO-422 · ÅPEN** — Regresjonstest at syntaktisk gyldig JSON med feil
 toppnivåtype (for eksempel `null`) avvises som korrupt værkonfigurasjonsfil.
+
+**AUTO-423 · ÅPEN** — Regresjonstest gjennom FileDocument at manglende eller
+ukjent valgt-sted-ID faller tilbake til første gyldige sted ved import.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

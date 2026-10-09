@@ -6838,6 +6838,14 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testConfigurationDocumentRejectsEmptyRegularFile() {
+        let emptyFile = FileWrapper(regularFileWithContents: Data())
+
+        XCTAssertThrowsError(try WeatherConfigurationDocument(
+            configuration: .init(file: emptyFile, contentType: .json)
+        ))
+    }
+
     func testLegacyConfigurationWithoutOptionalMetadataKeepsPlacesAndSelection() throws {
         let place = Place(name: "Namsos", lat: 64.5, lon: 11.5)
         let source = WeatherConfigurationExport(
