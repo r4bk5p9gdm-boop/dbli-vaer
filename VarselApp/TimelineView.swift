@@ -613,6 +613,7 @@ private struct CombinedHourBandCell: View {
                         : .neutral
                     // Boundary cells show a marker instead of a yellow sun fill.
                     let solarTransition = solarAppearance.transition
+                    let hourCellWidth = proxy.size.width / CGFloat(period.hours)
                     let matchesSunPreview = type == .sol && solarAppearance == .sunlit
                     let matchesPartialSunPreview = type == .sol && solarAppearance == .partlySunlit
                     let matchesTemperaturePreview = type == .temperatur && (hour.temp <= temperatureLowThreshold || hour.temp >= temperatureHighThreshold)
@@ -625,8 +626,6 @@ private struct CombinedHourBandCell: View {
                             Rectangle()
                                 .fill(type == .temperatur && hour.temp >= temperatureHighThreshold
                                   ? Color.orange.opacity(0.78)
-                                  : type == .temperatur && hour.temp <= 0
-                                  ? Color.white.opacity(0.92)
                                   : type.color.opacity(type == .sol && matchesPartialSunPreview
                                                        ? SolarCellMarkerStyle.partialFillOpacity
                                                        : type == .sol
@@ -642,7 +641,8 @@ private struct CombinedHourBandCell: View {
                         if matchesFrost {
                             Image(systemName: AlertType.frost.systemImage)
                                 .font(.system(size: 7, weight: .bold))
-                                .foregroundStyle(hour.temp <= 0 ? Color.blue : Color.white)
+                                .foregroundStyle(Color.white)
+                                .shadow(color: .black.opacity(0.28), radius: 0.7, y: 0.4)
                                     .frame(width: proxy.size.width / CGFloat(period.hours), height: proxy.size.height)
                                     .position(
                                     x: proxy.size.width * CGFloat(offset) / CGFloat(period.hours) + proxy.size.width / CGFloat(period.hours * 2),
@@ -652,11 +652,12 @@ private struct CombinedHourBandCell: View {
                     }
                     if offset < period.hours, let solarTransition {
                         Image(systemName: solarTransition.systemImage)
-                            .font(.system(size: 12, weight: .bold))
+                            .resizable()
                             .foregroundStyle(Color.orange)
-                            .frame(width: 21, height: 21)
+                            .scaledToFit()
+                            .frame(width: hourCellWidth, height: proxy.size.height)
                             .position(
-                                x: proxy.size.width * CGFloat(offset) / CGFloat(period.hours) + proxy.size.width / CGFloat(period.hours * 2),
+                                x: proxy.size.width * CGFloat(offset) / CGFloat(period.hours) + hourCellWidth / 2,
                                 y: proxy.size.height / 2
                             )
                             .accessibilityLabel(solarTransition == .sunrise ? "Soloppgang" : "Solnedgang")
@@ -1064,6 +1065,7 @@ private struct SolarHatchMark: View {
                 lineWidth: SolarCellMarkerStyle.hatchLineWidth
             )
         }
+        .clipShape(Rectangle())
         .allowsHitTesting(false)
     }
 }

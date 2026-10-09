@@ -54,6 +54,19 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-130 · FULLFØRT 2026-10-09** — Lavtemperaturceller forblir blå også
+under null i stedet for å bli hvite og forsvinne mot bakgrunnen. Frost vises
+separat som et hvitt snøfnugg med lett kontrastskygge oppå cellen. Swift-parsing,
+diffkontroll og iPhone-bygg består.
+
+**BRUKER-129 · FULLFØRT 2026-10-09** — Soloppgangs- og
+solnedgangsmerket skaleres nå innenfor bredden til én værbåndcelle. Symbolet
+fyller cellens høyde bedre, så retningspilen blir tydeligere uten at ikonet
+strekker seg inn i nabotimen. Skravuren klippes per celle og vises bare på den
+skravert-gule typen, ikke på helgule celler eller naboceller; skravurlinjene
+er nå tydelig gule i stedet for brunoransje. Swift-parsing, diffkontroll og
+iPhone-bygg består.
+
 **BRUKER-128 · FULLFØRT 2026-10-09** — Gjorde soloppgangs- og
 solnedgangsikonene i værbåndet transparente ved å fjerne den hvite sirkelen.
 Bare det oransje symbolet vises nå i cellen. Swift-parsing, diffkontroll og

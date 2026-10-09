@@ -4,8 +4,8 @@ import CoreLocation
 enum SolarCellMarkerStyle {
     static let solidFillOpacity = 0.78
     static let partialFillOpacity = 0.48
-    static let hatchColor = Color(red: 0.72, green: 0.42, blue: 0.08)
-    static let hatchOpacity = 0.7
+    static let hatchColor = Color(red: 1, green: 0.84, blue: 0)
+    static let hatchOpacity = 0.95
     static let hatchSpacing: CGFloat = 5
     static let hatchLineWidth: CGFloat = 1
 }

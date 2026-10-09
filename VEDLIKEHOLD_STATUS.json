@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T17:29:31Z",
+  "lastScheduledStart": "2026-10-09T17:35:04Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-402 fullført: Store rydder ugyldige homeFavorites sentralt når places-listen endres; omrekkefølge bevarer favorittene. Regresjon for listeerstatning, reorder, persistence og ny Store-oppstart lagt til. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-405; neste: AUTO-403/404/405."
+  "lastProgress": "BRUKER-130 fullført: lave temperaturceller blir værende blå under null i stedet for å forsvinne mot hvit bakgrunn, og frost framheves separat med hvitt snøfnugg og lett kontrastskygge. BRUKER-129 oppdaterer også solpilen og klipper gul skravur per celle. Swift-parsing, diffkontroll og iPhone-bygg består."
 }
