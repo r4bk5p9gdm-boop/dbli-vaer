@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-09T13:27:16Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-122 fullført: Lokal temperatur-seksjonen viser nå Yr og lokalt justert temperatur side om side, gjeldende avvik i den sammenleggbare overskriften, en tydelig +/- justering og forklaring på at endringen er stedsspesifikk og påvirker temperatur-/frostmarkeringer. Swift-parsing, diffkontroll og generisk iOS-build bestått; simulatorruntime er utilgjengelig."
+  "lastProgress": "AUTO-357 og AUTO-359–362 fullført: la til regnperioder-samme-regel, cross-place/onlyWhenNearby og fireAt-sorteringsregresjoner. Reparerte testmålets manglende precip-argumenter og typecheck-flaskehalser; xcodebuild build-for-testing nå bestått. XCTest ikke kjørt fordi simulatorruntime mangler. Neste åpne AUTO-kø: 363/364/365."
 }

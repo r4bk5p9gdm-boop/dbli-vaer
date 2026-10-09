@@ -2148,7 +2148,7 @@ final class PlannerTests: XCTestCase {
 
     func testLongPossibleRainUsesShowerWindowTemplateInRollingCard() {
         let now = base.addingTimeInterval(5 * 60)
-        let dry = ForecastHour(time: base, temp: 8, wind: 1, cloud: 90, dew: 5)
+        let dry = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 90, dew: 5)
         let event = base.addingTimeInterval(5 * 3_600)
         let rainHours = (0..<4).map { offset in
             ForecastHour(
@@ -2176,7 +2176,7 @@ final class PlannerTests: XCTestCase {
     func testFuturePossibleRainWithBroadDayPhrasePutsClockInDetail() {
         let calendar = Calendar.current
         let now = base.addingTimeInterval(5 * 60)
-        let dry = ForecastHour(time: base, temp: 8, wind: 1, cloud: 90, dew: 5)
+        let dry = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 90, dew: 5)
         let event = calendar.date(bySettingHour: 11, minute: 0, second: 0, of: base)!
         let possible = ForecastHour(
             time: event, temp: 8, precip: 0, wind: 1, cloud: 90, dew: 5,
@@ -2202,7 +2202,7 @@ final class PlannerTests: XCTestCase {
         let now = base.addingTimeInterval(5 * 60)
         let tomorrow = calendar.date(byAdding: .day, value: 1, to: base)!
         let event = calendar.date(bySettingHour: 9, minute: 0, second: 0, of: tomorrow)!
-        let dry = ForecastHour(time: base, temp: 8, wind: 1, cloud: 90, dew: 5)
+        let dry = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 90, dew: 5)
         let possible = ForecastHour(
             time: event, temp: 8, precip: 0, wind: 1, cloud: 90, dew: 5,
             precipMax: 0.2, precipProbability: 40
@@ -3856,6 +3856,93 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testPlanAllKeepsNearbyOnlyRainForOnePlaceWithoutDeduplicatingAnotherPlace() {
+        let firstEventAt = base.addingTimeInterval(2 * 3_600)
+        let nearbyEventAt = base.addingTimeInterval(5 * 3_600)
+        let calendar = Calendar.current
+        func rainRule(at eventAt: Date, onlyWhenNearby: Bool = false) -> Rule {
+            var rule = Rule(type: .regn)
+            rule.threshold = 0.5
+            rule.leadMinutes = 60
+            rule.onlyWhenNearby = onlyWhenNearby
+            let hour = calendar.component(.hour, from: eventAt)
+            rule.activeFromHour = hour
+            rule.activeToHour = (hour + 1) % 24
+            return rule
+        }
+        let firstRule = rainRule(at: firstEventAt)
+        let nearbyRule = rainRule(at: nearbyEventAt, onlyWhenNearby: true)
+        let firstPlace = Place(name: "Namsos", lat: 64.5, lon: 11.5, rules: [firstRule])
+        let nearbyPlace = Place(name: "Klinga", lat: 64.6, lon: 11.6, rules: [nearbyRule])
+        let forecast = (0...5).map { offset in
+            ForecastHour(
+                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
+                temp: 8,
+                precip: offset == 2 || offset == 5 ? 1 : 0,
+                wind: 1,
+                cloud: 60,
+                dew: 7
+            )
+        }
+
+        let alerts = Planner.planAll(
+            places: [firstPlace, nearbyPlace],
+            forecasts: [firstPlace.id: forecast, nearbyPlace.id: forecast],
+            nearbyPlaceIDs: [nearbyPlace.id],
+            now: base
+        )
+        let alertsWhileAway = Planner.planAll(
+            places: [firstPlace, nearbyPlace],
+            forecasts: [firstPlace.id: forecast, nearbyPlace.id: forecast],
+            now: base
+        )
+
+        XCTAssertEqual(nearbyEventAt.timeIntervalSince(firstEventAt), 3 * 3_600)
+        XCTAssertEqual(alerts.count, 2)
+        XCTAssertEqual(Set(alerts.map(\.placeID)), Set([firstPlace.id, nearbyPlace.id]))
+        XCTAssertEqual(Set(alerts.map(\.eventAt)), Set([firstEventAt, nearbyEventAt]))
+        XCTAssertEqual(alertsWhileAway.map(\.placeID), [firstPlace.id])
+    }
+
+    func testPlanAllSortsAlertsByFireTimeAcrossPlaces() {
+        let earlierEvent = base.addingTimeInterval(3 * 3_600)
+        let laterEvent = base.addingTimeInterval(5 * 3_600)
+        let calendar = Calendar.current
+        func rainRule(at eventAt: Date, leadMinutes: Int) -> Rule {
+            var rule = Rule(type: .regn)
+            rule.threshold = 0.5
+            rule.leadMinutes = leadMinutes
+            let hour = calendar.component(.hour, from: eventAt)
+            rule.activeFromHour = hour
+            rule.activeToHour = (hour + 1) % 24
+            return rule
+        }
+        let earlierRule = rainRule(at: earlierEvent, leadMinutes: 60)
+        let laterRule = rainRule(at: laterEvent, leadMinutes: 240)
+        let earlierPlace = Place(name: "Namsos", lat: 64.5, lon: 11.5, rules: [earlierRule])
+        let laterPlace = Place(name: "Klinga", lat: 64.6, lon: 11.6, rules: [laterRule])
+        let forecast = (0...5).map { offset in
+            ForecastHour(
+                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
+                temp: 8,
+                precip: offset == 3 || offset == 5 ? 1 : 0,
+                wind: 1,
+                cloud: 60,
+                dew: 7
+            )
+        }
+
+        let alerts = Planner.planAll(
+            places: [earlierPlace, laterPlace],
+            forecasts: [earlierPlace.id: forecast, laterPlace.id: forecast],
+            now: base
+        )
+
+        XCTAssertLessThan(alerts[0].fireAt, alerts[1].fireAt)
+        XCTAssertEqual(alerts.map(\.rule.id), [laterRule.id, earlierRule.id])
+        XCTAssertEqual(alerts.map(\.eventAt), [laterEvent, earlierEvent])
+    }
+
     func testPlanAllDeduplicatesRainWithoutDroppingOtherWeatherAlerts() {
         var firstRain = Rule(type: .regn)
         firstRain.threshold = 0.5
@@ -3916,11 +4003,13 @@ final class PlannerTests: XCTestCase {
         snow.activeToHour = (snowHour + 1) % 24
 
         let place = Place(name: "Klinga", lat: 64.5, lon: 11.5, rules: [rain, snow])
-        let forecast = (0...5).map { offset in
-            ForecastHour(
-                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
-                temp: offset == 5 ? 0 : 8,
-                precip: offset == 2 || offset == 5 ? 1 : 0,
+        let forecast: [ForecastHour] = (0...5).map { offset -> ForecastHour in
+            let temperature = offset == 5 ? 0.0 : 8.0
+            let precipitation = offset == 2 || offset == 5 ? 1.0 : 0.0
+            return ForecastHour(
+                time: base.addingTimeInterval(TimeInterval(offset) * 3_600),
+                temp: temperature,
+                precip: precipitation,
                 wind: 1,
                 cloud: 60,
                 dew: 7
@@ -3931,11 +4020,15 @@ final class PlannerTests: XCTestCase {
             places: [place], forecasts: [place.id: forecast]
         )
 
+        let rainAlerts: [PlannedAlert] = alerts.filter { $0.rule.type == AlertType.regn }
+        let snowAlerts: [PlannedAlert] = alerts.filter { $0.rule.type == AlertType.sno }
+        let ruleIDs: Set<UUID> = Set(alerts.map { $0.rule.id })
+        let eventTimes: Set<Date> = Set(alerts.map { $0.eventAt })
         XCTAssertEqual(alerts.count, 2)
-        XCTAssertEqual(alerts.filter { $0.rule.type == .regn }.count, 1)
-        XCTAssertEqual(alerts.filter { $0.rule.type == .sno }.count, 1)
-        XCTAssertEqual(Set(alerts.map(\.rule.id)), Set([rain.id, snow.id]))
-        XCTAssertEqual(Set(alerts.map(\.eventAt)), Set([rainAt, snowAt]))
+        XCTAssertEqual(rainAlerts.count, 1)
+        XCTAssertEqual(snowAlerts.count, 1)
+        XCTAssertEqual(ruleIDs, Set([rain.id, snow.id]))
+        XCTAssertEqual(eventTimes, Set([rainAt, snowAt]))
     }
 
     func testPlanAllDoesNotDeduplicateRainAgainstNearbySnowAtAnotherPlace() {
@@ -3958,11 +4051,13 @@ final class PlannerTests: XCTestCase {
 
         let rainPlace = Place(name: "Namsos", lat: 64.5, lon: 11.5, rules: [rain])
         let snowPlace = Place(name: "Klinga", lat: 64.6, lon: 11.6, rules: [snow])
-        let forecast = (0...5).map { offset in
-            ForecastHour(
-                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
-                temp: offset == 5 ? 0 : 8,
-                precip: offset == 2 || offset == 5 ? 1 : 0,
+        let forecast: [ForecastHour] = (0...5).map { offset -> ForecastHour in
+            let temperature = offset == 5 ? 0.0 : 8.0
+            let precipitation = offset == 2 || offset == 5 ? 1.0 : 0.0
+            return ForecastHour(
+                time: base.addingTimeInterval(TimeInterval(offset) * 3_600),
+                temp: temperature,
+                precip: precipitation,
                 wind: 1,
                 cloud: 60,
                 dew: 7
@@ -3976,9 +4071,13 @@ final class PlannerTests: XCTestCase {
         )
 
         XCTAssertEqual(alerts.count, 2)
-        XCTAssertEqual(Set(alerts.map(\.placeID)), Set([rainPlace.id, snowPlace.id]))
-        XCTAssertEqual(alerts.filter { $0.rule.type == .regn }.map(\.eventAt), [rainAt])
-        XCTAssertEqual(alerts.filter { $0.rule.type == .sno }.map(\.eventAt), [snowAt])
+        let placeIDs: Set<UUID> = Set(alerts.compactMap { $0.placeID })
+        let rainEvents: [Date] = alerts.filter { $0.rule.type == AlertType.regn }.map { $0.eventAt }
+        let snowEvents: [Date] = alerts.filter { $0.rule.type == AlertType.sno }.map { $0.eventAt }
+        XCTAssertEqual(alerts.count, 2)
+        XCTAssertEqual(placeIDs, Set([rainPlace.id, snowPlace.id]))
+        XCTAssertEqual(rainEvents, [rainAt])
+        XCTAssertEqual(snowEvents, [snowAt])
     }
 
     func testPlanAllKeepsWindAlertBetweenDeduplicatedRainAlerts() {
@@ -4703,6 +4802,39 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(alerts.count, 2)
         XCTAssertEqual(Set(alerts.map(\.rule.id)), Set([rules[0].id, rules[2].id]))
         XCTAssertEqual(Set(alerts.map(\.eventAt)), Set([eventTimes[0], eventTimes[2]]))
+    }
+
+    func testPlanAllKeepsRainEventsWithinSixHoursFromSameRule() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let now = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 10, day: 14, hour: 20)))
+        var rule = Rule(type: .regn)
+        rule.threshold = 0.5
+        rule.activeFromHour = 18
+        rule.activeToHour = 6
+        rule.previousDayNotificationHour = 21
+        rule.notificationDayOffset = 0
+
+        let hours = (0...9).map { offset in
+            ForecastHour(
+                time: now.addingTimeInterval(TimeInterval(offset * 3_600)),
+                temp: 8,
+                precip: offset == 3 || offset == 8 ? 1 : 0,
+                wind: 1,
+                cloud: 60,
+                dew: 7
+            )
+        }
+        let place = Place(name: "Klinga", lat: 64.5, lon: 11.5, rules: [rule])
+
+        let alerts = Planner.planAll(
+            places: [place], forecasts: [place.id: hours], now: now, calendar: calendar
+        )
+
+        XCTAssertEqual(alerts.count, 2)
+        XCTAssertEqual(alerts.map(\.rule.id), [rule.id, rule.id])
+        XCTAssertEqual(alerts.map(\.eventAt), [hours[3].time, hours[8].time])
+        XCTAssertLessThan(alerts[1].eventAt.timeIntervalSince(alerts[0].eventAt), 6 * 3_600)
     }
 
     func testNotificationLimitKeepsNearestUniqueFutureAlerts() {

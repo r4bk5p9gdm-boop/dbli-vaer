@@ -1454,29 +1454,51 @@ lettvektskjøringen.
 alle tre push-kandidatene for beholdt regnhendelse overlever mens en annen
 regels nærliggende hendelse dedupliseres. Ingen redundant test ble lagt til.
 
-**AUTO-357 · PÅ VENT 2026-10-09** — La til en rekkefølgeassert på
-`fireAt`, men testmålet kan ikke bygges i denne kjøringen: Xcode rapporterer
-eksisterende kompileringsfeil i `PlannerTests.swift` ved linje 2117, 2145,
-2171 og 3885 (manglende `precip`-argument/typekontroll). Filens Swift-parsing
-består; gjenoppta når testmålets eksisterende kompileringsfeil er rettet.
+**AUTO-357 · FULLFØRT 2026-10-09** — Rekkefølgeasserten på `fireAt` og
+PlannerTests-målet bygger nå etter reparasjonen i AUTO-362. XCTest ble ikke
+kjørt fordi ingen simulatorruntime er tilgjengelig.
 
 **AUTO-358 · FULLFØRT 2026-10-09** — La til
 `testNearbyOnlyRulesAreFilteredIndependentlyPerPlace`: med to steder og bare
 ett i `nearbyPlaceIDs` planlegges varslet bare for stedet som er nær. Swift-
-parsing og diffkontroll består. XCTest er ikke kjørt fordi testmålet fortsatt
-har de urelaterte kompileringsfeilene notert under AUTO-357.
+parsing og diffkontroll består; testmålet bygger nå etter AUTO-362. XCTest er
+ikke kjørt fordi ingen simulatorruntime er tilgjengelig.
 
-**AUTO-359 · ÅPEN** — Test at to separate regnperioder innen seks timer fra
-samme regel begge beholdes; cooldown skal bare deduplisere mellom ulike
-regler, ikke fjerne senere hendelser fra samme regel.
+**AUTO-359 · FULLFØRT 2026-10-09** — La til regresjonstest med to separate
+regnperioder fem timer fra hverandre fra samme nattregel; begge beholdes selv
+om de ligger innenfor cooldown-vinduet. Testmålet bygger etter AUTO-362;
+XCTest ikke kjørt fordi simulatorruntime mangler.
 
-**AUTO-360 · ÅPEN** — Test at regnvarsler for to forskjellige steder ikke
-dedupliseres mot hverandre når hendelsene ligger innen seks timers cooldown,
-inkludert når bare det ene stedet har en `onlyWhenNearby`-regel.
+**AUTO-360 · FULLFØRT 2026-10-09** — La til regresjonstest som beholder
+regnvarsler fra to steder med tre timers avstand når ett sted bruker
+`onlyWhenNearby`, og som samtidig bekrefter at dette varselet filtreres bort
+når stedet ikke er nært. Testmålet bygger; XCTest ikke kjørt uten simulator.
 
-**AUTO-361 · ÅPEN** — Test at samlet `planAll`-resultat på tvers av steder
-sorteres etter `fireAt` selv når stedsrekkefølge, regelrekkefølge og
-hendelsestid gir en annen rekkefølge.
+**AUTO-361 · FULLFØRT 2026-10-09** — La til test som sender steder i én
+rekkefølge, men med varsler sortert etter tidligste `fireAt` selv om det
+tilhører den senere værhendelsen. Testmålet bygger; XCTest ikke kjørt uten
+simulatorruntime.
+
+**AUTO-362 · FULLFØRT 2026-10-09** — Gjenopprettet byggbarhet for
+`PlannerTests`: tre eldre tørre prognoseprøver manglet eksplisitt `precip`,
+og to lange forecast-/assertuttrykk krevde tydelige typer og deluttrykk.
+`xcodebuild build-for-testing` lykkes nå, inkludert AUTO-357 og AUTO-359–361.
+Ved en ny kontroll i denne kjøringen feilet Xcode før testkompilering med
+`SwiftUIMacros.StateMacro` / `swift-plugin-server` malformed response og
+sandbox-feil; simulatorruntime er samtidig utilgjengelig. Dette er en
+verktøy-/miljøblokkering, ikke en ny testkilde-feil.
+
+**AUTO-363 · ÅPEN** — Gjør `Planner.planAll`-rekkefølgen deterministisk for
+like `fireAt` ved å avklare og teste tie-break mellom eventtid, varseltype og
+regel-ID, også på tvers av input-permutasjoner.
+
+**AUTO-364 · ÅPEN** — Samle solcellemarkeringens gul-/skravurfarger i én delt
+visuell kilde, slik at fargeprøven i «Tilpass» og cellene i værbåndet ikke kan
+gli fra hverandre.
+
+**AUTO-365 · ÅPEN** — Legg til modellregresjon som bekrefter at
+stedsspesifikk temperaturjustering endrer viste temperaturmarkeringer for det
+valgte stedet uten å overskrive Yr-originalverdien eller et annet steds data.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
