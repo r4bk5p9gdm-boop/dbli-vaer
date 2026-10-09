@@ -1231,6 +1231,28 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(restoredCabin.rules.allSatisfy(\.onlyWhenNearby))
     }
 
+    func testWizardPresetRulesPreserveExistingMatchingAndOtherRules() {
+        var existingPresetRule = Rule(type: .regn)
+        existingPresetRule.templateTitle = "Regn neste dag"
+        existingPresetRule.threshold = 7.5
+        var otherRule = Rule(type: .vind)
+        otherRule.templateTitle = "Min egen vindregel"
+        let existingRules = [existingPresetRule, otherRule]
+        let proposedRules = WizardPresetConfiguration.rules(
+            selectedIDs: ["regn-neste", "frost-natt"],
+            for: .home,
+            cabinOnlyWhenNearby: false
+        )
+
+        let result = WizardPresetConfiguration.addingMissingRules(proposedRules, to: existingRules)
+
+        XCTAssertEqual(result.map(\.id), [existingPresetRule.id, otherRule.id, proposedRules[1].id])
+        XCTAssertEqual(result.first?.templateTitle, existingPresetRule.templateTitle)
+        XCTAssertEqual(result.first?.threshold, 7.5)
+        XCTAssertEqual(result.filter { $0.templateTitle == "Regn neste dag" }.count, 1)
+        XCTAssertTrue(result.contains { $0.id == otherRule.id })
+    }
+
     func testEveryRulePresetHasCompleteAndConsistentDisplayCopy() {
         let presets = RulePreset.all
         XCTAssertFalse(presets.isEmpty)

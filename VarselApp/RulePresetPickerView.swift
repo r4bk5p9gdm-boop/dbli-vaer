@@ -198,6 +198,13 @@ enum WizardPresetConfiguration {
     static let homePresetIDs = ["regn-neste", "sol-morgen", "frost-natt", "vind-morgen"]
     static let cabinPresetIDs = ["regn-natt", "sno-natt", "frost-natt", "vind-kraftig"]
 
+    static func addingMissingRules(_ proposedRules: [Rule], to existingRules: [Rule]) -> [Rule] {
+        proposedRules.reduce(into: existingRules) { rules, proposedRule in
+            guard !rules.contains(where: { $0.templateTitle == proposedRule.templateTitle }) else { return }
+            rules.append(proposedRule)
+        }
+    }
+
     static func rules(
         selectedIDs: Set<String>,
         for place: WizardPlaceKind,
@@ -578,25 +585,25 @@ struct OnboardingWizardView: View {
             onFinish()
             return
         }
-        addRules(
+        home.rules = WizardPresetConfiguration.addingMissingRules(
             WizardPresetConfiguration.rules(
                 selectedIDs: presetSelections.ids(for: .home),
                 for: .home,
                 cabinOnlyWhenNearby: false
             ),
-            to: &home
+            to: home.rules
         )
         store.update(home)
 
         if let cabinPlaceID,
            var cabin = store.places.first(where: { $0.id == cabinPlaceID }) {
-            addRules(
+            cabin.rules = WizardPresetConfiguration.addingMissingRules(
                 WizardPresetConfiguration.rules(
                     selectedIDs: presetSelections.ids(for: .cabin),
                     for: .cabin,
                     cabinOnlyWhenNearby: cabinOnlyWhenNearby
                 ),
-                to: &cabin
+                to: cabin.rules
             )
             store.update(cabin)
         }
@@ -605,12 +612,6 @@ struct OnboardingWizardView: View {
         onFinish()
     }
 
-    private func addRules(_ rules: [Rule], to place: inout Place) {
-        for rule in rules {
-            guard !place.rules.contains(where: { $0.templateTitle == rule.templateTitle }) else { continue }
-            place.rules.append(rule)
-        }
-    }
 }
 
 enum ContextHelpTopic {

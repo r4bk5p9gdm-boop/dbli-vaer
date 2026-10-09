@@ -1639,10 +1639,13 @@ bevares uten å endre hjemstedets regler eller valgte sted. Swift-parsing,
 diffkontroll og iOS `build-for-testing` består; XCTest kunne ikke kjøres fordi
 CoreSimulator-/enhetstjenesten ikke er tilgjengelig.
 
-**AUTO-383 · ÅPEN** — Trekk veiviserens kontroll av allerede eksisterende
-regler inn i en testbar hjelpefunksjon. Legg til regresjon som sikrer at valg
-av et preset ikke lager duplikat med samme `templateTitle`, og samtidig
-beholder andre regler for stedet.
+**AUTO-383 · FULLFØRT 2026-10-09** — Flyttet sammenflettingen av
+veiviserforslag og stedets eksisterende regler til den testbare
+`WizardPresetConfiguration.addingMissingRules`. Regresjonen bekrefter at en
+eksisterende regel med samme `templateTitle` ikke dupliseres eller overskrives,
+og at andre regler beholdes. Swift-parsing, diffkontroll og iOS
+`build-for-testing` består; XCTest kunne ikke kjøres fordi simulatoren ikke er
+tilgjengelig.
 
 **AUTO-384 · ÅPEN** — Legg til regresjon for `WizardPresetConfiguration.rules`
 som sender inn både kjente og ukjente preset-ID-er. Bekreft at ukjente ID-er
@@ -1652,6 +1655,10 @@ regel ikke returneres flere ganger.
 **AUTO-385 · ÅPEN** — Legg til regresjon som gjenoppretter en Store der
 `selectedID` peker på et sted som ikke finnes. Bekreft at Store velger et gyldig
 sted og at den gjenopprettede tilstanden persisterer dette valget.
+
+**AUTO-386 · ÅPEN** — Utvid hyttepersistensregresjonen med brukeren som slår av
+«bare når jeg er i nærheten». Bekreft at `onlyWhenNearby == false` overlever
+Store-gjenoppretting, mens hjemstedets regelsett forblir uendret.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

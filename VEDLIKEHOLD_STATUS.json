@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T15:48:30Z",
+  "lastScheduledStart": "2026-10-09T15:53:30Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-382 fullført: la til persistensregresjon som lagrer Store med hjemsted og hytte, gjenoppretter den og kontrollerer at bare hyttas regler beholder onlyWhenNearby. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-385; neste: AUTO-383/384/385."
+  "lastProgress": "AUTO-383 fullført: flyttet veiviserens deduplisering av eksisterende varselregler til WizardPresetConfiguration.addingMissingRules. Regresjon bekrefter at matching templateTitle bevares uten duplikat/overskriving og at andre regler beholdes. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-386; neste: AUTO-384/385/386."
 }
