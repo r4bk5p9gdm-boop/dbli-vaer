@@ -165,6 +165,29 @@ enum WizardAlertCategory: String, CaseIterable, Identifiable {
     }
 }
 
+enum WizardPlaceKind: Equatable {
+    case home
+    case cabin
+}
+
+enum WizardPresetConfiguration {
+    static let homePresetIDs = ["regn-neste", "sol-morgen", "frost-natt", "vind-morgen"]
+    static let cabinPresetIDs = ["regn-natt", "sno-natt", "frost-natt", "vind-kraftig"]
+
+    static func rules(
+        selectedIDs: Set<String>,
+        for place: WizardPlaceKind,
+        cabinOnlyWhenNearby: Bool
+    ) -> [Rule] {
+        RulePreset.all.compactMap { preset in
+            guard selectedIDs.contains(preset.id) else { return nil }
+            var rule = preset.rule
+            rule.onlyWhenNearby = place == .cabin && cabinOnlyWhenNearby
+            return rule
+        }
+    }
+}
+
 struct OnboardingWizardView: View {
     @EnvironmentObject private var store: Store
     @StateObject private var locationManager = LocationManager()
@@ -174,8 +197,8 @@ struct OnboardingWizardView: View {
     @State private var showingCabinSearch = false
     @State private var isLocating = false
     @State private var locationMessage: String?
-    @State private var selectedHomePresetIDs: Set<String> = ["regn-neste", "sol-morgen", "frost-natt", "vind-morgen"]
-    @State private var selectedCabinPresetIDs: Set<String> = ["regn-natt", "sno-natt", "frost-natt", "vind-kraftig"]
+    @State private var selectedHomePresetIDs = Set(WizardPresetConfiguration.homePresetIDs)
+    @State private var selectedCabinPresetIDs = Set(WizardPresetConfiguration.cabinPresetIDs)
     @State private var homePlaceID: UUID?
     @State private var cabinPlaceID: UUID?
     @State private var cabinOnlyWhenNearby = true
@@ -223,7 +246,7 @@ struct OnboardingWizardView: View {
             PlaceSearchView(onSelect: selectSearchedHome)
         }
         .sheet(isPresented: $showingCabinSearch) {
-            PlaceSearchView(initialPreposition: .på, onSelect: selectSearchedCabin)
+            PlaceSearchView(initialPreposition: .pa, onSelect: selectSearchedCabin)
         }
     }
 
@@ -537,12 +560,26 @@ struct OnboardingWizardView: View {
             onFinish()
             return
         }
-        addRules(selectedHomePresetIDs, to: &home, onlyWhenNearby: false)
+        addRules(
+            WizardPresetConfiguration.rules(
+                selectedIDs: selectedHomePresetIDs,
+                for: .home,
+                cabinOnlyWhenNearby: false
+            ),
+            to: &home
+        )
         store.update(home)
 
         if let cabinPlaceID,
            var cabin = store.places.first(where: { $0.id == cabinPlaceID }) {
-            addRules(selectedCabinPresetIDs, to: &cabin, onlyWhenNearby: cabinOnlyWhenNearby)
+            addRules(
+                WizardPresetConfiguration.rules(
+                    selectedIDs: selectedCabinPresetIDs,
+                    for: .cabin,
+                    cabinOnlyWhenNearby: cabinOnlyWhenNearby
+                ),
+                to: &cabin
+            )
             store.update(cabin)
         }
         store.select(home)
@@ -550,10 +587,8 @@ struct OnboardingWizardView: View {
         onFinish()
     }
 
-    private func addRules(_ presetIDs: Set<String>, to place: inout Place, onlyWhenNearby: Bool) {
-        for preset in RulePreset.all where presetIDs.contains(preset.id) {
-            var rule = preset.rule
-            rule.onlyWhenNearby = onlyWhenNearby
+    private func addRules(_ rules: [Rule], to place: inout Place) {
+        for rule in rules {
             guard !place.rules.contains(where: { $0.templateTitle == rule.templateTitle }) else { continue }
             place.rules.append(rule)
         }

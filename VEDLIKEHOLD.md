@@ -1595,10 +1595,14 @@ og oppdateringstid skal overleve lagring og gjenoppretting. Swift-parsing og
 diffkontroll består, men testkjøring står PÅ VENT på grunn av tidligere
 `SwiftUIMacros.StateMacro`-feil i Xcode.
 
-**AUTO-377 · ÅPEN** — Trekk veiviserens forvalgte hjemsted- og hyttevarsel-ID-er
-ut i en ren, testbar modell og legg til kontroll som hvert valgt ID finnes i
-`RulePreset.all`, ikke er duplisert, og at bare hytteoppsettet kan markere
-forslagene som «bare når jeg er i nærheten».
+**AUTO-377 · FULLFØRT 2026-10-09** — Flyttet veiviserens standard-ID-er for
+hjemsted og hytte til `WizardPresetConfiguration`, som også lager reglene og
+tvinger «bare når jeg er i nærheten» av for hjemsted til av. Regresjonstesten
+bekrefter at alle ID-er finnes og er unike innen hver standardliste, at hjem-
+reglene aldri blir nærhetsstyrte, og at hyttereglene følger valget. Rettet også
+`.på` til enumens faktiske `.pa` i veiviseren og fem nye lagringstester.
+iPhone-bygg og `build-for-testing` består; XCTest kunne ikke kjøres fordi
+CoreSimulator-/enhetstjenesten ikke er tilgjengelig.
 
 **AUTO-378 · ÅPEN** — Legg til regresjon som sikrer at alle
 `WizardAlertCategory`-ene har synlig, ikke-tom tittel, forklaringstekst og
@@ -1608,6 +1612,11 @@ har et ikon.
 **AUTO-379 · ÅPEN** — Legg til regresjon for at et avbrutt `Store.add` fortsatt
 beholder stedet og valgt-ID som ble lagret før Yr-forespørselen, uten å lagre
 en ugyldig prognose eller vise en feil som om nettverket feilet.
+
+**AUTO-380 · ÅPEN** — Trekk veiviserens valgte varsel-ID-er per sted og
+kategori ut i en liten modell. Legg til regresjon som bekrefter at å slå et
+forslag av eller på for hjemstedet ikke endrer hyttevalget, og omvendt, også
+når samme preset finnes i begge standardlistene.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

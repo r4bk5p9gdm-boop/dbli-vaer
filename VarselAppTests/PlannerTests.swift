@@ -1121,6 +1121,41 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testWizardDefaultPresetsExistAndOnlyCabinCanUseNearbyRules() {
+        let availableIDs = Set(RulePreset.all.map(\.id))
+        let defaults = [
+            WizardPresetConfiguration.homePresetIDs,
+            WizardPresetConfiguration.cabinPresetIDs
+        ]
+
+        for ids in defaults {
+            XCTAssertEqual(ids.count, Set(ids).count, "Wizard defaults must not repeat preset IDs")
+            XCTAssertTrue(Set(ids).isSubset(of: availableIDs), "Every wizard default must match a preset")
+        }
+
+        let homeRules = WizardPresetConfiguration.rules(
+            selectedIDs: Set(WizardPresetConfiguration.homePresetIDs),
+            for: .home,
+            cabinOnlyWhenNearby: true
+        )
+        let nearbyCabinRules = WizardPresetConfiguration.rules(
+            selectedIDs: Set(WizardPresetConfiguration.cabinPresetIDs),
+            for: .cabin,
+            cabinOnlyWhenNearby: true
+        )
+        let alwaysActiveCabinRules = WizardPresetConfiguration.rules(
+            selectedIDs: Set(WizardPresetConfiguration.cabinPresetIDs),
+            for: .cabin,
+            cabinOnlyWhenNearby: false
+        )
+
+        XCTAssertEqual(homeRules.count, WizardPresetConfiguration.homePresetIDs.count)
+        XCTAssertTrue(homeRules.allSatisfy { !$0.onlyWhenNearby })
+        XCTAssertEqual(nearbyCabinRules.count, WizardPresetConfiguration.cabinPresetIDs.count)
+        XCTAssertTrue(nearbyCabinRules.allSatisfy(\.onlyWhenNearby))
+        XCTAssertTrue(alwaysActiveCabinRules.allSatisfy { !$0.onlyWhenNearby })
+    }
+
     func testEveryRulePresetHasCompleteAndConsistentDisplayCopy() {
         let presets = RulePreset.all
         XCTAssertFalse(presets.isEmpty)
@@ -6276,7 +6311,7 @@ final class PlannerTests: XCTestCase {
             forecastFetcher: { _, _ in throw URLError(.notConnectedToInternet) },
             persistenceKey: persistenceKey
         )
-        let place = Place(name: "Hytte", lat: 64.0, lon: 11.0, preposition: .på)
+        let place = Place(name: "Hytte", lat: 64.0, lon: 11.0, preposition: .pa)
 
         await store.add(place)
 
@@ -6299,7 +6334,7 @@ final class PlannerTests: XCTestCase {
         let persistenceKey = "varsel.test.add-empty-forecast-place.\(UUID().uuidString)"
         defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
         let store = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
-        let place = Place(name: "Hytte", lat: 64.0, lon: 11.0, preposition: .på)
+        let place = Place(name: "Hytte", lat: 64.0, lon: 11.0, preposition: .pa)
 
         await store.add(place)
 
@@ -6319,7 +6354,7 @@ final class PlannerTests: XCTestCase {
         defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
         let hour = ForecastHour(time: base, temp: 8, precip: 0, wind: 2, cloud: 40, dew: 4)
         let store = Store(forecastFetcher: { _, _ in [hour] }, persistenceKey: persistenceKey)
-        let place = Place(name: "Hytte", lat: 64.0, lon: 11.0, preposition: .på)
+        let place = Place(name: "Hytte", lat: 64.0, lon: 11.0, preposition: .pa)
 
         await store.add(place)
 
@@ -6347,7 +6382,7 @@ final class PlannerTests: XCTestCase {
             },
             persistenceKey: persistenceKey
         )
-        let newPlace = Place(name: "Hytte", lat: 64.0, lon: 11.0, preposition: .på)
+        let newPlace = Place(name: "Hytte", lat: 64.0, lon: 11.0, preposition: .pa)
         let task = Task { @MainActor in await store.add(newPlace) }
         await fulfillment(of: [fetchStarted], timeout: 5)
 
@@ -6375,7 +6410,7 @@ final class PlannerTests: XCTestCase {
         let newHour = ForecastHour(time: base.addingTimeInterval(3_600), temp: 8,
                                    precip: 0, wind: 2, cloud: 40, dew: 4)
         let store = Store(forecastFetcher: { _, _ in [newHour] }, persistenceKey: persistenceKey)
-        let added = Place(name: "Hytte", lat: 64.0, lon: 11.0, preposition: .på)
+        let added = Place(name: "Hytte", lat: 64.0, lon: 11.0, preposition: .pa)
 
         await store.add(added)
 
