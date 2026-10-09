@@ -1300,7 +1300,8 @@ final class PlannerTests: XCTestCase {
         existingRule.templateTitle = "Min egen regel"
         existingRule.enabled = false
         existingRule.threshold = 13
-        let home = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        var home = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        home.temperatureOffset = -1.5
         var cabin = Place(
             name: "Hytte", customName: "Fjellet", lat: 64.2, lon: 11.4,
             preposition: .pa, rules: [existingRule], notificationsEnabled: false
@@ -1324,9 +1325,13 @@ final class PlannerTests: XCTestCase {
         store.update(updatedCabin)
 
         let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        let restoredHome = try XCTUnwrap(restored.places.first { $0.id == home.id })
         let restoredCabin = try XCTUnwrap(restored.places.first { $0.id == cabin.id })
         let preservedRule = try XCTUnwrap(restoredCabin.rules.first { $0.id == existingRule.id })
         XCTAssertEqual(restored.selectedID, home.id)
+        XCTAssertEqual(restoredHome.localTemperatureOffset, -1.5)
+        XCTAssertEqual(restored.forecasts[home.id], [homeHour])
+        XCTAssertEqual(restored.forecasts[cabin.id], [cabinHour])
         XCTAssertEqual(restoredCabin.name, cabin.name)
         XCTAssertEqual(restoredCabin.customName, cabin.customName)
         XCTAssertFalse(restoredCabin.areNotificationsEnabled)
@@ -1334,8 +1339,6 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(preservedRule.enabled)
         XCTAssertEqual(preservedRule.threshold, 13)
         XCTAssertTrue(restoredCabin.rules.contains { $0.type == .frost && $0.onlyWhenNearby })
-        XCTAssertEqual(restored.forecasts[home.id], [homeHour])
-        XCTAssertEqual(restored.forecasts[cabin.id], [cabinHour])
     }
 
     func testWizardPresetRulesPreserveExistingMatchingAndOtherRules() {

@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T16:13:30Z",
+  "lastScheduledStart": "2026-10-09T16:18:30Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-387 fullført: la til Store-regresjon for å legge preset-regler på eksisterende hytte, lagre og gjenopprette. Bekreftet bevaring av ID/navn, varsler av, temperaturavvik, eksisterende avslått regel, valgt sted og separate cacheprognoser. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-390; neste: AUTO-388/389/390."
+  "lastProgress": "AUTO-388 fullført: utvidet regresjon for oppdatering av eksisterende hytte med ulike temperaturavvik for hjemsted og hytte. Etter Store-gjenoppretting har hvert sted eget avvik og separate prognosedata. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-391; neste: AUTO-389/390/391."
 }
