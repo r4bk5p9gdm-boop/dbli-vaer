@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-09T22:11:02Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-428 fullført: LocationManager bruker nå en ren, deterministisk autorisasjonsbeslutning; denied, restricted og ukjent framtidig status gir umiddelbar avslått-feil, mens notDetermined og autorisert oppførsel er bevart. Swift-parsing, typekontroll av beslutningsfunksjonen og diffkontroll består; XCTest ble utsatt på grunn av svært lite ledig minne. AUTO-431 ble opprettet etter bred køgjennomgang. Neste køpunkter er AUTO-429, AUTO-430 og AUTO-431."
+  "lastProgress": "BRUKER-144 fullført: GPS-stedsoverskriften viser nå «her [preposisjon] [sted]»; bare «her » er lagt foran preposisjonen, dens stil/plassering og stedsnavnet er bevart, og «↑ GPS» legges over uten layout-høyde med diskret pilfade. Swift-parsing og diffkontroll består; full iPhone-bygging/installasjon er ikke kjørt. Neste kø: AUTO-429, AUTO-430 og AUTO-431."
 }

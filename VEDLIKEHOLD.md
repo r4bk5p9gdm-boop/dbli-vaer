@@ -54,6 +54,15 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-144 · FULLFØRT 2026-10-10** — Rettet GPS-stedsoverskriften på
+Hjem etter presisering: teksten er nå «her [preposisjon] [sted]», der bare
+`her` er lagt til foran den eksisterende preposisjonen. Preposisjonen beholder
+sin opprinnelige skrifttype, farge og plassering; stedsnavnet og typografien
+forblir urørt. «↑ GPS» ligger som et overlegg over preposisjonen uten å øke
+etikettens layout-høyde, med en rolig fade på posisjonspilen som live-signal.
+Swift-parsing og diffkontroll består; full iPhone-bygging/installasjon er ikke
+kjørt i denne endringen.
+
 **AUTO-431 · ÅPEN** — Gjør den nye stedsmenyen deterministisk testbar på
 rollenivå: bekreft at «Her!» og «Hjem» slås sammen ved samme steds-ID, at
 hytte-ID som overlapper ikke lager ekstra snarvei, og at valgt snarvei følger
