@@ -54,6 +54,14 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-120 · FULLFØRT 2026-10-09** — Frost bruker nå et tydelig
+snøfnuggikon. Solgrensene styrer hver sin visning: celler under hovedgrensen
+er helgule, og celler fram til solgløttgrensen er lysere gule med skravur.
+Begge grensevalg går til 90 % skydekke. Soloppgang og solnedgang vises med
+større, heldekkende symbol som maskerer gulfargen. Skoddeprognoser får eget
+skoddeikon i stedet for å bli vist som overskyet. La til regresjonstester for
+grenselogikken, frostikonet og skoddeikonet.
+
 **BRUKER-119 · FULLFØRT 2026-09-24** — Ryddet opp i siden for synlige
 værrader på Hjem. Hver cellegrense har nå en forklaring som viser hva som
 faktisk markeres: frost forklarer 0 °C-grensen og eventuell frostmargin,

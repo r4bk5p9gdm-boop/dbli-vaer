@@ -211,6 +211,36 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testPartialSunUsesSecondCloudThresholdButSolarBoundariesStillWin() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let day = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 6, day: 15)))
+        let noon = try XCTUnwrap(calendar.date(bySettingHour: 12, minute: 0, second: 0, of: day))
+        XCTAssertEqual(SolarCycle.rowAppearance(
+            near: noon, cloud: 10, sunThreshold: 20, sunThreshold2: 60,
+            latitude: 63.43, longitude: 10.39, calendar: calendar
+        ), .sunlit)
+        XCTAssertEqual(SolarCycle.rowAppearance(
+            near: noon, cloud: 40, sunThreshold: 20, sunThreshold2: 60,
+            latitude: 63.43, longitude: 10.39, calendar: calendar
+        ), .partlySunlit)
+        XCTAssertEqual(SolarCycle.rowAppearance(
+            near: noon, cloud: 70, sunThreshold: 20, sunThreshold2: 60,
+            latitude: 63.43, longitude: 10.39, calendar: calendar
+        ), .neutral)
+
+        let start = calendar.startOfDay(for: day)
+        let appearances = (0..<24).compactMap { offset -> SolarCycle.RowAppearance? in
+            guard let sample = calendar.date(byAdding: .hour, value: offset, to: start) else { return nil }
+            return SolarCycle.rowAppearance(
+                near: sample, cloud: 40, sunThreshold: 20, sunThreshold2: 60,
+                latitude: 63.43, longitude: 10.39, calendar: calendar
+            )
+        }
+        XCTAssertTrue(appearances.contains(.sunrise))
+        XCTAssertTrue(appearances.contains(.sunset))
+    }
+
     func testPolarSolarStatesHaveNoFalseTransitionOrNightSunAlert() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
@@ -673,7 +703,8 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(decoded.displaySunThreshold2, 20)
         XCTAssertEqual(decoded.resolvedDisplaySunThreshold2, 20)
         place.displaySunThreshold2 = 99
-        XCTAssertEqual(place.resolvedDisplaySunThreshold2, 50)
+        XCTAssertEqual(place.resolvedDisplaySunThreshold2, 90)
+        XCTAssertEqual(AlertType.sol.range.upperBound, 90)
         place.displaySunThreshold2 = nil
         XCTAssertEqual(place.resolvedDisplaySunThreshold2, 20)
     }
@@ -880,6 +911,9 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(forecastSymbol(rain), "cloud.rain.fill")
         XCTAssertTrue(AlertType.sno.matches(snow, threshold: 0.1))
         XCTAssertTrue(AlertType.regn.matches(rain, threshold: 0.1))
+        let fog = ForecastHour(time: base.addingTimeInterval(7_200), temp: 8, precip: 0, wind: 1, cloud: 95, dew: 7, fog: 80)
+        XCTAssertEqual(forecastSymbol(fog), "cloud.fog.fill")
+        XCTAssertEqual(AlertType.frost.systemImage, "snowflake")
     }
 
     func testDialectWeekdaysKeepBokmalUnchanged() {

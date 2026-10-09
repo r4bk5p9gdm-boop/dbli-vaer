@@ -449,7 +449,7 @@ enum AlertType: String, Codable, CaseIterable, Identifiable {
         switch self { case .regn: 0.5; case .frost: 0; case .temperatur: 10; case .sno: 0.3; case .vind: 9; case .dugg: 1; case .sol: 20 }
     }
     var range: ClosedRange<Double> {
-        switch self { case .regn, .sno: 0.1...5; case .frost: -10...4; case .temperatur: -20...30; case .vind: 4...50; case .dugg: 0...3; case .sol: 0...50 }
+        switch self { case .regn, .sno: 0.1...5; case .frost: -10...4; case .temperatur: -20...30; case .vind: 4...50; case .dugg: 0...3; case .sol: 0...90 }
     }
     var step: Double {
         switch self { case .regn, .sno: 0.1; case .frost, .temperatur, .dugg: 0.5; case .vind: 1; case .sol: 5 }
@@ -458,7 +458,7 @@ enum AlertType: String, Codable, CaseIterable, Identifiable {
     var systemImage: String {
         switch self {
         case .regn: "cloud.rain.fill"
-        case .frost: "thermometer.snowflake"
+        case .frost: "snowflake"
         case .temperatur: "thermometer"
         case .sno: "cloud.snow.fill"
         case .vind: "wind"
@@ -1089,9 +1089,9 @@ struct Place: Codable, Identifiable, Hashable {
     }
     var resolvedDisplaySunThreshold2: Double {
         guard let value = displaySunThreshold2, value.isFinite else {
-            return min(50, displayThreshold(for: .sol) + 10)
+            return min(90, displayThreshold(for: .sol) + 10)
         }
-        return min(50, max(0, value))
+        return min(90, max(0, value))
     }
     var localTemperatureOffset: Double { min(10, max(-10, temperatureOffset ?? 0)) }
 
@@ -1247,13 +1247,14 @@ enum SolarCycle {
         case sunrise
         case sunset
         case sunlit
+        case partlySunlit
         case neutral
 
         var transition: Transition? {
             switch self {
             case .sunrise: .sunrise
             case .sunset: .sunset
-            case .sunlit, .neutral: nil
+            case .sunlit, .partlySunlit, .neutral: nil
             }
         }
     }
@@ -1320,6 +1321,7 @@ enum SolarCycle {
         near date: Date,
         cloud: Double,
         sunThreshold: Double,
+        sunThreshold2: Double? = nil,
         latitude: Double,
         longitude: Double,
         calendar: Calendar = .current
@@ -1329,9 +1331,10 @@ enum SolarCycle {
         ) {
             return transition == .sunrise ? .sunrise : .sunset
         }
-        guard isDaylight(date, latitude: latitude, longitude: longitude, calendar: calendar),
-              cloud <= sunThreshold else { return .neutral }
-        return .sunlit
+        guard isDaylight(date, latitude: latitude, longitude: longitude, calendar: calendar) else { return .neutral }
+        if cloud <= sunThreshold { return .sunlit }
+        if let sunThreshold2, cloud <= sunThreshold2 { return .partlySunlit }
+        return .neutral
     }
 
     private enum State {

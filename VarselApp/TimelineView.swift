@@ -20,6 +20,7 @@ struct ForecastVariantsView: View {
     let rules: [Rule]
     let frostMargin: Double
     let mode: ForecastDisplayMode
+    let sunThreshold: Double
     let sunThreshold2: Double
     let temperatureLowThreshold: Double
     let temperatureHighThreshold: Double
@@ -50,7 +51,7 @@ struct ForecastVariantsView: View {
                         TimeCardsForecast(day: day, allForecast: forecast, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold)
                     case .weatherBands:
                         SwiftUI.TimelineView(.periodic(from: .now, by: 60)) { timeline in
-                            WeatherBandsForecast(day: day, allForecast: forecast, rules: rules, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, now: timeline.date)
+                            WeatherBandsForecast(day: day, allForecast: forecast, rules: rules, frostMargin: frostMargin, sunThreshold: sunThreshold, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, now: timeline.date)
                         }
                     case .events:
                         WeatherEventsForecast(day: day, rules: rules, frostMargin: frostMargin)
@@ -300,6 +301,7 @@ private struct WeatherBandsForecast: View {
     let allForecast: [ForecastHour]
     let rules: [Rule]
     let frostMargin: Double
+    let sunThreshold: Double
     let sunThreshold2: Double
     let temperatureLowThreshold: Double
     let temperatureHighThreshold: Double
@@ -412,12 +414,12 @@ private struct WeatherBandsForecast: View {
                             WeatherBandLabel(
                                 title: type.label,
                                 systemImage: type == .temperatur && typeRules.contains(where: { $0.type == .frost })
-                                    ? "thermometer.snowflake"
+                                    ? AlertType.frost.systemImage
                                     : type.systemImage,
                                 color: type.color,
                                 showsNotification: typeRules.contains(where: { !$0.isDisplayOnly })
                             )
-                            CombinedDayBandTrack(hours: bandHours, rules: typeRules, type: type, day: day.date, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, includeEarlyMorning: includesEarlyMorningCell, compressForMorning: isMorningCompression && !isToday)
+                            CombinedDayBandTrack(hours: bandHours, rules: typeRules, type: type, day: day.date, frostMargin: frostMargin, sunThreshold: sunThreshold, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, includeEarlyMorning: includesEarlyMorningCell, compressForMorning: isMorningCompression && !isToday)
                         }
                     }
                 }
@@ -492,6 +494,7 @@ private struct CombinedDayBandTrack: View {
     let type: AlertType
     let day: Date
     let frostMargin: Double
+    let sunThreshold: Double
     let sunThreshold2: Double
     let temperatureLowThreshold: Double
     let temperatureHighThreshold: Double
@@ -508,11 +511,11 @@ private struct CombinedDayBandTrack: View {
             let totalHours: CGFloat = (includeEarlyMorning || compressForMorning) ? 26 : 24
             HStack(spacing: spacing) {
                 if includeEarlyMorning {
-                    CombinedHourBandCell(hours: hours, rules: rules, type: type, day: day, period: .earlyMorning, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude)
+                    CombinedHourBandCell(hours: hours, rules: rules, type: type, day: day, period: .earlyMorning, frostMargin: frostMargin, sunThreshold: sunThreshold, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude)
                         .frame(width: availableWidth * 2 / 26)
                 }
                 ForEach(WeatherBandPeriod.all) { period in
-                    CombinedHourBandCell(hours: hours, rules: rules, type: type, day: day, period: period, frostMargin: frostMargin, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude)
+                    CombinedHourBandCell(hours: hours, rules: rules, type: type, day: day, period: period, frostMargin: frostMargin, sunThreshold: sunThreshold, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude)
                         .frame(width: availableWidth * 8 / totalHours)
                 }
             }
@@ -531,6 +534,7 @@ private struct CombinedHourBandCell: View {
     let day: Date
     let period: WeatherBandPeriod
     let frostMargin: Double
+    let sunThreshold: Double
     let sunThreshold2: Double
     let temperatureLowThreshold: Double
     let temperatureHighThreshold: Double
@@ -544,11 +548,11 @@ private struct CombinedHourBandCell: View {
     private func displayPriority(for hour: ForecastHour) -> Double {
         let solarAppearance = type == .sol
             ? SolarCycle.rowAppearance(
-                near: hour.time, cloud: hour.cloud, sunThreshold: sunThreshold2,
+                near: hour.time, cloud: hour.cloud, sunThreshold: sunThreshold, sunThreshold2: sunThreshold2,
                 latitude: latitude, longitude: longitude
             )
             : .neutral
-        if type == .sol, solarAppearance == .sunlit {
+        if type == .sol, (solarAppearance == .sunlit || solarAppearance == .partlySunlit) {
             return 500 + max(0, sunThreshold2 - hour.cloud)
         }
         if type == .temperatur,
@@ -603,18 +607,19 @@ private struct CombinedHourBandCell: View {
                     let offset = hourOffset(hourNumber, from: period.startHour)
                     let solarAppearance = type == .sol
                         ? SolarCycle.rowAppearance(
-                            near: hour.time, cloud: hour.cloud, sunThreshold: sunThreshold2,
+                            near: hour.time, cloud: hour.cloud, sunThreshold: sunThreshold, sunThreshold2: sunThreshold2,
                             latitude: latitude, longitude: longitude
                         )
                         : .neutral
                     // Boundary cells show a marker instead of a yellow sun fill.
                     let solarTransition = solarAppearance.transition
                     let matchesSunPreview = type == .sol && solarAppearance == .sunlit
+                    let matchesPartialSunPreview = type == .sol && solarAppearance == .partlySunlit
                     let matchesTemperaturePreview = type == .temperatur && (hour.temp <= temperatureLowThreshold || hour.temp >= temperatureHighThreshold)
                     let matchesFrost = type == .temperatur && rules.contains(where: {
                         $0.type == .frost && $0.isActive(at: hour.time) && $0.matches(hour, frostMargin: frostMargin)
                     })
-                    if offset < period.hours, matchesSunPreview || matchesTemperaturePreview || (type != .sol && rules.contains(where: {
+                    if offset < period.hours, matchesSunPreview || matchesPartialSunPreview || matchesTemperaturePreview || (type != .sol && rules.contains(where: {
                         $0.isActive(at: hour.time) && $0.matches(hour, frostMargin: frostMargin)
                     })) {
                         Rectangle()
@@ -622,9 +627,14 @@ private struct CombinedHourBandCell: View {
                                   ? Color.orange.opacity(0.78)
                                   : type == .temperatur && hour.temp <= 0
                                   ? Color.white.opacity(0.92)
-                                  : type.color.opacity(type == .sol && hour.cloud > sunThreshold2 ? 0.35 : 0.78))
+                                  : type.color.opacity(type == .sol && matchesPartialSunPreview ? 0.48 : 0.78))
                             .frame(width: proxy.size.width / CGFloat(period.hours) + 0.5)
                             .offset(x: proxy.size.width * CGFloat(offset) / CGFloat(period.hours))
+                        if matchesPartialSunPreview {
+                            SolarHatchMark()
+                                .frame(width: proxy.size.width / CGFloat(period.hours), height: proxy.size.height)
+                                .offset(x: proxy.size.width * CGFloat(offset) / CGFloat(period.hours))
+                        }
                         if matchesFrost {
                             Image(systemName: AlertType.frost.systemImage)
                                 .font(.system(size: 7, weight: .bold))
@@ -638,10 +648,11 @@ private struct CombinedHourBandCell: View {
                     }
                     if offset < period.hours, let solarTransition {
                         Image(systemName: solarTransition.systemImage)
-                            .font(.system(size: 8, weight: .bold))
+                            .font(.system(size: 12, weight: .bold))
                             .foregroundStyle(Color.orange)
-                            .frame(width: 14, height: 14)
-                            .background(Color.white.opacity(0.72), in: Circle())
+                            .frame(width: 21, height: 21)
+                            // The opaque badge masks yellow sun fill at sunrise/sunset.
+                            .background(Color.white, in: Circle())
                             .position(
                                 x: proxy.size.width * CGFloat(offset) / CGFloat(period.hours) + proxy.size.width / CGFloat(period.hours * 2),
                                 y: proxy.size.height / 2
@@ -1026,9 +1037,26 @@ func localHourComponent(_ date: Date, calendar: Calendar = .autoupdatingCurrent)
 
 func forecastSymbol(_ hour: ForecastHour) -> String {
     if hour.precipitationRate >= 0.1 { return hour.temp <= 1 ? "cloud.snow.fill" : "cloud.rain.fill" }
+    if (hour.fog ?? 0) >= 50 { return "cloud.fog.fill" }
     if hour.cloud <= 20 { return "sun.max.fill" }
     if hour.cloud <= 65 { return "cloud.sun.fill" }
     return "cloud.fill"
+}
+
+private struct SolarHatchMark: View {
+    var body: some View {
+        GeometryReader { proxy in
+            Path { path in
+                let height = proxy.size.height
+                for startX in stride(from: -height, through: proxy.size.width, by: 5) {
+                    path.move(to: CGPoint(x: startX, y: height))
+                    path.addLine(to: CGPoint(x: startX + height, y: 0))
+                }
+            }
+            .stroke(Color(red: 0.72, green: 0.42, blue: 0.08).opacity(0.7), lineWidth: 1)
+        }
+        .allowsHitTesting(false)
+    }
 }
 
 struct TimelineView: View {

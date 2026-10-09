@@ -249,6 +249,7 @@ struct HomeView: View {
                                     rules: p.rulesForDisplay,
                                     frostMargin: p.localFrostMargin,
                                     mode: .weatherBands,
+                                    sunThreshold: p.displayThreshold(for: .sol),
                                     sunThreshold2: p.resolvedDisplaySunThreshold2,
                                     temperatureLowThreshold: p.resolvedDisplayTemperatureThreshold,
                                     temperatureHighThreshold: p.resolvedDisplayTemperatureHighThreshold,
@@ -1113,7 +1114,7 @@ struct RulesView: View {
                                                     get: { p.resolvedDisplaySunThreshold2 },
                                                     set: { p.displaySunThreshold2 = $0; store.update(p) }
                                                 )) {
-                                                    ForEach(Array(stride(from: 0.0, through: 50.0, by: 5.0)), id: \.self) { value in
+                                                    ForEach(Array(stride(from: 0.0, through: 90.0, by: 5.0)), id: \.self) { value in
                                                         Text("\(value.formatted(.number.precision(.fractionLength(0)))) % skydekke").tag(value)
                                                     }
                                                 }
@@ -1292,7 +1293,7 @@ struct RulesView: View {
             let threshold = place.displayThreshold(for: .vind)
             return "Markeres ved vindkast fra \(number(threshold)) m/s (\(windStrengthLabel(for: threshold))). Middelvind brukes ikke."
         case .sol:
-            return "Hovedgrense: maks \(number(place.displayThreshold(for: .sol)))% skydekke. Solgløttgrense: maks \(number(place.resolvedDisplaySunThreshold2))%."
+            return "Hel gul sol ved maks \(number(place.displayThreshold(for: .sol)))% skydekke. Skravert gul delvis sol fram til \(number(place.resolvedDisplaySunThreshold2))%."
         }
     }
 }
@@ -1635,6 +1636,7 @@ struct PlacesView: View {
             rules: place.rulesForDisplay,
             frostMargin: place.localFrostMargin,
             mode: .weatherBands,
+            sunThreshold: place.displayThreshold(for: .sol),
             sunThreshold2: place.resolvedDisplaySunThreshold2,
             temperatureLowThreshold: place.resolvedDisplayTemperatureThreshold,
             temperatureHighThreshold: place.resolvedDisplayTemperatureHighThreshold,
