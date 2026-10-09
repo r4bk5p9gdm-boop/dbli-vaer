@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T19:06:31Z",
+  "lastScheduledStart": "2026-10-09T19:11:31Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-420 fullført: filimportregresjon bekrefter at tomme vanlige JSON-filer avvises av dekoderen, ikke importeres som en tom værkonfigurasjon. Swift-parsing og diffkontroll består; Xcode-testbygg er blokkert av SwiftUIMacros.StateMacro-feilen, og CoreSimulatorService er utilgjengelig. AUTO-004 opprettet AUTO-423 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-421/422/423."
+  "lastProgress": "AUTO-421 fullført: feilformet-sted-regresjonen går nå gjennom WeatherConfigurationDocument-lesing og fil-eksport; ugyldig koordinat hoppes over og gyldige steder, språk og valgt-ID overlever omstart via ny fil. Swift-parsing og diffkontroll består; Xcode-testbygg er blokkert av SwiftUIMacros.StateMacro-feilen, og CoreSimulatorService er utilgjengelig. AUTO-004 opprettet AUTO-424 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-422/423/424."
 }
