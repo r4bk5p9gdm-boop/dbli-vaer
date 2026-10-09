@@ -54,6 +54,15 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-141 · FULLFØRT 2026-10-09** — Hovedmenyen har nå snarveier i
+rekkefølgen Nå, Hjem og Hytta, fulgt av Steder og Innstillinger. Steder kan
+velges eksplisitt som hytte i redigering; like steds-ID-er slås sammen, og
+Hjem-sveipingen følger samme dedupliserte rekkefølge. Aktiv snarvei markeres
+rolig, Nå får en liten GPS-prikk, og Steder åpner/utvider prognoser uten å
+hoppe til Hjem. La til regresjonstest for rekkefølge og sammenslåing. Swift-
+parsing og diffkontroll består; full Xcode-bygg/installasjon er ikke kjørt.
+Neste kø er AUTO-428, AUTO-429 og AUTO-430.
+
 **BRUKER-140 · FULLFØRT 2026-10-09** — Hjem viser nå en kompakt kompassring
 med GPS-tekst og diskret grønn live-prikk over den samlede stedsetiketten,
 som «Her på Klinga». «Her på» beholder den blå etikettstilen, og skjermleser

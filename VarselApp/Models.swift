@@ -12,6 +12,7 @@ enum SolarCellMarkerStyle {
 
 enum PlaceOrderingSettings {
     static let homePlaceIDKey = "varsel.homePlaceID"
+    static let cabinPlaceIDKey = "varsel.cabinPlaceID"
     static let sortModeKey = "varsel.placeSortMode"
 }
 
@@ -78,6 +79,14 @@ enum WatchPlaceSettings {
 /// IDs cannot create a phantom intermediate page.
 enum HomeSwipeSelection {
     static func shouldShowHint(placeCount: Int) -> Bool { placeCount > 1 }
+
+    /// Quick weather destinations are ordered by role and deduplicated by
+    /// place identity so GPS and home never create duplicate menu buttons.
+    static func orderedNavigationIDs(positionID: UUID?, homeID: UUID?, cabinID: UUID?) -> [UUID] {
+        [positionID, homeID, cabinID].compactMap { $0 }.reduce(into: [UUID]()) { result, id in
+            if !result.contains(id) { result.append(id) }
+        }
+    }
 
     /// Shared home-page order: live position first, then the two starred
     /// places. Missing or repeated IDs are removed without changing order.

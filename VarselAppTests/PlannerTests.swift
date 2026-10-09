@@ -9009,6 +9009,22 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testQuickNavigationOrdersPositionHomeAndCabinAndCollapsesDuplicates() {
+        let position = UUID(), home = UUID(), cabin = UUID()
+        XCTAssertEqual(
+            HomeSwipeSelection.orderedNavigationIDs(positionID: position, homeID: home, cabinID: cabin),
+            [position, home, cabin]
+        )
+        XCTAssertEqual(
+            HomeSwipeSelection.orderedNavigationIDs(positionID: position, homeID: position, cabinID: cabin),
+            [position, cabin]
+        )
+        XCTAssertEqual(
+            HomeSwipeSelection.orderedNavigationIDs(positionID: position, homeID: position, cabinID: position),
+            [position]
+        )
+    }
+
     @MainActor
     func testManualSelectionDoesNotCarryPositionStyle() {
         let store = Store.shared

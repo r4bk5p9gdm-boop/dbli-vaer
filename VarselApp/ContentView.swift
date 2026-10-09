@@ -124,25 +124,78 @@ struct LocalCalibrationView: View {
 
 struct ContentView: View {
     private enum Tab: Hashable { case home, places, settings }
+    private struct QuickPlaceTab: Identifiable {
+        let placeID: UUID
+        var title: String
+        var systemImage: String
+        var representsCurrentPosition: Bool
+        var id: UUID { placeID }
+    }
 
     @EnvironmentObject var store: Store
     @AppStorage("varsel.onboardingCompleted") private var onboardingCompleted = false
+    @AppStorage(PlaceOrderingSettings.homePlaceIDKey) private var homePlaceID = ""
+    @AppStorage(PlaceOrderingSettings.cabinPlaceIDKey) private var cabinPlaceID = ""
     @State private var showingOnboarding = false
     @State private var selectedTab: Tab = .home
 
+    private var quickPlaceTabs: [QuickPlaceTab] {
+        var result: [QuickPlaceTab] = []
+        func append(_ id: UUID?, title: String, systemImage: String, isPosition: Bool = false) {
+            guard let id, store.places.contains(where: { $0.id == id }) else { return }
+            if let existingIndex = result.firstIndex(where: { $0.placeID == id }) {
+                result[existingIndex].title += " · \(title)"
+                result[existingIndex].representsCurrentPosition = result[existingIndex].representsCurrentPosition || isPosition
+            } else {
+                result.append(QuickPlaceTab(
+                    placeID: id,
+                    title: title,
+                    systemImage: systemImage,
+                    representsCurrentPosition: isPosition
+                ))
+            }
+        }
+
+        append(store.currentLocationPlaceID, title: "Nå", systemImage: "location.fill", isPosition: true)
+        let resolvedHomeID = UUID(uuidString: homePlaceID) ?? store.selected?.id
+        append(resolvedHomeID, title: "Hjem", systemImage: "house.fill")
+        append(UUID(uuidString: cabinPlaceID), title: "Hytta", systemImage: "house.fill")
+        return result
+    }
+
+    private var navigationPlaceIDs: [UUID] {
+        HomeSwipeSelection.orderedNavigationIDs(
+            positionID: store.currentLocationPlaceID,
+            homeID: UUID(uuidString: homePlaceID) ?? store.selected?.id,
+            cabinID: UUID(uuidString: cabinPlaceID)
+        ).filter { id in store.places.contains(where: { $0.id == id }) }
+    }
+
+    private var selectedQuickPlaceID: UUID? {
+        if let selectedID = store.selectedID, quickPlaceTabs.contains(where: { $0.placeID == selectedID }) {
+            return selectedID
+        }
+        if store.selectionIsCurrentLocation, let currentLocationPlaceID = store.currentLocationPlaceID {
+            return currentLocationPlaceID
+        }
+        let resolvedHomeID = UUID(uuidString: homePlaceID) ?? store.selected?.id
+        return quickPlaceTabs.first(where: { $0.placeID == resolvedHomeID })?.placeID ?? quickPlaceTabs.first?.placeID
+    }
+
     var body: some View {
         TabView(selection: $selectedTab) {
-            HomeView()
-                .tabItem { Label("Hjem", systemImage: "cloud.sun") }.tag(Tab.home)
-            PlacesView(
-                onOpen: { place in store.select(place); selectedTab = .home }
-            )
-            .tabItem { Label("Steder", systemImage: "mappin.and.ellipse") }.tag(Tab.places)
+            HomeView(navigationPlaceIDs: navigationPlaceIDs)
+                .tag(Tab.home)
+            PlacesView()
+                .tag(Tab.places)
             GlobalSettingsView(showsDoneButton: false)
-                .tabItem { Label("Innstillinger", systemImage: "gearshape") }
                 .tag(Tab.settings)
         }
         .tint(Color(red: 0.09, green: 0.14, blue: 0.23))
+        .toolbar(.hidden, for: .tabBar)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            mainNavigationBar
+        }
         .onAppear {
             if !onboardingCompleted { showingOnboarding = true }
             openNotificationPlace(NotificationRoute.consumePendingPlaceID())
@@ -159,6 +212,78 @@ struct ContentView: View {
         }
     }
 
+    private var mainNavigationBar: some View {
+        HStack(spacing: 0) {
+            ForEach(quickPlaceTabs) { item in
+                navigationButton(
+                    item.title,
+                    systemImage: item.systemImage,
+                    isSelected: selectedTab == .home && selectedQuickPlaceID == item.placeID,
+                    showsLiveDot: item.representsCurrentPosition,
+                    accessibilityHint: item.representsCurrentPosition ? "Viser vær for live-posisjonen" : "Viser vær for dette stedet"
+                ) {
+                    guard let place = store.places.first(where: { $0.id == item.placeID }) else { return }
+                    store.select(place, fromCurrentLocation: item.representsCurrentPosition)
+                    selectedTab = .home
+                }
+            }
+            navigationButton("Steder", systemImage: "mappin.and.ellipse", isSelected: selectedTab == .places) {
+                selectedTab = .places
+            }
+            navigationButton("Innstillinger", systemImage: "gearshape", isSelected: selectedTab == .settings) {
+                selectedTab = .settings
+            }
+        }
+        .padding(.horizontal, 4)
+        .padding(.top, 4)
+        .background(.bar)
+        .overlay(alignment: .top) { Divider() }
+    }
+
+    private func navigationButton(
+        _ title: String,
+        systemImage: String,
+        isSelected: Bool,
+        showsLiveDot: Bool = false,
+        accessibilityHint: String? = nil,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            VStack(spacing: 3) {
+                ZStack(alignment: .bottomTrailing) {
+                    Image(systemName: systemImage)
+                        .font(.system(size: 17, weight: isSelected ? .semibold : .regular))
+                    if showsLiveDot {
+                        Circle()
+                            .fill(Color.green)
+                            .frame(width: 6, height: 6)
+                            .overlay(Circle().stroke(Color(uiColor: .systemBackground), lineWidth: 1.25))
+                            .offset(x: 3, y: 2)
+                    }
+                }
+                .frame(height: 19)
+                Text(title)
+                    .font(.system(size: 10, weight: isSelected ? .semibold : .regular))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.72)
+            }
+            .foregroundStyle(isSelected ? Color.indigo : Color.secondary)
+            .frame(maxWidth: .infinity)
+            .frame(height: 43)
+            .background {
+                if isSelected {
+                    RoundedRectangle(cornerRadius: 11, style: .continuous)
+                        .fill(Color.indigo.opacity(0.09))
+                        .padding(.horizontal, 2)
+                }
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+        .accessibilityHint(accessibilityHint ?? "")
+    }
+
     private func openNotificationPlace(_ placeIDString: String?) {
         guard let placeIDString,
               let placeID = UUID(uuidString: placeIDString),
@@ -172,6 +297,7 @@ struct ContentView: View {
 
 struct HomeView: View {
     @EnvironmentObject var store: Store
+    var navigationPlaceIDs: [UUID]? = nil
     @State private var editing: Rule?
     @State private var showingSettings = false
     @State private var transitionDirection: Edge = .trailing
@@ -186,9 +312,10 @@ struct HomeView: View {
     }
 
     private var swipePlaces: [Place] {
-        // Hjem har sin egen tre-steders hurtignavigering. Den styrer ikke
-        // Watch eller CarPlay, som begge følger den felles datakilden der.
-        return store.homeSwipePlaceIDs.compactMap { id in
+        // The bottom quick-navigation destinations and the swipe sequence
+        // share one order; Watch and CarPlay remain on their own data source.
+        let ids = navigationPlaceIDs ?? store.homeSwipePlaceIDs
+        return ids.compactMap { id in
             store.places.first { $0.id == id }
         }
     }
@@ -228,6 +355,7 @@ struct HomeView: View {
                                     locationCourse: store.selectionIsCurrentLocation ? store.currentLocationCourse : nil,
                                     onSelect: { place in store.select(place) },
                                     onEdit: { showingSettings = true },
+                                    showsPlaceMenu: false,
                                     showsContainer: false
                                 )
                                 .background(
@@ -1844,7 +1972,6 @@ private enum PlaceSortMode: String, CaseIterable, Identifiable {
 }
 
 struct PlacesView: View {
-    var onOpen: (Place) -> Void = { Store.shared.select($0) }
     @EnvironmentObject var store: Store
     @StateObject private var loc = LocationManager()
     @State private var busy = false
@@ -1854,6 +1981,7 @@ struct PlacesView: View {
     @State private var editingPlaces = false
     @State private var placeExpansion = PlaceExpansionState()
     @AppStorage(PlaceOrderingSettings.homePlaceIDKey) private var homePlaceID = ""
+    @AppStorage(PlaceOrderingSettings.cabinPlaceIDKey) private var cabinPlaceID = ""
     @AppStorage(PlaceOrderingSettings.sortModeKey) private var placeSortMode = PlaceSortMode.automatic.rawValue
 
     private var sortMode: PlaceSortMode { PlaceSortMode(rawValue: placeSortMode) ?? .automatic }
@@ -1891,6 +2019,13 @@ struct PlacesView: View {
                         }
                     }
                     .accessibilityHint("Brukes som utgangspunkt for avstandssortering")
+                    Picker("Hytta", selection: $cabinPlaceID) {
+                        Text("Ikke valgt").tag("")
+                        ForEach(store.places) { place in
+                            Text(place.displayName).tag(place.id.uuidString)
+                        }
+                    }
+                    .accessibilityHint("Velg hvilket sted som skal ha en egen snarvei i hovedmenyen")
                     Text(sortMode == .automatic
                          ? "Favoritt 1 og 2 står først. Resten sorteres etter avstand til hjemstedet."
                          : "Dra stedene i ønsket rekkefølge med håndtaket.")
@@ -2017,7 +2152,6 @@ struct PlacesView: View {
                                     }
                                     .card()
                                     .contentShape(Rectangle())
-                                    .onTapGesture { onOpen(place) }
                                 }
                             }
                         }
@@ -2088,6 +2222,9 @@ struct PlacesView: View {
         store.removePlaces(ids: removedIDs)
         if let homeID = UUID(uuidString: homePlaceID), removedIDs.contains(homeID) {
             homePlaceID = ""
+        }
+        if let cabinID = UUID(uuidString: cabinPlaceID), removedIDs.contains(cabinID) {
+            cabinPlaceID = ""
         }
     }
 
