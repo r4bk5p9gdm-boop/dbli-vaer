@@ -1113,6 +1113,16 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testEveryWizardCategoryHasReadableCopyAndASymbolName() {
+        XCTAssertFalse(WizardAlertCategory.allCases.isEmpty)
+
+        for category in WizardAlertCategory.allCases {
+            XCTAssertFalse(category.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            XCTAssertFalse(category.detail.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            XCTAssertFalse(category.image.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        }
+    }
+
     func testEveryWizardAlertCategoryHasMatchingPresetChoices() {
         for category in WizardAlertCategory.allCases {
             let presets = RulePreset.all.filter { category.types.contains($0.rule.type) }

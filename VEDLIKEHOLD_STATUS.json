@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T15:23:30Z",
+  "lastScheduledStart": "2026-10-09T15:28:30Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-377 fullført: samlet hjemsted-/hytteforvalgte varsel-ID-er og regeloppretting i WizardPresetConfiguration, med regresjonstest for gyldige/unikke ID-er og nærhetsstyring kun for hytte. Rettet også PlacePreposition `.på` til `.pa` i veiviser og fem persistenstester. Generisk iPhone-bygg og build-for-testing består; XCTest ikke kjørt fordi CoreSimulator-/enhetstjenesten ikke er tilgjengelig. AUTO-004 vurderte køen og opprettet AUTO-380; neste: AUTO-378/379/380."
+  "lastProgress": "AUTO-378 fullført: regresjonstest krever synlig, ikke-tom tittel, forklaringstekst og symbolnavn for alle veiviserkategorier. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi CoreSimulator-/enhetstjenesten ikke er tilgjengelig. AUTO-004 vurderte køen og opprettet AUTO-381; neste: AUTO-379/380/381."
 }

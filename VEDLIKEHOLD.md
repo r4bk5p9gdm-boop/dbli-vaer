@@ -1604,10 +1604,11 @@ reglene aldri blir nærhetsstyrte, og at hyttereglene følger valget. Rettet ogs
 iPhone-bygg og `build-for-testing` består; XCTest kunne ikke kjøres fordi
 CoreSimulator-/enhetstjenesten ikke er tilgjengelig.
 
-**AUTO-378 · ÅPEN** — Legg til regresjon som sikrer at alle
-`WizardAlertCategory`-ene har synlig, ikke-tom tittel, forklaringstekst og
-symbolnavn, slik at hvert kategori-kort i oppstartsveiviseren er forståelig og
-har et ikon.
+**AUTO-378 · FULLFØRT 2026-10-09** — La til regresjon som går gjennom alle
+`WizardAlertCategory`-verdiene og krever synlig, ikke-tom tittel,
+forklaringstekst og symbolnavn for hvert kort. Swift-parsing, diffkontroll og
+iOS `build-for-testing` består; XCTest kunne ikke kjøres uten
+CoreSimulator-/enhetstjenesten.
 
 **AUTO-379 · ÅPEN** — Legg til regresjon for at et avbrutt `Store.add` fortsatt
 beholder stedet og valgt-ID som ble lagret før Yr-forespørselen, uten å lagre
@@ -1617,6 +1618,11 @@ en ugyldig prognose eller vise en feil som om nettverket feilet.
 kategori ut i en liten modell. Legg til regresjon som bekrefter at å slå et
 forslag av eller på for hjemstedet ikke endrer hyttevalget, og omvendt, også
 når samme preset finnes i begge standardlistene.
+
+**AUTO-381 · ÅPEN** — Samle veiviserens kategori→preset-filtrering i én
+testbar kilde og bruk den også i kortvisningen. Utvid regresjonen slik at hver
+kategori viser minst ett forslag, og at ingen vist presets værtype faller
+utenfor kategorien.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
