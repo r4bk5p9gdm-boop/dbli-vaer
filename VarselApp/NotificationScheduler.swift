@@ -326,6 +326,19 @@ enum NotificationScheduler {
         (try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])) ?? false
     }
 
+    static func authorizationStatus(
+        readStatus: () async -> UNAuthorizationStatus = {
+            await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
+        }
+    ) async -> Bool? {
+        switch await readStatus() {
+        case .notDetermined: nil
+        case .denied: false
+        case .authorized, .provisional, .ephemeral: true
+        @unknown default: nil
+        }
+    }
+
     @discardableResult
     @MainActor
     static func reschedule(

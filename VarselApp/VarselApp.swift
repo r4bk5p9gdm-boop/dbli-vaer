@@ -31,6 +31,7 @@ final class AppNotificationDelegate: NSObject, UIApplicationDelegate, UNUserNoti
 struct VarselApp: App {
     @UIApplicationDelegateAdaptor(AppNotificationDelegate.self) private var notificationDelegate
     @StateObject private var store = Store.shared
+    @Environment(\.scenePhase) private var scenePhase
 
     init() { BackgroundRefresh.register() }
 
@@ -38,6 +39,12 @@ struct VarselApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(store)
+                .onChange(of: scenePhase) { _, phase in
+                    guard phase == .active else { return }
+                    Task { @MainActor in
+                        store.notificationsAuthorized = await NotificationScheduler.authorizationStatus()
+                    }
+                }
                 .task {
                     if !CommandLine.arguments.contains("-skipPermissionPrompts") {
                         store.notificationsAuthorized = await NotificationScheduler.requestPermission()

@@ -8980,6 +8980,18 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(foregroundStore.notificationsAuthorized, true)
     }
 
+    func testNotificationAuthorizationStatusReflectsCurrentSettings() async {
+        let denied = await NotificationScheduler.authorizationStatus { .denied }
+        let authorized = await NotificationScheduler.authorizationStatus { .authorized }
+        let provisional = await NotificationScheduler.authorizationStatus { .provisional }
+        let undetermined = await NotificationScheduler.authorizationStatus { .notDetermined }
+
+        XCTAssertEqual(denied, false)
+        XCTAssertEqual(authorized, true)
+        XCTAssertEqual(provisional, true)
+        XCTAssertNil(undetermined)
+    }
+
     @MainActor
     func testBackgroundRefreshIncludesSelectedAndNotificationPlacesOnly() {
         var enabledRule = Rule(type: .regn)

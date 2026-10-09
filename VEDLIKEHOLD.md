@@ -54,6 +54,12 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-433 · ÅPEN** — Samle timeprognosens symbol- og tilstandsvalg i én
+testbar værklassifisering. Dagens symbol og etikett har nærliggende, men
+uavhengige terskler for nedbør, tåke og skydekke; en felles beslutning med
+grensetester vil hindre at et ikon og VoiceOver beskriver ulikt vær ved
+grenseverdiene.
+
 **AUTO-432 · ÅPEN** — Trekk «her [preposisjon] [stedsnavn]» for GPS-steds-
 overskriften ut i en liten, deterministisk presentasjonsverdi og test alle
 preposisjonene. Lås at bare «her » settes foran preposisjonen, at stedsnavnet
@@ -2095,11 +2101,13 @@ regn og tåke på engelsk og mulig nedbør uten aktivt regnsymbol. Swift-parsing
 og diffkontroll består; XCTest ble ikke kjørt etter ressurskontroll viste
 svært lite ledig minne.
 
-**AUTO-430 · ÅPEN** — Oppdater `notificationsAuthorized` når appen kommer
-tilbake i forgrunnen, ikke bare etter tillatelsesforespørselen ved oppstart.
-Kontroller at Hjem-varslet om avslåtte pushvarsler forsvinner og dukker opp
-igjen når brukeren endrer tillatelsen i iOS-innstillingene mens appen er
-bakgrunnsaktiv.
+**AUTO-430 · FULLFØRT 2026-10-10** — Varslingsstatus leses på nytt når appen
+går tilbake til aktiv fra bakgrunnen, slik at Hjem-varslet oppdateres etter
+endring i iOS-innstillingene. En testbar statusleser bevarer `nil` for
+uavklart status, `false` for avslag og `true` for authorized/provisional.
+Swift-parsing og diffkontroll består; XCTest ble utsatt etter
+ressurskontroll viste svært lite ledig minne. Fysisk iPhone-kontroll ble også
+blokkert fordi denne Mac-en ikke oppdaget iPhone via CoreDevice.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

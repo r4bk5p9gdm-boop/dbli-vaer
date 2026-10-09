@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-09T22:11:02Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-429 fullført: Timekortenes VoiceOver-etikett inkluderer lokalisert værtilstand og følger samme nedbørsgrense som synlig symbol; mulig, men ikke aktiv, nedbør omtales ikke som regn. Regresjonstester dekker regn, snø, tåke, engelsk tekst og mulig nedbør. Swift-parsing og diffkontroll består; XCTest ble utsatt etter ressurskontroll viste ca. 94 MB frie minnesider. AUTO-432 ble opprettet etter bred køgjennomgang. Neste kø: AUTO-430, AUTO-431 og AUTO-432."
+  "lastProgress": "AUTO-430 fullført: Appen leser nå varslingsstatus på nytt når den blir aktiv etter bakgrunn, slik at Hjem-varslet følger endringer i iOS-innstillingene. Statusleseren skiller authorized/provisional, denied og notDetermined; regresjonstest dekker utfallene. Swift-parsing og diffkontroll består; XCTest ble utsatt etter ressurskontroll viste ca. 91 MB frie minnesider, og fysisk iPhone-kontroll var blokkert fordi CoreDevice ikke oppdaget enheten. AUTO-433 ble opprettet etter bred køgjennomgang. Neste kø: AUTO-431, AUTO-432 og AUTO-433."
 }
