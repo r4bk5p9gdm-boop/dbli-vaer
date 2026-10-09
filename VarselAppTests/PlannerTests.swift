@@ -1410,6 +1410,69 @@ final class PlannerTests: XCTestCase {
         XCTAssertNil(restored.forecasts[cabin.id])
     }
 
+    func testRemovingSeveralPlacesIncludingSelectionPreservesRemainingState() throws {
+        let persistenceKey = "varsel.test.remove-several-places.\(UUID().uuidString)"
+        let launchVersionKey = "varsel.launchPlacesVersion"
+        let previousLaunchVersion = UserDefaults.standard.object(forKey: launchVersionKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousLaunchVersion {
+                UserDefaults.standard.set(previousLaunchVersion, forKey: launchVersionKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: launchVersionKey)
+            }
+        }
+        UserDefaults.standard.set(9, forKey: launchVersionKey)
+
+        var homeRule = Rule(type: .regn)
+        homeRule.templateTitle = "Regn hjemme"
+        var cabinRule = Rule(type: .frost)
+        cabinRule.templateTitle = "Frost på hytta"
+        let home = Place(name: "Klinga", lat: 64.4, lon: 11.4, rules: [homeRule])
+        let selectedCabin = Place(name: "Valgt hytte", lat: 64.2, lon: 11.4, rules: [cabinRule])
+        let remainingCabin = Place(name: "Hytte nummer to", lat: 64.1, lon: 11.5)
+        let deletedCabin = Place(name: "Slett også meg", lat: 64.0, lon: 11.6)
+        let homeHour = ForecastHour(time: base, temp: 8, precip: 1, wind: 2, cloud: 40, dew: 4)
+        let remainingHour = ForecastHour(time: base.addingTimeInterval(3_600), temp: 6, precip: 0, wind: 1, cloud: 30, dew: 3)
+        let selectedHour = ForecastHour(time: base.addingTimeInterval(7_200), temp: -2, precip: 0, wind: 1, cloud: 80, dew: -3)
+        let deletedHour = ForecastHour(time: base.addingTimeInterval(10_800), temp: 4, precip: 0, wind: 2, cloud: 60, dew: 2)
+        UserDefaults.standard.set(try JSONEncoder().encode(PersistedStoreState(
+            places: [home, selectedCabin, remainingCabin, deletedCabin],
+            selectedID: selectedCabin.id, log: [],
+            forecasts: [
+                home.id: [homeHour],
+                selectedCabin.id: [selectedHour],
+                remainingCabin.id: [remainingHour],
+                deletedCabin.id: [deletedHour],
+            ],
+            forecastUpdatedAt: [
+                home.id: base,
+                selectedCabin.id: base.addingTimeInterval(7_200),
+                remainingCabin.id: base.addingTimeInterval(3_600),
+                deletedCabin.id: base.addingTimeInterval(10_800),
+            ],
+            lastUpdate: base
+        )), forKey: persistenceKey)
+
+        let store = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        store.removePlaces(ids: [selectedCabin.id, deletedCabin.id])
+
+        XCTAssertEqual(store.places.map(\.id), [home.id, remainingCabin.id])
+        XCTAssertEqual(store.selectedID, home.id)
+        XCTAssertEqual(store.forecasts[home.id], [homeHour])
+        XCTAssertEqual(store.forecasts[remainingCabin.id], [remainingHour])
+        XCTAssertNil(store.forecasts[selectedCabin.id])
+        XCTAssertNil(store.forecasts[deletedCabin.id])
+
+        let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        XCTAssertEqual(restored.places.map(\.id), [home.id, remainingCabin.id])
+        XCTAssertEqual(restored.selectedID, home.id)
+        XCTAssertEqual(restored.forecasts[home.id], [homeHour])
+        XCTAssertEqual(restored.forecasts[remainingCabin.id], [remainingHour])
+        XCTAssertNil(restored.forecasts[selectedCabin.id])
+        XCTAssertNil(restored.forecasts[deletedCabin.id])
+    }
+
     func testRemovingLastPlaceRestoresAndPersistsLaunchPlaces() throws {
         let persistenceKey = "varsel.test.remove-last-place.\(UUID().uuidString)"
         let launchVersionKey = "varsel.launchPlacesVersion"
