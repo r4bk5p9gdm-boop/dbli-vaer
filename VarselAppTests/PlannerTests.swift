@@ -1410,6 +1410,52 @@ final class PlannerTests: XCTestCase {
         XCTAssertNil(restored.forecasts[cabin.id])
     }
 
+    func testRemovingLastPlaceRestoresAndPersistsLaunchPlaces() throws {
+        let persistenceKey = "varsel.test.remove-last-place.\(UUID().uuidString)"
+        let launchVersionKey = "varsel.launchPlacesVersion"
+        let previousLaunchVersion = UserDefaults.standard.object(forKey: launchVersionKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousLaunchVersion {
+                UserDefaults.standard.set(previousLaunchVersion, forKey: launchVersionKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: launchVersionKey)
+            }
+        }
+        UserDefaults.standard.set(9, forKey: launchVersionKey)
+
+        var rule = Rule(type: .regn)
+        rule.templateTitle = "Regn på siste sted"
+        let lastPlace = Place(name: "Siste sted", lat: 64.4, lon: 11.4, rules: [rule])
+        let hour = ForecastHour(time: base, temp: 8, precip: 1, wind: 2, cloud: 40, dew: 4)
+        UserDefaults.standard.set(try JSONEncoder().encode(PersistedStoreState(
+            places: [lastPlace], selectedID: lastPlace.id, log: [],
+            forecasts: [lastPlace.id: [hour]],
+            forecastUpdatedAt: [lastPlace.id: base],
+            lastUpdate: base
+        )), forKey: persistenceKey)
+
+        let store = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        store.removePlaces(ids: [lastPlace.id])
+
+        XCTAssertEqual(store.places.map(\.name), Store.launchPlaces.map(\.name))
+        let selectedID = try XCTUnwrap(store.selectedID)
+        XCTAssertTrue(store.places.contains { $0.id == selectedID })
+        XCTAssertNil(store.forecasts[lastPlace.id])
+
+        let persistedData = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
+        let persisted = try JSONDecoder().decode(PersistedStoreState.self, from: persistedData)
+        XCTAssertEqual(persisted.places.map(\.id), store.places.map(\.id))
+        XCTAssertEqual(persisted.selectedID, selectedID)
+        XCTAssertTrue(persisted.forecasts.isEmpty)
+        XCTAssertTrue(persisted.forecastUpdatedAt.isEmpty)
+
+        let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        XCTAssertEqual(restored.places.map(\.id), store.places.map(\.id))
+        XCTAssertEqual(restored.selectedID, selectedID)
+        XCTAssertNil(restored.forecasts[lastPlace.id])
+    }
+
     func testWizardRuleUpdatePreservesExistingCabinSettingsAndForecasts() throws {
         let persistenceKey = "varsel.test.wizard-update-existing-cabin.\(UUID().uuidString)"
         let launchVersionKey = "varsel.launchPlacesVersion"

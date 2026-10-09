@@ -1740,9 +1740,12 @@ bekrefter at fallback-listen og valgt ID er lagret, og at sted-ID-ene fortsatt
 er identiske etter en ny Store-oppstart. Swift-parsing, diffkontroll og iOS
 `build-for-testing` består; XCTest kunne ikke kjøres uten simulator.
 
-**AUTO-395 · ÅPEN** — Legg til regresjon for sletting av siste lagrede sted.
-Bekreft at Store velger et gyldig fallback-sted, fjerner foreldreløs
-prognosecache og gjenoppretter samme gyldige tilstand ved neste oppstart.
+**AUTO-395 · FULLFØRT 2026-10-09** — Ved sletting av siste sted legger
+Store nå tilbake startstedene og velger en gyldig ID med en gang, i stedet for
+å etterlate en tom liste til neste lansering. Regresjonen kontrollerer at
+prognose og tidsstempel for slettet sted fjernes, at fallbacken persisteres,
+og at ID-ene består etter gjenoppretting. Swift-parsing, diffkontroll og iOS
+`build-for-testing` består; XCTest kunne ikke kjøres uten simulator.
 
 **AUTO-396 · ÅPEN** — Test sletting av flere steder samtidig når det valgte
 stedet slettes. Bekreft at valgt-ID faller tilbake til første gjenværende sted,
@@ -1752,6 +1755,10 @@ Store-gjenoppretting.
 **AUTO-397 · ÅPEN** — Legg til regresjon for skadede bytes i lagret Store-data.
 Bekreft at Store oppretter og persisterer gyldige startsteder og at sted-ID-ene
 overlever neste oppstart.
+
+**AUTO-398 · ÅPEN** — Dekk siste-sted-sletting via `removePlaces(at:)` i
+regresjon, og bekreft at UI-indekser etter fallback fortsatt peker på samme
+valgte sted og at varslingsplanen ikke beholder regler for det slettede stedet.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

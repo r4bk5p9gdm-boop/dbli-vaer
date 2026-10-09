@@ -781,7 +781,10 @@ final class Store: ObservableObject {
             forecasts.removeValue(forKey: id)
             forecastErrors.removeValue(forKey: id)
         }
-        if selectedID.map(removedIDs.contains) == true { selectedID = places.first?.id }
+        if places.isEmpty { places = Self.launchPlaces }
+        if selectedID.map({ selectedID in places.contains { $0.id == selectedID } }) != true {
+            selectedID = places.first?.id
+        }
         proximityMonitor.configure(for: places)
         Task { await replan() }
     }
