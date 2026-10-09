@@ -342,17 +342,30 @@ struct OnboardingWizardView: View {
                 Text(scheduleHelp)
             }
 
-            Section {
+        }
+        .safeAreaInset(edge: .bottom) {
+            VStack(spacing: 8) {
+                if step == 4 {
+                    Text("Valgene lagres for \(store.selected?.nameWithPreposition ?? "stedet ditt") når du trykker «Lagre varsler».")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
                 HStack {
                     Button("Tilbake") { step -= 1 }
                     Spacer()
-                    Button(step == 4 ? "Kom i gang" : "Neste") {
+                    Button(step == 4 ? "Lagre varsler" : "Neste") {
                         if step == 4 { installSelectedRules() }
                         else { step += 1 }
                     }
                     .fontWeight(.semibold)
+                    .accessibilityHint(step == 4 ? "Lagrer de valgte varslene og fullfører veiviseren." : "Går videre til neste steg.")
                 }
             }
+            .padding(.horizontal)
+            .padding(.top, 10)
+            .padding(.bottom, 8)
+            .background(.bar)
         }
     }
 

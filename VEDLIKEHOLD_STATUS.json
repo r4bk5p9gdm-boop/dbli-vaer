@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-09T13:27:16Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-123 fullført i a02f4eb: stedsøket lukkes før første prognosehenting og varselplanlegging, så langsomt nett ikke holder veiviseren fast. AUTO-363 står PÅ VENT med sortering og permutasjonstest implementert, men xcodebuild build-for-testing feiler før testkompilering med SwiftUIMacros.StateMacro malformed response i sandboxen; simulatorruntime utilgjengelig. AUTO-364 fullført: Tilpass og værbånd deler solar hel/partial-opasitet og skravurverdier. Swift-parsing og diffkontroll består. Neste kø: AUTO-365/366/367."
+  "lastProgress": "BRUKER-124 fullført: siste side i oppstartsveiviseren har nå fast synlig navigasjon, tydelig «Lagre varsler»-knapp og tekst som angir hvilket sted valgene lagres for. Swift-parsing og diffkontroll består; simulator utilgjengelig. AUTO-363 står PÅ VENT med delt alvorlighetsrekkefølge og permutasjonstest implementert, men xcodebuild build-for-testing feiler før testkompilering med SwiftUIMacros.StateMacro malformed response i sandboxen. AUTO-364 fullført: solmarkeringens visuelle kilde er delt mellom Tilpass og værbåndet. Neste kø: AUTO-365/366/367."
 }

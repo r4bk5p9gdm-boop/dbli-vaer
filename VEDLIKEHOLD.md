@@ -54,6 +54,11 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-124 · FULLFØRT 2026-10-09** — Gjorde fullføringen av
+oppstartsveiviseren tydeligere og lettere å nå: nederste navigasjon er nå
+festet synlig, siste knapp heter «Lagre varsler», og teksten forklarer hvilket
+sted valgene lagres for.
+
 **BRUKER-123 · FULLFØRT 2026-10-09** — Gjennomgått oppstartsveiviserens
 stedsvalg. Valg fra stedsøket lukker nå søkevinduet med én gang i stedet for
 å vente på første værhenting og varselplanlegging; dette hindret veiviseren i
