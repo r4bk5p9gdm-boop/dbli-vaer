@@ -1913,9 +1913,12 @@ valgt-ID beholdes gjennom import og ny eksport. Swift-parsing og diffkontroll
 består; Xcode-testbygg er blokkert av SwiftUIMacros.StateMacro-feilen, og
 CoreSimulatorService er utilgjengelig.
 
-**AUTO-417 · ÅPEN** — Regresjonstest at den faktiske
-WeatherConfigurationDocument-filflyten bevarer ISO-8601-tidspunkt, språk,
-valgt sted og terskelinnstillinger ved fil-eksport og -import.
+**AUTO-417 · FULLFØRT 2026-10-09** — La til regresjon gjennom den faktiske
+WeatherConfigurationDocument-filflyten: `.fileWrapper` skriver ISO-8601-tid,
+og dokumentimport bevarer språk, valgt sted blant flere, norsk stedsnavn,
+lokal temperaturjustering og varselterskel. Swift-parsing og diffkontroll
+består; Xcode-testbygg er blokkert av SwiftUIMacros.StateMacro-feilen, og
+CoreSimulatorService er utilgjengelig.
 
 **AUTO-418 · ÅPEN** — Regresjonstest at WeatherConfigurationDocument avviser
 ugyldig JSON som korrupt fil, i stedet for å importere en tom
@@ -1923,6 +1926,10 @@ værkonfigurasjon som om den var gyldig.
 
 **AUTO-419 · ÅPEN** — Regresjonstest at WeatherConfigurationDocument avviser
 en katalog/FileWrapper uten vanlige JSON-fildata som korrupt fil.
+
+**AUTO-420 · ÅPEN** — Regresjonstest at WeatherConfigurationDocument avviser
+en tom, men ellers gyldig JSON-fil som korrupt i stedet for å lage en tom
+værkonfigurasjon.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

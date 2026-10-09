@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T18:46:31Z",
+  "lastScheduledStart": "2026-10-09T18:51:31Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-416 fullført: feilformede valgfrie eksportmetadata får trygge standardverdier uten å miste gyldige steder eller valgt-ID; ny eksport/import beholder disse. Swift-parsing og diffkontroll består; iOS-testbygg er blokkert av SwiftUIMacros.StateMacro-feilen, og CoreSimulatorService er utilgjengelig. AUTO-004 opprettet AUTO-419 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-417/418/419."
+  "lastProgress": "AUTO-417 fullført: regresjon gjennom WeatherConfigurationDocument.fileWrapper og ReadConfiguration bekrefter ISO-8601-tid, språk, valgt sted blant flere, norsk stedsnavn, lokal temperaturjustering og regelterskel gjennom filflyten. Swift-parsing og diffkontroll består; Xcode-testbygg er blokkert av SwiftUIMacros.StateMacro-feilen, og CoreSimulatorService er utilgjengelig. AUTO-004 opprettet AUTO-420 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-418/419/420."
 }

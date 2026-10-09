@@ -1,6 +1,7 @@
 import XCTest
 import UserNotifications
 import CoreLocation
+import SwiftUI
 @testable import VarselApp
 
 private final class FakeNotificationCenter: NotificationCenterClient {
@@ -6782,6 +6783,41 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(restored.selectedPlaceID, place.id)
         XCTAssertEqual(restored.places.first?.nameWithPreposition, "nerri Namsos")
         XCTAssertEqual(restored.places.first?.localTemperatureOffset, -1.5)
+    }
+
+    func testConfigurationDocumentFileRoundTripPreservesISODateLanguageSelectionAndRules() throws {
+        var rule = Rule(type: .regn)
+        rule.threshold = 4.5
+        let home = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        var place = Place(name: "Åfjord", lat: 64.8, lon: 10.2, rules: [rule])
+        place.temperatureOffset = -1.5
+        let startedAt = Date()
+        let document = WeatherConfigurationDocument(
+            places: [home, place], selectedPlaceID: place.id, alertLanguageStyle: .english
+        )
+
+        let file = try document.fileWrapper(configuration: .init(contentType: .json, existingFile: nil))
+        let data = try XCTUnwrap(file.regularFileContents)
+        let json = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        let exportedAtString = try XCTUnwrap(json["exportedAt"] as? String)
+        XCTAssertTrue(exportedAtString.contains("T"))
+        XCTAssertTrue(exportedAtString.hasSuffix("Z"))
+
+        let importedDocument = try WeatherConfigurationDocument(
+            configuration: .init(file: file, contentType: .json)
+        )
+        let imported = importedDocument.configuration
+
+        XCTAssertEqual(imported.formatVersion, 1)
+        XCTAssertGreaterThanOrEqual(imported.exportedAt, startedAt.addingTimeInterval(-1))
+        XCTAssertLessThanOrEqual(imported.exportedAt, Date().addingTimeInterval(1))
+        XCTAssertEqual(imported.alertLanguageStyle, .english)
+        XCTAssertEqual(imported.selectedPlaceID, place.id)
+        XCTAssertEqual(imported.places.map(\.id), [home.id, place.id])
+        let importedPlace = try XCTUnwrap(imported.places.first { $0.id == place.id })
+        XCTAssertEqual(importedPlace.name, "Åfjord")
+        XCTAssertEqual(importedPlace.temperatureOffset, -1.5)
+        XCTAssertEqual(importedPlace.rules.first?.threshold, 4.5)
     }
 
     func testLegacyConfigurationWithoutOptionalMetadataKeepsPlacesAndSelection() throws {
