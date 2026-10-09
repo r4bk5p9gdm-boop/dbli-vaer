@@ -1872,9 +1872,12 @@ stedets ID, valgt status, prognosecache og hentetid overlever omstart. Swift-
 parsing, diffkontroll og generisk iOS `build-for-testing` med signering slått av
 består; XCTest kunne ikke kjøres fordi CoreSimulatorService er utilgjengelig.
 
-**AUTO-411 · ÅPEN** — Regresjonstest at gjeldende launch-place-versjon ikke
-overskriver brukerens tilpassede preposisjon eller regler for et standardsted
-ved gjentatt Store-oppstart.
+**AUTO-411 · FULLFØRT 2026-10-09** — La til regresjonstest som lagrer et
+standardsted med brukerens endrede preposisjon, egennavn, temperaturavvik og
+varselregel under gjeldende launch-place-versjon. Alle verdiene og fraværet av
+andre standardsteder består ny Store-oppstart. Swift-parsing, diffkontroll og
+generisk iOS `build-for-testing` med signering slått av består; XCTest kunne
+ikke kjøres fordi CoreSimulatorService er utilgjengelig.
 
 **AUTO-412 · ÅPEN** — Regresjonstest at en feilformet varselregel i import
 forkastes isolert, mens det gyldige stedet, øvrige regler og valgt-ID beholdes.
@@ -1882,6 +1885,10 @@ forkastes isolert, mens det gyldige stedet, øvrige regler og valgt-ID beholdes.
 **AUTO-413 · ÅPEN** — Regresjonstest at gjenoppretting av gjeldende
 launch-place-versjon bevarer hentetid og prognosecache for steder som fortsatt
 finnes, selv når brukeren tidligere har fjernet et standardsted.
+
+**AUTO-414 · ÅPEN** — Regresjonstest for eldre konfigurasjonsfiler der valgfrie
+formatversjon-, eksporttidspunkt- og språkfelt mangler, men gyldige steder skal
+fortsatt kunne importeres med trygge standardverdier.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

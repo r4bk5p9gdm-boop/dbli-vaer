@@ -1463,6 +1463,48 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(relaunched.selectedID, naust.id)
     }
 
+    func testCurrentLaunchPlaceVersionPreservesCustomizedDefaultPlaceSettings() throws {
+        let persistenceKey = "varsel.test.current-version-preserves-place-edits.\(UUID().uuidString)"
+        let launchVersionKey = "varsel.launchPlacesVersion"
+        let previousLaunchVersion = UserDefaults.standard.object(forKey: launchVersionKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousLaunchVersion {
+                UserDefaults.standard.set(previousLaunchVersion, forKey: launchVersionKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: launchVersionKey)
+            }
+        }
+        UserDefaults.standard.set(9, forKey: launchVersionKey)
+
+        var editedRule = Rule(type: .regn)
+        editedRule.templateTitle = "Min egen regnregel"
+        editedRule.threshold = 4.5
+        var editedKlinga = Place(name: "Klinga", lat: 64.4, lon: 11.4, preposition: .oppa, rules: [editedRule])
+        editedKlinga.customName = "Hjemme"
+        editedKlinga.temperatureOffset = -1.5
+        UserDefaults.standard.set(try JSONEncoder().encode(PersistedStoreState(
+            places: [editedKlinga], selectedID: editedKlinga.id, log: []
+        )), forKey: persistenceKey)
+
+        let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        let restoredKlinga = try XCTUnwrap(restored.places.first)
+
+        XCTAssertEqual(restored.places.map(\.id), [editedKlinga.id])
+        XCTAssertEqual(restoredKlinga.preposition, .oppa)
+        XCTAssertEqual(restoredKlinga.customName, "Hjemme")
+        XCTAssertEqual(restoredKlinga.temperatureOffset, -1.5)
+        XCTAssertEqual(restoredKlinga.rules.map(\.id), [editedRule.id])
+        XCTAssertEqual(restoredKlinga.rules.first?.templateTitle, "Min egen regnregel")
+        XCTAssertEqual(restoredKlinga.rules.first?.threshold, 4.5)
+
+        let relaunched = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        XCTAssertEqual(relaunched.places.map(\.id), [editedKlinga.id])
+        XCTAssertEqual(relaunched.selectedID, editedKlinga.id)
+        XCTAssertEqual(relaunched.selected?.preposition, .oppa)
+        XCTAssertEqual(relaunched.selected?.rules.first?.templateTitle, "Min egen regnregel")
+    }
+
     func testRemovingUnselectedCabinPreservesHomeAcrossStoreRestore() throws {
         let persistenceKey = "varsel.test.remove-unselected-cabin.\(UUID().uuidString)"
         let launchVersionKey = "varsel.launchPlacesVersion"

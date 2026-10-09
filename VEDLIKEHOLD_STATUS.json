@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T18:16:31Z",
+  "lastScheduledStart": "2026-10-09T18:21:31Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-410 fullført: migreringen gjenkjenner standardsted uavhengig av store/små bokstaver og diakritiske tegn uten duplikater, og regresjonen verifiserer at ID, valgt status, prognosecache og hentetid overlever omstart. Swift-parsing, diffkontroll og generisk iOS build-for-testing med signering slått av bestod; XCTest kunne ikke kjøres fordi CoreSimulatorService ikke er tilgjengelig. AUTO-004 opprettet AUTO-413 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-411/412/413."
+  "lastProgress": "AUTO-411 fullført: regresjonen bekrefter at gjeldende launch-place-versjon bevarer brukerens endrede standardsted, preposisjon, egennavn, temperaturavvik og regel etter Store-omstart, uten å gjeninnføre øvrige standardsteder. Swift-parsing, diffkontroll og generisk iOS build-for-testing med signering slått av bestod; XCTest kunne ikke kjøres fordi CoreSimulatorService ikke er tilgjengelig. AUTO-004 opprettet AUTO-414 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-412/413/414."
 }
