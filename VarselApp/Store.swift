@@ -424,6 +424,14 @@ final class Store: ObservableObject {
             UserDefaults.standard.set(launchPlacesVersion, forKey: launchPlacesVersionKey)
         }
 
+        let resolvedHomeFavorites = homeFavorites.resolved(availableIDs: Set(places.map(\.id)))
+        if homeFavorites != resolvedHomeFavorites {
+            homeFavorites = resolvedHomeFavorites
+            if let data = try? JSONEncoder().encode(resolvedHomeFavorites) {
+                UserDefaults.standard.set(data, forKey: "varsel.homeFavorites")
+            }
+        }
+
         let monitor = ProximityMonitor()
         proximityMonitor = monitor
         nearbyPlaceIDs = monitor.nearbyPlaceIDs

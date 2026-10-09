@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T17:46:31Z",
+  "lastScheduledStart": "2026-10-09T17:51:31Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-404 fullført: la til Store-regresjon som bekrefter at migrering beholder prognosecache og tidsstempel for egendefinerte steder, men fjerner cache for en slettet standardplass og persisterer oppryddingen. Swift-parsing, diffkontroll og iOS build-for-testing bestod; XCTest ble ikke kjørt fordi CoreSimulatorService ikke er tilgjengelig. AUTO-004 opprettet AUTO-407 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-405/406/407."
+  "lastProgress": "AUTO-405 fullført: Store-gjenoppretting rydder og persisterer nå homeFavorites-ID-er som ikke finnes blant gjenopprettede steder. La til regresjon for første oppstart, persistert verdi og ny Store-oppstart. Swift-parsing, diffkontroll og iOS build-for-testing bestod; XCTest ble ikke kjørt fordi CoreSimulatorService ikke er tilgjengelig. AUTO-004 opprettet AUTO-408 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-406/407/408."
 }
