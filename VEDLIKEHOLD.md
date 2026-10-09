@@ -1885,9 +1885,12 @@ og engelsk språk overlever både import og ny eksport/import. Swift-parsing,
 diffkontroll og generisk iOS `build-for-testing` med signering slått av består;
 XCTest kunne ikke kjøres fordi CoreSimulatorService er utilgjengelig.
 
-**AUTO-413 · ÅPEN** — Regresjonstest at gjenoppretting av gjeldende
-launch-place-versjon bevarer hentetid og prognosecache for steder som fortsatt
-finnes, selv når brukeren tidligere har fjernet et standardsted.
+**AUTO-413 · FULLFØRT 2026-10-09** — La til Store-regresjon med gjeldende
+launch-place-versjon: når Klinga er fjernet, beholdes Hytte og Naust med hver
+sin prognose og hentetid; cachen for Klinga fjernes fra vedvarende tilstand.
+Steder, valgt ID og cache består en ny Store-oppstart. Swift-parsing,
+diffkontroll og generisk iOS `build-for-testing` med signering slått av består;
+XCTest kunne ikke kjøres fordi CoreSimulatorService er utilgjengelig.
 
 **AUTO-414 · ÅPEN** — Regresjonstest for eldre konfigurasjonsfiler der valgfrie
 formatversjon-, eksporttidspunkt- og språkfelt mangler, men gyldige steder skal
@@ -1896,6 +1899,10 @@ fortsatt kunne importeres med trygge standardverdier.
 **AUTO-415 · ÅPEN** — Regresjonstest at migrering håndterer to lagrede
 stedsnavn som begge samsvarer med samme standardsted uten å etterlate
 duplikatvalg eller prognosecache for sted som ble slått sammen.
+
+**AUTO-416 · ÅPEN** — Regresjonstest at feilformede valgfrie
+versjons-, eksporttids- eller språkverdier i en konfigurasjonsfil faller tilbake
+trygt uten at gyldige steder og valgt-ID forkastes.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

@@ -1463,6 +1463,70 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(relaunched.selectedID, naust.id)
     }
 
+    func testCurrentLaunchPlaceVersionKeepsRemainingForecastCachesAfterDefaultRemoval() throws {
+        let persistenceKey = "varsel.test.current-version-cache-after-default-removal.\(UUID().uuidString)"
+        let launchVersionKey = "varsel.launchPlacesVersion"
+        let previousLaunchVersion = UserDefaults.standard.object(forKey: launchVersionKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousLaunchVersion {
+                UserDefaults.standard.set(previousLaunchVersion, forKey: launchVersionKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: launchVersionKey)
+            }
+        }
+        UserDefaults.standard.set(9, forKey: launchVersionKey)
+
+        let hytte = Place(name: "Hytte", lat: 64.2, lon: 11.4, preposition: .pa)
+        let naust = Place(name: "Naust", lat: 64.1, lon: 11.6, preposition: .inni)
+        let removedKlinga = Store.launchPlaces[0]
+        let hytteHour = ForecastHour(time: base, temp: 5, precip: 1, wind: 2, cloud: 40, dew: 3)
+        let naustHour = ForecastHour(time: base.addingTimeInterval(3_600), temp: 8, precip: 0, wind: 1, cloud: 20, dew: 4)
+        let removedHour = ForecastHour(time: base.addingTimeInterval(7_200), temp: 2, precip: 0, wind: 4, cloud: 70, dew: 1)
+        let hytteFetchedAt = base.addingTimeInterval(-600)
+        let naustFetchedAt = base.addingTimeInterval(-1_200)
+        let removedFetchedAt = base.addingTimeInterval(-1_800)
+        let savedState = PersistedStoreState(
+            places: [hytte, naust], selectedID: naust.id, log: [],
+            forecasts: [
+                hytte.id: [hytteHour],
+                naust.id: [naustHour],
+                removedKlinga.id: [removedHour],
+            ],
+            forecastUpdatedAt: [
+                hytte.id: hytteFetchedAt,
+                naust.id: naustFetchedAt,
+                removedKlinga.id: removedFetchedAt,
+            ],
+            lastUpdate: naustFetchedAt
+        )
+        UserDefaults.standard.set(try JSONEncoder().encode(savedState), forKey: persistenceKey)
+
+        let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+
+        XCTAssertEqual(restored.places.map(\.id), [hytte.id, naust.id])
+        XCTAssertEqual(restored.selectedID, naust.id)
+        XCTAssertEqual(restored.forecasts[hytte.id], [hytteHour])
+        XCTAssertEqual(restored.forecastUpdatedAt(for: hytte.id), hytteFetchedAt)
+        XCTAssertEqual(restored.forecasts[naust.id], [naustHour])
+        XCTAssertEqual(restored.forecastUpdatedAt(for: naust.id), naustFetchedAt)
+        XCTAssertNil(restored.forecasts[removedKlinga.id])
+        XCTAssertNil(restored.forecastUpdatedAt(for: removedKlinga.id))
+
+        let persistedData = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
+        let persisted = try JSONDecoder().decode(PersistedStoreState.self, from: persistedData)
+        XCTAssertEqual(Set(persisted.forecasts.keys), Set([hytte.id, naust.id]))
+        XCTAssertEqual(Set(persisted.forecastUpdatedAt.keys), Set([hytte.id, naust.id]))
+
+        let relaunched = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        XCTAssertEqual(relaunched.places.map(\.id), [hytte.id, naust.id])
+        XCTAssertEqual(relaunched.selectedID, naust.id)
+        XCTAssertEqual(relaunched.forecasts[hytte.id], [hytteHour])
+        XCTAssertEqual(relaunched.forecastUpdatedAt(for: hytte.id), hytteFetchedAt)
+        XCTAssertEqual(relaunched.forecasts[naust.id], [naustHour])
+        XCTAssertEqual(relaunched.forecastUpdatedAt(for: naust.id), naustFetchedAt)
+    }
+
     func testCurrentLaunchPlaceVersionPreservesCustomizedDefaultPlaceSettings() throws {
         let persistenceKey = "varsel.test.current-version-preserves-place-edits.\(UUID().uuidString)"
         let launchVersionKey = "varsel.launchPlacesVersion"
