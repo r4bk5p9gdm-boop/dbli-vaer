@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T15:58:30Z",
+  "lastScheduledStart": "2026-10-09T16:03:30Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-384 fullført: la til regresjon for WizardPresetConfiguration.rules med kjente og ukjente preset-ID-er i vilkårlig rekkefølge. Bekreftet ignorering av ukjente ID-er, katalogrekkefølge og fravær av duplikater. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-387; neste: AUTO-385/386/387."
+  "lastProgress": "AUTO-385 fullført: la til Store-regresjon for ugyldig lagret selectedID. Gjenoppretting velger første gyldige sted og persisterer det reparerte valget. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-388; neste: AUTO-386/387/388."
 }

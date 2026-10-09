@@ -1243,6 +1243,36 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(restoredCabin.rules.allSatisfy(\.onlyWhenNearby))
     }
 
+    func testStoreRepairsAndPersistsMissingSelectedPlaceID() throws {
+        let persistenceKey = "varsel.test.missing-selected-place.\(UUID().uuidString)"
+        let launchVersionKey = "varsel.launchPlacesVersion"
+        let previousLaunchVersion = UserDefaults.standard.object(forKey: launchVersionKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousLaunchVersion {
+                UserDefaults.standard.set(previousLaunchVersion, forKey: launchVersionKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: launchVersionKey)
+            }
+        }
+        UserDefaults.standard.set(9, forKey: launchVersionKey)
+
+        let first = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let second = Place(name: "Hytta", lat: 64.2, lon: 11.4, preposition: .pa)
+        let missingID = UUID()
+        let state = PersistedStoreState(places: [first, second], selectedID: missingID, log: [])
+        UserDefaults.standard.set(try JSONEncoder().encode(state), forKey: persistenceKey)
+
+        let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+
+        XCTAssertEqual(restored.selectedID, first.id)
+        let repairedData = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
+        let repairedState = try JSONDecoder().decode(PersistedStoreState.self, from: repairedData)
+        let repairedSelectedID = try XCTUnwrap(repairedState.selectedID)
+        XCTAssertEqual(repairedSelectedID, first.id)
+        XCTAssertTrue(repairedState.places.contains { $0.id == repairedSelectedID })
+    }
+
     func testWizardPresetRulesPreserveExistingMatchingAndOtherRules() {
         var existingPresetRule = Rule(type: .regn)
         existingPresetRule.templateTitle = "Regn neste dag"
