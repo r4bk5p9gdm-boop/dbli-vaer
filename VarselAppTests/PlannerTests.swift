@@ -6820,6 +6820,14 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(importedPlace.rules.first?.threshold, 4.5)
     }
 
+    func testConfigurationDocumentRejectsInvalidJSONFileContents() {
+        let file = FileWrapper(regularFileWithContents: Data("this is not JSON".utf8))
+
+        XCTAssertThrowsError(try WeatherConfigurationDocument(
+            configuration: .init(file: file, contentType: .json)
+        ))
+    }
+
     func testLegacyConfigurationWithoutOptionalMetadataKeepsPlacesAndSelection() throws {
         let place = Place(name: "Namsos", lat: 64.5, lon: 11.5)
         let source = WeatherConfigurationExport(

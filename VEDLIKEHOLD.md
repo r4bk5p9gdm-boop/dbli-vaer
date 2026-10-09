@@ -1920,9 +1920,11 @@ lokal temperaturjustering og varselterskel. Swift-parsing og diffkontroll
 består; Xcode-testbygg er blokkert av SwiftUIMacros.StateMacro-feilen, og
 CoreSimulatorService er utilgjengelig.
 
-**AUTO-418 · ÅPEN** — Regresjonstest at WeatherConfigurationDocument avviser
-ugyldig JSON som korrupt fil, i stedet for å importere en tom
-værkonfigurasjon som om den var gyldig.
+**AUTO-418 · FULLFØRT 2026-10-09** — La til filimportregresjon med innhold
+som ikke er JSON. WeatherConfigurationDocument kaster nå forventet feil fra
+JSON-dekoderen, i stedet for å godta filen som en tom værkonfigurasjon.
+Swift-parsing og diffkontroll består; Xcode-testbygg er blokkert av den kjente
+SwiftUIMacros.StateMacro-feilen, og CoreSimulatorService er utilgjengelig.
 
 **AUTO-419 · ÅPEN** — Regresjonstest at WeatherConfigurationDocument avviser
 en katalog/FileWrapper uten vanlige JSON-fildata som korrupt fil.
@@ -1930,6 +1932,9 @@ en katalog/FileWrapper uten vanlige JSON-fildata som korrupt fil.
 **AUTO-420 · ÅPEN** — Regresjonstest at WeatherConfigurationDocument avviser
 en tom, men ellers gyldig JSON-fil som korrupt i stedet for å lage en tom
 værkonfigurasjon.
+
+**AUTO-421 · ÅPEN** — Regresjonstest gjennom FileDocument-importen at én
+feilformet stedspost hoppes over mens gyldig sted, språk og valgt-ID beholdes.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
