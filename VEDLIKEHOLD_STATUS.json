@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-09T17:37:31Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-131 fullført: solens mellomtype er gule striper på nøytral bakgrunn uten gul helfyll. Swift-parsing, diffkontroll og iPhone build-for-testing består; oppdateringen er installert på iPhone 13 Pro Max. AUTO-403 er også verifisert og gjenstår kun å loggføre/committe separat."
+  "lastProgress": "AUTO-403 fullført: importdekoding faller tilbake til første importerte sted når selectedPlaceID mangler eller er ugyldig, med regresjon for ny eksport/import. Swift-parsing, diffkontroll og iOS build-for-testing består. XCTest ble ikke kjørt. AUTO-004 opprettet AUTO-406; neste: AUTO-404/405/406. BRUKER-131 er separat installert og committet."
 }

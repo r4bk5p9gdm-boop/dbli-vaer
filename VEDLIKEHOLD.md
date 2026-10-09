@@ -1816,6 +1816,12 @@ består; XCTest kunne ikke kjøres uten simulator.
 `selectedPlaceID` velger første importerte sted og bevarer dette valget ved
 eksport og ny import.
 
+**AUTO-403 · FULLFØRT 2026-10-09** — Importdekoding velger nå første importerte
+sted når `selectedPlaceID` mangler eller ikke finnes i listen. Regresjonen
+dekker begge tilfeller og bekrefter at fallback-valget består en ny eksport og
+import. Swift-parsing, diffkontroll og iOS `build-for-testing` består; XCTest
+ble ikke kjørt i denne kjøringen.
+
 **AUTO-404 · ÅPEN** — Regresjonstest at Store-migrering beholder prognosecache
 for egendefinerte steder, men fjerner cache og tidsstempel for en standardplass
 som ikke lenger finnes i den migrerte stedlisten.
@@ -1823,6 +1829,10 @@ som ikke lenger finnes i den migrerte stedlisten.
 **AUTO-405 · ÅPEN** — Kontroller at lagrede `homeFavorites` som peker på
 steder fjernet før appstart, blir ryddet og persistert under Store-gjenoppretting,
 og ikke bare filtrert midlertidig i visningen.
+
+**AUTO-406 · ÅPEN** — Regresjonstest at import med enkelte feilformede
+stedposter beholder de gyldige stedene og velger første gyldige sted dersom
+valgt-ID peker på en post som ble forkastet.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

@@ -11,9 +11,16 @@ struct WeatherConfigurationExport: Codable {
     init(places: [Place], selectedPlaceID: UUID?, alertLanguageStyle: AlertLanguageStyle) {
         formatVersion = 1
         exportedAt = Date()
-        self.selectedPlaceID = selectedPlaceID
-        self.alertLanguageStyle = alertLanguageStyle
         self.places = places
+        self.selectedPlaceID = Self.resolvedSelection(selectedPlaceID, in: places)
+        self.alertLanguageStyle = alertLanguageStyle
+    }
+
+    private static func resolvedSelection(_ selectedPlaceID: UUID?, in places: [Place]) -> UUID? {
+        if let selectedPlaceID, places.contains(where: { $0.id == selectedPlaceID }) {
+            return selectedPlaceID
+        }
+        return places.first?.id
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -24,9 +31,10 @@ struct WeatherConfigurationExport: Codable {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         formatVersion = (try? values.decode(Int.self, forKey: .formatVersion)) ?? 1
         exportedAt = (try? values.decode(Date.self, forKey: .exportedAt)) ?? .distantPast
-        selectedPlaceID = try? values.decode(UUID.self, forKey: .selectedPlaceID)
         alertLanguageStyle = try? values.decode(AlertLanguageStyle.self, forKey: .alertLanguageStyle)
         places = (try? values.decode([LossyDecodable<Place>].self, forKey: .places))?.compactMap(\.value) ?? []
+        let decodedSelection = try? values.decode(UUID.self, forKey: .selectedPlaceID)
+        selectedPlaceID = Self.resolvedSelection(decodedSelection, in: places)
     }
 }
 

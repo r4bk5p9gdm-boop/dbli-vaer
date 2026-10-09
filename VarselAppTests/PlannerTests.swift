@@ -6560,6 +6560,42 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(restored.places.first?.localTemperatureOffset, -1.5)
     }
 
+    func testConfigurationImportFallsBackToFirstPlaceForMissingOrUnknownSelection() throws {
+        let firstPlace = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let secondPlace = Place(name: "Namsos", lat: 64.5, lon: 11.5)
+        let source = WeatherConfigurationExport(
+            places: [firstPlace, secondPlace], selectedPlaceID: secondPlace.id, alertLanguageStyle: .english
+        )
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let validData = try encoder.encode(source)
+
+        var invalidSelectionObject = try XCTUnwrap(JSONSerialization.jsonObject(with: validData) as? [String: Any])
+        invalidSelectionObject["selectedPlaceID"] = UUID().uuidString
+        let missingSelectionObject = try XCTUnwrap(JSONSerialization.jsonObject(with: validData) as? [String: Any])
+        var missingSelection = missingSelectionObject
+        missingSelection.removeValue(forKey: "selectedPlaceID")
+
+        for sourceObject in [invalidSelectionObject, missingSelection] {
+            let importedData = try JSONSerialization.data(withJSONObject: sourceObject)
+            let imported = try decoder.decode(WeatherConfigurationExport.self, from: importedData)
+
+            XCTAssertEqual(imported.selectedPlaceID, firstPlace.id)
+            XCTAssertEqual(imported.places.map(\.id), [firstPlace.id, secondPlace.id])
+
+            let exportedAgain = try encoder.encode(WeatherConfigurationExport(
+                places: imported.places,
+                selectedPlaceID: imported.selectedPlaceID,
+                alertLanguageStyle: imported.alertLanguageStyle ?? .bokmal
+            ))
+            let reimported = try decoder.decode(WeatherConfigurationExport.self, from: exportedAgain)
+            XCTAssertEqual(reimported.selectedPlaceID, firstPlace.id)
+            XCTAssertEqual(reimported.places.map(\.id), [firstPlace.id, secondPlace.id])
+        }
+    }
+
     @MainActor
     func testCancellingActiveRefreshDoesNotCancelFollowingRefresh() async {
         let queue = ForecastRefreshQueue()
