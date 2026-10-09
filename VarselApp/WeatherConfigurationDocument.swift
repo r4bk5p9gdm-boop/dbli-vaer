@@ -2,6 +2,8 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct WeatherConfigurationExport: Codable {
+    static let currentFormatVersion = 1
+
     let formatVersion: Int
     let exportedAt: Date
     let selectedPlaceID: UUID?
@@ -9,7 +11,7 @@ struct WeatherConfigurationExport: Codable {
     let places: [Place]
 
     init(places: [Place], selectedPlaceID: UUID?, alertLanguageStyle: AlertLanguageStyle) {
-        formatVersion = 1
+        formatVersion = Self.currentFormatVersion
         exportedAt = Date()
         self.places = places
         self.selectedPlaceID = Self.resolvedSelection(selectedPlaceID, in: places)
@@ -29,7 +31,15 @@ struct WeatherConfigurationExport: Codable {
 
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        formatVersion = (try? values.decode(Int.self, forKey: .formatVersion)) ?? 1
+        let decodedFormatVersion = (try? values.decode(Int.self, forKey: .formatVersion)) ?? 1
+        guard decodedFormatVersion <= Self.currentFormatVersion else {
+            throw DecodingError.dataCorruptedError(
+                forKey: .formatVersion,
+                in: values,
+                debugDescription: "Unsupported configuration format version \(decodedFormatVersion); this app supports up to \(Self.currentFormatVersion)."
+            )
+        }
+        formatVersion = decodedFormatVersion
         exportedAt = (try? values.decode(Date.self, forKey: .exportedAt)) ?? .distantPast
         alertLanguageStyle = try? values.decode(AlertLanguageStyle.self, forKey: .alertLanguageStyle)
         places = (try? values.decode([LossyDecodable<Place>].self, forKey: .places))?.compactMap(\.value) ?? []

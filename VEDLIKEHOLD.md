@@ -1962,14 +1962,23 @@ til den faktiske FileDocument-filflyten. En dårlig regelpost hoppes over,
 og import. Swift-parsing og diffkontroll består; Xcode-testbygg er blokkert av
 SwiftUIMacros.StateMacro-feilen, og CoreSimulatorService er utilgjengelig.
 
-**AUTO-425 · ÅPEN** — Regresjonstest at eksport fra en eldre appversjon med
-større formatVersion avvises tydelig, så nyere konfigurasjonsdata ikke feiltolkes.
+**AUTO-425 · FULLFØRT 2026-10-09** — Eksport/import av en konfigurasjon med
+formatVersion høyere enn appens støttede versjon avvises nå med en tydelig
+DecodingError som peker på `formatVersion`. La til regresjon gjennom den faktiske
+WeatherConfigurationDocument-filimporten. Swift-parsing og diffkontroll består;
+Xcode-testbygg er blokkert av SwiftUIMacros.StateMacro-feilen, og CoreSimulatorService
+er utilgjengelig.
 
 **AUTO-426 · ÅPEN** — Regresjonstest gjennom FileDocument-filflyten at gyldig
 konfigurasjon med null steder beholder tom liste, nil valgt-ID og språk.
 
 **AUTO-427 · ÅPEN** — Regresjonstest FileDocument-import av eldre JSON uten
 valgfrie metadata: standardverdier brukes mens sted og valgt-ID beholdes.
+
+**AUTO-428 · ÅPEN** — Gjør autorisasjonsbeslutningen i LocationManager
+deterministisk testbar, og dekk at denied/restricted (og ukjent status)
+avslutter posisjonsforespørselen umiddelbart med avvist-feil i stedet for å
+vente på timeout. Bevar eksisterende oppførsel for uavklart og autorisert status.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

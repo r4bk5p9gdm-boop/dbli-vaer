@@ -6838,6 +6838,29 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testConfigurationDocumentRejectsUnsupportedFutureFormatVersion() throws {
+        let place = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let source = WeatherConfigurationExport(
+            places: [place], selectedPlaceID: place.id, alertLanguageStyle: .english
+        )
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: encoder.encode(source)) as? [String: Any])
+        object["formatVersion"] = WeatherConfigurationExport.currentFormatVersion + 1
+        let file = FileWrapper(regularFileWithContents: try JSONSerialization.data(withJSONObject: object))
+
+        XCTAssertThrowsError(try WeatherConfigurationDocument(
+            configuration: .init(file: file, contentType: .json)
+        )) { error in
+            guard case let DecodingError.dataCorrupted(context) = error else {
+                XCTFail("Expected an unsupported format version to be rejected, got: \(error)")
+                return
+            }
+            XCTAssertEqual(context.codingPath.last?.stringValue, "formatVersion")
+            XCTAssertTrue(context.debugDescription.contains("Unsupported configuration format version"))
+        }
+    }
+
     func testConfigurationDocumentRejectsDirectoryInsteadOfJSONFile() {
         let directory = FileWrapper(directoryWithFileWrappers: [:])
 

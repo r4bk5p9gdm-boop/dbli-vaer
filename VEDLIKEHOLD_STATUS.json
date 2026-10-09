@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T19:26:31Z",
+  "lastScheduledStart": "2026-10-09T19:34:34Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-424 fullført: feilformet regel hoppes nå over gjennom WeatherConfigurationDocument-filimport, og gyldige regler/steder bevares etter ny fileksport og reimport. Swift-parsing og diffkontroll består; Xcode-testbygg er blokkert av SwiftUIMacros.StateMacro-feilen, og CoreSimulatorService er utilgjengelig. AUTO-004 opprettet AUTO-427 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-425/426/427."
+  "lastProgress": "AUTO-425 fullført: fremtidig formatVersion avvises med tydelig DecodingError gjennom WeatherConfigurationDocument-filimport; la til regresjonstest. Swift-parsing og diffkontroll består; full Xcode-testkjøring er blokkert av kjent SwiftUIMacros.StateMacro-feil, og CoreSimulatorService er utilgjengelig. Bred gjennomgang av LocationManager avdekket at denied/restricted bør ha deterministisk regresjonsdekning; AUTO-428 opprettet. Neste: AUTO-426/427/428."
 }
