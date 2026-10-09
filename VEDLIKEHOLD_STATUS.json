@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-09T20:29:02Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-427 fullført: eldre JSON ble regresjonstestet gjennom faktisk FileDocument-filimport/-eksport uten formatversjon, eksporttid eller språkmetadata; standardverdier brukes mens sted og valgt-ID bevares. Swift-parsing/diffkontroll består; XCTest ikke kjørt pga. kjent SwiftUIMacros-feil. Bred gjennomgang fant risiko for utdatert varslingsstatus etter endring i iOS-innstillinger; AUTO-428, AUTO-429 og AUTO-430 står åpne."
+  "lastProgress": "BRUKER-140 fullført: Hjem viser nå en kompakt kompassring med GPS-tekst og rolig live-prikk over samlet stedsetikett («Her på Klinga»). Swift-parsing og diffkontroll består; iPhone-installasjon er ikke del av denne forespørselen. Neste køpunkter er AUTO-428, AUTO-429 og AUTO-430."
 }

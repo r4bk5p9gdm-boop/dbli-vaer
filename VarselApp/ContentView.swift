@@ -2,45 +2,40 @@ import SwiftUI
 import CoreLocation
 
 private struct LocationPresenceBadge: View {
-    let label: String
     let course: CLLocationDirection?
     @State private var pulse = false
 
     var body: some View {
-        ZStack {
-            // The rings read as a live position without adding another weather
-            // colour to the title row.
-            Circle()
-                .stroke(Color.indigo.opacity(pulse ? 0.08 : 0.34), lineWidth: 1.4)
-                .scaleEffect(pulse ? 1.16 : 0.72)
-            Circle()
-                .stroke(Color.indigo.opacity(pulse ? 0.22 : 0.46), lineWidth: 1.3)
-                .scaleEffect(pulse ? 0.86 : 0.58)
-
-            Image(systemName: "location.north.fill")
-                .font(.system(size: 31, weight: .black))
-                .foregroundStyle(.indigo.gradient)
-                // The arrow rests 45° left of the previous right-pointing
-                // posture, while a live course still rotates it with GPS.
-                .rotationEffect(.degrees(45 + (course ?? 0)))
-                .animation(.easeInOut(duration: 0.35), value: course)
-
-            // A white contour keeps the same light rounded label legible over
-            // both the arrow and its animated rings.
-            ZStack {
-                Text(label).font(.system(size: 23, weight: .light, design: .rounded)).foregroundStyle(.white).offset(x: 2)
-                Text(label).font(.system(size: 23, weight: .light, design: .rounded)).foregroundStyle(.white).offset(x: -2)
-                Text(label).font(.system(size: 23, weight: .light, design: .rounded)).foregroundStyle(.white).offset(y: 2)
-                Text(label).font(.system(size: 23, weight: .light, design: .rounded)).foregroundStyle(.white).offset(y: -2)
-                Text(label).font(.system(size: 23, weight: .light, design: .rounded)).foregroundStyle(.indigo)
+        HStack(spacing: 5) {
+            ZStack(alignment: .bottomTrailing) {
+                Circle()
+                    .stroke(Color.indigo.opacity(0.22), lineWidth: 1)
+                    .frame(width: 21, height: 21)
+                Image(systemName: "location.north.fill")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(.indigo.gradient)
+                    .rotationEffect(.degrees(course ?? 0))
+                    .animation(.easeInOut(duration: 0.35), value: course)
+                Circle()
+                    .fill(Color.green)
+                    .frame(width: 6, height: 6)
+                    .overlay(Circle().stroke(Color(uiColor: .systemBackground), lineWidth: 1.2))
+                    .scaleEffect(pulse ? 1 : 0.78)
+                    .opacity(pulse ? 1 : 0.72)
+                    .animation(
+                        .easeInOut(duration: 1.4).repeatForever(autoreverses: true),
+                        value: pulse
+                    )
             }
+            Text("GPS")
+                .font(.system(size: 11, weight: .bold, design: .rounded))
+                .tracking(0.7)
+                .foregroundStyle(.secondary)
         }
-        .frame(width: label == "here" ? 46 : 40, height: 34)
+        .fixedSize()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("GPS-posisjon, live")
         .onAppear { pulse = true }
-        .animation(
-            .spring(response: 0.85, dampingFraction: 0.55).repeatForever(autoreverses: true),
-            value: pulse
-        )
     }
 }
 
@@ -535,52 +530,74 @@ private struct CurrentWeatherCard: View {
                 WeatherWordmark(languageStyle: languageStyle)
 
                 if isCurrentLocation {
-                    LocationPresenceBadge(
-                        label: languageStyle == .english ? "here" : "her",
-                        course: locationCourse
-                    )
-                    .accessibilityElement(children: .combine)
-                    .accessibilityLabel("Posisjonsbasert værvarsel her")
-                    .accessibilityHint("Dette stedet følger telefonens aktuelle posisjon.")
-                }
+                    VStack(alignment: .leading, spacing: 3) {
+                        LocationPresenceBadge(course: locationCourse)
+                        HStack(alignment: .center, spacing: 4) {
+                            Text(languageStyle == .english ? "Here" : "Her")
+                                .font(.caption.weight(.bold).italic())
+                                .foregroundStyle(.white)
+                            Text(place.resolvedPreposition.rawValue)
+                                .font(.caption.weight(.bold).italic())
+                                .foregroundStyle(.white)
 
-                Text(place.resolvedPreposition.rawValue)
-                    .font(.caption.weight(.bold).italic())
-                    .foregroundStyle(.white)
-                    .fixedSize()
-                    .padding(.horizontal, 7)
-                    .padding(.vertical, 3)
-                    .background(
-                        LinearGradient(
-                            colors: [.blue.opacity(0.72), .cyan.opacity(0.72)],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        ),
-                        in: Capsule()
-                    )
-                    .rotationEffect(.degrees(-4))
-
-                if showsPlaceMenu {
-                    Menu {
-                        ForEach(places) { candidate in
-                            Button {
-                                onSelect(candidate)
-                            } label: {
-                                if candidate.id == place.id {
-                                    Label(candidate.displayName, systemImage: "checkmark")
-                                } else {
-                                    Text(candidate.displayName)
+                            if showsPlaceMenu {
+                                Menu {
+                                    placeMenuItems
+                                } label: {
+                                    currentLocationPlaceName(showsChevron: true)
                                 }
+                                .layoutPriority(1)
+                            } else {
+                                currentLocationPlaceName(showsChevron: false)
+                                    .layoutPriority(1)
                             }
                         }
-                    } label: {
-                        PlaceTitle(place: place, showsChevron: true, isCurrentLocation: isCurrentLocation)
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 3)
+                        .background(
+                            LinearGradient(
+                                colors: [.blue.opacity(0.72), .cyan.opacity(0.72)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            in: Capsule()
+                        )
+                        .rotationEffect(.degrees(-2))
                     }
-                    .layoutPriority(1)
-                } else {
-                    PlaceTitle(place: place, showsChevron: false, isCurrentLocation: isCurrentLocation)
-                        .layoutPriority(1)
+                    .accessibilityElement(children: .contain)
                 }
+
+                if !isCurrentLocation {
+                    Text(place.resolvedPreposition.rawValue)
+                        .font(.caption.weight(.bold).italic())
+                        .foregroundStyle(.white)
+                        .fixedSize()
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 3)
+                        .background(
+                            LinearGradient(
+                                colors: [.blue.opacity(0.72), .cyan.opacity(0.72)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            in: Capsule()
+                        )
+                        .rotationEffect(.degrees(-4))
+
+                    if showsPlaceMenu {
+                        Menu {
+                            placeMenuItems
+                        } label: {
+                            PlaceTitle(place: place, showsChevron: true, isCurrentLocation: false)
+                        }
+                        .layoutPriority(1)
+                    } else {
+                        PlaceTitle(place: place, showsChevron: false, isCurrentLocation: false)
+                            .layoutPriority(1)
+                    }
+                }
+
+                Spacer(minLength: 0)
 
                 HStack(spacing: 4) {
                     ZStack {
@@ -685,6 +702,39 @@ private struct CurrentWeatherCard: View {
                     .stroke(isCurrentLocation ? Color.indigo.opacity(0.28) : Color.blue.opacity(0.12))
             }
         }
+    }
+
+    @ViewBuilder
+    private var placeMenuItems: some View {
+        ForEach(places) { candidate in
+            Button {
+                onSelect(candidate)
+            } label: {
+                if candidate.id == place.id {
+                    Label(candidate.displayName, systemImage: "checkmark")
+                } else {
+                    Text(candidate.displayName)
+                }
+            }
+        }
+    }
+
+    private func currentLocationPlaceName(showsChevron: Bool) -> some View {
+        HStack(spacing: 3) {
+            Text(place.displayName)
+                .font(.system(size: 21, weight: .medium, design: .rounded))
+                .lineLimit(1)
+                .minimumScaleFactor(0.55)
+            if showsChevron {
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 8, weight: .bold))
+            }
+        }
+        .foregroundStyle(.white)
+        .fixedSize(horizontal: false, vertical: true)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(languageStyle == .english ? "Here" : "Her") \(place.nameWithPreposition), GPS-posisjon")
+        .accessibilityHint("Dette stedet følger telefonens aktuelle posisjon.")
     }
 
     private var precipitationMetricValue: String {

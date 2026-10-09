@@ -54,6 +54,11 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-140 · FULLFØRT 2026-10-09** — Hjem viser nå en kompakt kompassring
+med GPS-tekst og diskret grønn live-prikk over den samlede stedsetiketten,
+som «Her på Klinga». «Her på» beholder den blå etikettstilen, og skjermleser
+får en tydelig GPS-posisjonsbeskrivelse. Swift-parsing og diffkontroll består.
+
 **BRUKER-139 · FULLFØRT 2026-10-09** — Fjernet «Varsler» fra
 bunnmenyen, slik at navigasjonen nå har Hjem, Steder og Innstillinger.
 Kommende pushvarsler for valgt sted vises under værdagene på Hjem, og
