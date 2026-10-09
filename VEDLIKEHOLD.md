@@ -1407,9 +1407,11 @@ timer senere beholdes i begge tilfeller, altså påvirker filtrerte regler ikke
 cooldown-deduplisering. Swift-parsing/typekontroll og diffkontroll består;
 XCTest ble ikke kjørt i denne lettvektskjøringen.
 
-**AUTO-353 · ÅPEN** — Test at ulik lead time ikke endrer seks-timersgrensen:
-to regnhendelser nøyaktig seks forløpte timer fra hverandre beholdes selv om
-varslenes `fireAt`-rekkefølge er motsatt.
+**AUTO-353 · FULLFØRT 2026-10-09** — La til test med regnhendelser nøyaktig
+seks forløpte timer fra hverandre og motsatt `fireAt`-rekkefølge på grunn av
+ulike lead times. Begge beholdes ved cooldown-grensen. Swift-parsing/
+typekontroll og diffkontroll består; XCTest ble ikke kjørt i denne
+lettvektskjøringen.
 
 **AUTO-354 · ÅPEN** — Test at flere planlagte varsler for samme regnregel og
 værhendelse ikke dedupliseres mot hverandre som om de var ulike regler.
@@ -1417,6 +1419,10 @@ værhendelse ikke dedupliseres mot hverandre som om de var ulike regler.
 **AUTO-355 · ÅPEN** — Test at en `onlyWhenNearby` regnregel blir med i
 planlegging og cooldown-deduplisering når stedet faktisk finnes i
 `nearbyPlaceIDs`.
+
+**AUTO-356 · ÅPEN** — Test at alle planlagte push-kandidater for den beholdte
+tidligste regnhendelsen overlever når en annen regels nærliggende hendelse
+dedupliseres bort.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
