@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T16:03:30Z",
+  "lastScheduledStart": "2026-10-09T16:08:30Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-385 fullført: la til Store-regresjon for ugyldig lagret selectedID. Gjenoppretting velger første gyldige sted og persisterer det reparerte valget. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-388; neste: AUTO-386/387/388."
+  "lastProgress": "AUTO-386 fullført: utvidet Store-gjenopprettingsregresjonen til å kontrollere cabinOnlyWhenNearby både true og false. Begge valg bevares uten at hjemstedets regler endres. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-389; neste: AUTO-387/388/389."
 }

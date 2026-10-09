@@ -1660,9 +1660,11 @@ og testen bekrefter at reparert valg blir skrevet tilbake til persistensen.
 Swift-parsing, diffkontroll og iOS `build-for-testing` består; XCTest kunne
 ikke kjøres fordi simulatoren ikke er tilgjengelig.
 
-**AUTO-386 · ÅPEN** — Utvid hyttepersistensregresjonen med brukeren som slår av
-«bare når jeg er i nærheten». Bekreft at `onlyWhenNearby == false` overlever
-Store-gjenoppretting, mens hjemstedets regelsett forblir uendret.
+**AUTO-386 · FULLFØRT 2026-10-09** — Utvidet hyttepersistensregresjonen
+til å lagre og gjenopprette både påslått og avslått «bare når jeg er i
+nærheten». Begge variantene bevarer hjemstedets vanlige regler og hyttas valgte
+varslingsregler. Swift-parsing, diffkontroll og iOS `build-for-testing` består;
+XCTest kunne ikke kjøres fordi simulatoren ikke er tilgjengelig.
 
 **AUTO-387 · ÅPEN** — Legg til Store-regresjon for oppdatering av eksisterende
 hytte under veiviseroppsett: ved lagring av nye regler skal lokalt
@@ -1672,6 +1674,11 @@ temperaturavvik, varslinger av/på og cached værdata for stedet bevares.
 med ulike `localTemperatureOffset`-verdier. Bekreft etter gjenoppretting at
 hvert sted beholder sitt eget avvik og at den andre stedets værdata ikke blir
 blandet inn.
+
+**AUTO-389 · ÅPEN** — Legg til regresjon som oppdaterer eksisterende sted
+under veiviseroppsett og gjenoppretter Store. Bekreft at stedets ID, navn,
+varsler på/av og eksisterende egendefinerte regelinnstillinger beholdes ved
+siden av de nye preset-reglene.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
