@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-09T13:27:16Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-375 delvis fullført: la til regresjon som kontrollerer at alle WizardAlertCategory tilbyr minst ett varselforslag. Swift-parsing og diffkontroll består, men testkjøring er PÅ VENT på grunn av tidligere SwiftUIMacros.StateMacro-feil i Xcode. AUTO-004 køvurdering la til AUTO-378 etter at 375 ble satt PÅ VENT; åpne oppgaver: AUTO-376/377/378."
+  "lastProgress": "AUTO-376 delvis fullført: la til regresjon som verifiserer at vellykket Store.add for nytt sted bevarer både ny og eksisterende prognosecache og deres oppdateringstider etter gjenoppretting. Swift-parsing og diffkontroll består, men testkjøring er PÅ VENT på grunn av tidligere SwiftUIMacros.StateMacro-feil i Xcode. AUTO-004 køvurdering la til AUTO-379 etter at 376 ble satt PÅ VENT; åpne oppgaver: AUTO-377/378/379."
 }

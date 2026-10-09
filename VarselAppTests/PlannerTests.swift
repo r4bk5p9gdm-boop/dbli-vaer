@@ -6360,6 +6360,36 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(store.forecasts[newPlace.id], [hour])
     }
 
+    @MainActor
+    func testAddingPlacePreservesOtherPlacesForecastCache() async throws {
+        let persistenceKey = "varsel.test.add-place-preserves-other-cache.\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
+        let existing = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let oldHour = ForecastHour(time: base, temp: 3, precip: 0, wind: 1, cloud: 80, dew: 1)
+        let oldUpdatedAt = base.addingTimeInterval(-3_600)
+        UserDefaults.standard.set(try JSONEncoder().encode(PersistedStoreState(
+            places: [existing], selectedID: existing.id, log: [],
+            forecasts: [existing.id: [oldHour]],
+            forecastUpdatedAt: [existing.id: oldUpdatedAt], lastUpdate: oldUpdatedAt
+        )), forKey: persistenceKey)
+        let newHour = ForecastHour(time: base.addingTimeInterval(3_600), temp: 8,
+                                   precip: 0, wind: 2, cloud: 40, dew: 4)
+        let store = Store(forecastFetcher: { _, _ in [newHour] }, persistenceKey: persistenceKey)
+        let added = Place(name: "Hytte", lat: 64.0, lon: 11.0, preposition: .på)
+
+        await store.add(added)
+
+        XCTAssertEqual(store.forecasts[existing.id], [oldHour])
+        XCTAssertEqual(store.forecasts[added.id], [newHour])
+        XCTAssertEqual(store.forecastUpdatedAt(for: existing.id), oldUpdatedAt)
+        XCTAssertNotNil(store.forecastUpdatedAt(for: added.id))
+        let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        XCTAssertEqual(restored.forecasts[existing.id], [oldHour])
+        XCTAssertEqual(restored.forecasts[added.id], [newHour])
+        XCTAssertEqual(restored.forecastUpdatedAt(for: existing.id), oldUpdatedAt)
+        XCTAssertNotNil(restored.forecastUpdatedAt(for: added.id))
+    }
+
     func testEmptyForecastCreatesNoSnowAlert() {
         let rule = Rule(type: .sno)
         let result = Planner.plan(rule: rule, forecast: [], placeName: "Klinga", now: base)

@@ -1589,10 +1589,11 @@ grunn av tidligere `SwiftUIMacros.StateMacro`-feil i Xcode.
 og diffkontroll består, men testkjøring står PÅ VENT på grunn av tidligere
 `SwiftUIMacros.StateMacro`-feil i Xcode.
 
-**AUTO-376 · ÅPEN** — Legg til regresjon for vellykket `Store.add` mens et
-annet sted allerede har lagret prognose: første hentingen for det nye stedet
-skal oppdatere bare dets cache og tidspunkt, og bevare det eksisterende stedets
-prognose gjennom lagring og gjenoppretting.
+**AUTO-376 · PÅ VENT 2026-10-09** — La til regresjon med en eksisterende
+prognose og en vellykket første henting for et nytt sted; begge steders timer
+og oppdateringstid skal overleve lagring og gjenoppretting. Swift-parsing og
+diffkontroll består, men testkjøring står PÅ VENT på grunn av tidligere
+`SwiftUIMacros.StateMacro`-feil i Xcode.
 
 **AUTO-377 · ÅPEN** — Trekk veiviserens forvalgte hjemsted- og hyttevarsel-ID-er
 ut i en ren, testbar modell og legg til kontroll som hvert valgt ID finnes i
@@ -1603,6 +1604,10 @@ forslagene som «bare når jeg er i nærheten».
 `WizardAlertCategory`-ene har synlig, ikke-tom tittel, forklaringstekst og
 symbolnavn, slik at hvert kategori-kort i oppstartsveiviseren er forståelig og
 har et ikon.
+
+**AUTO-379 · ÅPEN** — Legg til regresjon for at et avbrutt `Store.add` fortsatt
+beholder stedet og valgt-ID som ble lagret før Yr-forespørselen, uten å lagre
+en ugyldig prognose eller vise en feil som om nettverket feilet.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
