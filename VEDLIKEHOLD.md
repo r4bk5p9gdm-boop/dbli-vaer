@@ -1693,9 +1693,11 @@ er lagt til, Store lagret og deretter gjenopprettet. Swift-parsing,
 diffkontroll og iOS `build-for-testing` består; XCTest kunne ikke kjøres uten
 simulator.
 
-**AUTO-391 · ÅPEN** — Legg til Store-regresjon med en gyldig lagret tilstand
-som har tom `places`-liste. Bekreft at appen faller tilbake til startstedene,
-velger et sted fra den gjenopprettede listen og ikke krasjer ved oppstart.
+**AUTO-391 · FULLFØRT 2026-10-09** — La til Store-regresjon med en gyldig,
+men tom lagret stedsliste. Store faller tilbake til startstedene, velger et
+sted fra listen og gir en gyldig valgt-place ved oppstart. Swift-parsing,
+diffkontroll og iOS `build-for-testing` består; XCTest kunne ikke kjøres uten
+simulator.
 
 **AUTO-392 · ÅPEN** — Legg til regresjon for sletting av ikke-valgt hytte etter
 oppsett. Bekreft at hjemstedets ID, varselregler, valgt status og prognosecache
@@ -1704,6 +1706,10 @@ består både umiddelbart og etter Store-gjenoppretting.
 **AUTO-393 · ÅPEN** — Legg til regresjon der den valgte hytta slettes mens
 hjemstedet fortsatt finnes. Bekreft at Store automatisk velger hjemstedet,
 persisterer gyldig `selectedID` og beholder hjemstedets prognose.
+
+**AUTO-394 · ÅPEN** — Når Store faller tilbake til startstedene etter en tom
+lagret stedsliste, lagre fallback-listen. Legg til regresjon som oppretter
+Store to ganger og bekrefter at sted-ID-ene forblir stabile mellom oppstartene.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

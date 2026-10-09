@@ -1282,6 +1282,30 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(repairedState.places.contains { $0.id == repairedSelectedID })
     }
 
+    func testStoreFallsBackToLaunchPlacesWhenPersistedListIsEmpty() throws {
+        let persistenceKey = "varsel.test.empty-persisted-places.\(UUID().uuidString)"
+        let launchVersionKey = "varsel.launchPlacesVersion"
+        let previousLaunchVersion = UserDefaults.standard.object(forKey: launchVersionKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousLaunchVersion {
+                UserDefaults.standard.set(previousLaunchVersion, forKey: launchVersionKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: launchVersionKey)
+            }
+        }
+        UserDefaults.standard.set(9, forKey: launchVersionKey)
+        let emptyState = PersistedStoreState(places: [], selectedID: nil, log: [])
+        UserDefaults.standard.set(try JSONEncoder().encode(emptyState), forKey: persistenceKey)
+
+        let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+
+        XCTAssertEqual(restored.places.map(\.name), Store.launchPlaces.map(\.name))
+        let selectedID = try XCTUnwrap(restored.selectedID)
+        XCTAssertTrue(restored.places.contains { $0.id == selectedID })
+        XCTAssertEqual(restored.selected?.id, selectedID)
+    }
+
     func testWizardRuleUpdatePreservesExistingCabinSettingsAndForecasts() throws {
         let persistenceKey = "varsel.test.wizard-update-existing-cabin.\(UUID().uuidString)"
         let launchVersionKey = "varsel.launchPlacesVersion"

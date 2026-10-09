@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T16:28:30Z",
+  "lastScheduledStart": "2026-10-09T16:33:30Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-390 fullført: utvidet hytteoppdateringsregresjonen med hiddenAlertTypes, rulesOnlyDisplay, frostMargin og displaytemperaturgrenser og bekreftet Store-gjenoppretting av verdiene. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-393; neste: AUTO-391/392/393."
+  "lastProgress": "AUTO-391 fullført: la til Store-regresjon for gyldig, tom lagret stedsliste. Store faller tilbake til startstedene og velger et sted i fallback-listen uten å krasje. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-394; neste: AUTO-392/393/394."
 }
