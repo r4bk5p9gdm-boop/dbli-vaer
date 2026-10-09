@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T17:51:31Z",
+  "lastScheduledStart": "2026-10-09T17:56:31Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-405 fullført: Store-gjenoppretting rydder og persisterer nå homeFavorites-ID-er som ikke finnes blant gjenopprettede steder. La til regresjon for første oppstart, persistert verdi og ny Store-oppstart. Swift-parsing, diffkontroll og iOS build-for-testing bestod; XCTest ble ikke kjørt fordi CoreSimulatorService ikke er tilgjengelig. AUTO-004 opprettet AUTO-408 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-406/407/408."
+  "lastProgress": "AUTO-406 fullført: la til importregresjon der feilformet første stedsoppføring forkastes, gyldige steder beholdes og valgt-ID faller tilbake til første gyldige sted, med språkinnstilling og eksport/import-roundtrip kontrollert. Swift-parsing, diffkontroll og iOS build-for-testing bestod; XCTest ble ikke kjørt fordi CoreSimulatorService ikke er tilgjengelig. AUTO-004 opprettet AUTO-409 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-407/408/409."
 }

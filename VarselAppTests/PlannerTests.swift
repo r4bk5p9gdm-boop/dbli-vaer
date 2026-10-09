@@ -6642,6 +6642,42 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testConfigurationImportSkipsMalformedPlaceAndUsesFirstValidSelection() throws {
+        let malformedPlace = Place(name: "Ugyldig", lat: 64.4, lon: 11.4)
+        let firstValidPlace = Place(name: "Namsos", lat: 64.5, lon: 11.5)
+        let secondValidPlace = Place(name: "Selbu", lat: 63.2, lon: 11.0)
+        let source = WeatherConfigurationExport(
+            places: [malformedPlace, firstValidPlace, secondValidPlace],
+            selectedPlaceID: malformedPlace.id,
+            alertLanguageStyle: .english
+        )
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let encoded = try encoder.encode(source)
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        var placeObjects = try XCTUnwrap(object["places"] as? [[String: Any]])
+        placeObjects[0]["lat"] = "not-a-coordinate"
+        object["places"] = placeObjects
+
+        let importedData = try JSONSerialization.data(withJSONObject: object)
+        let imported = try decoder.decode(WeatherConfigurationExport.self, from: importedData)
+
+        XCTAssertEqual(imported.places.map(\.id), [firstValidPlace.id, secondValidPlace.id])
+        XCTAssertEqual(imported.selectedPlaceID, firstValidPlace.id)
+        XCTAssertEqual(imported.alertLanguageStyle, .english)
+
+        let reexportedData = try encoder.encode(WeatherConfigurationExport(
+            places: imported.places,
+            selectedPlaceID: imported.selectedPlaceID,
+            alertLanguageStyle: imported.alertLanguageStyle ?? .bokmal
+        ))
+        let reimported = try decoder.decode(WeatherConfigurationExport.self, from: reexportedData)
+        XCTAssertEqual(reimported.places.map(\.id), [firstValidPlace.id, secondValidPlace.id])
+        XCTAssertEqual(reimported.selectedPlaceID, firstValidPlace.id)
+    }
+
     @MainActor
     func testCancellingActiveRefreshDoesNotCancelFollowingRefresh() async {
         let queue = ForecastRefreshQueue()
