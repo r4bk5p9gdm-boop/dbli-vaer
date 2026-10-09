@@ -1562,10 +1562,15 @@ tilgjengelig internt for tester (uten å gjøre den offentlig), og legg til
 regresjon som bekrefter at kategoriene dekker alle `AlertType`-verdier én gang
 og grupperer regn, vind, snø/frost, sol og temperatur/dugg riktig.
 
-**AUTO-370 · ÅPEN** — Legg til regresjon for at et tomt første Yr-svar etter
-`Store.add` ikke fjerner det allerede lagrede stedet eller valget. Gjenopprett
-en ny `Store` fra samme lagringsnøkkel og kontroller at oppsettet kan fortsette
-selv om første svar ikke inneholder prognosetimer.
+**AUTO-370 · PÅ VENT 2026-10-09** — La til regresjon for tomt første Yr-svar:
+sted og valgt-ID blir stående i Store og finnes igjen etter gjenoppretting, mens
+ingen tom prognose blir lagret. Swift-parsing og diffkontroll består, men
+testkjøring står PÅ VENT på grunn av tidligere `SwiftUIMacros.StateMacro`-feil
+i Xcode.
+
+**AUTO-373 · ÅPEN** — Legg til regresjon for vellykket første prognosehenting
+i `Store.add`: prognosetimer og oppdateringstid for det nye stedet skal være
+lagret og komme tilbake fra samme lagringsnøkkel etter at en ny Store opprettes.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
