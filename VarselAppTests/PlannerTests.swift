@@ -1167,6 +1167,18 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(alwaysActiveCabinRules.allSatisfy { !$0.onlyWhenNearby })
     }
 
+    func testWizardPresetRulesIgnoreUnknownIDsAndFollowCatalogOrder() {
+        let rules = WizardPresetConfiguration.rules(
+            selectedIDs: ["vind-kraftig", "ukjent-forslag", "regn-neste"],
+            for: .home,
+            cabinOnlyWhenNearby: false
+        )
+
+        XCTAssertEqual(rules.map(\.templateTitle), ["Regn neste dag", "Kraftige vindkast"])
+        XCTAssertEqual(rules.count, 2)
+        XCTAssertTrue(rules.allSatisfy { !$0.onlyWhenNearby })
+    }
+
     func testWizardPresetSelectionsAreIndependentForHomeAndCabin() {
         var selections = WizardPresetSelections()
         let sharedPresetID = "frost-natt"

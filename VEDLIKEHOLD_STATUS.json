@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T15:53:30Z",
+  "lastScheduledStart": "2026-10-09T15:58:30Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-383 fullført: flyttet veiviserens deduplisering av eksisterende varselregler til WizardPresetConfiguration.addingMissingRules. Regresjon bekrefter at matching templateTitle bevares uten duplikat/overskriving og at andre regler beholdes. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-386; neste: AUTO-384/385/386."
+  "lastProgress": "AUTO-384 fullført: la til regresjon for WizardPresetConfiguration.rules med kjente og ukjente preset-ID-er i vilkårlig rekkefølge. Bekreftet ignorering av ukjente ID-er, katalogrekkefølge og fravær av duplikater. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-387; neste: AUTO-385/386/387."
 }

@@ -1647,10 +1647,12 @@ og at andre regler beholdes. Swift-parsing, diffkontroll og iOS
 `build-for-testing` består; XCTest kunne ikke kjøres fordi simulatoren ikke er
 tilgjengelig.
 
-**AUTO-384 · ÅPEN** — Legg til regresjon for `WizardPresetConfiguration.rules`
-som sender inn både kjente og ukjente preset-ID-er. Bekreft at ukjente ID-er
-ignoreres, kjente regler beholdes i `RulePreset.all`-rekkefølge, og samme
-regel ikke returneres flere ganger.
+**AUTO-384 · FULLFØRT 2026-10-09** — La til regresjon for
+`WizardPresetConfiguration.rules` med kjente og ukjente preset-ID-er i
+vilkårlig valg-rekkefølge. Testen bekrefter at ukjente forslag ignoreres,
+kjente forslag følger katalogrekkefølgen og ingen regel dupliseres.
+Swift-parsing, diffkontroll og iOS `build-for-testing` består; XCTest kunne
+ikke kjøres fordi simulatoren ikke er tilgjengelig.
 
 **AUTO-385 · ÅPEN** — Legg til regresjon som gjenoppretter en Store der
 `selectedID` peker på et sted som ikke finnes. Bekreft at Store velger et gyldig
@@ -1659,6 +1661,10 @@ sted og at den gjenopprettede tilstanden persisterer dette valget.
 **AUTO-386 · ÅPEN** — Utvid hyttepersistensregresjonen med brukeren som slår av
 «bare når jeg er i nærheten». Bekreft at `onlyWhenNearby == false` overlever
 Store-gjenoppretting, mens hjemstedets regelsett forblir uendret.
+
+**AUTO-387 · ÅPEN** — Legg til Store-regresjon for oppdatering av eksisterende
+hytte under veiviseroppsett: ved lagring av nye regler skal lokalt
+temperaturavvik, varslinger av/på og cached værdata for stedet bevares.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
