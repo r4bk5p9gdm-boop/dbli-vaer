@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-09T13:27:16Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-374 delvis fullført: la til kontrollert asynkron regresjon som endrer valgt sted mens Store.add venter på Yr og sjekker at fullført henting lagrer prognosen uten å ta tilbake stedsvalget. Swift-parsing og diffkontroll består, men testkjøring er PÅ VENT på grunn av tidligere SwiftUIMacros.StateMacro-feil i Xcode. AUTO-004 køvurdering la til AUTO-377 etter at 374 ble satt PÅ VENT; åpne oppgaver: AUTO-375/376/377."
+  "lastProgress": "AUTO-375 delvis fullført: la til regresjon som kontrollerer at alle WizardAlertCategory tilbyr minst ett varselforslag. Swift-parsing og diffkontroll består, men testkjøring er PÅ VENT på grunn av tidligere SwiftUIMacros.StateMacro-feil i Xcode. AUTO-004 køvurdering la til AUTO-378 etter at 375 ble satt PÅ VENT; åpne oppgaver: AUTO-376/377/378."
 }

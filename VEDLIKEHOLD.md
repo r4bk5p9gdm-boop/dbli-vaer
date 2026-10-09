@@ -1584,9 +1584,10 @@ overleve en vellykket henting, samtidig som den nye prognosen lagres på riktig
 sted. Swift-parsing og diffkontroll består, men testkjøring står PÅ VENT på
 grunn av tidligere `SwiftUIMacros.StateMacro`-feil i Xcode.
 
-**AUTO-375 · ÅPEN** — Legg til regresjon som sikrer at hver
-`WizardAlertCategory` har minst ett passende `RulePreset`, og at ingen
-forhåndsdefinerte varseltyper dermed blir utilgjengelige når kategorier endres.
+**AUTO-375 · PÅ VENT 2026-10-09** — La til regresjon som sikrer at alle fem
+`WizardAlertCategory`-ene tilbyr minst ett passende `RulePreset`. Swift-parsing
+og diffkontroll består, men testkjøring står PÅ VENT på grunn av tidligere
+`SwiftUIMacros.StateMacro`-feil i Xcode.
 
 **AUTO-376 · ÅPEN** — Legg til regresjon for vellykket `Store.add` mens et
 annet sted allerede har lagret prognose: første hentingen for det nye stedet
@@ -1597,6 +1598,11 @@ prognose gjennom lagring og gjenoppretting.
 ut i en ren, testbar modell og legg til kontroll som hvert valgt ID finnes i
 `RulePreset.all`, ikke er duplisert, og at bare hytteoppsettet kan markere
 forslagene som «bare når jeg er i nærheten».
+
+**AUTO-378 · ÅPEN** — Legg til regresjon som sikrer at alle
+`WizardAlertCategory`-ene har synlig, ikke-tom tittel, forklaringstekst og
+symbolnavn, slik at hvert kategori-kort i oppstartsveiviseren er forståelig og
+har et ikon.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

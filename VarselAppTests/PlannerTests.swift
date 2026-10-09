@@ -1113,6 +1113,14 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testEveryWizardAlertCategoryHasMatchingPresetChoices() {
+        for category in WizardAlertCategory.allCases {
+            let presets = RulePreset.all.filter { category.types.contains($0.rule.type) }
+            XCTAssertFalse(presets.isEmpty, "\(category.title) must offer at least one preset")
+            XCTAssertTrue(presets.allSatisfy { category.types.contains($0.rule.type) })
+        }
+    }
+
     func testEveryRulePresetHasCompleteAndConsistentDisplayCopy() {
         let presets = RulePreset.all
         XCTAssertFalse(presets.isEmpty)
