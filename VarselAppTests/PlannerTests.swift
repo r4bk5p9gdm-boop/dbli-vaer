@@ -1271,8 +1271,12 @@ final class PlannerTests: XCTestCase {
 
         let first = Place(name: "Klinga", lat: 64.4, lon: 11.4)
         let second = Place(name: "Hytta", lat: 64.2, lon: 11.4, preposition: .pa)
+        let cachedHour = ForecastHour(time: base, temp: 7, precip: 0, wind: 1, cloud: 30, dew: 4)
         let missingID = UUID()
-        let state = PersistedStoreState(places: [first, second], selectedID: missingID, log: [])
+        let state = PersistedStoreState(
+            places: [first, second], selectedID: missingID, log: [],
+            forecasts: [first.id: [cachedHour]], forecastUpdatedAt: [first.id: base], lastUpdate: base
+        )
         UserDefaults.standard.set(try JSONEncoder().encode(state), forKey: persistenceKey)
 
         let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
@@ -1283,6 +1287,15 @@ final class PlannerTests: XCTestCase {
         let repairedSelectedID = try XCTUnwrap(repairedState.selectedID)
         XCTAssertEqual(repairedSelectedID, first.id)
         XCTAssertTrue(repairedState.places.contains { $0.id == repairedSelectedID })
+        XCTAssertEqual(repairedState.forecasts[first.id], [cachedHour])
+        XCTAssertEqual(repairedState.forecastUpdatedAt[first.id], base)
+
+        let relaunched = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        XCTAssertEqual(relaunched.places.map(\.id), [first.id, second.id])
+        XCTAssertEqual(relaunched.selectedID, first.id)
+        XCTAssertEqual(relaunched.selected?.id, first.id)
+        XCTAssertEqual(relaunched.forecasts[first.id], [cachedHour])
+        XCTAssertEqual(relaunched.forecastUpdatedAt(for: first.id), base)
     }
 
     func testStoreFallsBackToLaunchPlacesWhenPersistedListIsEmpty() throws {
