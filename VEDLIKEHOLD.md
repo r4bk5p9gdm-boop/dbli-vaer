@@ -54,12 +54,18 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-142 · FULLFØRT 2026-10-09** — Endret GPS-snarveiens menynavn fra
+«Nå» til «Her!», som tydelig peker på brukerens aktuelle posisjonssted og
+fungerer som et lite hint i menyen. Ved sammenslåing vises «Her! · Hjem».
+Swift-parsing og diffkontroll består. Neste kø er AUTO-428, AUTO-429 og
+AUTO-430.
+
 **BRUKER-141 · FULLFØRT 2026-10-09** — Hovedmenyen har nå snarveier i
-rekkefølgen Nå, Hjem og Hytta, fulgt av Steder og Innstillinger. Steder kan
+rekkefølgen Her!, Hjem og Hytta, fulgt av Steder og Innstillinger. Steder kan
 velges eksplisitt som hytte i redigering; like steds-ID-er slås sammen, og
 Hjem-sveipingen følger samme dedupliserte rekkefølge. Aktiv snarvei markeres
-rolig, Nå får en liten GPS-prikk, og Steder åpner/utvider prognoser uten å
-hoppe til Hjem. La til regresjonstest for rekkefølge og sammenslåing. Swift-
+rolig, GPS-snarveien får en liten posisjonsprikk, og Steder åpner/utvider
+prognoser uten å hoppe til Hjem. La til regresjonstest for rekkefølge og sammenslåing. Swift-
 parsing og diffkontroll består; full Xcode-bygg/installasjon er ikke kjørt.
 Neste kø er AUTO-428, AUTO-429 og AUTO-430.
 

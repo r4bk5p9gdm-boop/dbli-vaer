@@ -156,7 +156,7 @@ struct ContentView: View {
             }
         }
 
-        append(store.currentLocationPlaceID, title: "Nå", systemImage: "location.fill", isPosition: true)
+        append(store.currentLocationPlaceID, title: "Her!", systemImage: "location.fill", isPosition: true)
         let resolvedHomeID = UUID(uuidString: homePlaceID) ?? store.selected?.id
         append(resolvedHomeID, title: "Hjem", systemImage: "house.fill")
         append(UUID(uuidString: cabinPlaceID), title: "Hytta", systemImage: "house.fill")

@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-09T20:29:02Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-141 fullført: Navigasjonen viser Nå, Hjem og Hytta før Steder og Innstillinger; like steder slås sammen, Hjem-sveip følger samme rekkefølge, og Steder hopper ikke uventet til Hjem. Swift-parsing, regresjonstestkilde og diffkontroll består; full Xcode-bygg/installasjon er ikke kjørt. Neste køpunkter er AUTO-428, AUTO-429 og AUTO-430."
+  "lastProgress": "BRUKER-142 fullført: GPS-snarveiens menynavn er endret fra Nå til Her!, også i den sammenslåtte Her! · Hjem-varianten. Swift-parsing og diffkontroll består. Neste køpunkter er AUTO-428, AUTO-429 og AUTO-430."
 }
