@@ -429,6 +429,26 @@ final class Store: ObservableObject {
             UserDefaults.standard.set(launchPlacesVersion, forKey: launchPlacesVersionKey)
         }
 
+        // Place migrations can merge names that differ only by case or
+        // diacritics. Reconcile every place-keyed value after that merge so a
+        // discarded duplicate cannot remain selected or retain an orphaned
+        // forecast cache.
+        let migratedPlaceIDs = Set(places.map(\.id))
+        let migratedForecasts = rawForecasts.filter { migratedPlaceIDs.contains($0.key) }
+        let migratedForecastUpdatedAt = forecastUpdatedAt.filter {
+            migratedPlaceIDs.contains($0.key) && migratedForecasts[$0.key]?.isEmpty == false
+        }
+        if migratedForecasts.count != rawForecasts.count
+            || migratedForecastUpdatedAt.count != forecastUpdatedAt.count {
+            rawForecasts = migratedForecasts
+            forecastUpdatedAt = migratedForecastUpdatedAt
+            needsPersistedStateRepair = true
+        }
+        if selectedID.map({ id in migratedPlaceIDs.contains(id) }) != true {
+            selectedID = places.first?.id
+            needsPersistedStateRepair = true
+        }
+
         let resolvedHomeFavorites = homeFavorites.resolved(availableIDs: Set(places.map(\.id)))
         if homeFavorites != resolvedHomeFavorites {
             homeFavorites = resolvedHomeFavorites

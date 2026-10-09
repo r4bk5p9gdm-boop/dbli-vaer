@@ -7357,6 +7357,69 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testLaunchPlaceMigrationMergesNormalizedDuplicatesAndRepairsSelectionAndCache() throws {
+        let persistenceKey = "varsel.test.launch-place-migration-duplicate-name.\(UUID().uuidString)"
+        let migrationVersionKey = "varsel.launchPlacesVersion"
+        let previousVersion = UserDefaults.standard.object(forKey: migrationVersionKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousVersion {
+                UserDefaults.standard.set(previousVersion, forKey: migrationVersionKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: migrationVersionKey)
+            }
+        }
+
+        UserDefaults.standard.set(8, forKey: migrationVersionKey)
+        let survivingKlinga = Place(name: "KLÍNGA", lat: 64.4094, lon: 11.47786, preposition: .oppa)
+        let mergedKlinga = Place(name: "Klinga", lat: 64.4094, lon: 11.47786, preposition: .pa)
+        let cabin = Place(name: "Hytte", lat: 64.2, lon: 11.2, preposition: .pa)
+        let survivingHour = ForecastHour(time: base, temp: 7, precip: 0, wind: 1, cloud: 40, dew: 3)
+        let mergedHour = ForecastHour(time: base, temp: 2, precip: 0, wind: 2, cloud: 80, dew: 1)
+        let cabinHour = ForecastHour(time: base, temp: 9, precip: 0, wind: 0, cloud: 10, dew: 5)
+        let fetchedAt = base.addingTimeInterval(-1_800)
+        let savedState = PersistedStoreState(
+            places: [survivingKlinga, mergedKlinga, cabin], selectedID: mergedKlinga.id, log: [],
+            forecasts: [
+                survivingKlinga.id: [survivingHour],
+                mergedKlinga.id: [mergedHour],
+                cabin.id: [cabinHour]
+            ],
+            forecastUpdatedAt: [
+                survivingKlinga.id: fetchedAt,
+                mergedKlinga.id: fetchedAt,
+                cabin.id: fetchedAt
+            ]
+        )
+        UserDefaults.standard.set(try JSONEncoder().encode(savedState), forKey: persistenceKey)
+
+        let migrated = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        let klingaPlaces = migrated.places.filter {
+            $0.name.compare("Klinga", options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame
+        }
+
+        XCTAssertEqual(klingaPlaces.map(\.id), [survivingKlinga.id])
+        XCTAssertEqual(migrated.selectedID, survivingKlinga.id)
+        XCTAssertEqual(migrated.forecasts[survivingKlinga.id], [survivingHour])
+        XCTAssertEqual(migrated.forecastUpdatedAt(for: survivingKlinga.id), fetchedAt)
+        XCTAssertNil(migrated.forecasts[mergedKlinga.id])
+        XCTAssertNil(migrated.forecastUpdatedAt(for: mergedKlinga.id))
+        XCTAssertEqual(migrated.forecasts[cabin.id], [cabinHour])
+        XCTAssertEqual(migrated.forecastUpdatedAt(for: cabin.id), fetchedAt)
+
+        let persistedData = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
+        let repairedState = try JSONDecoder().decode(PersistedStoreState.self, from: persistedData)
+        XCTAssertEqual(repairedState.selectedID, survivingKlinga.id)
+        XCTAssertEqual(Set(repairedState.forecasts.keys), [survivingKlinga.id, cabin.id])
+        XCTAssertEqual(Set(repairedState.forecastUpdatedAt.keys), [survivingKlinga.id, cabin.id])
+
+        let restarted = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        XCTAssertEqual(restarted.selectedID, survivingKlinga.id)
+        XCTAssertNil(restarted.forecasts[mergedKlinga.id])
+        XCTAssertEqual(restarted.forecasts[cabin.id], [cabinHour])
+    }
+
+    @MainActor
     func testPreservedAndNewNotificationsShareChronologicalCapacity() {
         let dates = (0..<80).reversed().map { (id: "request-\($0)", date: base.addingTimeInterval(Double($0))) }
         let ids = NotificationScheduler.nearestRequestIDs(dates)

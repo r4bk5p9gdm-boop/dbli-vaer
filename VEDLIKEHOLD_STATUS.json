@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T18:36:31Z",
+  "lastScheduledStart": "2026-10-09T18:41:31Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-414 fullført: bakoverkompatibilitetstesten bekrefter at eldre eksport uten formatversjon, eksporttidspunkt og språkfelt får trygge metadata-standarder mens gyldig sted og valgt-ID beholdes gjennom eksport/import. Swift-parsing, diffkontroll og generisk iOS build-for-testing med signering slått av bestod; XCTest kunne ikke kjøres fordi CoreSimulatorService ikke er tilgjengelig. AUTO-004 opprettet AUTO-417 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-415/416/417."
+  "lastProgress": "AUTO-415 fullført: migrering med to stedsnavn som bare skiller seg i aksent/store bokstaver beholder én plass, reparerer valgt-ID og fjerner bare slått-sammen ID sin prognosecache; annen steds cache består omstart. Swift-parsing og diffkontroll består; XCTest kunne ikke kjøres fordi CoreSimulatorService ikke er tilgjengelig. AUTO-004 opprettet AUTO-418 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-416/417/418."
 }

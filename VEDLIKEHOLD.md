@@ -1899,9 +1899,12 @@ gjennom ny eksport/import. Swift-parsing, diffkontroll og generisk iOS
 `build-for-testing` med signering slått av består; XCTest kunne ikke kjøres
 fordi CoreSimulatorService er utilgjengelig.
 
-**AUTO-415 · ÅPEN** — Regresjonstest at migrering håndterer to lagrede
-stedsnavn som begge samsvarer med samme standardsted uten å etterlate
-duplikatvalg eller prognosecache for sted som ble slått sammen.
+**AUTO-415 · FULLFØRT 2026-10-09** — La til migreringsregresjon med to
+lagrede stedsnavn som bare skiller seg i aksent og store/små bokstaver.
+Migreringen beholder ett sted, flytter et ugyldig valgt-ID til det overlevende
+stedet og fjerner bare prognose/hentetid for ID-en som ble slått sammen.
+Hyttecache beholdes også etter omstart. Swift-parsing og diffkontroll består;
+XCTest er blokkert fordi CoreSimulatorService ikke er tilgjengelig.
 
 **AUTO-416 · ÅPEN** — Regresjonstest at feilformede valgfrie
 versjons-, eksporttids- eller språkverdier i en konfigurasjonsfil faller tilbake
@@ -1910,6 +1913,10 @@ trygt uten at gyldige steder og valgt-ID forkastes.
 **AUTO-417 · ÅPEN** — Regresjonstest at den faktiske
 WeatherConfigurationDocument-filflyten bevarer ISO-8601-tidspunkt, språk,
 valgt sted og terskelinnstillinger ved fil-eksport og -import.
+
+**AUTO-418 · ÅPEN** — Regresjonstest at WeatherConfigurationDocument avviser
+ugyldig JSON som korrupt fil, i stedet for å importere en tom
+værkonfigurasjon som om den var gyldig.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
