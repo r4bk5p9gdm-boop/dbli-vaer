@@ -1426,9 +1426,10 @@ planlegges nærhendelsen og den vanlige dedupliseres bort. Swift-parsing/
 typekontroll og diffkontroll består; XCTest ble ikke kjørt i denne
 lettvektskjøringen.
 
-**AUTO-356 · ÅPEN** — Test at alle planlagte push-kandidater for den beholdte
-tidligste regnhendelsen overlever når en annen regels nærliggende hendelse
-dedupliseres bort.
+**AUTO-356 · FULLFØRT 2026-10-09** — Lukket som dekket av AUTO-354:
+`testPlanAllKeepsEveryRepeatForTheRetainedRainEvent` verifiserer allerede at
+alle tre push-kandidatene for beholdt regnhendelse overlever mens en annen
+regels nærliggende hendelse dedupliseres. Ingen redundant test ble lagt til.
 
 **AUTO-357 · ÅPEN** — Test at `planAll` fortsatt returnerer varsler sortert
 kronologisk etter `fireAt` etter at cooldown-deduplisering internt sorterer
@@ -1436,6 +1437,10 @@ regnhendelser etter `eventAt`.
 
 **AUTO-358 · ÅPEN** — Test at `onlyWhenNearby`-filtrering er uavhengig per
 sted når flere steder planlegges samtidig og bare ett sted er i nærheten.
+
+**AUTO-359 · ÅPEN** — Test at to separate regnperioder innen seks timer fra
+samme regel begge beholdes; cooldown skal bare deduplisere mellom ulike
+regler, ikke fjerne senere hendelser fra samme regel.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

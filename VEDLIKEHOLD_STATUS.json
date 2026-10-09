@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T12:20:12Z",
+  "lastScheduledStart": "2026-10-09T12:50:12Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-355 fullført: test bekrefter at nearby-only regnregel planlegges og deltar i cooldown bare når stedets ID finnes i nearbyPlaceIDs; den vinner mot senere nærliggende vanlig regel. AUTO-358 lagt til for fler-sted-filtrering. Swift-parsing/typekontroll og diffkontroll bestått; XCTest ikke kjørt i denne lettvektskjøringen."
+  "lastProgress": "AUTO-356 lukket som redundant: AUTO-354-testen dekker allerede alle push-kandidater for beholdt regnhendelse mens nærliggende duplikatregel fjernes. AUTO-359 lagt til for separate regnperioder fra samme regel innen cooldown. JSON-validering og diffkontroll bestått."
 }
