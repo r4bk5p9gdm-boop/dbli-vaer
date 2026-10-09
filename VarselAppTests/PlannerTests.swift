@@ -6929,15 +6929,17 @@ final class PlannerTests: XCTestCase {
         )
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
         var object = try XCTUnwrap(JSONSerialization.jsonObject(with: encoder.encode(source)) as? [String: Any])
         object.removeValue(forKey: "formatVersion")
         object.removeValue(forKey: "exportedAt")
         object.removeValue(forKey: "alertLanguageStyle")
 
         let legacyData = try JSONSerialization.data(withJSONObject: object)
-        let imported = try decoder.decode(WeatherConfigurationExport.self, from: legacyData)
+        let legacyFile = FileWrapper(regularFileWithContents: legacyData)
+        let importedDocument = try WeatherConfigurationDocument(configuration: .init(
+            file: legacyFile, contentType: .json
+        ))
+        let imported = importedDocument.configuration
 
         XCTAssertEqual(imported.formatVersion, 1)
         XCTAssertEqual(imported.exportedAt, .distantPast)
@@ -6945,12 +6947,17 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(imported.places.map(\.id), [place.id])
         XCTAssertEqual(imported.selectedPlaceID, place.id)
 
-        let reexported = try encoder.encode(WeatherConfigurationExport(
+        let reexportedDocument = WeatherConfigurationDocument(
             places: imported.places,
             selectedPlaceID: imported.selectedPlaceID,
             alertLanguageStyle: imported.alertLanguageStyle ?? .bokmal
+        )
+        let reexportedFile = try reexportedDocument.fileWrapper(configuration: .init(
+            contentType: .json, existingFile: nil
         ))
-        let reimported = try decoder.decode(WeatherConfigurationExport.self, from: reexported)
+        let reimported = try WeatherConfigurationDocument(configuration: .init(
+            file: reexportedFile, contentType: .json
+        )).configuration
         XCTAssertEqual(reimported.places.map(\.id), [place.id])
         XCTAssertEqual(reimported.selectedPlaceID, place.id)
         XCTAssertEqual(reimported.alertLanguageStyle, .bokmal)

@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T20:06:26Z",
+  "lastScheduledStart": "2026-10-09T20:29:02Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-136 fullført: erstattet Frostmargin med Frostfare over grensen, viste °C i valgene og viste beregnet frostfarereferanse tydeligere uten å endre beregning eller Yr-temperatur. Swift-parsing og diffkontroll består. Åpne AUTO-oppgaver etter full skanning: AUTO-427, AUTO-428 og AUTO-429."
+  "lastProgress": "AUTO-427 fullført: eldre JSON ble regresjonstestet gjennom faktisk FileDocument-filimport/-eksport uten formatversjon, eksporttid eller språkmetadata; standardverdier brukes mens sted og valgt-ID bevares. Swift-parsing/diffkontroll består; XCTest ikke kjørt pga. kjent SwiftUIMacros-feil. Bred gjennomgang fant risiko for utdatert varslingsstatus etter endring i iOS-innstillinger; AUTO-428, AUTO-429 og AUTO-430 står åpne."
 }

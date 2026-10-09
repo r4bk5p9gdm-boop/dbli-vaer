@@ -2002,8 +2002,12 @@ konfigurasjon med null steder og nil valgt-ID. Tom liste, nil valgt-ID og valgt
 språk bevares gjennom eksport til fil og import fra fil. Swift-parsing og
 diffkontroll består; XCTest er ikke kjørt i denne kjøringen.
 
-**AUTO-427 · ÅPEN** — Regresjonstest FileDocument-import av eldre JSON uten
-valgfrie metadata: standardverdier brukes mens sted og valgt-ID beholdes.
+**AUTO-427 · FULLFØRT 2026-10-09** — Utvidet bakoverkompatibilitetstesten
+for eldre JSON slik at den går gjennom `WeatherConfigurationDocument` sin
+faktiske filimport og fil-eksport. Uten formatversjon, eksporttidspunkt og
+språkvalg brukes standardverdiene, mens sted og valgt-ID beholdes gjennom
+filrundturen. Swift-parsing og diffkontroll består; XCTest er ikke kjørt på
+grunn av den kjente SwiftUIMacros-feilen i Xcode.
 
 **AUTO-428 · ÅPEN** — Gjør autorisasjonsbeslutningen i LocationManager
 deterministisk testbar, og dekk at denied/restricted (og ukjent status)
@@ -2014,6 +2018,12 @@ vente på timeout. Bevar eksisterende oppførsel for uavklart og autorisert stat
 VoiceOver-labelen inkluderer den lokaliserte værtilstanden i tillegg til tid,
 temperatur og nedbør. Nåværende label utelater værtypen som symbolene formidler,
 noe som særlig gjør regn, snø og skodde vanskeligere å skille uten syn.
+
+**AUTO-430 · ÅPEN** — Oppdater `notificationsAuthorized` når appen kommer
+tilbake i forgrunnen, ikke bare etter tillatelsesforespørselen ved oppstart.
+Kontroller at Hjem-varslet om avslåtte pushvarsler forsvinner og dukker opp
+igjen når brukeren endrer tillatelsen i iOS-innstillingene mens appen er
+bakgrunnsaktiv.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
