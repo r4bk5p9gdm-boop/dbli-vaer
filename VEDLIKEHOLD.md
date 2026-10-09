@@ -54,6 +54,14 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-126 · FULLFØRT 2026-10-09** — Rettet solstatusen ved Klinga etter
+solnedgang: hjemkortets solsymbol bruker faktisk klokkeslett i stedet for
+tidsstempelet til Yr-prøven, og rullerende solstatus kan ikke lenger forlenge
+siste dagslysprøve til «solgløtt nå» etter at sola har gått ned. La til en
+regresjon som finner solnedgangen for datoen i Europe/Oslo og kontrollerer
+grensen med siste værprøve før den. Swift-parsing, diffkontroll og iOS
+`build-for-testing` består; XCTest kunne ikke kjøres uten simulator.
+
 **BRUKER-125 · FULLFØRT 2026-10-09** — Bygde oppstartsveiviseren om til en
 trinnvis flyt med hjemsted via posisjon eller søk, fem visuelle værkategorier
 og ferdige varselforslag for hver type. Hytte er valgfritt, får egne valgte

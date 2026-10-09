@@ -629,7 +629,13 @@ enum Planner {
             )
         }
         let currentFloor = now.addingTimeInterval(-3_600)
-        if let currentIndex = forecast.lastIndex(where: {
+        let currentSolarIsVisible: Bool
+        if rule.type == .sol, let latitude, let longitude {
+            currentSolarIsVisible = SolarCycle.isDaylight(now, latitude: latitude, longitude: longitude)
+        } else {
+            currentSolarIsVisible = true
+        }
+        if currentSolarIsVisible, let currentIndex = forecast.lastIndex(where: {
             $0.time <= now && $0.time > currentFloor
         }),
         (!isPrecipitationRule(rule) || forecast[currentIndex].radarSamples?.isEmpty != false),

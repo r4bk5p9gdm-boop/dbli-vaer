@@ -610,7 +610,9 @@ private struct CurrentWeatherCard: View {
     }
 
     private var isDaylightNow: Bool {
-        SolarCycle.isDaylight(current.time, latitude: place.lat, longitude: place.lon)
+        // `current.time` is the timestamp of Yr's latest hourly sample. Near
+        // sunset that sample can still be in daylight after the sun has set.
+        SolarCycle.isDaylight(Date(), latitude: place.lat, longitude: place.lon)
     }
 
     private var currentWeatherIcon: (systemImage: String, color: Color, label: String) {

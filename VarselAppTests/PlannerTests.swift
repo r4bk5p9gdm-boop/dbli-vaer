@@ -2079,6 +2079,34 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testRollingSolarStatusAndCurrentIconUseActualTimeAfterSunset() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let day = try XCTUnwrap(calendar.date(from: DateComponents(year: 2026, month: 10, day: 9)))
+        let samples = try (0..<(24 * 60)).map { minute in
+            try XCTUnwrap(calendar.date(byAdding: .minute, value: minute, to: day))
+        }
+        let sunset = try XCTUnwrap(samples.first { sample in
+            !SolarCycle.isDaylight(sample, latitude: 64.46, longitude: 11.50, calendar: calendar)
+                && calendar.date(byAdding: .minute, value: -1, to: sample).map {
+                    SolarCycle.isDaylight($0, latitude: 64.46, longitude: 11.50, calendar: calendar)
+                } == true
+        })
+        let latestForecastTime = try XCTUnwrap(calendar.date(byAdding: .minute, value: -10, to: sunset))
+        let now = try XCTUnwrap(calendar.date(byAdding: .minute, value: 5, to: sunset))
+        XCTAssertTrue(SolarCycle.isDaylight(latestForecastTime, latitude: 64.46, longitude: 11.50, calendar: calendar))
+        XCTAssertFalse(SolarCycle.isDaylight(now, latitude: 64.46, longitude: 11.50, calendar: calendar))
+
+        var place = Place(name: "Klinga", lat: 64.46, lon: 11.50)
+        place.displaySunThreshold2 = 40
+        let lastDaylightHour = ForecastHour(
+            time: latestForecastTime, temp: 8, precip: 0, wind: 1, cloud: 30, dew: 4
+        )
+        let rolling = Planner.rollingStatuses(for: place, forecast: [lastDaylightHour], now: now)
+
+        XCTAssertFalse(rolling.contains { $0.type == .sol && $0.isNow })
+    }
+
     func testDeletedRuleImmediatelyDisappearsFromWidgetEventSource() {
         var place = Place(name: "Klinga", lat: 64, lon: 11)
         var rule = Rule(type: .regn)
