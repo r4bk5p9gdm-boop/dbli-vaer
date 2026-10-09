@@ -1341,6 +1341,53 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(restoredCabin.rules.contains { $0.type == .frost && $0.onlyWhenNearby })
     }
 
+    func testWizardRuleUpdatePreservesExistingHomeRulesAndIdentity() throws {
+        let persistenceKey = "varsel.test.wizard-update-existing-home.\(UUID().uuidString)"
+        let launchVersionKey = "varsel.launchPlacesVersion"
+        let previousLaunchVersion = UserDefaults.standard.object(forKey: launchVersionKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousLaunchVersion {
+                UserDefaults.standard.set(previousLaunchVersion, forKey: launchVersionKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: launchVersionKey)
+            }
+        }
+        UserDefaults.standard.set(9, forKey: launchVersionKey)
+
+        var customRule = Rule(type: .vind)
+        customRule.templateTitle = "Min vindgrense"
+        customRule.threshold = 17
+        customRule.enabled = false
+        let home = Place(
+            name: "Klinga", customName: "Hjemme", lat: 64.4, lon: 11.4,
+            rules: [customRule], notificationsEnabled: false
+        )
+        UserDefaults.standard.set(try JSONEncoder().encode(PersistedStoreState(
+            places: [home], selectedID: home.id, log: []
+        )), forKey: persistenceKey)
+
+        let store = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        var updatedHome = try XCTUnwrap(store.places.first { $0.id == home.id })
+        let proposedRules = WizardPresetConfiguration.rules(
+            selectedIDs: ["regn-neste", "frost-natt"], for: .home, cabinOnlyWhenNearby: true
+        )
+        updatedHome.rules = WizardPresetConfiguration.addingMissingRules(proposedRules, to: updatedHome.rules)
+        store.update(updatedHome)
+
+        let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        let restoredHome = try XCTUnwrap(restored.places.first { $0.id == home.id })
+        let restoredCustomRule = try XCTUnwrap(restoredHome.rules.first { $0.id == customRule.id })
+        XCTAssertEqual(restored.selectedID, home.id)
+        XCTAssertEqual(restoredHome.name, home.name)
+        XCTAssertEqual(restoredHome.customName, home.customName)
+        XCTAssertFalse(restoredHome.areNotificationsEnabled)
+        XCTAssertFalse(restoredCustomRule.enabled)
+        XCTAssertEqual(restoredCustomRule.threshold, 17)
+        XCTAssertFalse(restoredHome.rules.contains { $0.type == .frost && $0.onlyWhenNearby })
+        XCTAssertEqual(restoredHome.rules.filter { $0.templateTitle == "Regn neste dag" }.count, 1)
+    }
+
     func testWizardPresetRulesPreserveExistingMatchingAndOtherRules() {
         var existingPresetRule = Rule(type: .regn)
         existingPresetRule.templateTitle = "Regn neste dag"
