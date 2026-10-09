@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-09T13:27:16Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-121 fullført: Tilpass-siden ble komprimert med sammenleggbare værtyper, lokal temperatur og pushregler. Alle værtyper viser nå den faktiske cellemarkeringens farge; temperatur viser blå/oransje grenser og sol helgul/skravert gul med verdiene. Tekstene er tydeligere om hva innstillingen endrer. Swift-parsing, diffkontroll og generisk iOS-build bestått. Simulatorruntime utilgjengelig; ingen visuell iPhone-gjennomgang. AUTO-359/360/361 er neste køpunkter."
+  "lastProgress": "BRUKER-122 fullført: Lokal temperatur-seksjonen viser nå Yr og lokalt justert temperatur side om side, gjeldende avvik i den sammenleggbare overskriften, en tydelig +/- justering og forklaring på at endringen er stedsspesifikk og påvirker temperatur-/frostmarkeringer. Swift-parsing, diffkontroll og generisk iOS-build bestått; simulatorruntime er utilgjengelig."
 }

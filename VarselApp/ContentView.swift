@@ -1016,29 +1016,63 @@ struct RulesView: View {
                     }
                     Section {
                         DisclosureGroup(isExpanded: $showingLocalTemperatureSettings) {
-                        if let hour = store.selectedForecast.last(where: { $0.time <= Date() && $0.time > Date().addingTimeInterval(-3600) }) {
-                            HStack {
-                                Text("Yr")
-                                Text("\((hour.yrTemperature ?? hour.temp).formatted(.number.precision(.fractionLength(1))))°")
-                                    .strikethrough(p.localTemperatureOffset != 0)
+                            if let hour = currentLocalTemperatureHour {
+                                HStack(spacing: 8) {
+                                    temperatureReading(
+                                        label: "Fra Yr",
+                                        value: hour.yrTemperature ?? hour.temp,
+                                        color: .secondary
+                                    )
+                                    Image(systemName: "arrow.right")
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundStyle(.tertiary)
+                                    temperatureReading(
+                                        label: "Lokalt \(p.nameWithPreposition)",
+                                        value: hour.temp,
+                                        color: AlertType.temperatur.color
+                                    )
+                                }
+                            } else {
+                                Label("Ingen aktuell Yr-temperatur", systemImage: "cloud.sun")
+                                    .font(.caption)
                                     .foregroundStyle(.secondary)
-                                Image(systemName: "arrow.right")
-                                Text("\(hour.temp.formatted(.number.precision(.fractionLength(1))))° \(p.nameWithPreposition) nå").bold()
                             }
-                        }
-                        Stepper(value: Binding(
-                            get: { p.localTemperatureOffset },
-                            set: { p.temperatureOffset = $0; store.update(p); Task { await store.replan() } }
-                        ), in: -10...10, step: 0.5) {
-                            Text("Justering: \(p.localTemperatureOffset.formatted(.number.precision(.fractionLength(1)))) °C")
-                        }
-                        Text("Gjelder akkurat denne lagrede posisjonen. Minus betyr kaldere enn Yr. Frostmarginen kommer i tillegg. Ingen justering skjer automatisk.")
-                            .font(.caption).foregroundStyle(.secondary)
-                        NavigationLink("Registrer temperatur eller frost") {
-                            LocalCalibrationView(placeID: p.id)
-                        }
+                            Stepper(value: Binding(
+                                get: { p.localTemperatureOffset },
+                                set: { p.temperatureOffset = $0; store.update(p); Task { await store.replan() } }
+                            ), in: -10...10, step: 0.5) {
+                                HStack {
+                                    Text("Lokal justering")
+                                    Spacer(minLength: 6)
+                                    Text(signedTemperatureOffset(p.localTemperatureOffset))
+                                        .font(.subheadline.monospacedDigit().weight(.semibold))
+                                        .foregroundStyle(p.localTemperatureOffset == 0 ? Color.secondary : AlertType.temperatur.color)
+                                }
+                            }
+                            Text("Minus gjør appens temperatur lavere enn Yr, pluss gjør den høyere. Justeringen gjelder bare dette stedet og påvirker også frost- og temperaturmarkeringer.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                            NavigationLink {
+                                LocalCalibrationView(placeID: p.id)
+                            } label: {
+                                Label("Registrer temperatur eller frost", systemImage: "thermometer.sun")
+                            }
                         } label: {
-                            Label("Lokal temperatur", systemImage: "thermometer.medium")
+                            VStack(alignment: .leading, spacing: 3) {
+                                Label("Lokal temperatur", systemImage: "thermometer.medium")
+                                    .font(.body.weight(.semibold))
+                                HStack(spacing: 5) {
+                                    RoundedRectangle(cornerRadius: 2)
+                                        .fill(AlertType.temperatur.color)
+                                        .frame(width: 10, height: 7)
+                                    Text(localTemperatureSummary(for: p))
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                        .lineLimit(1)
+                                }
+                                .padding(.leading, 28)
+                            }
                         }
                     }
                     Section {
@@ -1288,6 +1322,44 @@ struct RulesView: View {
             return lhs.id.uuidString < rhs.id.uuidString
         }
         store.update(place)
+    }
+
+    private var currentLocalTemperatureHour: ForecastHour? {
+        let now = Date()
+        return store.selectedForecast.last(where: {
+            $0.time <= now && $0.time > now.addingTimeInterval(-3_600)
+        })
+    }
+
+    private func localTemperatureSummary(for place: Place) -> String {
+        let offset = signedTemperatureOffset(place.localTemperatureOffset)
+        guard let hour = currentLocalTemperatureHour else {
+            return "Yr-temperaturen justeres her · \(offset)"
+        }
+        let yr = (hour.yrTemperature ?? hour.temp).formatted(.number.precision(.fractionLength(1)))
+        let local = hour.temp.formatted(.number.precision(.fractionLength(1)))
+        return "Yr \(yr)° → her \(local)° · \(offset)"
+    }
+
+    private func signedTemperatureOffset(_ value: Double) -> String {
+        let number = value.formatted(.number.precision(.fractionLength(1)))
+        return "\(value > 0 ? "+" : "")\(number)°C"
+    }
+
+    private func temperatureReading(label: String, value: Double, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(label)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+            Text("\(value.formatted(.number.precision(.fractionLength(1))))°")
+                .font(.subheadline.monospacedDigit().weight(.semibold))
+                .foregroundStyle(color)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 7)
+        .background(Color.secondary.opacity(0.07), in: RoundedRectangle(cornerRadius: 9))
+        .accessibilityElement(children: .combine)
     }
 
     private func displayThresholdExplanation(for type: AlertType, place: Place) -> String {

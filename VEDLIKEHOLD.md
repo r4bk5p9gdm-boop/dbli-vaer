@@ -54,6 +54,12 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-122 · FULLFØRT 2026-10-09** — Gjorde også bolken «Lokal
+temperatur» tydeligere: den sammenleggbare overskriften viser nå Yr-verdi,
+lokalt justert verdi og valgt avvik. Innholdet viser Yr og lokal temperatur
+side om side, en kompakt justering med pluss/minus og en forklaring på at
+justeringen gjelder dette stedet og påvirker temperatur- og frostmarkeringer.
+
 **BRUKER-121 · FULLFØRT 2026-10-09** — Gjorde «Tilpass» kortere og
 mer oversiktlig ved å samle værtypene, lokal temperatur og pushvarsler i
 sammenleggbare grupper. Hver værtype viser nå en kompakt oppsummering av
