@@ -125,13 +125,6 @@ struct LocalCalibrationView: View {
 
 struct ContentView: View {
     private enum Tab: Hashable { case home, places, settings }
-    private struct QuickPlaceTab: Identifiable {
-        let placeID: UUID
-        var title: String
-        var systemImage: String
-        var representsCurrentPosition: Bool
-        var id: UUID { placeID }
-    }
 
     @EnvironmentObject var store: Store
     @AppStorage("varsel.onboardingCompleted") private var onboardingCompleted = false
@@ -140,47 +133,27 @@ struct ContentView: View {
     @State private var showingOnboarding = false
     @State private var selectedTab: Tab = .home
 
-    private var quickPlaceTabs: [QuickPlaceTab] {
-        var result: [QuickPlaceTab] = []
-        func append(_ id: UUID?, title: String, systemImage: String, isPosition: Bool = false) {
-            guard let id, store.places.contains(where: { $0.id == id }) else { return }
-            if let existingIndex = result.firstIndex(where: { $0.placeID == id }) {
-                result[existingIndex].title += " · \(title)"
-                result[existingIndex].representsCurrentPosition = result[existingIndex].representsCurrentPosition || isPosition
-            } else {
-                result.append(QuickPlaceTab(
-                    placeID: id,
-                    title: title,
-                    systemImage: systemImage,
-                    representsCurrentPosition: isPosition
-                ))
-            }
-        }
-
-        append(store.currentLocationPlaceID, title: "Her!", systemImage: "location.fill", isPosition: true)
-        let resolvedHomeID = UUID(uuidString: homePlaceID) ?? store.selected?.id
-        append(resolvedHomeID, title: "Hjem", systemImage: "house.fill")
-        append(UUID(uuidString: cabinPlaceID), title: "Hytta", systemImage: "house.fill")
-        return result
+    private var quickPlaceTabs: [HomeSwipeSelection.NavigationDestination] {
+        HomeSwipeSelection.navigationDestinations(
+            positionID: store.currentLocationPlaceID,
+            homeID: UUID(uuidString: homePlaceID) ?? store.selected?.id,
+            cabinID: UUID(uuidString: cabinPlaceID),
+            availableIDs: Set(store.places.map(\.id))
+        )
     }
 
     private var navigationPlaceIDs: [UUID] {
-        HomeSwipeSelection.orderedNavigationIDs(
-            positionID: store.currentLocationPlaceID,
-            homeID: UUID(uuidString: homePlaceID) ?? store.selected?.id,
-            cabinID: UUID(uuidString: cabinPlaceID)
-        ).filter { id in store.places.contains(where: { $0.id == id }) }
+        quickPlaceTabs.map(\.placeID)
     }
 
     private var selectedQuickPlaceID: UUID? {
-        if let selectedID = store.selectedID, quickPlaceTabs.contains(where: { $0.placeID == selectedID }) {
-            return selectedID
-        }
-        if store.selectionIsCurrentLocation, let currentLocationPlaceID = store.currentLocationPlaceID {
-            return currentLocationPlaceID
-        }
-        let resolvedHomeID = UUID(uuidString: homePlaceID) ?? store.selected?.id
-        return quickPlaceTabs.first(where: { $0.placeID == resolvedHomeID })?.placeID ?? quickPlaceTabs.first?.placeID
+        HomeSwipeSelection.selectedNavigationID(
+            selectedID: store.selectedID,
+            selectionIsCurrentLocation: store.selectionIsCurrentLocation,
+            positionID: store.currentLocationPlaceID,
+            homeID: UUID(uuidString: homePlaceID) ?? store.selected?.id,
+            destinations: quickPlaceTabs
+        )
     }
 
     var body: some View {

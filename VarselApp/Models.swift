@@ -78,14 +78,62 @@ enum WatchPlaceSettings {
 /// scrolling is never interpreted as a place change, and duplicate favorite
 /// IDs cannot create a phantom intermediate page.
 enum HomeSwipeSelection {
+    struct NavigationDestination: Equatable, Identifiable {
+        let placeID: UUID
+        var title: String
+        let systemImage: String
+        var representsCurrentPosition: Bool
+
+        var id: UUID { placeID }
+    }
+
     static func shouldShowHint(placeCount: Int) -> Bool { placeCount > 1 }
 
-    /// Quick weather destinations are ordered by role and deduplicated by
-    /// place identity so GPS and home never create duplicate menu buttons.
-    static func orderedNavigationIDs(positionID: UUID?, homeID: UUID?, cabinID: UUID?) -> [UUID] {
-        [positionID, homeID, cabinID].compactMap { $0 }.reduce(into: [UUID]()) { result, id in
-            if !result.contains(id) { result.append(id) }
+    /// Builds the visible shortcut menu from valid saved destinations only.
+    /// When roles refer to the same place, they share one item while retaining
+    /// the GPS affordance and a readable combined title.
+    static func navigationDestinations(
+        positionID: UUID?,
+        homeID: UUID?,
+        cabinID: UUID?,
+        availableIDs: Set<UUID>
+    ) -> [NavigationDestination] {
+        var result: [NavigationDestination] = []
+        func append(_ id: UUID?, title: String, systemImage: String, isPosition: Bool = false) {
+            guard let id, availableIDs.contains(id) else { return }
+            if let index = result.firstIndex(where: { $0.placeID == id }) {
+                result[index].title += " · \(title)"
+                result[index].representsCurrentPosition = result[index].representsCurrentPosition || isPosition
+            } else {
+                result.append(NavigationDestination(
+                    placeID: id,
+                    title: title,
+                    systemImage: systemImage,
+                    representsCurrentPosition: isPosition
+                ))
+            }
         }
+
+        append(positionID, title: "Her!", systemImage: "location.fill", isPosition: true)
+        append(homeID, title: "Hjem", systemImage: "house.fill")
+        append(cabinID, title: "Hytta", systemImage: "house.fill")
+        return result
+    }
+
+    /// Keeps the bottom shortcut selection aligned with the active Home swipe
+    /// destination, falling back safely if stored roles were deleted.
+    static func selectedNavigationID(
+        selectedID: UUID?,
+        selectionIsCurrentLocation: Bool,
+        positionID: UUID?,
+        homeID: UUID?,
+        destinations: [NavigationDestination]
+    ) -> UUID? {
+        if let selectedID, destinations.contains(where: { $0.placeID == selectedID }) { return selectedID }
+        if selectionIsCurrentLocation,
+           let positionID,
+           destinations.contains(where: { $0.placeID == positionID }) { return positionID }
+        return destinations.first(where: { $0.placeID == homeID })?.placeID ?? destinations.first?.placeID
     }
 
     /// Shared home-page order: live position first, then the two starred

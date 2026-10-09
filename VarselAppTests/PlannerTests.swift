@@ -9065,19 +9065,84 @@ final class PlannerTests: XCTestCase {
         )
     }
 
-    func testQuickNavigationOrdersPositionHomeAndCabinAndCollapsesDuplicates() {
-        let position = UUID(), home = UUID(), cabin = UUID()
+    func testQuickNavigationDestinationsMergeRolesAndKeepGPSAffordance() {
+        let position = UUID(), cabin = UUID()
+        let destinations = HomeSwipeSelection.navigationDestinations(
+            positionID: position,
+            homeID: position,
+            cabinID: cabin,
+            availableIDs: [position, cabin]
+        )
+
+        XCTAssertEqual(destinations.map(\.placeID), [position, cabin])
+        XCTAssertEqual(destinations.map(\.title), ["Her! · Hjem", "Hytta"])
+        XCTAssertEqual(destinations.map(\.representsCurrentPosition), [true, false])
+        XCTAssertEqual(destinations.first?.systemImage, "location.fill")
+    }
+
+    func testQuickNavigationDropsMissingRolesAndDeduplicatesCabinOverlap() {
+        let position = UUID(), cabin = UUID(), deletedHome = UUID()
+        let destinations = HomeSwipeSelection.navigationDestinations(
+            positionID: position,
+            homeID: deletedHome,
+            cabinID: position,
+            availableIDs: [position, cabin]
+        )
+
+        XCTAssertEqual(destinations.map(\.placeID), [position])
+        XCTAssertEqual(destinations.map(\.title), ["Her! · Hytta"])
+        XCTAssertTrue(destinations[0].representsCurrentPosition)
+
+        let afterDeletedPosition = HomeSwipeSelection.navigationDestinations(
+            positionID: UUID(),
+            homeID: deletedHome,
+            cabinID: cabin,
+            availableIDs: [cabin]
+        )
+        XCTAssertEqual(afterDeletedPosition.map(\.placeID), [cabin])
+        XCTAssertEqual(afterDeletedPosition.map(\.title), ["Hytta"])
+    }
+
+    func testQuickNavigationSelectionTracksSwipedPlaceAndFallsBackAfterDeletion() {
+        let position = UUID(), home = UUID(), cabin = UUID(), deleted = UUID()
+        let destinations = HomeSwipeSelection.navigationDestinations(
+            positionID: position,
+            homeID: home,
+            cabinID: cabin,
+            availableIDs: [position, home, cabin]
+        )
+
+        for swipedID in [position, home, cabin] {
+            XCTAssertEqual(
+                HomeSwipeSelection.selectedNavigationID(
+                    selectedID: swipedID,
+                    selectionIsCurrentLocation: swipedID == position,
+                    positionID: position,
+                    homeID: home,
+                    destinations: destinations
+                ),
+                swipedID
+            )
+        }
         XCTAssertEqual(
-            HomeSwipeSelection.orderedNavigationIDs(positionID: position, homeID: home, cabinID: cabin),
-            [position, home, cabin]
+            HomeSwipeSelection.selectedNavigationID(
+                selectedID: deleted,
+                selectionIsCurrentLocation: true,
+                positionID: position,
+                homeID: home,
+                destinations: destinations
+            ),
+            position
         )
         XCTAssertEqual(
-            HomeSwipeSelection.orderedNavigationIDs(positionID: position, homeID: position, cabinID: cabin),
-            [position, cabin]
-        )
-        XCTAssertEqual(
-            HomeSwipeSelection.orderedNavigationIDs(positionID: position, homeID: position, cabinID: position),
-            [position]
+            HomeSwipeSelection.selectedNavigationID(
+                selectedID: deleted,
+                selectionIsCurrentLocation: false,
+                positionID: deleted,
+                homeID: deleted,
+                destinations: [destinations[2]]
+            ),
+            cabin
         )
     }
 

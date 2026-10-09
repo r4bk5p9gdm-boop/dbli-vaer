@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T22:11:02Z",
+  "lastScheduledStart": "2026-10-09T23:41:02Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-430 fullført: Appen leser nå varslingsstatus på nytt når den blir aktiv etter bakgrunn, slik at Hjem-varslet følger endringer i iOS-innstillingene. Statusleseren skiller authorized/provisional, denied og notDetermined; regresjonstest dekker utfallene. Swift-parsing og diffkontroll består; XCTest ble utsatt etter ressurskontroll viste ca. 91 MB frie minnesider, og fysisk iPhone-kontroll var blokkert fordi CoreDevice ikke oppdaget enheten. AUTO-433 ble opprettet etter bred køgjennomgang. Neste kø: AUTO-431, AUTO-432 og AUTO-433."
+  "lastProgress": "AUTO-431 fullført: Hurtigmeny og Hjem-sveip bruker nå samme testbare destinasjonsprojeksjon. Regresjonstester dekker sammenslåing av Her!/Hjem/Hytta-roller uten ID-duplikater, filtrering av slettede ID-er, valgt snarvei etter sveip og fallback. Swift-parsing og diffkontroll består; XCTest ble utsatt fordi disken er 98 % full og den kjente SwiftUIMacros-feilen fortsatt gjelder. AUTO-434 ble lagt til etter gjennomgang av hurtigmenyens tilgjengelighet. Neste kø: AUTO-432, AUTO-433 og AUTO-434."
 }

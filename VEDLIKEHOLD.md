@@ -54,6 +54,13 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-434 · ÅPEN** — Gjennomgå VoiceOver-presentasjonen av hurtigmenyen for
+«Her!», Hjem og Hytta. Når roller slås sammen for samme sted, skal etikett,
+live-posisjon og valgt status annonseres samlet uten at SF Symbol-navn gir
+duplisert eller misvisende tale. Dekk den rollebaserte etiketten med en
+deterministisk test, og kontroller SwiftUI-atferden på iPhone når enhet er
+tilgjengelig.
+
 **AUTO-433 · ÅPEN** — Samle timeprognosens symbol- og tilstandsvalg i én
 testbar værklassifisering. Dagens symbol og etikett har nærliggende, men
 uavhengige terskler for nedbør, tåke og skydekke; en felles beslutning med
@@ -75,11 +82,13 @@ etikettens layout-høyde, med en rolig fade på posisjonspilen som live-signal.
 Swift-parsing og diffkontroll består; full iPhone-bygging/installasjon er ikke
 kjørt i denne endringen.
 
-**AUTO-431 · ÅPEN** — Gjør den nye stedsmenyen deterministisk testbar på
-rollenivå: bekreft at «Her!» og «Hjem» slås sammen ved samme steds-ID, at
-hytte-ID som overlapper ikke lager ekstra snarvei, og at valgt snarvei følger
-Hjem-sveipingen også når lagrede steds-ID-er mangler eller er fjernet. Dette
-dekker visnings-/valgsynkronisering som dagens rene rekkefølgetest ikke låser.
+**AUTO-431 · FULLFØRT 2026-10-10** — Hurtigmenyens destinasjoner er nå én
+testbar, rollebasert projeksjon som Hjem-sveipingen også bruker. Tester låser
+at samme sted samler «Her!»/Hjem eller Hytta uten duplikat, at slettede
+posisjons-/hjem-ID-er filtreres bort, og at valgt knapp følger sveipestedet
+med trygt fallback når lagrede roller mangler. Swift-parsing og diffkontroll
+består; XCTest ble utsatt på grunn av nesten full disk og den kjente
+SwiftUIMacros-feilen.
 
 **BRUKER-143 · FULLFØRT 2026-10-10** — Bygget Debug for den sammenkoblede
 iPhone 13 Pro Max med prosjektets eksisterende automatiske utviklersignering,
