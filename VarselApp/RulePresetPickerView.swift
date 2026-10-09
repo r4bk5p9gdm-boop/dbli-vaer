@@ -114,66 +114,99 @@ struct RulePresetPickerView: View {
     }
 }
 
+private enum WizardAlertCategory: String, CaseIterable, Identifiable {
+    case rain, wind, winter, sun, moisture
+
+    var id: String { rawValue }
+    var title: String {
+        switch self {
+        case .rain: "Regn"
+        case .wind: "Vind"
+        case .winter: "Snø og frost"
+        case .sun: "Sol"
+        case .moisture: "Temperatur og dugg"
+        }
+    }
+    var detail: String {
+        switch self {
+        case .rain: "Få tid til å ta inn eller kle på deg."
+        case .wind: "Sikre løse ting før vinden øker."
+        case .winter: "Vær klar for snøfall eller frost."
+        case .sun: "Finn et godt tidspunkt for uteplaner."
+        case .moisture: "Følg med på kulde og kondens."
+        }
+    }
+    var image: String {
+        switch self {
+        case .rain: AlertType.regn.systemImage
+        case .wind: AlertType.vind.systemImage
+        case .winter: AlertType.sno.systemImage
+        case .sun: AlertType.sol.systemImage
+        case .moisture: AlertType.dugg.systemImage
+        }
+    }
+    var color: Color {
+        switch self {
+        case .rain: AlertType.regn.color
+        case .wind: AlertType.vind.color
+        case .winter: AlertType.frost.color
+        case .sun: AlertType.sol.color
+        case .moisture: AlertType.dugg.color
+        }
+    }
+    var types: Set<AlertType> {
+        switch self {
+        case .rain: [.regn]
+        case .wind: [.vind]
+        case .winter: [.sno, .frost]
+        case .sun: [.sol]
+        case .moisture: [.temperatur, .dugg]
+        }
+    }
+}
+
 struct OnboardingWizardView: View {
     @EnvironmentObject private var store: Store
     @StateObject private var locationManager = LocationManager()
     @State private var step = 0
-    @State private var showingPlaceSearch = false
+    @State private var selectedCategory: WizardAlertCategory?
+    @State private var showingHomeSearch = false
+    @State private var showingCabinSearch = false
     @State private var isLocating = false
     @State private var locationMessage: String?
-    @State private var selectedPresetIDs: Set<String> = ["regn-neste", "sol-morgen", "frost-natt", "vind-morgen"]
-    @State private var eveningTime = Self.time(hour: 21)
-    @State private var morningTime = Self.time(hour: 7)
-    @State private var weekendTime = Self.time(hour: 21)
-    @State private var daytimeLeadMinutes = 180
+    @State private var selectedHomePresetIDs: Set<String> = ["regn-neste", "sol-morgen", "frost-natt", "vind-morgen"]
+    @State private var selectedCabinPresetIDs: Set<String> = ["regn-natt", "sno-natt", "frost-natt", "vind-kraftig"]
+    @State private var homePlaceID: UUID?
+    @State private var cabinPlaceID: UUID?
+    @State private var cabinOnlyWhenNearby = true
 
     let onFinish: () -> Void
 
-    private let eveningIDs = ["regn-neste", "regn-natt", "dugg-morgen", "sol-morgen", "sno-natt", "sno-morgen", "frost-natt", "temp-natt", "vind-natt", "vind-morgen"]
-    private let morningIDs = ["dag-regn", "dag-sol", "dag-sno", "dag-vind"]
-    private let weekendIDs = ["sol-helg", "regn-helg"]
-    private let daytimeIDs = ["snart-regn", "snart-sno", "snart-vind", "vind-kraftig", "vind-ekstrem"]
-
-    private static func time(hour: Int) -> Date {
-        Calendar.current.date(from: DateComponents(hour: hour, minute: 0)) ?? Date()
+    private var isCabinStep: Bool { step == 3 }
+    private var activePresetIDs: Set<String> {
+        isCabinStep ? selectedCabinPresetIDs : selectedHomePresetIDs
     }
-
-    private var currentIDs: [String] {
-        switch step {
-        case 1: eveningIDs
-        case 2: morningIDs
-        case 3: weekendIDs
-        default: daytimeIDs
-        }
+    private var activePlace: Place? {
+        let id = isCabinStep ? cabinPlaceID : homePlaceID
+        return store.places.first { $0.id == id }
     }
-
-    private var currentPresets: [RulePreset] {
-        currentIDs.compactMap { id in RulePreset.all.first { $0.id == id } }
-    }
-
     private var pageTitle: String {
         switch step {
-        case 0: "Hvor er hjemme?"
-        case 1: "Kvelden før"
-        case 2: "Om morgenen"
-        case 3: "Før helga"
-        default: "Før det skjer"
-        }
-    }
-
-    private var pageExplanation: String {
-        switch step {
-        case 1: "Varsler om natt eller neste dag, samlet på et rolig tidspunkt kvelden før."
-        case 2: "En kort oppsummering samme morgen for været resten av dagen."
-        case 3: "Se etter helgevær allerede torsdag kveld. Langtidsvarselet er litt grovere."
-        default: "Varsler på dagtid noen timer før selve værhendelsen."
+        case 0: "Velg hjemsted"
+        case 1: selectedCategory?.title ?? "Velg varsler"
+        case 2: "Vil du sette opp hytta?"
+        default: selectedCategory?.title ?? "Varsler på hytta"
         }
     }
 
     var body: some View {
         NavigationStack {
             Group {
-                if step == 0 { placeStep } else { alertGroupStep }
+                switch step {
+                case 0: homePlaceStep
+                case 1, 3: alertChoiceStep
+                default: cabinStepView
+                }
             }
             .navigationTitle(pageTitle)
             .navigationBarTitleDisplayMode(.inline)
@@ -181,92 +214,279 @@ struct OnboardingWizardView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Hopp over") { onFinish() }
                 }
+                ToolbarItem(placement: .topBarTrailing) {
+                    ContextHelpButton(topic: .wizard)
+                }
             }
         }
-        .sheet(isPresented: $showingPlaceSearch) { PlaceSearchView() }
+        .sheet(isPresented: $showingHomeSearch) {
+            PlaceSearchView(onSelect: selectSearchedHome)
+        }
+        .sheet(isPresented: $showingCabinSearch) {
+            PlaceSearchView(initialPreposition: .på, onSelect: selectSearchedCabin)
+        }
     }
 
-    private var placeStep: some View {
-        VStack(spacing: 18) {
-            VStack(spacing: 7) {
+    private var homePlaceStep: some View {
+        VStack(spacing: 8) {
+            VStack(spacing: 8) {
                 Image(systemName: "house.and.flag.fill")
-                    .font(.system(size: 42))
+                    .font(.system(size: 38))
                     .foregroundStyle(.blue)
-                Text("Velg stedet du vil se først")
+                Text("Start med stedet du bor")
                     .font(.title3.weight(.semibold))
-                Text("Du kan legge til hytte og andre steder etterpå.")
+                Text("Vi foreslår posisjonen din. Du kan også søke etter hjemstedet.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
-            .padding(.top, 22)
+            .padding(.horizontal)
+            .padding(.top, 14)
 
             List {
-                Section {
-                    Button {
-                        useCurrentLocation()
-                    } label: {
-                        HStack(spacing: 12) {
-                            Image(systemName: "location.fill")
-                                .foregroundStyle(.blue)
-                                .frame(width: 24)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(isLocating ? "Finner posisjonen din …" : "Bruk posisjonen min")
+                Section("Forslag") {
+                    Button(action: useCurrentLocation) {
+                        Label {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(isLocating ? "Finner posisjonen …" : "Bruk posisjonen min")
                                     .foregroundStyle(.primary)
-                                Text("Vær hentes direkte fra MET/Yr")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
+                                Text("Appen foreslår nærmeste sted der du er")
+                                    .font(.caption).foregroundStyle(.secondary)
                             }
-                            Spacer()
-                            if isLocating { ProgressView().controlSize(.small) }
+                        } icon: {
+                            Image(systemName: "location.fill").foregroundStyle(.blue)
                         }
                     }
                     .disabled(isLocating)
                     if let locationMessage {
-                        Text(locationMessage)
-                            .font(.caption)
-                            .foregroundStyle(.red)
+                        Text(locationMessage).font(.caption).foregroundStyle(.red)
                     }
+                }
+                if !store.places.isEmpty {
+                    Section("Lagrede steder") {
+                        ForEach(store.places) { place in
+                            Button {
+                                homePlaceID = place.id
+                                store.select(place)
+                            } label: {
+                                HStack {
+                                    Label(place.nameWithPreposition, systemImage: "mappin.and.ellipse")
+                                        .foregroundStyle(.primary)
+                                    Spacer()
+                                    if homePlaceID == place.id || (homePlaceID == nil && store.selectedID == place.id) {
+                                        Image(systemName: "checkmark.circle.fill").foregroundStyle(.blue)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                Section {
+                    Button {
+                        showingHomeSearch = true
+                    } label: {
+                        Label("Søk etter hjemsted", systemImage: "magnifyingglass")
+                    }
+                }
+            }
+            .listStyle(.insetGrouped)
+            .safeAreaInset(edge: .bottom) {
+                footer {
+                    Spacer()
+                    Button("Velg varsler") {
+                        if homePlaceID == nil { homePlaceID = store.selectedID }
+                        step = 1
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(homePlaceID == nil && store.selectedID == nil)
+                }
+            }
+        }
+    }
 
-                    ForEach(store.places) { place in
+    private var alertChoiceStep: some View {
+        Group {
+            if let selectedCategory {
+                presetDetail(for: selectedCategory)
+            } else {
+                categoryList
+            }
+        }
+        .safeAreaInset(edge: .bottom) {
+            footer {
+                Button("Tilbake") {
+                    if selectedCategory != nil {
+                        selectedCategory = nil
+                    } else if step == 1 {
+                        step = 0
+                    } else {
+                        step = 2
+                    }
+                }
+                Spacer()
+                Button(step == 3 ? "Lagre varsler" : "Neste") {
+                    if step == 3 {
+                        installSelectedRules()
+                    } else {
+                        step = 2
+                    }
+                }
+                .fontWeight(.semibold)
+                .accessibilityHint(step == 3 ? "Lagrer varslene for hjemstedet og hytta." : "Går videre til valgfri hytteoppsett.")
+            }
+        }
+    }
+
+    private var categoryList: some View {
+        List {
+            Section {
+                Text("Velg en type for å se ferdige varselforslag. Du kan endre detaljene senere.")
+                    .font(.subheadline).foregroundStyle(.secondary)
+                ForEach(WizardAlertCategory.allCases) { category in
+                    Button {
+                        selectedCategory = category
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: category.image)
+                                .font(.title3.weight(.semibold))
+                                .foregroundStyle(category.color)
+                                .frame(width: 34)
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(category.title).font(.headline).foregroundStyle(.primary)
+                                Text(category.detail).font(.caption).foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            let count = RulePreset.all.filter { category.types.contains($0.rule.type) && activePresetIDs.contains($0.id) }.count
+                            if count > 0 {
+                                Text("\(count) valgt")
+                                    .font(.caption2.weight(.semibold))
+                                    .foregroundStyle(category.color)
+                            }
+                            Image(systemName: "chevron.right").font(.caption.weight(.semibold)).foregroundStyle(.tertiary)
+                        }
+                        .padding(.vertical, 4)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
+            } header: {
+                Text(isCabinStep ? "Varsler for \(activePlace?.nameWithPreposition ?? "hytta")" : "Varsler for \(activePlace?.nameWithPreposition ?? "hjemstedet")")
+            } footer: {
+                Text("Forslagene er ferdige å bruke. Du kan finjustere tid, grense og varsling senere under Tilpass.")
+            }
+        }
+        .listStyle(.insetGrouped)
+    }
+
+    private func presetDetail(for category: WizardAlertCategory) -> some View {
+        List {
+            Section {
+                Text("Velg ett eller flere forslag. Hvert forslag har et rolig standardtidspunkt som kan endres senere.")
+                    .font(.subheadline).foregroundStyle(.secondary)
+                ForEach(RulePreset.all.filter { category.types.contains($0.rule.type) }) { preset in
+                    Toggle(isOn: presetBinding(for: preset.id)) {
+                        Label {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(preset.title).font(.subheadline.weight(.semibold))
+                                Text(preset.detail)
+                                    .font(.caption).foregroundStyle(.secondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                Text("Forslag: \(preset.suggestion)")
+                                    .font(.caption2).foregroundStyle(.blue)
+                            }
+                        } icon: {
+                            Image(systemName: preset.rule.type.systemImage)
+                                .foregroundStyle(preset.rule.type.color)
+                        }
+                    }
+                    .tint(preset.rule.type.color)
+                    .padding(.vertical, 3)
+                }
+            } header: {
+                Text(category.title)
+            }
+        }
+        .listStyle(.insetGrouped)
+    }
+
+    private var cabinStepView: some View {
+        List {
+            Section {
+                Label("Hyttevarsler lagres separat fra hjemstedet.", systemImage: "house.lodge.fill")
+                    .font(.subheadline)
+                Text("Du kan bruke de samme enkle varseltypene på hytta og velge at de bare skal varsle når du er i nærheten.")
+                    .font(.caption).foregroundStyle(.secondary)
+                Toggle("Bare når jeg er i nærheten", isOn: $cabinOnlyWhenNearby)
+                Text("Når dette er på, venter hytta med å sende pushvarsel til telefonen er i nærheten.")
+                    .font(.caption).foregroundStyle(.secondary)
+            } header: {
+                Text("Valgfritt")
+            }
+            let otherPlaces = store.places.filter { $0.id != homePlaceID }
+            if !otherPlaces.isEmpty {
+                Section("Velg et lagret sted") {
+                    ForEach(otherPlaces) { place in
                         Button {
-                            store.select(place)
+                            cabinPlaceID = place.id
                         } label: {
                             HStack {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(place.displayName).foregroundStyle(.primary)
-                                    Text("\(place.resolvedPreposition.rawValue) \(place.displayName)")
-                                        .font(.caption).foregroundStyle(.secondary)
-                                }
+                                Label(place.nameWithPreposition, systemImage: "mappin.and.ellipse")
+                                    .foregroundStyle(.primary)
                                 Spacer()
-                                if place.id == store.selectedID {
+                                if cabinPlaceID == place.id {
                                     Image(systemName: "checkmark.circle.fill").foregroundStyle(.blue)
                                 }
                             }
                         }
                     }
-                    Button {
-                        showingPlaceSearch = true
-                    } label: {
-                        Label("Finn et annet sted", systemImage: "magnifyingglass")
-                    }
                 }
             }
-            .listStyle(.insetGrouped)
-
-            Button {
-                step = 1
-            } label: {
-                Text("Neste")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
+            Section {
+                Button {
+                    showingCabinSearch = true
+                } label: {
+                    Label("Søk etter hytta", systemImage: "magnifyingglass")
+                }
+            } footer: {
+                Text("Hopp over hvis du vil gjøre dette senere. Du kan alltid legge til et sted under Steder.")
             }
-            .buttonStyle(.borderedProminent)
-            .padding(.horizontal)
-            .padding(.bottom, 12)
-            .disabled(store.selected == nil)
         }
+        .listStyle(.insetGrouped)
+        .safeAreaInset(edge: .bottom) {
+            footer {
+                Button("Tilbake") { step = 1 }
+                Spacer()
+                if cabinPlaceID == nil {
+                    Button("Ferdig uten hytte") { installSelectedRules() }
+                } else {
+                    Button("Velg hyttevarsler") { step = 3 }
+                        .buttonStyle(.borderedProminent)
+                }
+            }
+        }
+    }
+
+    private func footer<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        HStack(spacing: 12, content: content)
+            .padding(.horizontal)
+            .padding(.top, 10)
+            .padding(.bottom, 8)
+            .background(.bar)
+    }
+
+    private func presetBinding(for id: String) -> Binding<Bool> {
+        Binding(
+            get: { activePresetIDs.contains(id) },
+            set: { enabled in
+                if isCabinStep {
+                    if enabled { selectedCabinPresetIDs.insert(id) }
+                    else { selectedCabinPresetIDs.remove(id) }
+                } else {
+                    if enabled { selectedHomePresetIDs.insert(id) }
+                    else { selectedHomePresetIDs.remove(id) }
+                }
+            }
+        )
     }
 
     private func useCurrentLocation() {
@@ -279,163 +499,150 @@ struct OnboardingWizardView: View {
                     CLLocation(latitude: place.lat, longitude: place.lon).distance(from: location) < 500
                 }) {
                     store.select(existing)
+                    homePlaceID = existing.id
                 } else {
                     let name = await LocationManager.name(for: location)
-                    await store.add(Place(
+                    let place = Place(
                         name: name,
                         lat: location.coordinate.latitude,
                         lon: location.coordinate.longitude,
                         preposition: .i
-                    ))
+                    )
+                    homePlaceID = place.id
+                    Task { await store.add(place) }
                 }
+                step = 1
             } catch {
-                locationMessage = "Fant ikke posisjonen. Kontroller stedstilgang i Innstillinger."
+                locationMessage = "Fant ikke posisjonen. Du kan søke etter hjemstedet i stedet."
             }
             isLocating = false
         }
     }
 
-    private var alertGroupStep: some View {
-        Form {
-            Section {
-                VStack(alignment: .leading, spacing: 5) {
-                    HStack {
-                        Text(AppCopy.heading(placeName: store.selected?.nameWithPreposition ?? ""))
-                        Spacer()
-                        Text("\(step) av 4")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(.secondary)
-                    }
-                        .font(.headline)
-                    Text(pageExplanation)
-                        .font(.subheadline).foregroundStyle(.secondary)
-                }
-                .padding(.vertical, 4)
-            }
-
-            Section("Velg varsler") {
-                ForEach(currentPresets) { preset in
-                    Toggle(isOn: Binding(
-                        get: { selectedPresetIDs.contains(preset.id) },
-                        set: { enabled in
-                            if enabled { selectedPresetIDs.insert(preset.id) }
-                            else { selectedPresetIDs.remove(preset.id) }
-                        }
-                    )) {
-                        Label {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(preset.title)
-                                Text(preset.detail.components(separatedBy: " · varsling").first ?? preset.detail)
-                                    .font(.caption).foregroundStyle(.secondary)
-                            }
-                        } icon: {
-                            Image(systemName: preset.rule.type.systemImage)
-                                .foregroundStyle(preset.rule.type.color)
-                        }
-                    }
-                }
-            }
-
-            Section {
-                scheduleControl
-            } footer: {
-                Text(scheduleHelp)
-            }
-
-        }
-        .safeAreaInset(edge: .bottom) {
-            VStack(spacing: 8) {
-                if step == 4 {
-                    Text("Valgene lagres for \(store.selected?.nameWithPreposition ?? "stedet ditt") når du trykker «Lagre varsler».")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                }
-                HStack {
-                    Button("Tilbake") { step -= 1 }
-                    Spacer()
-                    Button(step == 4 ? "Lagre varsler" : "Neste") {
-                        if step == 4 { installSelectedRules() }
-                        else { step += 1 }
-                    }
-                    .fontWeight(.semibold)
-                    .accessibilityHint(step == 4 ? "Lagrer de valgte varslene og fullfører veiviseren." : "Går videre til neste steg.")
-                }
-            }
-            .padding(.horizontal)
-            .padding(.top, 10)
-            .padding(.bottom, 8)
-            .background(.bar)
-        }
+    private func selectSearchedHome(_ place: Place) {
+        homePlaceID = place.id
+        Task { await store.add(place) }
+        step = 1
     }
 
-    @ViewBuilder
-    private var scheduleControl: some View {
-        switch step {
-        case 1:
-            DatePicker("Foreslått tidspunkt", selection: $eveningTime, displayedComponents: .hourAndMinute)
-        case 2:
-            DatePicker("Foreslått tidspunkt", selection: $morningTime, displayedComponents: .hourAndMinute)
-        case 3:
-            DatePicker("Torsdag", selection: $weekendTime, displayedComponents: .hourAndMinute)
-        default:
-            Picker("Varsle før", selection: $daytimeLeadMinutes) {
-                Text("1 time").tag(60)
-                Text("2 timer").tag(120)
-                Text("3 timer").tag(180)
-                Text("6 timer").tag(360)
-            }
-        }
-    }
-
-    private var scheduleHelp: String {
-        switch step {
-        case 1: "Foreslått kl. 21.00. Ett tidspunkt brukes for alle valgene på denne siden."
-        case 2: "Foreslått kl. 07.00 samme dag."
-        case 3: "Foreslått torsdag kl. 21.00 for kommende lørdag og søndag."
-        default: "Foreslått 3 timer før. Disse varslene kan komme gjennom dagen."
-        }
+    private func selectSearchedCabin(_ place: Place) {
+        cabinPlaceID = place.id
+        Task { await store.add(place) }
+        step = 3
     }
 
     private func installSelectedRules() {
-        guard var place = store.selected else {
+        guard let homePlaceID,
+              var home = store.places.first(where: { $0.id == homePlaceID }) else {
             onFinish()
             return
         }
-        let evening = Calendar.current.dateComponents([.hour, .minute], from: eveningTime)
-        let morning = Calendar.current.dateComponents([.hour, .minute], from: morningTime)
-        let weekend = Calendar.current.dateComponents([.hour, .minute], from: weekendTime)
-        let allWizardIDs = eveningIDs + morningIDs + weekendIDs + daytimeIDs
-        for preset in RulePreset.all where allWizardIDs.contains(preset.id) && selectedPresetIDs.contains(preset.id) {
-            var rule = preset.rule
-            if eveningIDs.contains(preset.id) {
-                rule.previousDayNotificationHour = evening.hour ?? 21
-                rule.previousDayNotificationMinute = evening.minute ?? 0
-                rule.notificationWeekday = nil
-                rule.notificationDayOffset = nil
-            } else if morningIDs.contains(preset.id) {
-                rule.previousDayNotificationHour = morning.hour ?? 7
-                rule.previousDayNotificationMinute = morning.minute ?? 0
-                rule.notificationWeekday = nil
-                rule.notificationDayOffset = 0
-            } else if weekendIDs.contains(preset.id) {
-                rule.previousDayNotificationHour = weekend.hour ?? 21
-                rule.previousDayNotificationMinute = weekend.minute ?? 0
-                rule.notificationWeekday = 3
-                rule.notificationDayOffset = nil
-            } else {
-                rule.previousDayNotificationHour = nil
-                rule.notificationWeekday = nil
-                rule.notificationDayOffset = nil
-                rule.leadMinutes = daytimeLeadMinutes
-            }
-            let alreadyExists = place.rules.contains {
-                !$0.templateTitle.isEmpty && $0.templateTitle == rule.templateTitle
-            }
-            if !alreadyExists { place.rules.append(rule) }
+        addRules(selectedHomePresetIDs, to: &home, onlyWhenNearby: false)
+        store.update(home)
+
+        if let cabinPlaceID,
+           var cabin = store.places.first(where: { $0.id == cabinPlaceID }) {
+            addRules(selectedCabinPresetIDs, to: &cabin, onlyWhenNearby: cabinOnlyWhenNearby)
+            store.update(cabin)
         }
-        store.update(place)
+        store.select(home)
         Task { await store.replan() }
         onFinish()
+    }
+
+    private func addRules(_ presetIDs: Set<String>, to place: inout Place, onlyWhenNearby: Bool) {
+        for preset in RulePreset.all where presetIDs.contains(preset.id) {
+            var rule = preset.rule
+            rule.onlyWhenNearby = onlyWhenNearby
+            guard !place.rules.contains(where: { $0.templateTitle == rule.templateTitle }) else { continue }
+            place.rules.append(rule)
+        }
+    }
+}
+
+enum ContextHelpTopic {
+    case home, places, alerts, settings, wizard
+
+    var title: String {
+        switch self {
+        case .home: "Slik leser du Hjem"
+        case .places: "Steder og hytte"
+        case .alerts: "Hva betyr varsellista?"
+        case .settings: "Innstillinger"
+        case .wizard: "Hjelp til oppstarten"
+        }
+    }
+    var introduction: String {
+        switch self {
+        case .home: "Hjem viser været for det valgte stedet og de neste dagene. Trykk på blyanten for å tilpasse rader, terskler og pushvarsler."
+        case .places: "Legg til hjemsted, hytte og andre steder. Et sted med aktive regler får egne varsler og kan velges på Hjem."
+        case .alerts: "Her ser du både varsler som allerede er planlagt sendt, og aktive regler som følger med på været framover."
+        case .settings: "Her finner du språk, klokkeformat, enheter og valg for Apple Watch og CarPlay. Oppstartsveiviseren kan kjøres på nytt herfra."
+        case .wizard: "Velg først hjemsted, og deretter værtypene du vil følge. Forslagene lagres som vanlige varsler du kan endre senere."
+        }
+    }
+    var steps: [String] {
+        switch self {
+        case .home: ["Værbåndene viser når prognosen passerer en markert grense.", "Trykk på blyanten for å endre hva som vises og hvilke pushvarsler som brukes.", "Sveip sidelengs for å bla mellom favorittsteder."]
+        case .places: ["Bruk posisjon eller søk for å legge til et sted.", "Velg et sted for å åpne det på Hjem.", "For hytta kan du slå på «Bare når jeg er i nærheten» på varslene."]
+        case .alerts: ["Bjelle betyr at et pushvarsel allerede er satt opp.", "Øye betyr at appen følger med på regelen, men ingen sending er planlagt akkurat nå.", "Åpne Tilpass fra Hjem for å endre eller legge til regler."]
+        case .settings: ["Språkstil påvirker varseltekster og talemåte.", "Apple Watch kan følge telefonens posisjon eller ett fast sted.", "Du kan når som helst kjøre oppstartsveiviseren på nytt."]
+        case .wizard: ["Velg hjemsted med posisjon eller søk.", "Åpne en værtype for å velge ferdige forslag, som regn i natt eller vind i morgen.", "Hytte er valgfritt; hyttevarsler kan bare gjelde når du er i nærheten.", "Alt kan endres senere under Tilpass."]
+        }
+    }
+}
+
+struct ContextHelpButton: View {
+    let topic: ContextHelpTopic
+    @State private var showingHelp = false
+
+    var body: some View {
+        Button { showingHelp = true } label: {
+            Image(systemName: "questionmark.circle.fill")
+                .font(.title3)
+                .foregroundStyle(Color(red: 0.91, green: 0.62, blue: 0.08))
+                .shadow(color: .yellow.opacity(0.35), radius: 5)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Hjelp: \(topic.title)")
+        .sheet(isPresented: $showingHelp) {
+            HelpGuideView(topic: topic)
+        }
+    }
+}
+
+private struct HelpGuideView: View {
+    @Environment(\.dismiss) private var dismiss
+    let topic: ContextHelpTopic
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section(topic.title) {
+                    Text(topic.introduction)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Section("Kort forklart") {
+                    ForEach(Array(topic.steps.enumerated()), id: \.offset) { index, text in
+                        Label {
+                            Text(text).fixedSize(horizontal: false, vertical: true)
+                        } icon: {
+                            Text("\(index + 1)")
+                                .font(.caption.weight(.bold))
+                                .foregroundStyle(.white)
+                                .frame(width: 22, height: 22)
+                                .background(Color.blue, in: Circle())
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Hjelp")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Ferdig") { dismiss() }
+                }
+            }
+        }
     }
 }

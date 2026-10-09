@@ -309,6 +309,11 @@ struct HomeView: View {
             }
             .background(Color(red: 0.93, green: 0.95, blue: 0.97))
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    ContextHelpButton(topic: .home)
+                }
+            }
             .refreshable { _ = await store.refreshAll() }
             .contentShape(Rectangle())
             .highPriorityGesture(DragGesture(minimumDistance: 45).onEnded { value in
@@ -1562,6 +1567,11 @@ struct AlertQueueView: View {
                 }
             }
             .navigationTitle("Varsler")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    ContextHelpButton(topic: .alerts)
+                }
+            }
             .refreshable { _ = await store.refreshAll() }
         }
     }
@@ -1785,6 +1795,7 @@ struct PlacesView: View {
             .navigationTitle("Steder")
             .toolbar {
                 ToolbarItemGroup(placement: .topBarTrailing) {
+                    ContextHelpButton(topic: .places)
                     Button(editingPlaces ? "Ferdig" : "Rediger") { editingPlaces.toggle() }
                     Button("Eksporter oppsett", systemImage: "square.and.arrow.up") {
                         showingExporter = true
@@ -1945,6 +1956,9 @@ private struct GlobalSettingsView: View {
             .navigationTitle("Innstillinger")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    ContextHelpButton(topic: .settings)
+                }
                 if showsDoneButton {
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Ferdig") { dismiss() }

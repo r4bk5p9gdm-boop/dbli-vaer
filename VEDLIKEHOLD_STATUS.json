@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-09T13:27:16Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-124 fullført: siste side i oppstartsveiviseren har nå fast synlig navigasjon, tydelig «Lagre varsler»-knapp og tekst som angir hvilket sted valgene lagres for. Swift-parsing og diffkontroll består; simulator utilgjengelig. AUTO-363 står PÅ VENT med delt alvorlighetsrekkefølge og permutasjonstest implementert, men xcodebuild build-for-testing feiler før testkompilering med SwiftUIMacros.StateMacro malformed response i sandboxen. AUTO-364 fullført: solmarkeringens visuelle kilde er delt mellom Tilpass og værbåndet. Neste kø: AUTO-365/366/367."
+  "lastProgress": "BRUKER-125 fullført: oppstartsveiviseren har nå hjemstedsvalg, fem kategorier med ferdige varsler, valgfritt hytteoppsett med nærhetsvalg og kontekstuell gul hjelp på alle fire hovedfaner. Nye steder persisteres før nettverkshenting; regresjonstest dekker offline-feil. Swift-parsing, JSON-kontroll og diffkontroll består. Simulatorbygg/test utsatt: tidligere SwiftUIMacros.StateMacro-feil i Xcode og 11 GB ledig diskplass. Neste kø: AUTO-365/366/367."
 }

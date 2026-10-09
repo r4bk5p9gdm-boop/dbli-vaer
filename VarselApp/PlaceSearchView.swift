@@ -88,7 +88,13 @@ struct PlaceSearchView: View {
     @EnvironmentObject private var store: Store
     @Environment(\.dismiss) private var dismiss
     @StateObject private var model = PlaceSearchModel()
-    @State private var preposition: PlacePreposition = .i
+    @State private var preposition: PlacePreposition
+    var onSelect: ((Place) -> Void)?
+
+    init(initialPreposition: PlacePreposition = .i, onSelect: ((Place) -> Void)? = nil) {
+        _preposition = State(initialValue: initialPreposition)
+        self.onSelect = onSelect
+    }
 
     var body: some View {
         NavigationStack {
@@ -169,10 +175,15 @@ struct PlaceSearchView: View {
                                 lon: result.longitude,
                                 preposition: preposition
                             )
-                            // Let the wizard continue as soon as the place is selected;
-                            // fetching its first forecast can take a while or fail offline.
-                            dismiss()
-                            Task { await store.add(place) }
+                            if let onSelect {
+                                onSelect(place)
+                                dismiss()
+                            } else {
+                                // Let place search dismiss immediately; fetching its
+                                // first forecast can take a while or fail offline.
+                                dismiss()
+                                Task { await store.add(place) }
+                            }
                         } label: {
                             VStack(alignment: .leading, spacing: 3) {
                                 Text("\(preposition.rawValue) \(result.name)").foregroundStyle(.primary)

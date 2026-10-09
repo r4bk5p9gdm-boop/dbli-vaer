@@ -6142,6 +6142,25 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(Store.isUsableForecast([]), "Tomt Yr-svar skal ikke bli ny cache")
     }
 
+    @MainActor
+    func testAddingPlacePersistsSelectionBeforeOfflineForecastFailure() async throws {
+        let persistenceKey = "varsel.test.add-offline-place.\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
+        let store = Store(
+            forecastFetcher: { _, _ in throw URLError(.notConnectedToInternet) },
+            persistenceKey: persistenceKey
+        )
+        let place = Place(name: "Hytte", lat: 64.0, lon: 11.0, preposition: .på)
+
+        await store.add(place)
+
+        let data = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
+        let persisted = try JSONDecoder().decode(PersistedStoreState.self, from: data)
+        XCTAssertEqual(persisted.places.map(\.id), [place.id])
+        XCTAssertEqual(persisted.selectedID, place.id)
+        XCTAssertNotNil(store.forecastErrors[place.id])
+    }
+
     func testEmptyForecastCreatesNoSnowAlert() {
         let rule = Rule(type: .sno)
         let result = Planner.plan(rule: rule, forecast: [], placeName: "Klinga", now: base)

@@ -54,6 +54,17 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-125 · FULLFØRT 2026-10-09** — Bygde oppstartsveiviseren om til en
+trinnvis flyt med hjemsted via posisjon eller søk, fem visuelle værkategorier
+og ferdige varselforslag for hver type. Hytte er valgfritt, får egne valgte
+regler og kan begrenses til når brukeren er i nærheten. La til gule,
+kontekstuelle hjelpesider på Hjem, Steder, Varsler og Innstillinger, samt i
+veiviseren. Et nytt sted lagres nå før første prognosehenting, slik at
+nettverksfeil ikke mister hjemsted eller hytte. Swift-parsing, JSON-kontroll
+og diffkontroll består. Simulatorbygg/test er ikke kjørt: Xcode har tidligere
+stoppet testbygg før kompilering på SwiftUIMacros.StateMacro-feil, og ledig
+diskplass er 11 GB.
+
 **BRUKER-124 · FULLFØRT 2026-10-09** — Gjorde fullføringen av
 oppstartsveiviseren tydeligere og lettere å nå: nederste navigasjon er nå
 festet synlig, siste knapp heter «Lagre varsler», og teksten forklarer hvilket

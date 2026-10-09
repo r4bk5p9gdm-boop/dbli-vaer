@@ -743,6 +743,9 @@ final class Store: ObservableObject {
         selectedID = place.id
         selectionIsCurrentLocation = false
         proximityMonitor.configure(for: places)
+        // Persist the place before the first network request so setup and
+        // manual place selection remain durable when the device is offline.
+        save()
         do {
             let forecast = try await forecastFetcher(place.lat, place.lon)
             guard !Task.isCancelled,
@@ -762,6 +765,7 @@ final class Store: ObservableObject {
             guard !Task.isCancelled,
                   let currentPlace = Self.currentRecipients(for: [place], in: places).first else { return }
             forecastErrors[place.id] = forecastErrorMessage(for: currentPlace, error: error, style: alertLanguageStyle)
+            save()
         }
         await replan()
     }
