@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T17:24:31Z",
+  "lastScheduledStart": "2026-10-09T17:29:31Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-401 fullført: Store fjerner nå ukjente prognose-ID-er og tidsstempler uten gyldig prognose, og persisterer oppryddingen. Regresjonen bekrefter at friske data overlever korrupt cachepost og ny Store-oppstart. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-404; neste: AUTO-402/403/404."
+  "lastProgress": "AUTO-402 fullført: Store rydder ugyldige homeFavorites sentralt når places-listen endres; omrekkefølge bevarer favorittene. Regresjon for listeerstatning, reorder, persistence og ny Store-oppstart lagt til. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-405; neste: AUTO-403/404/405."
 }

@@ -1787,9 +1787,12 @@ reparerte cachen lagres og er fortsatt ren etter ny oppstart. La til en
 Store-regresjon for dette. Swift-parsing, diffkontroll og iOS
 `build-for-testing` består; XCTest kunne ikke kjøres uten simulator.
 
-**AUTO-402 · ÅPEN** — Kontroller at når hele stedlisten erstattes eller
-importeres, fjernes slettede ID-er fra `homeFavorites`, mens ren omrekkefølge
-beholder de samme stjernefavorittene.
+**AUTO-402 · FULLFØRT 2026-10-09** — `places`-endringer rydder nå ugyldige
+ID-er fra `homeFavorites` sentralt, slik at både full erstatning/import og
+sletting følger samme regel; omrekkefølge beholder favorittene. Regresjonen
+kontrollerer direkte listeerstatning, omrekkefølge, vedvarende favoritter og
+ny Store-oppstart. Swift-parsing, diffkontroll og iOS `build-for-testing`
+består; XCTest kunne ikke kjøres uten simulator.
 
 **AUTO-403 · ÅPEN** — Regresjonstest at import med en ugyldig eller manglende
 `selectedPlaceID` velger første importerte sted og bevarer dette valget ved
@@ -1798,6 +1801,10 @@ eksport og ny import.
 **AUTO-404 · ÅPEN** — Regresjonstest at Store-migrering beholder prognosecache
 for egendefinerte steder, men fjerner cache og tidsstempel for en standardplass
 som ikke lenger finnes i den migrerte stedlisten.
+
+**AUTO-405 · ÅPEN** — Kontroller at lagrede `homeFavorites` som peker på
+steder fjernet før appstart, blir ryddet og persistert under Store-gjenoppretting,
+og ikke bare filtrert midlertidig i visningen.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
