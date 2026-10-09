@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T16:08:30Z",
+  "lastScheduledStart": "2026-10-09T16:13:30Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-386 fullført: utvidet Store-gjenopprettingsregresjonen til å kontrollere cabinOnlyWhenNearby både true og false. Begge valg bevares uten at hjemstedets regler endres. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-389; neste: AUTO-387/388/389."
+  "lastProgress": "AUTO-387 fullført: la til Store-regresjon for å legge preset-regler på eksisterende hytte, lagre og gjenopprette. Bekreftet bevaring av ID/navn, varsler av, temperaturavvik, eksisterende avslått regel, valgt sted og separate cacheprognoser. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-390; neste: AUTO-388/389/390."
 }

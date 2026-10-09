@@ -1666,9 +1666,12 @@ nærheten». Begge variantene bevarer hjemstedets vanlige regler og hyttas valgt
 varslingsregler. Swift-parsing, diffkontroll og iOS `build-for-testing` består;
 XCTest kunne ikke kjøres fordi simulatoren ikke er tilgjengelig.
 
-**AUTO-387 · ÅPEN** — Legg til Store-regresjon for oppdatering av eksisterende
-hytte under veiviseroppsett: ved lagring av nye regler skal lokalt
-temperaturavvik, varslinger av/på og cached værdata for stedet bevares.
+**AUTO-387 · FULLFØRT 2026-10-09** — La til regresjon som gjenoppretter
+Store etter at veiviserens preset-regler er lagt til en eksisterende hytte.
+Sted-ID/navn, varsler av, lokalt temperaturavvik, avslått egendefinert regel,
+valgt sted og begge steders værdata bevares. Swift-parsing, diffkontroll og
+iOS `build-for-testing` består; XCTest kunne ikke kjøres fordi simulatoren
+ikke er tilgjengelig.
 
 **AUTO-388 · ÅPEN** — Utvid Store-gjenopprettingstesten for hjemsted og hytte
 med ulike `localTemperatureOffset`-verdier. Bekreft etter gjenoppretting at
@@ -1679,6 +1682,11 @@ blandet inn.
 under veiviseroppsett og gjenoppretter Store. Bekreft at stedets ID, navn,
 varsler på/av og eksisterende egendefinerte regelinnstillinger beholdes ved
 siden av de nye preset-reglene.
+
+**AUTO-390 · ÅPEN** — Utvid stedsspesifikk veiviseroppdateringsregresjon med
+egendefinert `hiddenAlertTypes`, `frostMargin` og displaytemperaturgrenser.
+Bekreft at alle bevares uendret etter at nye preset-regler er lagret og Store
+er gjenopprettet.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

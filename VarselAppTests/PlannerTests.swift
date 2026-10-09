@@ -1282,6 +1282,62 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(repairedState.places.contains { $0.id == repairedSelectedID })
     }
 
+    func testWizardRuleUpdatePreservesExistingCabinSettingsAndForecasts() throws {
+        let persistenceKey = "varsel.test.wizard-update-existing-cabin.\(UUID().uuidString)"
+        let launchVersionKey = "varsel.launchPlacesVersion"
+        let previousLaunchVersion = UserDefaults.standard.object(forKey: launchVersionKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousLaunchVersion {
+                UserDefaults.standard.set(previousLaunchVersion, forKey: launchVersionKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: launchVersionKey)
+            }
+        }
+        UserDefaults.standard.set(9, forKey: launchVersionKey)
+
+        var existingRule = Rule(type: .vind)
+        existingRule.templateTitle = "Min egen regel"
+        existingRule.enabled = false
+        existingRule.threshold = 13
+        let home = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        var cabin = Place(
+            name: "Hytte", customName: "Fjellet", lat: 64.2, lon: 11.4,
+            preposition: .pa, rules: [existingRule], notificationsEnabled: false
+        )
+        cabin.temperatureOffset = 2.5
+        let homeHour = ForecastHour(time: base, temp: 8, precip: 0, wind: 2, cloud: 40, dew: 4)
+        let cabinHour = ForecastHour(time: base.addingTimeInterval(3_600), temp: 3, precip: 0, wind: 1, cloud: 75, dew: 1)
+        UserDefaults.standard.set(try JSONEncoder().encode(PersistedStoreState(
+            places: [home, cabin], selectedID: home.id, log: [],
+            forecasts: [home.id: [homeHour], cabin.id: [cabinHour]],
+            forecastUpdatedAt: [home.id: base, cabin.id: base.addingTimeInterval(3_600)],
+            lastUpdate: base
+        )), forKey: persistenceKey)
+
+        let store = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        var updatedCabin = try XCTUnwrap(store.places.first { $0.id == cabin.id })
+        let proposedRules = WizardPresetConfiguration.rules(
+            selectedIDs: ["frost-natt"], for: .cabin, cabinOnlyWhenNearby: true
+        )
+        updatedCabin.rules = WizardPresetConfiguration.addingMissingRules(proposedRules, to: updatedCabin.rules)
+        store.update(updatedCabin)
+
+        let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        let restoredCabin = try XCTUnwrap(restored.places.first { $0.id == cabin.id })
+        let preservedRule = try XCTUnwrap(restoredCabin.rules.first { $0.id == existingRule.id })
+        XCTAssertEqual(restored.selectedID, home.id)
+        XCTAssertEqual(restoredCabin.name, cabin.name)
+        XCTAssertEqual(restoredCabin.customName, cabin.customName)
+        XCTAssertFalse(restoredCabin.areNotificationsEnabled)
+        XCTAssertEqual(restoredCabin.localTemperatureOffset, 2.5)
+        XCTAssertFalse(preservedRule.enabled)
+        XCTAssertEqual(preservedRule.threshold, 13)
+        XCTAssertTrue(restoredCabin.rules.contains { $0.type == .frost && $0.onlyWhenNearby })
+        XCTAssertEqual(restored.forecasts[home.id], [homeHour])
+        XCTAssertEqual(restored.forecasts[cabin.id], [cabinHour])
+    }
+
     func testWizardPresetRulesPreserveExistingMatchingAndOtherRules() {
         var existingPresetRule = Rule(type: .regn)
         existingPresetRule.templateTitle = "Regn neste dag"
