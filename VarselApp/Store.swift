@@ -357,11 +357,14 @@ final class Store: ObservableObject {
                 }
             }
             let standardNames = Self.launchPlaces.map(\.name)
-            let standardNameSet = Set(standardNames.map { $0.lowercased() })
             let orderedStandards = standardNames.compactMap { standardName in
                 places.first { $0.name.compare(standardName, options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame }
             }
-            let otherPlaces = places.filter { !standardNameSet.contains($0.name.lowercased()) }
+            let otherPlaces = places.filter { place in
+                !standardNames.contains {
+                    place.name.compare($0, options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame
+                }
+            }
             places = orderedStandards + otherPlaces
             for placeIndex in places.indices {
                 for ruleIndex in places[placeIndex].rules.indices {

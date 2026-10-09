@@ -1865,9 +1865,12 @@ Swift-parsing, diffkontroll og generisk iOS `build-for-testing` med signering
 slått av består; XCTest kunne ikke kjøres fordi CoreSimulatorService er
 utilgjengelig.
 
-**AUTO-410 · ÅPEN** — Regresjonstest at launch-place-migrering gjenkjenner et
-lagret standardsted uavhengig av store/små bokstaver og diakritiske tegn, og
-oppdaterer det uten å lage en duplikat eller forkaste stedets ID/cache.
+**AUTO-410 · FULLFØRT 2026-10-09** — Launch-place-migrering filtrerer nå
+standardsteder med samme case- og diakritikkuavhengige sammenligning som brukes
+for å finne dem. Regresjonen migrerer «KLÍNGA» uten duplikat og bekrefter at
+stedets ID, valgt status, prognosecache og hentetid overlever omstart. Swift-
+parsing, diffkontroll og generisk iOS `build-for-testing` med signering slått av
+består; XCTest kunne ikke kjøres fordi CoreSimulatorService er utilgjengelig.
 
 **AUTO-411 · ÅPEN** — Regresjonstest at gjeldende launch-place-versjon ikke
 overskriver brukerens tilpassede preposisjon eller regler for et standardsted
@@ -1875,6 +1878,10 @@ ved gjentatt Store-oppstart.
 
 **AUTO-412 · ÅPEN** — Regresjonstest at en feilformet varselregel i import
 forkastes isolert, mens det gyldige stedet, øvrige regler og valgt-ID beholdes.
+
+**AUTO-413 · ÅPEN** — Regresjonstest at gjenoppretting av gjeldende
+launch-place-versjon bevarer hentetid og prognosecache for steder som fortsatt
+finnes, selv når brukeren tidligere har fjernet et standardsted.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

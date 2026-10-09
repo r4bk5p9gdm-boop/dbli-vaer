@@ -7119,6 +7119,54 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testLaunchPlaceMigrationMatchesCaseAndDiacriticVariantWithoutDuplicatingOrLosingCache() throws {
+        let persistenceKey = "varsel.test.launch-place-migration-normalized-name.\(UUID().uuidString)"
+        let migrationVersionKey = "varsel.launchPlacesVersion"
+        let previousVersion = UserDefaults.standard.object(forKey: migrationVersionKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousVersion {
+                UserDefaults.standard.set(previousVersion, forKey: migrationVersionKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: migrationVersionKey)
+            }
+        }
+
+        UserDefaults.standard.set(8, forKey: migrationVersionKey)
+        let klinga = Place(name: "KLÍNGA", lat: 64.4094, lon: 11.47786, preposition: .oppa)
+        let cabin = Place(name: "Hytte", lat: 64.2, lon: 11.2, preposition: .pa)
+        let hour = ForecastHour(time: base, temp: 7, precip: 0, wind: 1, cloud: 40, dew: 3)
+        let fetchedAt = base.addingTimeInterval(-1_800)
+        let savedState = PersistedStoreState(
+            places: [cabin, klinga], selectedID: klinga.id, log: [],
+            forecasts: [cabin.id: [hour], klinga.id: [hour]],
+            forecastUpdatedAt: [cabin.id: fetchedAt, klinga.id: fetchedAt]
+        )
+        UserDefaults.standard.set(try JSONEncoder().encode(savedState), forKey: persistenceKey)
+
+        let migrated = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        let matchedPlaces = migrated.places.filter {
+            $0.name.compare("Klinga", options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame
+        }
+
+        XCTAssertEqual(matchedPlaces.count, 1)
+        XCTAssertEqual(matchedPlaces.first?.id, klinga.id)
+        XCTAssertEqual(migrated.selectedID, klinga.id)
+        XCTAssertEqual(migrated.forecasts[klinga.id], [hour])
+        XCTAssertEqual(migrated.forecastUpdatedAt(for: klinga.id), fetchedAt)
+        XCTAssertEqual(migrated.forecasts[cabin.id], [hour])
+        XCTAssertEqual(migrated.forecastUpdatedAt(for: cabin.id), fetchedAt)
+
+        let restarted = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        XCTAssertEqual(restarted.places.filter {
+            $0.name.compare("Klinga", options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame
+        }.map(\.id), [klinga.id])
+        XCTAssertEqual(restarted.selectedID, klinga.id)
+        XCTAssertEqual(restarted.forecasts[klinga.id], [hour])
+        XCTAssertEqual(restarted.forecastUpdatedAt(for: klinga.id), fetchedAt)
+    }
+
+    @MainActor
     func testPreservedAndNewNotificationsShareChronologicalCapacity() {
         let dates = (0..<80).reversed().map { (id: "request-\($0)", date: base.addingTimeInterval(Double($0))) }
         let ids = NotificationScheduler.nearestRequestIDs(dates)
