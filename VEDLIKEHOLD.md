@@ -1879,8 +1879,11 @@ andre standardsteder består ny Store-oppstart. Swift-parsing, diffkontroll og
 generisk iOS `build-for-testing` med signering slått av består; XCTest kunne
 ikke kjøres fordi CoreSimulatorService er utilgjengelig.
 
-**AUTO-412 · ÅPEN** — Regresjonstest at en feilformet varselregel i import
-forkastes isolert, mens det gyldige stedet, øvrige regler og valgt-ID beholdes.
+**AUTO-412 · FULLFØRT 2026-10-09** — La til importregresjon som forkaster én
+feilformet regel isolert. Stedene beholdes i rekkefølge, gyldig regel, valgt-ID
+og engelsk språk overlever både import og ny eksport/import. Swift-parsing,
+diffkontroll og generisk iOS `build-for-testing` med signering slått av består;
+XCTest kunne ikke kjøres fordi CoreSimulatorService er utilgjengelig.
 
 **AUTO-413 · ÅPEN** — Regresjonstest at gjenoppretting av gjeldende
 launch-place-versjon bevarer hentetid og prognosecache for steder som fortsatt
@@ -1889,6 +1892,10 @@ finnes, selv når brukeren tidligere har fjernet et standardsted.
 **AUTO-414 · ÅPEN** — Regresjonstest for eldre konfigurasjonsfiler der valgfrie
 formatversjon-, eksporttidspunkt- og språkfelt mangler, men gyldige steder skal
 fortsatt kunne importeres med trygge standardverdier.
+
+**AUTO-415 · ÅPEN** — Regresjonstest at migrering håndterer to lagrede
+stedsnavn som begge samsvarer med samme standardsted uten å etterlate
+duplikatvalg eller prognosecache for sted som ble slått sammen.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

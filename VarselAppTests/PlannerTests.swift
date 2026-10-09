@@ -6823,6 +6823,56 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(reimported.alertLanguageStyle, .english)
     }
 
+    func testConfigurationImportSkipsMalformedRuleAndPreservesOtherData() throws {
+        var malformedRule = Rule(type: .frost)
+        malformedRule.templateTitle = "Feilformet regel"
+        var retainedRule = Rule(type: .regn)
+        retainedRule.templateTitle = "Gyldig regnregel"
+        retainedRule.threshold = 3
+        let selectedPlace = Place(
+            name: "Namsos", lat: 64.5, lon: 11.5,
+            rules: [malformedRule, retainedRule]
+        )
+        let otherPlace = Place(name: "Selbu", lat: 63.2, lon: 11.0)
+        let source = WeatherConfigurationExport(
+            places: [selectedPlace, otherPlace],
+            selectedPlaceID: selectedPlace.id,
+            alertLanguageStyle: .english
+        )
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let encoded = try encoder.encode(source)
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        var placeObjects = try XCTUnwrap(object["places"] as? [[String: Any]])
+        var rules = try XCTUnwrap(placeObjects[0]["rules"] as? [Any])
+        rules[0] = "not a rule"
+        placeObjects[0]["rules"] = rules
+        object["places"] = placeObjects
+
+        let importedData = try JSONSerialization.data(withJSONObject: object)
+        let imported = try decoder.decode(WeatherConfigurationExport.self, from: importedData)
+        let importedSelected = try XCTUnwrap(imported.places.first)
+
+        XCTAssertEqual(imported.places.map(\.id), [selectedPlace.id, otherPlace.id])
+        XCTAssertEqual(imported.selectedPlaceID, selectedPlace.id)
+        XCTAssertEqual(importedSelected.rules.map(\.id), [retainedRule.id])
+        XCTAssertEqual(importedSelected.rules.first?.templateTitle, "Gyldig regnregel")
+        XCTAssertEqual(importedSelected.rules.first?.threshold, 3)
+        XCTAssertEqual(imported.alertLanguageStyle, .english)
+
+        let reexported = try encoder.encode(WeatherConfigurationExport(
+            places: imported.places,
+            selectedPlaceID: imported.selectedPlaceID,
+            alertLanguageStyle: imported.alertLanguageStyle ?? .bokmal
+        ))
+        let reimported = try decoder.decode(WeatherConfigurationExport.self, from: reexported)
+        XCTAssertEqual(reimported.places.map(\.id), [selectedPlace.id, otherPlace.id])
+        XCTAssertEqual(reimported.selectedPlaceID, selectedPlace.id)
+        XCTAssertEqual(reimported.places.first?.rules.map(\.id), [retainedRule.id])
+    }
+
     @MainActor
     func testCancellingActiveRefreshDoesNotCancelFollowingRefresh() async {
         let queue = ForecastRefreshQueue()
