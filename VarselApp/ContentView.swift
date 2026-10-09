@@ -1425,9 +1425,13 @@ struct RulesView: View {
                     .padding(.leading, 3)
                 Text("over \(place.resolvedDisplayTemperatureHighThreshold.formatted(.number.precision(.fractionLength(0...1))))°")
             case .sol:
-                markerSwatch(AlertType.sol.color)
+                markerSwatch(AlertType.sol.color, opacity: SolarCellMarkerStyle.solidFillOpacity)
                 Text("hel ≤ \(place.displayThreshold(for: .sol).formatted(.number.precision(.fractionLength(0...1))))%")
-                markerSwatch(AlertType.sol.color, hatched: true)
+                markerSwatch(
+                    AlertType.sol.color,
+                    opacity: SolarCellMarkerStyle.partialFillOpacity,
+                    hatched: true
+                )
                     .padding(.leading, 3)
                 Text("skravert ≤ \(place.resolvedDisplaySunThreshold2.formatted(.number.precision(.fractionLength(0...1))))%")
             case .frost:
@@ -1445,9 +1449,13 @@ struct RulesView: View {
         .lineLimit(2)
     }
 
-    private func markerSwatch(_ color: Color, hatched: Bool = false) -> some View {
+    private func markerSwatch(
+        _ color: Color,
+        opacity: Double = 0.78,
+        hatched: Bool = false
+    ) -> some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 2).fill(color.opacity(hatched ? 0.48 : 0.78))
+            RoundedRectangle(cornerRadius: 2).fill(color.opacity(opacity))
             if hatched {
                 GeometryReader { proxy in
                     Path { path in
@@ -1455,10 +1463,13 @@ struct RulesView: View {
                         while x < proxy.size.width {
                             path.move(to: CGPoint(x: x, y: proxy.size.height))
                             path.addLine(to: CGPoint(x: x + proxy.size.height, y: 0))
-                            x += 4
+                            x += SolarCellMarkerStyle.hatchSpacing
                         }
                     }
-                    .stroke(Color(red: 0.72, green: 0.42, blue: 0.08).opacity(0.7), lineWidth: 0.8)
+                    .stroke(
+                        SolarCellMarkerStyle.hatchColor.opacity(SolarCellMarkerStyle.hatchOpacity),
+                        lineWidth: SolarCellMarkerStyle.hatchLineWidth
+                    )
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 2))
             }

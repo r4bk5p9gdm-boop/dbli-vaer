@@ -1,6 +1,15 @@
 import SwiftUI
 import CoreLocation
 
+enum SolarCellMarkerStyle {
+    static let solidFillOpacity = 0.78
+    static let partialFillOpacity = 0.48
+    static let hatchColor = Color(red: 0.72, green: 0.42, blue: 0.08)
+    static let hatchOpacity = 0.7
+    static let hatchSpacing: CGFloat = 5
+    static let hatchLineWidth: CGFloat = 1
+}
+
 enum PlaceOrderingSettings {
     static let homePlaceIDKey = "varsel.homePlaceID"
     static let sortModeKey = "varsel.placeSortMode"
@@ -412,6 +421,15 @@ func precipitationHeadlineName(temperature: Double, possible: Bool) -> String {
 enum AlertType: String, Codable, CaseIterable, Identifiable {
     case regn, frost, temperatur, sno, vind, dugg, sol
     var id: String { rawValue }
+
+    /// Higher values are scheduled first when multiple alerts share a fire time.
+    var notificationSeverity: Int {
+        switch self {
+        case .frost, .sno: 3
+        case .vind: 2
+        default: 1
+        }
+    }
 
     init(from decoder: Decoder) throws {
         let value = try decoder.singleValueContainer().decode(String.self).lowercased()

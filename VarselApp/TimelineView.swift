@@ -622,12 +622,16 @@ private struct CombinedHourBandCell: View {
                     if offset < period.hours, matchesSunPreview || matchesPartialSunPreview || matchesTemperaturePreview || (type != .sol && rules.contains(where: {
                         $0.isActive(at: hour.time) && $0.matches(hour, frostMargin: frostMargin)
                     })) {
-                        Rectangle()
-                            .fill(type == .temperatur && hour.temp >= temperatureHighThreshold
+                            Rectangle()
+                                .fill(type == .temperatur && hour.temp >= temperatureHighThreshold
                                   ? Color.orange.opacity(0.78)
                                   : type == .temperatur && hour.temp <= 0
                                   ? Color.white.opacity(0.92)
-                                  : type.color.opacity(type == .sol && matchesPartialSunPreview ? 0.48 : 0.78))
+                                  : type.color.opacity(type == .sol && matchesPartialSunPreview
+                                                       ? SolarCellMarkerStyle.partialFillOpacity
+                                                       : type == .sol
+                                                       ? SolarCellMarkerStyle.solidFillOpacity
+                                                       : 0.78))
                             .frame(width: proxy.size.width / CGFloat(period.hours) + 0.5)
                             .offset(x: proxy.size.width * CGFloat(offset) / CGFloat(period.hours))
                         if matchesPartialSunPreview {
@@ -1048,12 +1052,19 @@ private struct SolarHatchMark: View {
         GeometryReader { proxy in
             Path { path in
                 let height = proxy.size.height
-                for startX in stride(from: -height, through: proxy.size.width, by: 5) {
+                for startX in stride(
+                    from: -height,
+                    through: proxy.size.width,
+                    by: SolarCellMarkerStyle.hatchSpacing
+                ) {
                     path.move(to: CGPoint(x: startX, y: height))
                     path.addLine(to: CGPoint(x: startX + height, y: 0))
                 }
             }
-            .stroke(Color(red: 0.72, green: 0.42, blue: 0.08).opacity(0.7), lineWidth: 1)
+            .stroke(
+                SolarCellMarkerStyle.hatchColor.opacity(SolarCellMarkerStyle.hatchOpacity),
+                lineWidth: SolarCellMarkerStyle.hatchLineWidth
+            )
         }
         .allowsHitTesting(false)
     }

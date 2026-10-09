@@ -3943,6 +3943,60 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(alerts.map(\.eventAt), [laterEvent, earlierEvent])
     }
 
+    func testPlanAllOrdersEqualFireTimesByEventThenSeverityThenRuleID() {
+        let eventAt = base.addingTimeInterval(2 * 3_600)
+        let calendar = Calendar.current
+        let eventHour = calendar.component(.hour, from: eventAt)
+        var frost = Rule(type: .frost)
+        frost.id = UUID(uuidString: "00000000-0000-0000-0000-000000000001")!
+        frost.threshold = 0
+        frost.leadMinutes = 60
+        frost.activeFromHour = eventHour
+        frost.activeToHour = (eventHour + 1) % 24
+        var snow = Rule(type: .sno)
+        snow.id = UUID(uuidString: "00000000-0000-0000-0000-000000000002")!
+        snow.threshold = 0.3
+        snow.leadMinutes = 60
+        snow.activeFromHour = eventHour
+        snow.activeToHour = (eventHour + 1) % 24
+        var wind = Rule(type: .vind)
+        wind.id = UUID(uuidString: "00000000-0000-0000-0000-000000000003")!
+        wind.threshold = 9
+        wind.leadMinutes = 60
+        wind.activeFromHour = eventHour
+        wind.activeToHour = (eventHour + 1) % 24
+        let placeID = UUID(uuidString: "00000000-0000-0000-0000-000000000100")!
+        var place = Place(name: "Klinga", lat: 64.5, lon: 11.5, rules: [wind, snow, frost])
+        place.id = placeID
+        var hour = ForecastHour(time: eventAt, temp: -2, precip: 1, wind: 1, cloud: 60, dew: -3)
+        hour.gust = 12
+        let forecast = [hour]
+
+        func planned(_ rules: [Rule]) -> [PlannedAlert] {
+            var reorderedPlace = place
+            reorderedPlace.rules = rules
+            return Planner.planAll(
+                places: [reorderedPlace], forecasts: [placeID: forecast], now: base
+            )
+        }
+
+        let forward = planned([wind, snow, frost])
+        let reverse = planned([frost, snow, wind])
+
+        XCTAssertEqual(
+            forward.map(\.fireAt),
+            Array(repeating: eventAt.addingTimeInterval(-3_600), count: 3)
+        )
+        XCTAssertEqual(forward.map(\.eventAt), Array(repeating: eventAt, count: 3))
+        XCTAssertEqual(forward.map(\.id), reverse.map(\.id))
+        XCTAssertEqual(forward.map { $0.rule.type }, [.frost, .sno, .vind])
+        XCTAssertEqual(forward.map { $0.rule.id.uuidString }, [
+            "00000000-0000-0000-0000-000000000001",
+            "00000000-0000-0000-0000-000000000002",
+            "00000000-0000-0000-0000-000000000003",
+        ])
+    }
+
     func testPlanAllDeduplicatesRainWithoutDroppingOtherWeatherAlerts() {
         var firstRain = Rule(type: .regn)
         firstRain.threshold = 0.5

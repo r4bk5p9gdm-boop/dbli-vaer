@@ -720,7 +720,16 @@ enum Planner {
                 ).alerts
             }
             return removingDuplicateRainAlerts(placeAlerts)
-        }.sorted { $0.fireAt < $1.fireAt }
+        }.sorted(by: notificationOrder)
+    }
+
+    private static func notificationOrder(_ first: PlannedAlert, _ second: PlannedAlert) -> Bool {
+        if first.fireAt != second.fireAt { return first.fireAt < second.fireAt }
+        if first.eventAt != second.eventAt { return first.eventAt < second.eventAt }
+        if first.rule.type.notificationSeverity != second.rule.type.notificationSeverity {
+            return first.rule.type.notificationSeverity > second.rule.type.notificationSeverity
+        }
+        return first.id < second.id
     }
 
     private static func removingDuplicateRainAlerts(_ alerts: [PlannedAlert]) -> [PlannedAlert] {

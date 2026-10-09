@@ -1493,17 +1493,30 @@ Ved en ny kontroll i denne kjøringen feilet Xcode før testkompilering med
 sandbox-feil; simulatorruntime er samtidig utilgjengelig. Dette er en
 verktøy-/miljøblokkering, ikke en ny testkilde-feil.
 
-**AUTO-363 · ÅPEN** — Gjør `Planner.planAll`-rekkefølgen deterministisk for
-like `fireAt` ved å avklare og teste tie-break mellom eventtid, varseltype og
-regel-ID, også på tvers av input-permutasjoner.
+**AUTO-363 · PÅ VENT 2026-10-09** — La til delt alvorlighetsrekkefølge for
+varsler og en permutasjonstest av `Planner.planAll` ved like `fireAt`, med
+eventtid, alvorlighet og regel-ID som tie-break. Swift-parsing og
+diffkontroll består, men ny `xcodebuild build-for-testing` feilet før
+testkjøring fordi Xcode sin `SwiftUIMacros.StateMacro`-plugin svarte
+malformet i sandboxen. Gjenoppta når Xcode-miljøet kan bygge testmålet.
 
-**AUTO-364 · ÅPEN** — Samle solcellemarkeringens gul-/skravurfarger i én delt
-visuell kilde, slik at fargeprøven i «Tilpass» og cellene i værbåndet ikke kan
-gli fra hverandre.
+**AUTO-364 · FULLFØRT 2026-10-09** — Samlet helgul/delvis gul opasitet og
+skravurens farge, avstand og linjebredde i `SolarCellMarkerStyle`. Både
+fargeprøven i «Tilpass» og skravuren i værbåndet bruker nå samme kilde.
+Swift-parsing og diffkontroll består; full byggkontroll er blokkert av samme
+Xcode Swift-makrofeil som AUTO-363.
 
 **AUTO-365 · ÅPEN** — Legg til modellregresjon som bekrefter at
 stedsspesifikk temperaturjustering endrer viste temperaturmarkeringer for det
 valgte stedet uten å overskrive Yr-originalverdien eller et annet steds data.
+
+**AUTO-366 · ÅPEN** — Utvid varselsorteringstesten til å låse at
+`NotificationScheduler.alertsToSchedule` beholder samme alvorlighetsrekkefølge
+ved like branntidspunkter og ulik inputrekkefølge.
+
+**AUTO-367 · ÅPEN** — Legg til regresjon som bekrefter at valg av nytt sted
+lagres også når første prognosehenting feiler, slik at oppstartsveiviseren kan
+fortsette uten nett og stedet finnes etter omstart.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
