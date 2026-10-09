@@ -1473,6 +1473,60 @@ final class PlannerTests: XCTestCase {
         XCTAssertNil(restored.forecasts[deletedCabin.id])
     }
 
+    @MainActor
+    func testBulkRemovalPrunesHomeFavoritesAndPersistsResolvedSwipePlaces() throws {
+        let persistenceKey = "varsel.test.remove-prunes-home-favorites.\(UUID().uuidString)"
+        let favoritesKey = "varsel.homeFavorites"
+        let launchVersionKey = "varsel.launchPlacesVersion"
+        let previousFavorites = UserDefaults.standard.data(forKey: favoritesKey)
+        let previousLaunchVersion = UserDefaults.standard.object(forKey: launchVersionKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousFavorites {
+                UserDefaults.standard.set(previousFavorites, forKey: favoritesKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: favoritesKey)
+            }
+            if let previousLaunchVersion {
+                UserDefaults.standard.set(previousLaunchVersion, forKey: launchVersionKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: launchVersionKey)
+            }
+        }
+        UserDefaults.standard.set(9, forKey: launchVersionKey)
+
+        let home = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let deletedFavorite = Place(name: "Gammel hytte", lat: 64.2, lon: 11.4)
+        let retainedFavorite = Place(name: "Ny hytte", lat: 64.1, lon: 11.5)
+        let alsoDeleted = Place(name: "Ekstra", lat: 64.0, lon: 11.6)
+        let favorites = HomeFavorites(left: deletedFavorite.id, right: retainedFavorite.id)
+        UserDefaults.standard.set(try JSONEncoder().encode(favorites), forKey: favoritesKey)
+        UserDefaults.standard.set(try JSONEncoder().encode(PersistedStoreState(
+            places: [home, deletedFavorite, retainedFavorite, alsoDeleted],
+            selectedID: home.id, log: []
+        )), forKey: persistenceKey)
+
+        let store = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        store.removePlaces(ids: [deletedFavorite.id, alsoDeleted.id])
+
+        let expected = HomeFavorites(left: nil, right: retainedFavorite.id)
+        XCTAssertEqual(store.homeFavorites, expected)
+        XCTAssertEqual(store.resolvedHomeFavorites, expected)
+        XCTAssertTrue(Set(store.homeSwipePlaceIDs).isSubset(of: Set(store.places.map(\.id))))
+        XCTAssertFalse(store.homeSwipePlaceIDs.contains(deletedFavorite.id))
+        XCTAssertFalse(store.homeSwipePlaceIDs.contains(alsoDeleted.id))
+
+        let persistedFavoritesData = try XCTUnwrap(UserDefaults.standard.data(forKey: favoritesKey))
+        XCTAssertEqual(try JSONDecoder().decode(HomeFavorites.self, from: persistedFavoritesData), expected)
+
+        let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        XCTAssertEqual(restored.homeFavorites, expected)
+        XCTAssertEqual(restored.resolvedHomeFavorites, expected)
+        XCTAssertTrue(Set(restored.homeSwipePlaceIDs).isSubset(of: Set(restored.places.map(\.id))))
+        XCTAssertFalse(restored.homeSwipePlaceIDs.contains(deletedFavorite.id))
+        XCTAssertFalse(restored.homeSwipePlaceIDs.contains(alsoDeleted.id))
+    }
+
     func testRemovingLastPlaceByIndexRestoresFallbackSelectionAndDropsItsAlerts() throws {
         let persistenceKey = "varsel.test.remove-last-place.\(UUID().uuidString)"
         let launchVersionKey = "varsel.launchPlacesVersion"

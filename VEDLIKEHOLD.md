@@ -1767,9 +1767,12 @@ og varsler ikke blir med videre. Regresjonsoppsettet bekrefter også at stedet
 hadde et planlagt varsel før sletting. Swift-parsing, diffkontroll og iOS
 `build-for-testing` består; XCTest kunne ikke kjøres uten simulator.
 
-**AUTO-399 · ÅPEN** — Test at massesletting ikke etterlater slettede sted-ID-er
-i `homeFavorites`; oppløste swipe-favoritter skal bare inneholde steder som
-fortsatt finnes, også etter Store-gjenoppretting.
+**AUTO-399 · FULLFØRT 2026-10-09** — massesletting filtrerer nå
+`homeFavorites` mot stedene som står igjen og lagrer de oppløste favorittene.
+Regresjonen sletter to steder, bekrefter at swipe-ID-ene bare viser eksisterende
+steder og at favorittene fortsatt er rene etter Store-gjenoppretting.
+Swift-parsing, diffkontroll og iOS `build-for-testing` består; XCTest kunne
+ikke kjøres uten simulator.
 
 **AUTO-400 · ÅPEN** — Når gyldig lagret Store-data har en `selectedID` som ikke
 finnes i stedlisten, kontroller at fallback-valget både persisteres og overlever
@@ -1778,6 +1781,10 @@ neste oppstart.
 **AUTO-401 · ÅPEN** — Test at Store gjenoppretter gyldige steder og prognoser
 når én lagret prognosepost er feilformet, og at neste oppstart ikke får med
 feilaktige eller ukjente prognose-ID-er.
+
+**AUTO-402 · ÅPEN** — Kontroller at når hele stedlisten erstattes eller
+importeres, fjernes slettede ID-er fra `homeFavorites`, mens ren omrekkefølge
+beholder de samme stjernefavorittene.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

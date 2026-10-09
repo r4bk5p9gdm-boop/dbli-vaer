@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T17:09:31Z",
+  "lastScheduledStart": "2026-10-09T17:14:31Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-398 fullført: utvidet siste-sted-slettetesten til å bruke removePlaces(at:), bevise at slettet sted hadde en planlagt varsling, og kontrollere valgt UI-indeks, regler, prognoser og varslingsplan før og etter Store-gjenoppretting. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-401; neste: AUTO-399/400/401."
+  "lastProgress": "AUTO-399 fullført: massesletting filtrerer og persisterer nå homeFavorites for gjenværende steder. Regresjonen kontrollerer sletting av to favorittsteder, at swipe-ID-er bare peker på eksisterende steder og at valgene overlever Store-gjenoppretting. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-402; neste: AUTO-400/401/402."
 }

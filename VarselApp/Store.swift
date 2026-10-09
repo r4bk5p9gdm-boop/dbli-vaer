@@ -785,6 +785,7 @@ final class Store: ObservableObject {
         if selectedID.map({ selectedID in places.contains { $0.id == selectedID } }) != true {
             selectedID = places.first?.id
         }
+        homeFavorites = homeFavorites.resolved(availableIDs: Set(places.map(\.id)))
         proximityMonitor.configure(for: places)
         Task { await replan() }
     }
