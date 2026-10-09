@@ -1419,9 +1419,12 @@ Alle tre push-kandidatene beholdes, mens det senere duplikatvarselet fjernes.
 Swift-parsing/typekontroll og diffkontroll består; XCTest ble ikke kjørt i
 denne lettvektskjøringen.
 
-**AUTO-355 · ÅPEN** — Test at en `onlyWhenNearby` regnregel blir med i
-planlegging og cooldown-deduplisering når stedet faktisk finnes i
-`nearbyPlaceIDs`.
+**AUTO-355 · FULLFØRT 2026-10-09** — La til test med `onlyWhenNearby`
+regnhendelse tre timer før en vanlig regnhendelse. Når stedet er langt unna,
+planlegges bare den vanlige regelen; når ID-en er med i `nearbyPlaceIDs`,
+planlegges nærhendelsen og den vanlige dedupliseres bort. Swift-parsing/
+typekontroll og diffkontroll består; XCTest ble ikke kjørt i denne
+lettvektskjøringen.
 
 **AUTO-356 · ÅPEN** — Test at alle planlagte push-kandidater for den beholdte
 tidligste regnhendelsen overlever når en annen regels nærliggende hendelse
@@ -1430,6 +1433,9 @@ dedupliseres bort.
 **AUTO-357 · ÅPEN** — Test at `planAll` fortsatt returnerer varsler sortert
 kronologisk etter `fireAt` etter at cooldown-deduplisering internt sorterer
 regnhendelser etter `eventAt`.
+
+**AUTO-358 · ÅPEN** — Test at `onlyWhenNearby`-filtrering er uavhengig per
+sted når flere steder planlegges samtidig og bare ett sted er i nærheten.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

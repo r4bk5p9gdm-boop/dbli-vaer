@@ -4391,6 +4391,53 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testPlanAllIncludedNearbyRainRuleParticipatesInCooldown() {
+        let nearbyEventAt = base.addingTimeInterval(2 * 3_600)
+        let ordinaryEventAt = base.addingTimeInterval(5 * 3_600)
+        let calendar = Calendar.current
+        func rainRule(at eventAt: Date, nearbyOnly: Bool) -> Rule {
+            var rule = Rule(type: .regn)
+            rule.threshold = 0.5
+            rule.leadMinutes = 60
+            rule.onlyWhenNearby = nearbyOnly
+            let hour = calendar.component(.hour, from: eventAt)
+            rule.activeFromHour = hour
+            rule.activeToHour = (hour + 1) % 24
+            return rule
+        }
+        let nearbyRule = rainRule(at: nearbyEventAt, nearbyOnly: true)
+        let ordinaryRule = rainRule(at: ordinaryEventAt, nearbyOnly: false)
+        let place = Place(
+            name: "Klinga", lat: 64.5, lon: 11.5,
+            rules: [ordinaryRule, nearbyRule]
+        )
+        let forecast = (0...5).map { offset in
+            ForecastHour(
+                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
+                temp: 8,
+                precip: offset == 2 || offset == 5 ? 1 : 0,
+                wind: 1,
+                cloud: 60,
+                dew: 7
+            )
+        }
+
+        let alertsWhenAway = Planner.planAll(
+            places: [place], forecasts: [place.id: forecast], now: base
+        )
+        let alertsWhenNearby = Planner.planAll(
+            places: [place], forecasts: [place.id: forecast],
+            nearbyPlaceIDs: [place.id], now: base
+        )
+
+        XCTAssertEqual(alertsWhenAway.count, 1)
+        XCTAssertEqual(alertsWhenAway.first?.rule.id, ordinaryRule.id)
+        XCTAssertEqual(alertsWhenAway.first?.eventAt, ordinaryEventAt)
+        XCTAssertEqual(alertsWhenNearby.count, 1)
+        XCTAssertEqual(alertsWhenNearby.first?.rule.id, nearbyRule.id)
+        XCTAssertEqual(alertsWhenNearby.first?.eventAt, nearbyEventAt)
+    }
+
     func testPlanAllUsesPreciseRadarTimesJustBelowRainCooldown() {
         var firstRule = Rule(type: .regn)
         firstRule.threshold = 0.5
