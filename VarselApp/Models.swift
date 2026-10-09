@@ -1106,10 +1106,11 @@ struct Place: Codable, Identifiable, Hashable {
         return min(40, max(-10, value))
     }
     var resolvedDisplaySunThreshold2: Double {
+        let firstThreshold = displayThreshold(for: .sol)
         guard let value = displaySunThreshold2, value.isFinite else {
-            return min(90, displayThreshold(for: .sol) + 10)
+            return min(90, firstThreshold + 10)
         }
-        return min(90, max(0, value))
+        return min(90, max(firstThreshold, value))
     }
     var localTemperatureOffset: Double { min(10, max(-10, temperatureOffset ?? 0)) }
 

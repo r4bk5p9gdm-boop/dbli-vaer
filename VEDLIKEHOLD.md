@@ -54,6 +54,15 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-127 · FULLFØRT 2026-10-09** — I «Tilpass» heter solraden nå
+«Sollys / skydekke». Den ekspanderte visningen viser større helgule og
+skraverte gule eksempelceller og forklarer intervallene nøyaktig: helgul fra
+0 til første grense, skravert gul over første til andre grense. Den andre
+grensen kan ikke lenger settes lavere enn den første, og sammendraget viser
+begge intervallene. La til modellregresjon for grenseordningen. Swift-parsing,
+diffkontroll og iOS `build-for-testing` består; XCTest kunne ikke kjøres uten
+simulator.
+
 **BRUKER-126 · FULLFØRT 2026-10-09** — Rettet solstatusen ved Klinga etter
 solnedgang: hjemkortets solsymbol bruker faktisk klokkeslett i stedet for
 tidsstempelet til Yr-prøven, og rullerende solstatus kan ikke lenger forlenge

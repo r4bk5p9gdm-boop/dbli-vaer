@@ -705,8 +705,11 @@ final class PlannerTests: XCTestCase {
         place.displaySunThreshold2 = 99
         XCTAssertEqual(place.resolvedDisplaySunThreshold2, 90)
         XCTAssertEqual(AlertType.sol.range.upperBound, 90)
+        place.displaySunThreshold = 45
+        place.displaySunThreshold2 = 30
+        XCTAssertEqual(place.resolvedDisplaySunThreshold2, 45)
         place.displaySunThreshold2 = nil
-        XCTAssertEqual(place.resolvedDisplaySunThreshold2, 20)
+        XCTAssertEqual(place.resolvedDisplaySunThreshold2, 55)
     }
 
     func testMalformedPlaceSnapshotUsesSafeDefaults() throws {

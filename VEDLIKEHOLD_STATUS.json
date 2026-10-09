@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T16:44:43Z",
+  "lastScheduledStart": "2026-10-09T16:47:25Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-393 fullført: Store-regresjon for sletting av valgt hytte bekrefter automatisk valg av hjemsted, gyldig persisted selectedID og bevart hjemmeregel/prognose umiddelbart og etter Store-gjenoppretting; hytteprognosen fjernes. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-396; neste: AUTO-394/395/396."
+  "lastProgress": "BRUKER-127 fullført: Tilpass viser nå større helgul og skravert gul prøve ved sollys/skydekke; intervallene er 0–første grense og over første–andre grense, og øvre grense holdes minst like høy som den første. La til modellregresjon for grenseordningen. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. Neste: AUTO-394/395/396."
 }

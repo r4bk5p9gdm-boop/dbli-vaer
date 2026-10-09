@@ -1094,10 +1094,10 @@ struct RulesView: View {
                                 if [.temperatur, .dugg, .sol, .vind].contains(type) {
                                     VStack(alignment: .leading, spacing: 5) {
                                         HStack(spacing: 6) {
-                                            Text(type == .temperatur ? "Kaldere enn" : type == .dugg ? "Duggfare" : type == .vind ? "Vindkast fra" : "Hel sol til")
+                                            Text(type == .temperatur ? "Kaldere enn" : type == .dugg ? "Duggfare" : type == .vind ? "Vindkast fra" : "Helgul celle til")
                                                 .font(.caption.weight(.medium))
                                                 .foregroundStyle(.secondary)
-                                            Picker("Grense for \(type.label)", selection: Binding(
+                                            Picker("Grense for \(displayTypeTitle(type))", selection: Binding(
                                                 get: { p.displayThreshold(for: type) },
                                                 set: { value in
                                                     switch type {
@@ -1142,20 +1142,23 @@ struct RulesView: View {
 
                                         if type == .sol {
                                             HStack(spacing: 6) {
-                                                Text("Skravert delvis sol til")
+                                                Text("Skravert gul til")
                                                     .font(.caption.weight(.medium))
                                                     .foregroundStyle(.secondary)
-                                                Picker("Solgløttgrense", selection: Binding(
+                                                Picker("Øvre grense for skravert gul celle", selection: Binding(
                                                     get: { p.resolvedDisplaySunThreshold2 },
                                                     set: { p.displaySunThreshold2 = $0; store.update(p) }
                                                 )) {
-                                                    ForEach(Array(stride(from: 0.0, through: 90.0, by: 5.0)), id: \.self) { value in
+                                                    ForEach(Array(stride(from: 0.0, through: 90.0, by: 5.0).filter {
+                                                        $0 >= p.displayThreshold(for: .sol)
+                                                    }), id: \.self) { value in
                                                         Text("\(value.formatted(.number.precision(.fractionLength(0)))) % skydekke").tag(value)
                                                     }
                                                 }
                                                 .labelsHidden()
                                                 .pickerStyle(.menu)
                                             }
+                                            solarThresholdLegendView(for: p)
                                         }
                                     }
                                     .padding(.leading, 32)
@@ -1196,12 +1199,12 @@ struct RulesView: View {
                                         .foregroundStyle(type.color)
                                         .frame(width: 22)
                                     VStack(alignment: .leading, spacing: 2) {
-                                        Text(type.label)
+                                        Text(displayTypeTitle(type))
                                             .font(.subheadline.weight(.semibold))
                                         displayThresholdSummaryView(for: type, place: p)
                                     }
                                     Spacer(minLength: 2)
-                                    Toggle("Vis \(type.label)", isOn: Binding(
+                                    Toggle("Vis \(displayTypeTitle(type))", isOn: Binding(
                                         get: { p.isAlertTypeVisible(type) },
                                         set: { visible in
                                             var hidden = p.hiddenAlertTypes ?? []
@@ -1394,7 +1397,7 @@ struct RulesView: View {
             let threshold = place.displayThreshold(for: .vind)
             return "Markeres ved vindkast fra \(number(threshold)) m/s (\(windStrengthLabel(for: threshold))). Middelvind brukes ikke."
         case .sol:
-            return "Hel gul sol ved maks \(number(place.displayThreshold(for: .sol)))% skydekke. Skravert gul markering for delvis sol fram til \(number(place.resolvedDisplaySunThreshold2))%. Dette endrer ikke pushvarslene."
+            return "I dagslys markeres 0–\(number(place.displayThreshold(for: .sol)))% skydekke med helgul celle. Over denne grensen og til \(number(place.resolvedDisplaySunThreshold2))% vises skravert gult. Dette styrer bare værbåndet, ikke pushvarslene."
         }
     }
 
@@ -1417,7 +1420,7 @@ struct RulesView: View {
         case .vind:
             return "Vindkast fra \(number(place.displayThreshold(for: .vind))) m/s"
         case .sol:
-            return "Hel sol til \(number(place.displayThreshold(for: .sol)))% · delvis til \(number(place.resolvedDisplaySunThreshold2))%"
+            return "Helgul: 0–\(number(place.displayThreshold(for: .sol)))% · skravert: >\(number(place.displayThreshold(for: .sol)))–\(number(place.resolvedDisplaySunThreshold2))%"
         }
     }
 
@@ -1433,14 +1436,14 @@ struct RulesView: View {
                 Text("over \(place.resolvedDisplayTemperatureHighThreshold.formatted(.number.precision(.fractionLength(0...1))))°")
             case .sol:
                 markerSwatch(AlertType.sol.color, opacity: SolarCellMarkerStyle.solidFillOpacity)
-                Text("hel ≤ \(place.displayThreshold(for: .sol).formatted(.number.precision(.fractionLength(0...1))))%")
+                Text("0–\(place.displayThreshold(for: .sol).formatted(.number.precision(.fractionLength(0...1))))%")
                 markerSwatch(
                     AlertType.sol.color,
                     opacity: SolarCellMarkerStyle.partialFillOpacity,
                     hatched: true
                 )
                     .padding(.leading, 3)
-                Text("skravert ≤ \(place.resolvedDisplaySunThreshold2.formatted(.number.precision(.fractionLength(0...1))))%")
+                Text(">\(place.displayThreshold(for: .sol).formatted(.number.precision(.fractionLength(0...1))))–\(place.resolvedDisplaySunThreshold2.formatted(.number.precision(.fractionLength(0...1))))%")
             case .frost:
                 Image(systemName: AlertType.frost.systemImage)
                     .font(.system(size: 8, weight: .semibold))
@@ -1456,10 +1459,41 @@ struct RulesView: View {
         .lineLimit(2)
     }
 
+    private func displayTypeTitle(_ type: AlertType) -> String {
+        type == .sol ? "Sollys / skydekke" : type.label
+    }
+
+    private func solarThresholdLegendView(for place: Place) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 8) {
+                markerSwatch(
+                    AlertType.sol.color,
+                    opacity: SolarCellMarkerStyle.solidFillOpacity,
+                    size: CGSize(width: 24, height: 14)
+                )
+                Text("Helgul celle · 0–\(place.displayThreshold(for: .sol).formatted(.number.precision(.fractionLength(0...1))))% skydekke")
+            }
+            HStack(spacing: 8) {
+                markerSwatch(
+                    AlertType.sol.color,
+                    opacity: SolarCellMarkerStyle.partialFillOpacity,
+                    hatched: true,
+                    size: CGSize(width: 24, height: 14)
+                )
+                Text("Skravert gul celle · over \(place.displayThreshold(for: .sol).formatted(.number.precision(.fractionLength(0...1))))% til \(place.resolvedDisplaySunThreshold2.formatted(.number.precision(.fractionLength(0...1))))% skydekke")
+            }
+        }
+        .font(.caption)
+        .foregroundStyle(.secondary)
+        .fixedSize(horizontal: false, vertical: true)
+        .accessibilityElement(children: .combine)
+    }
+
     private func markerSwatch(
         _ color: Color,
         opacity: Double = 0.78,
-        hatched: Bool = false
+        hatched: Bool = false,
+        size: CGSize = CGSize(width: 12, height: 8)
     ) -> some View {
         ZStack {
             RoundedRectangle(cornerRadius: 2).fill(color.opacity(opacity))
@@ -1481,7 +1515,7 @@ struct RulesView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 2))
             }
         }
-        .frame(width: 12, height: 8)
+        .frame(width: size.width, height: size.height)
         .accessibilityHidden(true)
     }
 }
