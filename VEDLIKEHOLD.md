@@ -1892,9 +1892,12 @@ Steder, valgt ID og cache består en ny Store-oppstart. Swift-parsing,
 diffkontroll og generisk iOS `build-for-testing` med signering slått av består;
 XCTest kunne ikke kjøres fordi CoreSimulatorService er utilgjengelig.
 
-**AUTO-414 · ÅPEN** — Regresjonstest for eldre konfigurasjonsfiler der valgfrie
-formatversjon-, eksporttidspunkt- og språkfelt mangler, men gyldige steder skal
-fortsatt kunne importeres med trygge standardverdier.
+**AUTO-414 · FULLFØRT 2026-10-09** — La til bakoverkompatibilitetstest for
+eldre eksport uten formatversjon, eksporttidspunkt eller språkfelt. Decoder
+bruker trygge metadata-standarder, samtidig som gyldig sted og valgt-ID beholdes
+gjennom ny eksport/import. Swift-parsing, diffkontroll og generisk iOS
+`build-for-testing` med signering slått av består; XCTest kunne ikke kjøres
+fordi CoreSimulatorService er utilgjengelig.
 
 **AUTO-415 · ÅPEN** — Regresjonstest at migrering håndterer to lagrede
 stedsnavn som begge samsvarer med samme standardsted uten å etterlate
@@ -1903,6 +1906,10 @@ duplikatvalg eller prognosecache for sted som ble slått sammen.
 **AUTO-416 · ÅPEN** — Regresjonstest at feilformede valgfrie
 versjons-, eksporttids- eller språkverdier i en konfigurasjonsfil faller tilbake
 trygt uten at gyldige steder og valgt-ID forkastes.
+
+**AUTO-417 · ÅPEN** — Regresjonstest at den faktiske
+WeatherConfigurationDocument-filflyten bevarer ISO-8601-tidspunkt, språk,
+valgt sted og terskelinnstillinger ved fil-eksport og -import.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

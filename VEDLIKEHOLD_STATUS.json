@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T18:31:31Z",
+  "lastScheduledStart": "2026-10-09T18:36:31Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-413 fullført: testen bekrefter at gjeldende launch-place-versjon bevarer Hytte- og Naust-prognoser og hentetider etter at Klinga er fjernet, samtidig som Klinga-cache ryddes fra vedvarende tilstand. Steder, valgt-ID og gjenværende cache overlever Store-omstart. Swift-parsing, diffkontroll og generisk iOS build-for-testing med signering slått av bestod; XCTest kunne ikke kjøres fordi CoreSimulatorService ikke er tilgjengelig. AUTO-004 opprettet AUTO-416 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-414/415/416."
+  "lastProgress": "AUTO-414 fullført: bakoverkompatibilitetstesten bekrefter at eldre eksport uten formatversjon, eksporttidspunkt og språkfelt får trygge metadata-standarder mens gyldig sted og valgt-ID beholdes gjennom eksport/import. Swift-parsing, diffkontroll og generisk iOS build-for-testing med signering slått av bestod; XCTest kunne ikke kjøres fordi CoreSimulatorService ikke er tilgjengelig. AUTO-004 opprettet AUTO-417 for å holde tre konkrete AUTO-punkter åpne. Neste: AUTO-415/416/417."
 }
