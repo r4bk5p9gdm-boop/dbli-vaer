@@ -137,11 +137,10 @@ struct ContentView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            HomeView(onOpenAlerts: { selectedTab = .queue })
+            HomeView()
                 .tabItem { Label("Hjem", systemImage: "cloud.sun") }.tag(Tab.home)
             PlacesView(
-                onOpen: { place in store.select(place); selectedTab = .home },
-                onOpenAlerts: { selectedTab = .queue }
+                onOpen: { place in store.select(place); selectedTab = .home }
             )
             .tabItem { Label("Steder", systemImage: "mappin.and.ellipse") }.tag(Tab.places)
             AlertQueueView().tabItem { Label("Varsler", systemImage: "bell.and.waves.left.and.right") }.tag(Tab.queue)
@@ -178,7 +177,6 @@ struct ContentView: View {
 }
 
 struct HomeView: View {
-    var onOpenAlerts: () -> Void = {}
     @EnvironmentObject var store: Store
     @State private var editing: Rule?
     @State private var showingSettings = false
@@ -205,7 +203,7 @@ struct HomeView: View {
         NavigationStack {
             ScrollView {
                 ZStack {
-                VStack(alignment: .leading, spacing: 14) {
+                LazyVStack(alignment: .leading, spacing: 14) {
                     if store.notificationsAuthorized == false {
                         Label("Varslinger er avslått. Slå dem på i Innstillinger for å motta værvarsler.", systemImage: "bell.slash.fill")
                             .font(.footnote)
@@ -265,11 +263,7 @@ struct HomeView: View {
                                     todayTitle: forecastHeaderTitle,
                                     updatedAt: forecastUpdatedAt,
                                     isRefreshing: store.isRefreshing,
-                                    isStale: Store.isForecastStale(forecastUpdatedAt),
-                                    placeName: p.displayName,
-                                    notificationsEnabled: p.areNotificationsEnabled,
-                                    languageStyle: store.alertLanguageStyle,
-                                    onOpenAlerts: onOpenAlerts
+                                    isStale: Store.isForecastStale(forecastUpdatedAt)
                                 )
                                 .padding(.horizontal, 12)
                                 .padding(.top, 16)
@@ -308,6 +302,17 @@ struct HomeView: View {
                             systemImage: "mappin.slash",
                             description: Text("Legg til et sted under Steder for å hente værvarsel.")
                         )
+                    }
+
+                    if let p = store.selected {
+                        CurrentPlacePushAlertsSection(
+                            place: p,
+                            forecast: store.forecasts[p.id] ?? [],
+                            nearbyPlaceIDs: store.nearbyPlaceIDs,
+                            notificationsAuthorized: store.notificationsAuthorized,
+                            languageStyle: store.alertLanguageStyle
+                        )
+                        .padding(.horizontal, 4)
                     }
                 }
                 .offset(x: liveSwipeOffset)
@@ -363,6 +368,129 @@ struct HomeView: View {
     private var activeIndexForSelectedPlace: Int {
         let pageCount = max(1, swipePlaces.count)
         return min(pageCount - 1, max(0, swipePlaces.firstIndex(where: { $0.id == store.selected?.id }) ?? 0))
+    }
+}
+
+private struct CurrentPlacePushAlertsSection: View {
+    let place: Place
+    let forecast: [ForecastHour]
+    let nearbyPlaceIDs: Set<UUID>
+    let notificationsAuthorized: Bool?
+    let languageStyle: AlertLanguageStyle
+
+    @State private var showsAllAlerts = false
+
+    private var plannedPushAlerts: [PlannedAlert] {
+        Planner.planAll(
+            places: [place],
+            forecasts: [place.id: forecast],
+            nearbyPlaceIDs: nearbyPlaceIDs
+        )
+    }
+
+    private var enabledPushRules: [Rule] {
+        place.rules.filter { $0.enabled && !($0.isDisplayOnly) }
+    }
+
+    private func localized(_ bokmal: String, english: String) -> String {
+        languageStyle == .english ? english : WeatherLanguage.text(bokmal, style: languageStyle)
+    }
+
+    var body: some View {
+        let upcomingAlerts = plannedPushAlerts
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 8) {
+                Image(systemName: "bell.badge.fill")
+                    .foregroundStyle(.orange)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(localized("Kommende pushvarsler", english: "Upcoming push alerts"))
+                        .font(.headline)
+                    Text(place.nameWithPreposition)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer(minLength: 0)
+                if notificationsAuthorized != false && place.areNotificationsEnabled && !upcomingAlerts.isEmpty {
+                    Text("\(upcomingAlerts.count)")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color(uiColor: .tertiarySystemBackground), in: Capsule())
+                        .accessibilityLabel(localized("\(upcomingAlerts.count) planlagte pushvarsler", english: "\(upcomingAlerts.count) planned push alerts"))
+                }
+            }
+
+            if notificationsAuthorized == false {
+                emptyState(localized("Varsler er avslått i iPhone-innstillingene.", english: "Notifications are disabled in iPhone Settings."))
+            } else if !place.areNotificationsEnabled {
+                emptyState(localized("Pushvarsler er slått av for dette stedet.", english: "Push alerts are turned off for this place."))
+            } else if enabledPushRules.isEmpty {
+                emptyState(localized("Ingen pushvarsler er slått på for dette stedet.", english: "No push alerts are enabled for this place."))
+            } else if forecast.isEmpty {
+                emptyState(localized("Venter på værvarsel før pushvarsler kan beregnes.", english: "Waiting for a forecast to calculate push alerts."))
+            } else if upcomingAlerts.isEmpty {
+                emptyState(localized("Ingen pushvarsler er ventet ut fra prognosen nå.", english: "No push alerts are expected from the current forecast."))
+            } else {
+                VStack(spacing: 9) {
+                    ForEach(Array(upcomingAlerts.prefix(showsAllAlerts ? upcomingAlerts.count : 3))) { alert in
+                        HStack(alignment: .top, spacing: 10) {
+                            Image(systemName: alert.rule.type.systemImage)
+                                .foregroundStyle(alert.rule.type.color)
+                                .frame(width: 20)
+                                .padding(.top, 2)
+                                .accessibilityHidden(true)
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(NotificationCopy.title(
+                                    for: alert.rule,
+                                    placeName: alert.placeName,
+                                    eventAt: alert.eventAt,
+                                    referenceAt: alert.fireAt,
+                                    possible: alert.possible,
+                                    languageStyle: languageStyle
+                                ))
+                                .font(.subheadline.weight(.semibold))
+                                Text(NotificationCopy.message(
+                                    for: alert.rule,
+                                    eventAt: alert.eventAt,
+                                    referenceAt: alert.fireAt,
+                                    possible: alert.possible,
+                                    eventDetail: alert.eventDetail,
+                                    languageStyle: languageStyle
+                                ))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                Text(localized("Sendes \(eventTimePhrase(alert.fireAt))", english: "Scheduled \(eventTimePhrase(alert.fireAt))"))
+                                    .font(.caption2.weight(.medium))
+                                    .foregroundStyle(.blue)
+                            }
+                            Spacer(minLength: 0)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+
+                if upcomingAlerts.count > 3 {
+                    Button(showsAllAlerts
+                           ? localized("Vis færre", english: "Show fewer")
+                           : localized("Vis alle \(upcomingAlerts.count) varsler", english: "Show all \(upcomingAlerts.count) alerts")) {
+                        showsAllAlerts.toggle()
+                    }
+                    .font(.footnote.weight(.semibold))
+                    .padding(.top, 2)
+                }
+            }
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 16))
+        .accessibilityElement(children: .contain)
+    }
+
+    private func emptyState(_ message: String) -> some View {
+        Text(message)
+            .font(.footnote)
+            .foregroundStyle(.secondary)
     }
 }
 
@@ -1668,7 +1796,6 @@ private enum PlaceSortMode: String, CaseIterable, Identifiable {
 
 struct PlacesView: View {
     var onOpen: (Place) -> Void = { Store.shared.select($0) }
-    var onOpenAlerts: () -> Void = {}
     @EnvironmentObject var store: Store
     @StateObject private var loc = LocationManager()
     @State private var busy = false
@@ -1896,11 +2023,7 @@ struct PlacesView: View {
             todayTitle: "Resten av i dag",
             updatedAt: store.forecastUpdatedAt(for: place.id),
             isRefreshing: store.isRefreshing,
-            isStale: Store.isForecastStale(store.forecastUpdatedAt(for: place.id)),
-            placeName: place.displayName,
-            notificationsEnabled: place.areNotificationsEnabled,
-            languageStyle: store.alertLanguageStyle,
-            onOpenAlerts: onOpenAlerts
+            isStale: Store.isForecastStale(store.forecastUpdatedAt(for: place.id))
         )
         .padding(.horizontal, 12)
         .padding(.top, 16)

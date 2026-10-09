@@ -993,21 +993,6 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(solarBandFogSymbol(for: .partlySunlit), "sun.haze.fill")
     }
 
-    func testActiveNotificationOverviewListsUniqueEnabledPushTypesOnly() {
-        let rain = Rule(type: .regn)
-        var displayOnlySun = Rule(type: .sol)
-        displayOnlySun.isDisplayOnly = true
-        var disabledWind = Rule(type: .vind)
-        disabledWind.enabled = false
-        let dew = Rule(type: .dugg)
-
-        XCTAssertEqual(
-            activeNotificationTypes(from: [rain, displayOnlySun, disabledWind, dew, rain], notificationsEnabled: true),
-            [.regn, .dugg]
-        )
-        XCTAssertEqual(activeNotificationTypes(from: [rain, dew], notificationsEnabled: false), [])
-    }
-
     func testDialectWeekdaysKeepBokmalUnchanged() {
         XCTAssertEqual(WeatherLanguage.text("Regn denne timen", style: .inntrondersk), "Regn herre tima")
         XCTAssertEqual(WeatherLanguage.text("Regn denne timen", style: .bokmal), "Regn denne timen")

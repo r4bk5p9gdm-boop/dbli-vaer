@@ -30,10 +30,6 @@ struct ForecastVariantsView: View {
     let updatedAt: Date?
     let isRefreshing: Bool
     let isStale: Bool
-    let placeName: String
-    let notificationsEnabled: Bool
-    let languageStyle: AlertLanguageStyle
-    let onOpenAlerts: () -> Void
 
     private var days: [ForecastDay] { ForecastDay.make(from: forecast) }
     private var visibleDays: [ForecastDay] {
@@ -62,95 +58,8 @@ struct ForecastVariantsView: View {
                     }
                 }
             }
-            if mode == .weatherBands {
-                ActiveAlertOverview(
-                    placeName: placeName,
-                    alertTypes: activeNotificationTypes(from: rules, notificationsEnabled: notificationsEnabled),
-                    notificationsEnabled: notificationsEnabled,
-                    languageStyle: languageStyle,
-                    onOpenAlerts: onOpenAlerts
-                )
-            }
         }
     }
-}
-
-private struct ActiveAlertOverview: View {
-    let placeName: String
-    let alertTypes: [AlertType]
-    let notificationsEnabled: Bool
-    let languageStyle: AlertLanguageStyle
-    let onOpenAlerts: () -> Void
-
-    private let columns = [GridItem(.adaptive(minimum: 88), alignment: .leading)]
-
-    private func localized(_ bokmal: String, english: String) -> String {
-        languageStyle == .english ? english : WeatherLanguage.text(bokmal, style: languageStyle)
-    }
-
-    var body: some View {
-        Button(action: onOpenAlerts) {
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(spacing: 6) {
-                    Image(systemName: "bell.badge.fill")
-                        .foregroundStyle(.orange)
-                    Text(notificationsEnabled
-                         ? localized("Varslingsoversikt", english: "Alert overview")
-                         : localized("Varsler av", english: "Alerts off"))
-                        .font(.subheadline.weight(.semibold))
-                    Text("· \(placeName)")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                    Spacer(minLength: 0)
-                    Image(systemName: "chevron.right")
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(.tertiary)
-                }
-
-                if alertTypes.isEmpty {
-                    Text(notificationsEnabled
-                         ? localized("Ingen pushvarsler er slått på", english: "No push alerts are enabled")
-                         : localized("Pushvarsler er slått av for stedet", english: "Push alerts are off for this place"))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                } else {
-                    LazyVGrid(columns: columns, alignment: .leading, spacing: 6) {
-                        ForEach(alertTypes) { type in
-                            HStack(spacing: 5) {
-                                Image(systemName: type.systemImage)
-                                    .foregroundStyle(type.color)
-                                Text(WeatherLanguage.text(type.label, style: languageStyle))
-                                    .foregroundStyle(.primary)
-                                    .lineLimit(1)
-                                    .minimumScaleFactor(0.8)
-                            }
-                            .font(.caption)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 5)
-                            .background(type.color.opacity(0.09), in: Capsule())
-                            .overlay(Capsule().stroke(type.color.opacity(0.12), lineWidth: 0.7))
-                        }
-                    }
-                }
-            }
-            .padding(11)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color(uiColor: .secondarySystemBackground), in: RoundedRectangle(cornerRadius: 14))
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(localized("Varslingsoversikt for \(placeName)", english: "Alert overview for \(placeName)"))
-        .accessibilityValue(alertTypes.isEmpty
-                            ? localized("Ingen pushvarsler aktive", english: "No active push alerts")
-                            : alertTypes.map { WeatherLanguage.text($0.label, style: languageStyle) }.joined(separator: ", "))
-        .accessibilityHint(localized("Åpner Varsler for å se og endre varslene", english: "Opens Alerts to review and change them"))
-    }
-}
-
-func activeNotificationTypes(from rules: [Rule], notificationsEnabled: Bool) -> [AlertType] {
-    guard notificationsEnabled else { return [] }
-    let activeTypes = Set(rules.filter { $0.enabled && !$0.isDisplayOnly }.map(\.type))
-    return AlertType.allCases.filter(activeTypes.contains)
 }
 
 struct ForecastDay: Identifiable {

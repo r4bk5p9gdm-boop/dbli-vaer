@@ -54,6 +54,16 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-138 · FULLFØRT 2026-10-09** — Fjernet den kompakte
+varslingsoversikten under tredagersradene og la i stedet kommende, faktiske
+pushvarsler for valgt sted nederst på Hjem. Listen bruker `Planner.planAll`
+og samme tittel/tekst som Varsler-fanen, viser de tre neste først og kan
+utvides. Rullerende «nå»-status brukes ikke. Beregningen skjer først når den
+lazy Hjem-listen nærmer seg seksjonen ved scrolling, og bruker allerede
+bufrede prognoser uten ekstra nettverkskall. Swift-parsing og diffkontroll
+består; full Xcode-bygging er utsatt på grunn av begrenset diskplass og kjent
+SwiftUIMacros-feil.
+
 **BRUKER-137 · FULLFØRT 2026-10-09** — Hjeminnholdet følger nå en horisontal
 fingersveipning mens den pågår, i stedet for å stå stille til fingeren løftes.
 Vertikal bevegelse brukes fortsatt til vanlig scrolling og velger ikke et nytt
