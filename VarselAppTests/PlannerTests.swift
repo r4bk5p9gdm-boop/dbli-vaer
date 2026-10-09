@@ -6828,6 +6828,16 @@ final class PlannerTests: XCTestCase {
         ))
     }
 
+    func testConfigurationDocumentRejectsDirectoryInsteadOfJSONFile() {
+        let directory = FileWrapper(directoryWithFileWrappers: [:])
+
+        XCTAssertThrowsError(try WeatherConfigurationDocument(
+            configuration: .init(file: directory, contentType: .json)
+        )) { error in
+            XCTAssertEqual((error as? CocoaError)?.code, .fileReadCorruptFile)
+        }
+    }
+
     func testLegacyConfigurationWithoutOptionalMetadataKeepsPlacesAndSelection() throws {
         let place = Place(name: "Namsos", lat: 64.5, lon: 11.5)
         let source = WeatherConfigurationExport(
