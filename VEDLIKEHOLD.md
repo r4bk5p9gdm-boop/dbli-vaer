@@ -1572,9 +1572,11 @@ ingen tom prognose blir lagret. Swift-parsing og diffkontroll består, men
 testkjøring står PÅ VENT på grunn av tidligere `SwiftUIMacros.StateMacro`-feil
 i Xcode.
 
-**AUTO-373 · ÅPEN** — Legg til regresjon for vellykket første prognosehenting
-i `Store.add`: prognosetimer og oppdateringstid for det nye stedet skal være
-lagret og komme tilbake fra samme lagringsnøkkel etter at en ny Store opprettes.
+**AUTO-373 · PÅ VENT 2026-10-09** — La til test for vellykket første
+prognosehenting: prognosetimer, oppdateringstid og valgt sted skal gjenopprettes
+fra samme lagringsnøkkel etter ny `Store`. Swift-parsing og diffkontroll består,
+men testkjøring står PÅ VENT på grunn av tidligere
+`SwiftUIMacros.StateMacro`-feil i Xcode.
 
 **AUTO-374 · ÅPEN** — Legg til regresjon med kontrollert, forsinket prognose-
 henting i `Store.add`: hvis brukeren velger et annet sted mens hentingen pågår,
@@ -1584,6 +1586,11 @@ det aktive stedsvalget tilbake.
 **AUTO-375 · ÅPEN** — Legg til regresjon som sikrer at hver
 `WizardAlertCategory` har minst ett passende `RulePreset`, og at ingen
 forhåndsdefinerte varseltyper dermed blir utilgjengelige når kategorier endres.
+
+**AUTO-376 · ÅPEN** — Legg til regresjon for vellykket `Store.add` mens et
+annet sted allerede har lagret prognose: første hentingen for det nye stedet
+skal oppdatere bare dets cache og tidspunkt, og bevare det eksisterende stedets
+prognose gjennom lagring og gjenoppretting.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.

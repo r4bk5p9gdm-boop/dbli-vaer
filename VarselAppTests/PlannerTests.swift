@@ -6305,6 +6305,24 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(restored.forecasts[place.id, default: []].isEmpty)
     }
 
+    @MainActor
+    func testAddingPlacePersistsSuccessfulFirstForecastAndTimestamp() async throws {
+        let persistenceKey = "varsel.test.add-successful-forecast-place.\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
+        let hour = ForecastHour(time: base, temp: 8, precip: 0, wind: 2, cloud: 40, dew: 4)
+        let store = Store(forecastFetcher: { _, _ in [hour] }, persistenceKey: persistenceKey)
+        let place = Place(name: "Hytte", lat: 64.0, lon: 11.0, preposition: .på)
+
+        await store.add(place)
+
+        XCTAssertEqual(store.forecasts[place.id], [hour])
+        XCTAssertNotNil(store.forecastUpdatedAt(for: place.id))
+        let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        XCTAssertEqual(restored.forecasts[place.id], [hour])
+        XCTAssertNotNil(restored.forecastUpdatedAt(for: place.id))
+        XCTAssertEqual(restored.selectedID, place.id)
+    }
+
     func testEmptyForecastCreatesNoSnowAlert() {
         let rule = Rule(type: .sno)
         let result = Planner.plan(rule: rule, forecast: [], placeName: "Klinga", now: base)
