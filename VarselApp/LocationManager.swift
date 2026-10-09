@@ -1,5 +1,24 @@
 import CoreLocation
 
+enum LocationAuthorizationDecision: Equatable {
+    case requestWhenInUseAuthorization
+    case requestLocation
+    case fail(CLError.Code)
+
+    static func forRawStatus(_ rawStatus: Int32) -> Self {
+        switch rawStatus {
+        case CLAuthorizationStatus.notDetermined.rawValue:
+            .requestWhenInUseAuthorization
+        case CLAuthorizationStatus.authorizedAlways.rawValue,
+             CLAuthorizationStatus.authorizedWhenInUse.rawValue:
+            .requestLocation
+        default:
+            // Denied, restricted, and future unknown statuses are terminal.
+            .fail(.denied)
+        }
+    }
+}
+
 @MainActor
 final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     private var manager: CLLocationManager?
@@ -58,11 +77,13 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
     }
 
     private func requestIfAuthorized(_ source: CLLocationManager) {
-        switch source.authorizationStatus {
-        case .notDetermined: source.requestWhenInUseAuthorization()
-        case .authorizedAlways, .authorizedWhenInUse: source.requestLocation()
-        case .denied, .restricted: finish(.failure(CLError(.denied)))
-        @unknown default: finish(.failure(CLError(.denied)))
+        switch LocationAuthorizationDecision.forRawStatus(source.authorizationStatus.rawValue) {
+        case .requestWhenInUseAuthorization:
+            source.requestWhenInUseAuthorization()
+        case .requestLocation:
+            source.requestLocation()
+        case let .fail(code):
+            finish(.failure(CLError(code)))
         }
     }
 

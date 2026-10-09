@@ -1137,6 +1137,35 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testLocationAuthorizationDecisionFailsImmediatelyForDeniedRestrictedAndUnknownStatus() {
+        for status in [CLAuthorizationStatus.denied, .restricted] {
+            XCTAssertEqual(
+                LocationAuthorizationDecision.forRawStatus(status.rawValue),
+                .fail(.denied)
+            )
+        }
+        XCTAssertEqual(
+            LocationAuthorizationDecision.forRawStatus(Int32.max),
+            .fail(.denied),
+            "An unrecognized future authorization status must not wait for the timeout."
+        )
+    }
+
+    func testLocationAuthorizationDecisionPreservesUndeterminedAndAuthorizedBehavior() {
+        XCTAssertEqual(
+            LocationAuthorizationDecision.forRawStatus(CLAuthorizationStatus.notDetermined.rawValue),
+            .requestWhenInUseAuthorization
+        )
+        XCTAssertEqual(
+            LocationAuthorizationDecision.forRawStatus(CLAuthorizationStatus.authorizedAlways.rawValue),
+            .requestLocation
+        )
+        XCTAssertEqual(
+            LocationAuthorizationDecision.forRawStatus(CLAuthorizationStatus.authorizedWhenInUse.rawValue),
+            .requestLocation
+        )
+    }
+
     func testWindDefaultsPreserveExistingRules() throws {
         XCTAssertEqual(Rule(type: .vind).threshold, 9)
         let legacy = try JSONDecoder().decode(Rule.self, from: Data("{\"type\":\"vind\"}".utf8))

@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T20:29:02Z",
+  "lastScheduledStart": "2026-10-09T22:11:02Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-143 fullført: Debug ble bygget med eksisterende automatisk utviklersignering og installert på den tilkoblede iPhone 13 Pro Max. Xcode build bestod; eksisterende lokale kildeendringer ble bygget, men ikke endret eller committet. Neste køpunkter er AUTO-428, AUTO-429 og AUTO-430."
+  "lastProgress": "AUTO-428 fullført: LocationManager bruker nå en ren, deterministisk autorisasjonsbeslutning; denied, restricted og ukjent framtidig status gir umiddelbar avslått-feil, mens notDetermined og autorisert oppførsel er bevart. Swift-parsing, typekontroll av beslutningsfunksjonen og diffkontroll består; XCTest ble utsatt på grunn av svært lite ledig minne. AUTO-431 ble opprettet etter bred køgjennomgang. Neste køpunkter er AUTO-429, AUTO-430 og AUTO-431."
 }

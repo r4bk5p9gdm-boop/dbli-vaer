@@ -54,6 +54,12 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-431 · ÅPEN** — Gjør den nye stedsmenyen deterministisk testbar på
+rollenivå: bekreft at «Her!» og «Hjem» slås sammen ved samme steds-ID, at
+hytte-ID som overlapper ikke lager ekstra snarvei, og at valgt snarvei følger
+Hjem-sveipingen også når lagrede steds-ID-er mangler eller er fjernet. Dette
+dekker visnings-/valgsynkronisering som dagens rene rekkefølgetest ikke låser.
+
 **BRUKER-143 · FULLFØRT 2026-10-10** — Bygget Debug for den sammenkoblede
 iPhone 13 Pro Max med prosjektets eksisterende automatiske utviklersignering,
 og installerte `no.mathias.VarselApp` på enheten. Xcode `build` bestod; ingen
@@ -2058,10 +2064,12 @@ språkvalg brukes standardverdiene, mens sted og valgt-ID beholdes gjennom
 filrundturen. Swift-parsing og diffkontroll består; XCTest er ikke kjørt på
 grunn av den kjente SwiftUIMacros-feilen i Xcode.
 
-**AUTO-428 · ÅPEN** — Gjør autorisasjonsbeslutningen i LocationManager
-deterministisk testbar, og dekk at denied/restricted (og ukjent status)
-avslutter posisjonsforespørselen umiddelbart med avvist-feil i stedet for å
-vente på timeout. Bevar eksisterende oppførsel for uavklart og autorisert status.
+**AUTO-428 · FULLFØRT 2026-10-10** — LocationManager bruker nå en ren,
+testbar beslutning basert på rå statusverdi. Uavklart status ber om tillatelse,
+begge autoriserte statuser henter posisjonen, og denied/restricted/ukjent
+status gir umiddelbar CLError.denied. La til tester for begge grenene.
+Swift-parsing, typekontroll av beslutningsfunksjonen og diffkontroll består;
+XCTest ble utsatt etter ressurskontroll på grunn av svært lite ledig minne.
 
 **AUTO-429 · ÅPEN** — Utvid tilgjengelighetstesten for timekort slik at
 VoiceOver-labelen inkluderer den lokaliserte værtilstanden i tillegg til tid,
