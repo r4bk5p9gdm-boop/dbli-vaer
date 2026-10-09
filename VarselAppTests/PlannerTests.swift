@@ -7059,8 +7059,6 @@ final class PlannerTests: XCTestCase {
         )
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
         let encoded = try encoder.encode(source)
         var object = try XCTUnwrap(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
         var placeObjects = try XCTUnwrap(object["places"] as? [[String: Any]])
@@ -7070,7 +7068,10 @@ final class PlannerTests: XCTestCase {
         object["places"] = placeObjects
 
         let importedData = try JSONSerialization.data(withJSONObject: object)
-        let imported = try decoder.decode(WeatherConfigurationExport.self, from: importedData)
+        let importedDocument = try WeatherConfigurationDocument(configuration: .init(
+            file: FileWrapper(regularFileWithContents: importedData), contentType: .json
+        ))
+        let imported = importedDocument.configuration
         let importedSelected = try XCTUnwrap(imported.places.first)
 
         XCTAssertEqual(imported.places.map(\.id), [selectedPlace.id, otherPlace.id])
@@ -7080,12 +7081,18 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(importedSelected.rules.first?.threshold, 3)
         XCTAssertEqual(imported.alertLanguageStyle, .english)
 
-        let reexported = try encoder.encode(WeatherConfigurationExport(
+        let reexported = WeatherConfigurationDocument(
             places: imported.places,
             selectedPlaceID: imported.selectedPlaceID,
             alertLanguageStyle: imported.alertLanguageStyle ?? .bokmal
+        )
+        let reexportedFile = try reexported.fileWrapper(configuration: .init(
+            contentType: .json, existingFile: nil
         ))
-        let reimported = try decoder.decode(WeatherConfigurationExport.self, from: reexported)
+        let reimportedDocument = try WeatherConfigurationDocument(configuration: .init(
+            file: reexportedFile, contentType: .json
+        ))
+        let reimported = reimportedDocument.configuration
         XCTAssertEqual(reimported.places.map(\.id), [selectedPlace.id, otherPlace.id])
         XCTAssertEqual(reimported.selectedPlaceID, selectedPlace.id)
         XCTAssertEqual(reimported.places.first?.rules.map(\.id), [retainedRule.id])

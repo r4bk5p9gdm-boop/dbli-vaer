@@ -1956,14 +1956,20 @@ gyldige sted, og valgt-ID/stedsrekkefølge overlever ny eksport og import.
 Swift-parsing og diffkontroll består; Xcode-testbygg er blokkert av
 SwiftUIMacros.StateMacro-feilen, og CoreSimulatorService er utilgjengelig.
 
-**AUTO-424 · ÅPEN** — Regresjonstest FileDocument-filflyten at en feilformet
-regel hoppes over mens øvrige regler på stedet beholdes etter ny eksport/import.
+**AUTO-424 · FULLFØRT 2026-10-09** — Utvidet feilformet-regel-regresjonen
+til den faktiske FileDocument-filflyten. En dårlig regelpost hoppes over,
+øvrige regler og steder beholdes, og de gyldige dataene overlever ny eksport
+og import. Swift-parsing og diffkontroll består; Xcode-testbygg er blokkert av
+SwiftUIMacros.StateMacro-feilen, og CoreSimulatorService er utilgjengelig.
 
 **AUTO-425 · ÅPEN** — Regresjonstest at eksport fra en eldre appversjon med
 større formatVersion avvises tydelig, så nyere konfigurasjonsdata ikke feiltolkes.
 
 **AUTO-426 · ÅPEN** — Regresjonstest gjennom FileDocument-filflyten at gyldig
 konfigurasjon med null steder beholder tom liste, nil valgt-ID og språk.
+
+**AUTO-427 · ÅPEN** — Regresjonstest FileDocument-import av eldre JSON uten
+valgfrie metadata: standardverdier brukes mens sted og valgt-ID beholdes.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
