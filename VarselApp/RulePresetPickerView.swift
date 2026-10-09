@@ -170,6 +170,26 @@ enum WizardPlaceKind: Equatable {
     case cabin
 }
 
+struct WizardPresetSelections {
+    private(set) var homeIDs = Set(WizardPresetConfiguration.homePresetIDs)
+    private(set) var cabinIDs = Set(WizardPresetConfiguration.cabinPresetIDs)
+
+    func ids(for place: WizardPlaceKind) -> Set<String> {
+        place == .cabin ? cabinIDs : homeIDs
+    }
+
+    mutating func set(_ id: String, selected: Bool, for place: WizardPlaceKind) {
+        switch place {
+        case .home:
+            if selected { homeIDs.insert(id) }
+            else { homeIDs.remove(id) }
+        case .cabin:
+            if selected { cabinIDs.insert(id) }
+            else { cabinIDs.remove(id) }
+        }
+    }
+}
+
 enum WizardPresetConfiguration {
     static let homePresetIDs = ["regn-neste", "sol-morgen", "frost-natt", "vind-morgen"]
     static let cabinPresetIDs = ["regn-natt", "sno-natt", "frost-natt", "vind-kraftig"]
@@ -197,8 +217,7 @@ struct OnboardingWizardView: View {
     @State private var showingCabinSearch = false
     @State private var isLocating = false
     @State private var locationMessage: String?
-    @State private var selectedHomePresetIDs = Set(WizardPresetConfiguration.homePresetIDs)
-    @State private var selectedCabinPresetIDs = Set(WizardPresetConfiguration.cabinPresetIDs)
+    @State private var presetSelections = WizardPresetSelections()
     @State private var homePlaceID: UUID?
     @State private var cabinPlaceID: UUID?
     @State private var cabinOnlyWhenNearby = true
@@ -206,8 +225,9 @@ struct OnboardingWizardView: View {
     let onFinish: () -> Void
 
     private var isCabinStep: Bool { step == 3 }
+    private var activePlaceKind: WizardPlaceKind { isCabinStep ? .cabin : .home }
     private var activePresetIDs: Set<String> {
-        isCabinStep ? selectedCabinPresetIDs : selectedHomePresetIDs
+        presetSelections.ids(for: activePlaceKind)
     }
     private var activePlace: Place? {
         let id = isCabinStep ? cabinPlaceID : homePlaceID
@@ -501,13 +521,7 @@ struct OnboardingWizardView: View {
         Binding(
             get: { activePresetIDs.contains(id) },
             set: { enabled in
-                if isCabinStep {
-                    if enabled { selectedCabinPresetIDs.insert(id) }
-                    else { selectedCabinPresetIDs.remove(id) }
-                } else {
-                    if enabled { selectedHomePresetIDs.insert(id) }
-                    else { selectedHomePresetIDs.remove(id) }
-                }
+                presetSelections.set(id, selected: enabled, for: activePlaceKind)
             }
         )
     }
@@ -562,7 +576,7 @@ struct OnboardingWizardView: View {
         }
         addRules(
             WizardPresetConfiguration.rules(
-                selectedIDs: selectedHomePresetIDs,
+                selectedIDs: presetSelections.ids(for: .home),
                 for: .home,
                 cabinOnlyWhenNearby: false
             ),
@@ -574,7 +588,7 @@ struct OnboardingWizardView: View {
            var cabin = store.places.first(where: { $0.id == cabinPlaceID }) {
             addRules(
                 WizardPresetConfiguration.rules(
-                    selectedIDs: selectedCabinPresetIDs,
+                    selectedIDs: presetSelections.ids(for: .cabin),
                     for: .cabin,
                     cabinOnlyWhenNearby: cabinOnlyWhenNearby
                 ),

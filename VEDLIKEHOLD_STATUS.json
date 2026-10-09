@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-09T15:33:30Z",
+  "lastScheduledStart": "2026-10-09T15:38:30Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-379 fullført: regresjonstest avbrutt Store.add etter at sted og valgt-ID er lagret før Yr-henting; testen bekrefter at sted/valg overlever gjenoppretting uten prognose/tidsstempel eller falsk nettverksfeil. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi CoreSimulator-/enhetstjenesten ikke er tilgjengelig. AUTO-004 opprettet AUTO-382; neste: AUTO-380/381/382."
+  "lastProgress": "AUTO-380 fullført: samlet veiviserens valgte regel-ID-er for hjemsted og hytte i WizardPresetSelections og brukte modellen i bindinger og lagring. Regresjonstest bekrefter at av/på-endring av delt frost-natt-preset ikke endrer det andre stedet. Swift-parsing, diffkontroll og iOS build-for-testing består; XCTest ikke kjørt fordi simulatoren ikke er tilgjengelig. AUTO-004 opprettet AUTO-383; neste: AUTO-381/382/383."
 }

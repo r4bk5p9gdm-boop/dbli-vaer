@@ -1166,6 +1166,30 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(alwaysActiveCabinRules.allSatisfy { !$0.onlyWhenNearby })
     }
 
+    func testWizardPresetSelectionsAreIndependentForHomeAndCabin() {
+        var selections = WizardPresetSelections()
+        let sharedPresetID = "frost-natt"
+
+        XCTAssertTrue(selections.ids(for: .home).contains(sharedPresetID))
+        XCTAssertTrue(selections.ids(for: .cabin).contains(sharedPresetID))
+
+        selections.set(sharedPresetID, selected: false, for: .home)
+        XCTAssertFalse(selections.ids(for: .home).contains(sharedPresetID))
+        XCTAssertTrue(selections.ids(for: .cabin).contains(sharedPresetID))
+
+        selections.set(sharedPresetID, selected: false, for: .cabin)
+        XCTAssertFalse(selections.ids(for: .home).contains(sharedPresetID))
+        XCTAssertFalse(selections.ids(for: .cabin).contains(sharedPresetID))
+
+        selections.set(sharedPresetID, selected: true, for: .home)
+        XCTAssertTrue(selections.ids(for: .home).contains(sharedPresetID))
+        XCTAssertFalse(selections.ids(for: .cabin).contains(sharedPresetID))
+
+        selections.set(sharedPresetID, selected: true, for: .cabin)
+        XCTAssertTrue(selections.ids(for: .home).contains(sharedPresetID))
+        XCTAssertTrue(selections.ids(for: .cabin).contains(sharedPresetID))
+    }
+
     func testEveryRulePresetHasCompleteAndConsistentDisplayCopy() {
         let presets = RulePreset.all
         XCTAssertFalse(presets.isEmpty)

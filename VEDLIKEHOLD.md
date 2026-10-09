@@ -1617,10 +1617,12 @@ eller oppdateringstid blir lagret, og at avbruddet ikke vises som nettverksfeil.
 Swift-parsing, diffkontroll og iOS `build-for-testing` består; XCTest kunne ikke
 kjøres fordi CoreSimulator-/enhetstjenesten er utilgjengelig.
 
-**AUTO-380 · ÅPEN** — Trekk veiviserens valgte varsel-ID-er per sted og
-kategori ut i en liten modell. Legg til regresjon som bekrefter at å slå et
-forslag av eller på for hjemstedet ikke endrer hyttevalget, og omvendt, også
-når samme preset finnes i begge standardlistene.
+**AUTO-380 · FULLFØRT 2026-10-09** — Trakk hjemstedets og hyttas valgte
+varsel-ID-er inn i `WizardPresetSelections` og koblet både kortoppsummering,
+av/på-bindinger og lagring til modellen. Regresjonstesten slår det delte
+`frost-natt`-forslaget av og på på hvert sted etter tur og bekrefter at det
+andre stedet ikke endres. Swift-parsing, diffkontroll og iOS
+`build-for-testing` består; XCTest kunne ikke kjøres uten simulator.
 
 **AUTO-381 · ÅPEN** — Samle veiviserens kategori→preset-filtrering i én
 testbar kilde og bruk den også i kortvisningen. Utvid regresjonen slik at hver
@@ -1630,6 +1632,11 @@ utenfor kategorien.
 **AUTO-382 · ÅPEN** — Legg til persistensregresjon for oppstartsveiviserens
 stedsspesifikke regler: hyttevarsel med `onlyWhenNearby` skal overleve
 Store-gjenoppretting uten å endre hjemstedets regler eller nærhetsvalg.
+
+**AUTO-383 · ÅPEN** — Trekk veiviserens kontroll av allerede eksisterende
+regler inn i en testbar hjelpefunksjon. Legg til regresjon som sikrer at valg
+av et preset ikke lager duplikat med samme `templateTitle`, og samtidig
+beholder andre regler for stedet.
 
 **BRUKER-038 · FULLFØRT 2026-09-17** — Flyttet redigeringsknappen fra
 temperatur-/ikonlinjen til nedre høyre hjørne av den rullerende Nå-bolken.
