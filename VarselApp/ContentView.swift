@@ -135,7 +135,8 @@ struct ContentView: View {
             positionID: store.currentLocationPlaceID,
             homeID: UUID(uuidString: homePlaceID) ?? store.selected?.id,
             cabinID: UUID(uuidString: cabinPlaceID),
-            availableIDs: Set(store.places.map(\.id))
+            availableIDs: Set(store.places.map(\.id)),
+            languageStyle: store.alertLanguageStyle
         )
     }
 
@@ -191,8 +192,10 @@ struct ContentView: View {
                     systemImage: item.systemImage,
                     isSelected: selectedTab == .home && selectedQuickPlaceID == item.placeID,
                     showsLiveDot: item.representsCurrentPosition,
-                    accessibilityLabel: item.accessibilityLabel,
-                    accessibilityHint: item.representsCurrentPosition ? "Viser vær for live-posisjonen" : "Viser vær for dette stedet"
+                    accessibilityLabel: item.accessibilityLabel(languageStyle: store.alertLanguageStyle),
+                    accessibilityHint: item.representsCurrentPosition
+                        ? (store.alertLanguageStyle == .english ? "Shows weather for your live GPS location" : WeatherLanguage.text("Viser vær for live-posisjonen", style: store.alertLanguageStyle))
+                        : (store.alertLanguageStyle == .english ? "Shows weather for this place" : WeatherLanguage.text("Viser vær for dette stedet", style: store.alertLanguageStyle))
                 ) {
                     guard let place = store.places.first(where: { $0.id == item.placeID }) else { return }
                     store.select(place, fromCurrentLocation: item.representsCurrentPosition)

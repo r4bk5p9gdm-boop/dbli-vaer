@@ -54,6 +54,12 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-440 · ÅPEN** — Lokaliser de faste «Steder» og «Innstillinger»-snarveiene.
+De tre stedssnarveiene følger nå språkvalget, men de to faste menyvalgene i
+samme navigasjonslinje er fortsatt bokmål. Bruk samme språkstil for synlige
+etiketter og VoiceOver-navn, og dekk bokmål, inntrøndersk og engelsk uten å
+endre fanenes handling eller plassering.
+
 **AUTO-439 · ÅPEN** — La hurtignavigasjonens tekst respektere større tekststørrelser.
 Snarveiknappenes titler bruker nå `.system(size: 10)` og
 `minimumScaleFactor`, som kan bli vanskelig å lese og ikke følger Dynamic Type.
@@ -68,12 +74,11 @@ utvidelsen feilaktig følger med til det nye stedet; knytt tilstanden til
 stedets ID og legg til en målrettet regresjon for identitet/bytte uten å
 beregne varsler for andre steder.
 
-**AUTO-437 · ÅPEN** — Lokaliser hurtigmenyen for valgt språk.
-Stedsfanene «Her!», «Hjem» og «Hytta» samt VoiceOver-etikettene og hintene
-bygges nå med faste bokmålstekster, mens resten av Hjem-visningen har engelske
-varianter. Bruk appens valgte språkstil i disse tekstene, og dekk sammenslåtte
-posisjons-/hjemmeroller med regresjonstester uten å endre rekkefølge eller
-navigasjonsatferd.
+**AUTO-437 · FULLFØRT 2026-10-10** — Hurtignavigasjonens stedstitler og
+VoiceOver-etiketter/hint følger nå valgt bokmål, inntrøndersk eller engelsk.
+Engelsk bruker «Here!», «Home», «Cabin» og «live GPS location»; eksisterende
+rolle-sammenslåing, rekkefølge og valg er uendret. Regresjonstesten dekker
+sammenslått Here!/Home og engelske tilgjengelighetsetiketter.
 
 **AUTO-436 · FULLFØRT 2026-10-10** — Timekortene får nå stedets koordinater
 og bruker `SolarCycle.isDaylight` ved prognosetimen. Klart vær viser

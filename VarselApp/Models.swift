@@ -90,8 +90,11 @@ enum HomeSwipeSelection {
 
         var id: UUID { placeID }
 
-        var accessibilityLabel: String {
-            representsCurrentPosition ? "\(title), GPS-posisjon, live" : title
+        func accessibilityLabel(languageStyle: AlertLanguageStyle) -> String {
+            guard representsCurrentPosition else { return title }
+            let locationStatus = languageStyle == .english ? "live GPS location" :
+                WeatherLanguage.text("GPS-posisjon, live", style: languageStyle)
+            return "\(title), \(locationStatus)"
         }
     }
 
@@ -104,7 +107,8 @@ enum HomeSwipeSelection {
         positionID: UUID?,
         homeID: UUID?,
         cabinID: UUID?,
-        availableIDs: Set<UUID>
+        availableIDs: Set<UUID>,
+        languageStyle: AlertLanguageStyle = .bokmal
     ) -> [NavigationDestination] {
         var result: [NavigationDestination] = []
         func append(_ id: UUID?, title: String, systemImage: String, isPosition: Bool = false) {
@@ -122,9 +126,12 @@ enum HomeSwipeSelection {
             }
         }
 
-        append(positionID, title: "Her!", systemImage: "location.fill", isPosition: true)
-        append(homeID, title: "Hjem", systemImage: "house.fill")
-        append(cabinID, title: "Hytta", systemImage: "house.fill")
+        let positionTitle = languageStyle == .english ? "Here!" : WeatherLanguage.text("Her!", style: languageStyle)
+        let homeTitle = languageStyle == .english ? "Home" : WeatherLanguage.text("Hjem", style: languageStyle)
+        let cabinTitle = languageStyle == .english ? "Cabin" : WeatherLanguage.text("Hytta", style: languageStyle)
+        append(positionID, title: positionTitle, systemImage: "location.fill", isPosition: true)
+        append(homeID, title: homeTitle, systemImage: "house.fill")
+        append(cabinID, title: cabinTitle, systemImage: "house.fill")
         return result
     }
 
