@@ -54,6 +54,12 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-444 · ÅPEN** — Lokaliser VoiceOver-etiketten for redigering av varsler.
+Penneknappen ved værkortets varseloversikt har fast bokmålsnavn («Rediger
+varsler for …») også i engelsk modus. Bruk kortets språkstil for knappens
+tilgjengelighetsetikett, behold ikon og layout uendret, og dekk bokmål,
+inntrøndersk og engelsk med en regresjonstest.
+
 **AUTO-443 · ÅPEN** — Lokaliser VoiceOver-sidetelleren i Hjem.
 Hjemmets «Stedside X av Y»-etikett på sideprikkene er fortsatt bokmål når
 engelsk er valgt. Bruk samme språkstil for VoiceOver-teksten og dekk
@@ -67,11 +73,13 @@ trykkmål. Legg til en repeterbar simulator-/UI-kontroll for fem destinasjoner
 ved tilgjengelighetsstørrelse; kontroller klipping, rekkefølge og at hver
 knapp fortsatt kan aktiveres.
 
-**AUTO-441 · ÅPEN** — Lokaliser VoiceOver-teksten for GPS-merket på Hjem.
-`LocationPresenceBadge` viser visuelt bare «GPS», men den tilgjengelige
-etiketten er fast bokmål («GPS-posisjon, live») selv i engelsk språkstil.
-La merket motta valgt språkstil, behold den kompakte visuelle teksten, og test
-VoiceOver-etiketten for bokmål, inntrøndersk og engelsk.
+**AUTO-441 · FULLFØRT 2026-10-10** — GPS-merket på Hjem beholder den synlige,
+kompakte «GPS»-teksten, mens VoiceOver-etikett og hint nå følger valgt
+språkstil: engelsk bruker «Live GPS location» og engelsk hjelpetekst;
+bokmål/inntrøndersk bruker appens språkbehandling. Samme lokalisering brukes
+for den samlede tilgjengelighetsteksten på GPS-stedet. Regresjonstest dekker
+etikett og hint; Swift-parsing, JSON-validering og diffkontroll består. Full
+Xcode/XCTest-kjøring ble ikke utført på grunn av kjent SwiftUIMacros-feil.
 
 **AUTO-440 · FULLFØRT 2026-10-10** — De faste «Steder» og «Innstillinger»-
 snarveiene bruker nå valgt bokmål, inntrøndersk eller engelsk. Engelsk viser

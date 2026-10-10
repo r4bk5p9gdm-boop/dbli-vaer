@@ -3,6 +3,7 @@ import CoreLocation
 
 private struct LocationPresenceBadge: View {
     let course: CLLocationDirection?
+    let languageStyle: AlertLanguageStyle
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var shouldPulse: Bool {
@@ -33,7 +34,7 @@ private struct LocationPresenceBadge: View {
         }
         .fixedSize()
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("GPS-posisjon, live")
+        .accessibilityLabel(LocationPresenceAccessibilityCopy.label(languageStyle: languageStyle))
     }
 }
 
@@ -678,7 +679,7 @@ private struct CurrentWeatherCard: View {
                     .rotationEffect(.degrees(-2))
                     // Overlay leaves the original text baseline and card height unchanged.
                     .overlay(alignment: .topLeading) {
-                        LocationPresenceBadge(course: locationCourse)
+                        LocationPresenceBadge(course: locationCourse, languageStyle: languageStyle)
                             .offset(x: 7, y: -19)
                     }
                     .accessibilityElement(children: .contain)
@@ -853,8 +854,8 @@ private struct CurrentWeatherCard: View {
         .foregroundStyle(.white)
         .fixedSize(horizontal: false, vertical: true)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(languageStyle == .english ? "Here \(place.nameWithPreposition)" : heading.visibleText), GPS-posisjon")
-        .accessibilityHint("Dette stedet følger telefonens aktuelle posisjon.")
+        .accessibilityLabel("\(languageStyle == .english ? "Here \(place.nameWithPreposition)" : heading.visibleText), \(LocationPresenceAccessibilityCopy.label(languageStyle: languageStyle))")
+        .accessibilityHint(LocationPresenceAccessibilityCopy.hint(languageStyle: languageStyle))
     }
 
     private var precipitationMetricValue: String {

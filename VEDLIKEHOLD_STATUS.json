@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-10T04:11:03Z",
+  "lastScheduledStart": "2026-10-10T04:41:03Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-440 fullført: de faste Steder- og Innstillinger-knappene følger nå valgt språkstil; engelsk viser Places og Settings, mens inntrøndersk bruker appens språktransformasjon. Regresjonstest dekker begge labels for bokmål, inntrøndersk og engelsk. Swift-parsing, JSON-validering og diffkontroll består; Xcode/XCTest ble ikke kjørt grunnet kjent SwiftUIMacros-byggblokkering. Bred gjennomgang fant at Hjems tilgjengelighetsetikett for sideprikker fortsatt er bokmål i engelsk modus; AUTO-443 dekker lokalisering uten visuell endring. Neste kø: AUTO-441, AUTO-442 og AUTO-443."
+  "lastProgress": "AUTO-441 fullført: GPS-merket beholder synlig «GPS», mens VoiceOver-etikett og hint følger valgt språkstil; samme lokalisering brukes på GPS-stedets samlede tilgjengelighetstekst. Regresjonstest dekker bokmål, inntrøndersk og engelsk. Swift-parsing, JSON-validering og diffkontroll består; XCTest ikke kjørt grunnet kjent SwiftUIMacros-byggblokkering. Bred Hjem-gjennomgang fant også den faste bokmåls-VoiceOver-teksten på varselredigeringsknappen; AUTO-444 dekker lokalisering uten layoutendring. Neste kø: AUTO-442, AUTO-443 og AUTO-444."
 }

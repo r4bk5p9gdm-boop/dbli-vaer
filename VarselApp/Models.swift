@@ -1357,6 +1357,20 @@ struct CurrentLocationPlaceHeading: Equatable {
     var visibleText: String { "\(prefixedPreposition) \(placeName)" }
 }
 
+enum LocationPresenceAccessibilityCopy {
+    static func label(languageStyle: AlertLanguageStyle) -> String {
+        languageStyle == .english
+            ? "Live GPS location"
+            : WeatherLanguage.text("GPS-posisjon, live", style: languageStyle)
+    }
+
+    static func hint(languageStyle: AlertLanguageStyle) -> String {
+        languageStyle == .english
+            ? "This place follows the phone’s current location."
+            : WeatherLanguage.text("Dette stedet følger telefonens aktuelle posisjon.", style: languageStyle)
+    }
+}
+
 enum PlaceOrdering {
     static func automatic(_ places: [Place], favorite1ID: UUID?, favorite2ID: UUID?, homeID: UUID?) -> [Place] {
         let byID = Dictionary(uniqueKeysWithValues: places.map { ($0.id, $0) })

@@ -6736,6 +6736,29 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(LiveLocationBadgeMotionPolicy.shouldPulse(reduceMotion: true))
     }
 
+    func testLocationPresenceAccessibilityCopyFollowsLanguageStyle() {
+        XCTAssertEqual(
+            LocationPresenceAccessibilityCopy.label(languageStyle: .bokmal),
+            "GPS-posisjon, live"
+        )
+        XCTAssertEqual(
+            LocationPresenceAccessibilityCopy.label(languageStyle: .inntrondersk),
+            WeatherLanguage.text("GPS-posisjon, live", style: .inntrondersk)
+        )
+        XCTAssertEqual(
+            LocationPresenceAccessibilityCopy.label(languageStyle: .english),
+            "Live GPS location"
+        )
+        XCTAssertEqual(
+            LocationPresenceAccessibilityCopy.hint(languageStyle: .bokmal),
+            "Dette stedet følger telefonens aktuelle posisjon."
+        )
+        XCTAssertEqual(
+            LocationPresenceAccessibilityCopy.hint(languageStyle: .english),
+            "This place follows the phone’s current location."
+        )
+    }
+
     func testYrFixturePrefersDetailedHourOverOverlappingSixHourEstimate() throws {
         let forecast = try YrService.decodeLocationForecast(Self.locationForecastFixture)
         var calendar = Calendar(identifier: .gregorian)
