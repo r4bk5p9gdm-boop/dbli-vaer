@@ -980,6 +980,30 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(AlertType.frost.systemImage, "snowflake")
     }
 
+    func testForecastSymbolMatchesConditionClassificationAtEveryWeatherBoundary() {
+        let cases: [(ForecastHour, String)] = [
+            (ForecastHour(time: base, temp: 8, precip: 0.099, wind: 1, cloud: 80, dew: 5), "cloud.fill"),
+            (ForecastHour(time: base, temp: 8, precip: 0.1, wind: 1, cloud: 80, dew: 5), "cloud.rain.fill"),
+            (ForecastHour(time: base, temp: 1, precip: 0.1, wind: 1, cloud: 80, dew: 0), "cloud.snow.fill"),
+            (ForecastHour(time: base, temp: 1.01, precip: 0.1, wind: 1, cloud: 80, dew: 0), "cloud.rain.fill"),
+            (ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 80, dew: 5, fog: 49.9), "cloud.fill"),
+            (ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 80, dew: 5, fog: 50), "cloud.fog.fill"),
+            (ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 20, dew: 5), "sun.max.fill"),
+            (ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 20.1, dew: 5), "cloud.sun.fill"),
+            (ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 65, dew: 5), "cloud.sun.fill"),
+            (ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 65.1, dew: 5), "cloud.fill")
+        ]
+
+        for (hour, expectedSymbol) in cases {
+            let condition = CurrentWeatherCondition.resolve(
+                hour,
+                precipitationIsFalling: hour.precipitationRate >= 0.1
+            )
+            XCTAssertEqual(forecastSymbol(hour), expectedSymbol)
+            XCTAssertEqual(condition.systemImage, expectedSymbol)
+        }
+    }
+
     func testFogMarkerInSolarBandUsesSunHazeOnlyWhenSolarCellShowsSun() {
         let foggy = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 95, dew: 7, fog: 50)
         let clearVisibility = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 95, dew: 7, fog: 49.9)

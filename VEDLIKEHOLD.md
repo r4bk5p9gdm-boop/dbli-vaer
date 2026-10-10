@@ -54,6 +54,11 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-436 · ÅPEN** — Sørg for at timekort ikke viser solsymboler om natten.
+Skill værtype fra lokal dagslysstatus for klare og delvis skyete timer, og bruk
+egnede nattsymboler etter lokal solnedgang. Legg til grensetester rundt
+solnedgang for Klingas koordinater, uten å endre regn-, tåke- eller snøsymboler.
+
 **AUTO-435 · ÅPEN** — Respekter «Reduser bevegelse» i live-GPS-merket.
 Pilen pulserer nå kontinuerlig; behold tydelig GPS-/live-status uten
 evigvarende bevegelse når tilgjengelighetsinnstillingen er aktiv, og dekk
@@ -66,11 +71,13 @@ duplisert eller misvisende tale. Dekk den rollebaserte etiketten med en
 deterministisk test, og kontroller SwiftUI-atferden på iPhone når enhet er
 tilgjengelig.
 
-**AUTO-433 · ÅPEN** — Samle timeprognosens symbol- og tilstandsvalg i én
-testbar værklassifisering. Dagens symbol og etikett har nærliggende, men
-uavhengige terskler for nedbør, tåke og skydekke; en felles beslutning med
-grensetester vil hindre at et ikon og VoiceOver beskriver ulikt vær ved
-grenseverdiene.
+**AUTO-433 · FULLFØRT 2026-10-10** — Timekortet bruker nå samme
+`CurrentWeatherCondition`-klassifisering som værbeskrivelsen i stedet for å
+gjenta egne terskler for regn, snø, tåke og skydekke. Regresjonstesten dekker
+begge sider av hver grense og bekrefter samsvar mellom symbolhjelperen og
+klassifiseringen. Swift-parsing, JSON-validering og diffkontroll består;
+XCTest/build ble utsatt fordi disken har 8,2 GB ledig og prosjektet fortsatt
+har den kjente SwiftUIMacros-feilen.
 
 **AUTO-432 · FULLFØRT 2026-10-10** — Trakk GPS-overskriftens tekstverdier ut
 i `CurrentLocationPlaceHeading`. Visningen bruker nå den samme presentasjonen

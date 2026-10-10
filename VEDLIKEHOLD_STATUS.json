@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-10T00:11:02Z",
+  "lastScheduledStart": "2026-10-10T00:41:03Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-432 fullført: GPS-tittelens tekstverdier er nå samlet i en ren presentasjon, og Hjem-visningen bruker den uten å endre stedsnavnet. Regresjonstest låser liten 'her ' foran alle 15 lagrede preposisjoner, inklusive nøyaktig 'her på Klinga'. Swift-parsing, JSON-validering og diffkontroll består; XCTest ble utsatt fordi disken er 98 % full og prosjektet fortsatt har kjent SwiftUIMacros-feil. AUTO-435 ble lagt til etter bred gjennomgang for å sikre at live-GPS-animasjonen følger Reduser bevegelse. Neste kø: AUTO-433, AUTO-434 og AUTO-435."
+  "lastProgress": "AUTO-433 fullført: timekortets værikon deler nå CurrentWeatherCondition-klassifiseringen med etiketten i stedet for å ha parallelle terskler. Regresjonstest dekker regn/snø, tåke og skygrenser på begge sider. Swift-parsing, JSON-validering og diffkontroll består; full bygg/test ble utsatt med 8,2 GB ledig diskplass og kjent SwiftUIMacros-feil. Bred køgjennomgang avdekket AUTO-436: timekort kan vise solsymbol etter lokal solnedgang. Neste kø: AUTO-434, AUTO-435 og AUTO-436."
 }

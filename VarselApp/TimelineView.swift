@@ -275,7 +275,7 @@ private struct TimeCardsForecast: View {
                     VStack(spacing: 6) {
                         Text(label.display)
                             .font(.caption.weight(.semibold))
-                        Image(systemName: forecastSymbol(hour))
+                        Image(systemName: condition.systemImage)
                             .font(.title3)
                             .symbolRenderingMode(.multicolor)
                             .frame(height: 24)
@@ -1047,11 +1047,10 @@ func localHourComponent(_ date: Date, calendar: Calendar = .autoupdatingCurrent)
 }
 
 func forecastSymbol(_ hour: ForecastHour) -> String {
-    if hour.precipitationRate >= 0.1 { return hour.temp <= 1 ? "cloud.snow.fill" : "cloud.rain.fill" }
-    if (hour.fog ?? 0) >= 50 { return "cloud.fog.fill" }
-    if hour.cloud <= 20 { return "sun.max.fill" }
-    if hour.cloud <= 65 { return "cloud.sun.fill" }
-    return "cloud.fill"
+    CurrentWeatherCondition.resolve(
+        hour,
+        precipitationIsFalling: hour.precipitationRate >= 0.1
+    ).systemImage
 }
 
 func solarBandFogLevel(_ hour: ForecastHour) -> Double? {
