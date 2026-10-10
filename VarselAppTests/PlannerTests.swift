@@ -9189,6 +9189,21 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testFixedNavigationLabelsFollowSelectedLanguageStyle() {
+        XCTAssertEqual(
+            FixedNavigationDestination.allCases.map { $0.title(languageStyle: .bokmal) },
+            ["Steder", "Innstillinger"]
+        )
+        XCTAssertEqual(
+            FixedNavigationDestination.allCases.map { $0.title(languageStyle: .inntrondersk) },
+            ["Steder", "Innstillinger"]
+        )
+        XCTAssertEqual(
+            FixedNavigationDestination.allCases.map { $0.title(languageStyle: .english) },
+            ["Places", "Settings"]
+        )
+    }
+
     func testQuickNavigationDropsMissingRolesAndDeduplicatesCabinOverlap() {
         let position = UUID(), cabin = UUID(), deletedHome = UUID()
         let destinations = HomeSwipeSelection.navigationDestinations(

@@ -202,10 +202,18 @@ struct ContentView: View {
                     selectedTab = .home
                 }
             }
-            navigationButton("Steder", systemImage: "mappin.and.ellipse", isSelected: selectedTab == .places) {
+            navigationButton(
+                FixedNavigationDestination.places.title(languageStyle: store.alertLanguageStyle),
+                systemImage: "mappin.and.ellipse",
+                isSelected: selectedTab == .places
+            ) {
                 selectedTab = .places
             }
-            navigationButton("Innstillinger", systemImage: "gearshape", isSelected: selectedTab == .settings) {
+            navigationButton(
+                FixedNavigationDestination.settings.title(languageStyle: store.alertLanguageStyle),
+                systemImage: "gearshape",
+                isSelected: selectedTab == .settings
+            ) {
                 selectedTab = .settings
             }
         }

@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-10T03:41:03Z",
+  "lastScheduledStart": "2026-10-10T04:11:03Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-439 fullført: hurtigmenyens tekst bruker nå Dynamic-Type-skalert caption2 i stedet for fast 10-punkts tekst; lange etiketter kan gå over to linjer, med uendret rekkefølge og samme minimumsmål. Swift-parsing, JSON-validering og diffkontroll består. Simulator-/XCTest-layoutkontroll ble ikke kjørt; diskplassen er begrenset og den kjente SwiftUIMacros-feilen gjør full bygging upålitelig. Bred gjennomgang fant at UI-layout ikke kan verifiseres av PlannerTests alene; AUTO-442 dekker repeterbar tilgjengelighetsstørrelse-kontroll med fem destinasjoner. Neste kø: AUTO-440, AUTO-441 og AUTO-442."
+  "lastProgress": "AUTO-440 fullført: de faste Steder- og Innstillinger-knappene følger nå valgt språkstil; engelsk viser Places og Settings, mens inntrøndersk bruker appens språktransformasjon. Regresjonstest dekker begge labels for bokmål, inntrøndersk og engelsk. Swift-parsing, JSON-validering og diffkontroll består; Xcode/XCTest ble ikke kjørt grunnet kjent SwiftUIMacros-byggblokkering. Bred gjennomgang fant at Hjems tilgjengelighetsetikett for sideprikker fortsatt er bokmål i engelsk modus; AUTO-443 dekker lokalisering uten visuell endring. Neste kø: AUTO-441, AUTO-442 og AUTO-443."
 }

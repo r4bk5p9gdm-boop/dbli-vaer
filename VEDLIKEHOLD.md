@@ -54,6 +54,12 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-443 · ÅPEN** — Lokaliser VoiceOver-sidetelleren i Hjem.
+Hjemmets «Stedside X av Y»-etikett på sideprikkene er fortsatt bokmål når
+engelsk er valgt. Bruk samme språkstil for VoiceOver-teksten og dekk
+bokmål, inntrøndersk og engelsk med en ren regresjonstest; behold den
+visuelle indikatorens størrelse og rekkefølge.
+
 **AUTO-442 · ÅPEN** — Verifiser hurtigmenyens faktiske layout med stor tekst.
 AUTO-439 gjør etikettene Dynamic-Type-tilpasset og lar lange navn bruke to
 linjer, men PlannerTests kan ikke bekrefte SwiftUI-layout eller tilgjengelige
@@ -67,11 +73,12 @@ etiketten er fast bokmål («GPS-posisjon, live») selv i engelsk språkstil.
 La merket motta valgt språkstil, behold den kompakte visuelle teksten, og test
 VoiceOver-etiketten for bokmål, inntrøndersk og engelsk.
 
-**AUTO-440 · ÅPEN** — Lokaliser de faste «Steder» og «Innstillinger»-snarveiene.
-De tre stedssnarveiene følger nå språkvalget, men de to faste menyvalgene i
-samme navigasjonslinje er fortsatt bokmål. Bruk samme språkstil for synlige
-etiketter og VoiceOver-navn, og dekk bokmål, inntrøndersk og engelsk uten å
-endre fanenes handling eller plassering.
+**AUTO-440 · FULLFØRT 2026-10-10** — De faste «Steder» og «Innstillinger»-
+snarveiene bruker nå valgt bokmål, inntrøndersk eller engelsk. Engelsk viser
+«Places» og «Settings»; knappens VoiceOver-navn følger samme oversettelse,
+mens fanenes plassering og handling er uendret. Regresjonstest dekker begge
+etiketter i alle tre språkstiler. Swift-parsing og diffkontroll består; full
+Xcode/XCTest-kjøring ble ikke utført på grunn av kjent byggblokkering.
 
 **AUTO-439 · FULLFØRT 2026-10-10** — Hurtigmenyetikettene bruker nå den
 Dynamic-Type-skalerte `caption2`-stilen i stedet for fast 10-punkts tekst.

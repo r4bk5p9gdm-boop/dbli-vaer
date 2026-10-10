@@ -277,6 +277,25 @@ enum LanguageCatalog {
     }
 }
 
+enum FixedNavigationDestination: CaseIterable {
+    case places
+    case settings
+
+    func title(languageStyle: AlertLanguageStyle) -> String {
+        let bokmal: String
+        let english: String
+        switch self {
+        case .places:
+            bokmal = "Steder"
+            english = "Places"
+        case .settings:
+            bokmal = "Innstillinger"
+            english = "Settings"
+        }
+        return languageStyle == .english ? english : WeatherLanguage.text(bokmal, style: languageStyle)
+    }
+}
+
 enum WeatherTextSeparator: String, CaseIterable, Codable, Identifiable {
     case space, comma, bullet, dash
     var id: String { rawValue }
