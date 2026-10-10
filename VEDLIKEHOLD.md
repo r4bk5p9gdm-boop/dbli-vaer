@@ -107,11 +107,12 @@ brukbare tabellverdier. Swift-parsing og diffkontroll består; XCTest/build ble
 ikke kjørt fordi CoreSimulatorService er utilgjengelig og maskinen har 10 GB
 ledig diskplass.
 
-**AUTO-459 · ÅPEN** — Gjenopprett deling av inntil tre unike stedsnavn til
-widget/CarPlay. `SharedWidgetData.saveSharedPlaces` stopper for øyeblikket
-etter første element, mens regresjonstesten krever tre unike ID-er. Endre
-utvalget til å hoppe over duplikater og stoppe ved tre gyldige steder, og test
-rekkefølge, duplikater, grense og færre enn tre steder.
+**AUTO-459 · FULLFØRT 2026-10-10** — Widget/CarPlay-delingen samler nå de tre
+første unike stedene i samme rekkefølge som brukerens stedsliste. Duplikater
+hoppes over uten å bruke opp grensen, og færre enn tre steder deles som de er.
+Regresjonstesten kontrollerer rekkefølge, duplikater og grensen. Swift-parsing
+og diffkontroll består; XCTest/build ble ikke kjørt fordi CoreSimulatorService
+er utilgjengelig.
 
 **AUTO-460 · ÅPEN** — Ikke lag nye pushvarsler fra foreldede prognoser.
 `Store.isForecastStale` brukes i visningen, men `Store.replan()` gir alle
@@ -130,6 +131,14 @@ negativ verdi fra en importert konfigurasjon kan derfor skape urimelig arbeid
 eller ugyldig varselplan. Definer kompatible grenser/sanering for lagrede og
 importerte regler, og test både historiske standardverdier og ekstreme JSON-
 verdier uten å endre vanlige brukerinnstillinger.
+
+**AUTO-462 · ÅPEN** — Beskytt delte widget-/Watch-data mot entitlement-drift.
+`SharedWidgetData` bruker appgruppen `group.no.mathias.dblivaer`, og appen,
+widgeten, Watch-appen og Watch-widgeten trenger samme entitlement for å lese
+de samme UserDefaults-dataene. De fire entitlement-filene samsvarer nå, men
+ingen regresjonskontroll varsler hvis en senere mål-/konfigurasjonsendring
+fjerner gruppen fra én av dem. Legg til en lett, repeterbar prosjektkontroll
+for alle relevante entitlements/buildkonfigurasjoner.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

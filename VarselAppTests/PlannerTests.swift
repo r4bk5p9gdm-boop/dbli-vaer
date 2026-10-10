@@ -6383,6 +6383,7 @@ final class PlannerTests: XCTestCase {
         let summaries = SharedWidgetData.loadSharedPlaces()
         XCTAssertEqual(summaries.count, 3)
         XCTAssertEqual(Set(summaries.map(\.id)).count, 3)
+        XCTAssertEqual(summaries.map(\.id), [first.id, second.id, third.id])
     }
 
     func testSharedWidgetPlacesOnlyWriteWhenOrderOrContentChanges() {
