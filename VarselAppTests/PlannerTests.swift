@@ -9414,6 +9414,42 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(model.results.map(\.id), ["new"])
     }
 
+    func testPlaceSearchCopyUsesSelectedLanguageForControlsAndMessages() {
+        XCTAssertEqual(PlaceSearchCopy.searchPlaceholder(.english), "Search for a city or place")
+        XCTAssertEqual(PlaceSearchCopy.addPlaceTitle(.english), "Add place")
+        XCTAssertEqual(PlaceSearchCopy.close(.english), "Close")
+        XCTAssertEqual(PlaceSearchCopy.searchAreaTitle(.english), "Search area")
+        XCTAssertEqual(PlaceSearchCopy.searchArea(.norway, style: .english), "Norway")
+        XCTAssertEqual(PlaceSearchCopy.searchArea(.world, style: .english), "Worldwide")
+        XCTAssertEqual(PlaceSearchCopy.prepositionHeading(.english), "Write the place with")
+        XCTAssertEqual(PlaceSearchCopy.prepositionAccessibilityLabel(.english), "Preposition")
+        XCTAssertEqual(
+            PlacePreposition.allCases.map { PlaceSearchCopy.preposition($0, style: .english) },
+            ["on", "in", "inside", "in", "near", "on", "on", "in", "on", "near", "on", "in", "on", "at", "near"]
+        )
+        XCTAssertEqual(PlaceSearchCopy.noNorwayResults(.english), "No places found in Norway. Try “Worldwide” or a nearby place name.")
+        XCTAssertEqual(PlaceSearchCopy.noResults(.english), "No matching places found.")
+        XCTAssertEqual(PlaceSearchCopy.networkError(.english), "The search could not be completed. Check your connection and try again.")
+        XCTAssertEqual(PlaceSearchCopy.searchPlaceholder(.bokmal), "Søk etter by eller sted")
+        XCTAssertEqual(PlaceSearchCopy.searchArea(.world, style: .inntrondersk), WeatherLanguage.text("Hele verden", style: .inntrondersk))
+    }
+
+    @MainActor
+    func testPlaceSearchEmptyAndFailureMessagesUseRequestedLanguage() async {
+        let noNorwayResults = PlaceSearchModel { _, _ in [] }
+        noNorwayResults.query = "zz"
+        await noNorwayResults.search(languageStyle: .english)
+        XCTAssertEqual(noNorwayResults.message, PlaceSearchCopy.noNorwayResults(.english))
+
+        noNorwayResults.scope = .world
+        await noNorwayResults.search(languageStyle: .english)
+        XCTAssertEqual(noNorwayResults.message, PlaceSearchCopy.noResults(.english))
+
+        let failedSearch = PlaceSearchModel { _, _ in throw NSError(domain: "PlaceSearch", code: 1) }
+        failedSearch.query = "zz"
+        await failedSearch.search(languageStyle: .english)
+        XCTAssertEqual(failedSearch.message, PlaceSearchCopy.networkError(.english))
+    }
 
     private static let locationForecastFixture = Data("""
     {"properties":{"timeseries":[

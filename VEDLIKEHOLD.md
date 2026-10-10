@@ -79,25 +79,18 @@ Swift-parsing og diffkontroll består; iOS-bygg og XCTest er ikke kjørt i denne
 runden fordi maskinen har bare 10 GB ledig diskplass og testmålet har kjente
 kompileringsfeil.
 
-**AUTO-451 · ÅPEN** — Hindre at et eldre stedsøk overskriver resultater fra et
-nyere søk. `PlaceSearchView` starter både et kansellerbart debounce-søk og et
-frittstående søk ved tastaturets søkeknapp; det siste beholdes ikke som en
-kansellerbar oppgave når søketekst eller søkeområde endres. Legg til en
-generasjonsvakt eller tilsvarende og en deterministisk test med injisert
-søkeleverandør, slik at bare nyeste søk kan endre resultater/feilmelding.
+**AUTO-456 · ÅPEN** — Begrens ressursbruken ved import av værkonfigurasjon.
+`WeatherConfigurationDocument.init(data:)` dekoder hele den valgte JSON-filen
+uten størrelsesgrense. Avvis urimelig store filer før dekoding og dekk både
+grenseverdien og vanlig import med regresjonstest, slik at en utilsiktet stor
+fil ikke kan bruke opp appens minne.
 
-**AUTO-452 · ÅPEN** — Sikre at vertikal rulling og horisontalt Hjem-sveip ikke
-stjeler hverandres bevegelser. Hjem bruker samtidig `DragGesture` og lar
-`ScrollView` håndtere vertikale drag, mens sidebytte avgjøres ved slutten av
-bevegelsen. Legg til målrettede tester for vertikale, diagonale, korte og
-horisontale bevegelser, og juster retningsavgjørelsen dersom en vertikal
-scrolling kan endre valgt sted eller en horisontal sveipretning blir snudd.
-
-**AUTO-453 · ÅPEN** — Lokaliser hele stedsøket etter appens valgte språkstil.
-`PlaceSearchView` viser fortsatt hardkodet norsk for søkefelt, søkeområde,
-preposisjonsvalg, tomt resultat og nettverksfeil, selv om resten av appen
-støtter engelsk. Bruk eksisterende språkmodell/katalog uten å endre søkelogikk,
-og legg til tester for synlige etiketter og resultatmeldinger.
+**AUTO-455 · ÅPEN** — Valider geografiske koordinater ved gjenoppretting og
+før prognoseforespørsler. `Place` erstatter ikke-finite verdier med null, men
+beholder endelige koordinater utenfor gyldig bredde-/lengdegrad; avstands- og
+solberegningene avviser dem, mens lagring og prognoseflyt kan behandle dem som
+steder. Velg en trygg, konsistent håndtering og dekk import/gjenoppretting og
+forespørsel med tester.
 
 **AUTO-454 · ÅPEN** — Avgrens prognosenes ferskhetslogikk mot fremtidige
 tidsstempler. `Store.isForecastStale` og `shouldReplaceForecast` stoler på
@@ -105,6 +98,21 @@ lokalt lagret `forecastUpdatedAt`; hvis enhetens klokke stilles tilbake eller
 lagrede data inneholder et fremtidig tidspunkt, kan gammel prognose bli regnet
 fersk og hindre nyere data i å erstatte den. Definer en trygg håndtering av
 urimelig framtidige tidsstempler og dekk klokkeendring/persistens med tester.
+
+**AUTO-453 · FULLFØRT 2026-10-10** — Hele stedsøket følger nå valgt språkstil:
+søkefelt, søkeområde, preposisjoner, skjermleseretiketter, tomme resultater,
+nettverksfeil, tittel og lukkeknapp. Språkendring oppdaterer også en synlig
+søkemelding uten å endre søkelogikken. Regresjonstester dekker bokmål, engelsk,
+inntrøndersk språkvei og resultat-/feilmeldinger. Swift-parsering og JSON-
+validering består. iOS-testbygget stoppet i det eksisterende SwiftUI-makro-
+miljøet (`StateMacro` ga malformed response); simulatoren er utilgjengelig,
+så XCTest ble ikke kjørt. Signering og installasjon ble ikke berørt.
+
+**AUTO-452 · PÅ VENT 2026-10-10** — Verifisering av Hjem-sveip er satt på vent
+fordi `ContentView.swift` og `PlannerTests.swift` har ucommittede endringer som
+allerede endrer nettopp sveipegesten og retningstestene. Ikke overskriv eller
+ta eierskap over disse brukerendringene; gjenoppta etter at de er commitert
+eller brukeren ber om kontroll av den samlede endringen.
 
 **AUTO-449 · FULLFØRT 2026-10-10** — XCTest-målet kompilerer igjen.
 Forenklet gjentatte prognosedata-byggere i planleggertestene til en delt,

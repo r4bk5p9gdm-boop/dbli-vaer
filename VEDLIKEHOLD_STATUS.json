@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-10T12:20:51Z",
+  "lastScheduledStart": "2026-10-10T12:50:51Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-451 fullført: Stedsøk bruker en generasjonsvakt og injisert søkeleverandør, slik at bare nyeste svar kan endre resultater eller feilmelding. xcodebuild build-for-testing for iOS består; CoreSimulator mangler tilgjengelig runtime, så XCTest ble ikke kjørt. Bred gjennomgang fant også at fremtidige forecastUpdatedAt-verdier kan holde gammel prognose fersk; AUTO-454 er opprettet. Neste åpne kø fra fullskanning: AUTO-452, AUTO-453, AUTO-454."
+  "lastProgress": "AUTO-453 fullført: Stedsøket lokaliserer kontroller, preposisjoner, tilgjengelighetstekster og tom-/feiltilstander etter valgt språk; meldinger følger også språkbytte under søk. AUTO-452 satt PÅ VENT fordi brukerens ucommittede ContentView.swift og PlannerTests.swift endrer akkurat sveipegesten og retningstestene. Bred gjennomgang fant ugyldige lagrede koordinater som kan nå prognoseflyten (AUTO-455) og import uten filstørrelsesgrense (AUTO-456). Neste åpne AUTO-kø: AUTO-454, AUTO-455 og AUTO-456."
 }

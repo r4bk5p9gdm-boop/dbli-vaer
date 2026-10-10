@@ -15,6 +15,68 @@ enum PlaceSearchScope: String, CaseIterable, Identifiable {
     var id: String { rawValue }
 }
 
+enum PlaceSearchCopy {
+    static func searchPlaceholder(_ style: AlertLanguageStyle) -> String {
+        text("Søk etter by eller sted", english: "Search for a city or place", style: style)
+    }
+
+    static func addPlaceTitle(_ style: AlertLanguageStyle) -> String {
+        text("Legg til sted", english: "Add place", style: style)
+    }
+
+    static func close(_ style: AlertLanguageStyle) -> String {
+        text("Lukk", english: "Close", style: style)
+    }
+
+    static func searchAreaTitle(_ style: AlertLanguageStyle) -> String {
+        text("Søkeområde", english: "Search area", style: style)
+    }
+
+    static func searchArea(_ scope: PlaceSearchScope, style: AlertLanguageStyle) -> String {
+        return switch scope {
+        case .norway: text("Norge", english: "Norway", style: style)
+        case .world: text("Hele verden", english: "Worldwide", style: style)
+        }
+    }
+
+    static func prepositionHeading(_ style: AlertLanguageStyle) -> String {
+        text("Skriv stedet med", english: "Write the place with", style: style)
+    }
+
+    static func prepositionAccessibilityLabel(_ style: AlertLanguageStyle) -> String {
+        text("Preposisjon", english: "Preposition", style: style)
+    }
+
+    static func preposition(_ value: PlacePreposition, style: AlertLanguageStyle) -> String {
+        guard style == .english else { return WeatherLanguage.text(value.rawValue, style: style) }
+        return switch value {
+        case .pa, .oppa, .utpa, .bortpa, .nedpa, .innpa: "on"
+        case .i, .oppi, .nerri, .uti: "in"
+        case .inni: "inside"
+        case .borti, .oppmed, .nedmed: "near"
+        case .frammi: "at"
+        }
+    }
+
+    static func noNorwayResults(_ style: AlertLanguageStyle) -> String {
+        text("Fant ingen steder i Norge. Prøv «Hele verden» eller et navn i nærheten.",
+             english: "No places found in Norway. Try “Worldwide” or a nearby place name.", style: style)
+    }
+
+    static func noResults(_ style: AlertLanguageStyle) -> String {
+        text("Fant ingen steder som passer.", english: "No matching places found.", style: style)
+    }
+
+    static func networkError(_ style: AlertLanguageStyle) -> String {
+        text("Søket kunne ikke fullføres. Kontroller nettet og prøv igjen.",
+             english: "The search could not be completed. Check your connection and try again.", style: style)
+    }
+
+    private static func text(_ bokmal: String, english: String, style: AlertLanguageStyle) -> String {
+        style == .english ? english : WeatherLanguage.text(bokmal, style: style)
+    }
+}
+
 @MainActor
 final class PlaceSearchModel: ObservableObject {
     typealias SearchProvider = @MainActor (String, PlaceSearchScope) async throws -> [PlaceSearchResult]
@@ -36,7 +98,7 @@ final class PlaceSearchModel: ObservableObject {
         self.searchProvider = searchProvider ?? Self.searchMapKit
     }
 
-    func search() async {
+    func search(languageStyle: AlertLanguageStyle = .bokmal) async {
         searchGeneration &+= 1
         let generation = searchGeneration
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -58,13 +120,13 @@ final class PlaceSearchModel: ObservableObject {
             results = Array(found.prefix(25))
             if results.isEmpty {
                 message = scope == .norway
-                    ? "Fant ingen steder i Norge. Prøv «Hele verden» eller et navn i nærheten."
-                    : "Fant ingen steder som passer."
+                    ? PlaceSearchCopy.noNorwayResults(languageStyle)
+                    : PlaceSearchCopy.noResults(languageStyle)
             }
         } catch {
             guard !Task.isCancelled, generation == searchGeneration else { return }
             results = []
-            message = "Søket kunne ikke fullføres. Kontroller nettet og prøv igjen."
+            message = PlaceSearchCopy.networkError(languageStyle)
         }
     }
 
@@ -128,11 +190,11 @@ struct PlaceSearchView: View {
                 HStack(spacing: 9) {
                     Image(systemName: "magnifyingglass")
                         .foregroundStyle(.secondary)
-                    TextField("Søk etter by eller sted", text: $model.query)
+                    TextField(PlaceSearchCopy.searchPlaceholder(store.alertLanguageStyle), text: $model.query)
                         .textInputAutocapitalization(.words)
                         .autocorrectionDisabled()
                         .submitLabel(.search)
-                        .onSubmit { Task { await model.search() } }
+                        .onSubmit { Task { await model.search(languageStyle: store.alertLanguageStyle) } }
                     if !model.query.isEmpty {
                         Button {
                             model.query = ""
@@ -153,22 +215,22 @@ struct PlaceSearchView: View {
 
                 List {
                     Section {
-                        Picker("Søkeområde", selection: $model.scope) {
+                        Picker(PlaceSearchCopy.searchAreaTitle(store.alertLanguageStyle), selection: $model.scope) {
                             ForEach(PlaceSearchScope.allCases) { scope in
-                                Text(scope.rawValue).tag(scope)
+                                Text(PlaceSearchCopy.searchArea(scope, style: store.alertLanguageStyle)).tag(scope)
                             }
                         }
                         .pickerStyle(.segmented)
 
                         VStack(alignment: .leading, spacing: 9) {
-                            Text("Skriv stedet med")
+                            Text(PlaceSearchCopy.prepositionHeading(store.alertLanguageStyle))
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 6) {
                                     ForEach(PlacePreposition.allCases) { value in
                                         Button {
                                             preposition = value
                                         } label: {
-                                            Text(value.rawValue)
+                                            Text(PlaceSearchCopy.preposition(value, style: store.alertLanguageStyle))
                                                 .font(.caption.weight(.semibold))
                                                 .foregroundStyle(preposition == value ? Color.white : Color.primary)
                                                 .padding(.horizontal, 10)
@@ -183,7 +245,7 @@ struct PlaceSearchView: View {
                                 }
                             }
                             .accessibilityElement(children: .contain)
-                            .accessibilityLabel("Preposisjon")
+                            .accessibilityLabel(PlaceSearchCopy.prepositionAccessibilityLabel(store.alertLanguageStyle))
                         }
                     }
 
@@ -212,7 +274,7 @@ struct PlaceSearchView: View {
                             }
                         } label: {
                             VStack(alignment: .leading, spacing: 3) {
-                                Text("\(preposition.rawValue) \(result.name)").foregroundStyle(.primary)
+                                Text("\(PlaceSearchCopy.preposition(preposition, style: store.alertLanguageStyle)) \(result.name)").foregroundStyle(.primary)
                                 if !result.subtitle.isEmpty {
                                     Text(result.subtitle).font(.caption).foregroundStyle(.secondary)
                                 }
@@ -222,16 +284,16 @@ struct PlaceSearchView: View {
                 }
                 .listStyle(.insetGrouped)
             }
-            .navigationTitle("Legg til sted")
+            .navigationTitle(PlaceSearchCopy.addPlaceTitle(store.alertLanguageStyle))
             .navigationBarTitleDisplayMode(.inline)
-            .task(id: "\(model.scope.rawValue)|\(model.query)") {
+            .task(id: "\(model.scope.rawValue)|\(model.query)|\(store.alertLanguageStyle.rawValue)") {
                 try? await Task.sleep(for: .milliseconds(350))
                 guard !Task.isCancelled else { return }
-                await model.search()
+                await model.search(languageStyle: store.alertLanguageStyle)
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Lukk") { dismiss() }
+                    Button(PlaceSearchCopy.close(store.alertLanguageStyle)) { dismiss() }
                 }
             }
         }
