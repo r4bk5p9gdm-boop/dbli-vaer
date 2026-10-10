@@ -54,6 +54,12 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-441 · ÅPEN** — Lokaliser VoiceOver-teksten for GPS-merket på Hjem.
+`LocationPresenceBadge` viser visuelt bare «GPS», men den tilgjengelige
+etiketten er fast bokmål («GPS-posisjon, live») selv i engelsk språkstil.
+La merket motta valgt språkstil, behold den kompakte visuelle teksten, og test
+VoiceOver-etiketten for bokmål, inntrøndersk og engelsk.
+
 **AUTO-440 · ÅPEN** — Lokaliser de faste «Steder» og «Innstillinger»-snarveiene.
 De tre stedssnarveiene følger nå språkvalget, men de to faste menyvalgene i
 samme navigasjonslinje er fortsatt bokmål. Bruk samme språkstil for synlige
@@ -67,12 +73,11 @@ Bruk skalert typografi med en kompakt layout som fortsatt fungerer når fem
 destinasjoner vises, og verifiser stor tekst uten å endre rekkefølge eller
 trykkmål.
 
-**AUTO-438 · ÅPEN** — Avgrens «Vis alle varsler» til aktivt sted.
-Hjemmets kommende pushvarsler holder utvidet/kollapset tilstand i lokal
-SwiftUI-state. Når valgt sted byttes på samme Hjem-visning, kontroller om
-utvidelsen feilaktig følger med til det nye stedet; knytt tilstanden til
-stedets ID og legg til en målrettet regresjon for identitet/bytte uten å
-beregne varsler for andre steder.
+**AUTO-438 · FULLFØRT 2026-10-10** — Hjemmets kommende pushvarsler bruker nå
+den delte `PlaceExpansionState`-modellen i stedet for en ubundet boolsk
+SwiftUI-state. Utvidelsen sjekkes mot aktivt steds ID og kan derfor ikke vises
+som utvidet for et annet sted. Målrettet regresjon dekker bytte mellom Klinga
+og Hytta samt lukking; varselberegningen er fortsatt bare for aktivt sted.
 
 **AUTO-437 · FULLFØRT 2026-10-10** — Hurtignavigasjonens stedstitler og
 VoiceOver-etiketter/hint følger nå valgt bokmål, inntrøndersk eller engelsk.

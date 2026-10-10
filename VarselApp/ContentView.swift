@@ -479,7 +479,7 @@ private struct CurrentPlacePushAlertsSection: View {
     let notificationsAuthorized: Bool?
     let languageStyle: AlertLanguageStyle
 
-    @State private var showsAllAlerts = false
+    @State private var alertExpansion = PlaceExpansionState()
 
     private var plannedPushAlerts: [PlannedAlert] {
         Planner.planAll(
@@ -499,6 +499,7 @@ private struct CurrentPlacePushAlertsSection: View {
 
     var body: some View {
         let upcomingAlerts = plannedPushAlerts
+        let showsAllAlerts = alertExpansion.expandedPlaceID == place.id
         return VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 8) {
                 Image(systemName: "bell.badge.fill")
@@ -575,7 +576,7 @@ private struct CurrentPlacePushAlertsSection: View {
                     Button(showsAllAlerts
                            ? localized("Vis færre", english: "Show fewer")
                            : localized("Vis alle \(upcomingAlerts.count) varsler", english: "Show all \(upcomingAlerts.count) alerts")) {
-                        showsAllAlerts.toggle()
+                        alertExpansion.toggle(place.id)
                     }
                     .font(.footnote.weight(.semibold))
                     .padding(.top, 2)

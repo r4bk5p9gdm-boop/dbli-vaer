@@ -664,6 +664,22 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(WeatherStatus.uniqueByType([rainA, rainB, wind]), [rainA, wind])
     }
 
+    func testExpandedPushAlertsStayScopedToTheirPlace() {
+        let klinga = UUID(), cabin = UUID()
+        var expansion = PlaceExpansionState()
+
+        expansion.toggle(klinga)
+        XCTAssertEqual(expansion.expandedPlaceID, klinga)
+        XCTAssertNotEqual(expansion.expandedPlaceID, cabin)
+
+        expansion.toggle(cabin)
+        XCTAssertNotEqual(expansion.expandedPlaceID, klinga)
+        XCTAssertEqual(expansion.expandedPlaceID, cabin)
+
+        expansion.toggle(cabin)
+        XCTAssertNil(expansion.expandedPlaceID)
+    }
+
     func testHomeSwipeOrderKeepsCurrentPlaceBetweenDistinctFavorites() {
         let left = UUID(), current = UUID(), right = UUID()
         XCTAssertEqual(

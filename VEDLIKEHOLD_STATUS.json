@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-10T02:41:03Z",
+  "lastScheduledStart": "2026-10-10T03:11:03Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-437 fullført: stedssnarveienes titler og VoiceOver-etiketter/hint følger nå valgt bokmål, inntrøndersk eller engelsk. Beholdt sammenslåing/rekkefølge; regresjonstest dekker engelsk Here! · Home og Cabin med live GPS-etikett. Swift-parsing, JSON-validering og diffkontroll består; full Xcode-test/build er ikke kjørt i denne runden. Bred gjennomgang fant at de faste Steder- og Innstillinger-knappene i samme navigasjonslinje fortsatt er bokmål; AUTO-440 dekker synlig tekst og VoiceOver for valgt språk. Neste kø: AUTO-438, AUTO-439 og AUTO-440."
+  "lastProgress": "AUTO-438 fullført: Kommende pushvarsler knytter nå utvidet visning til aktivt steds ID via delt PlaceExpansionState, så utvidelse for Klinga ikke arves av Hytta; målrettet state-regresjon dekker bytte og lukking, uten ekstra varselberegning. Swift-parsing, JSON-validering og diffkontroll består; full Xcode-test/build er ikke kjørt. Bred appgjennomgang fant at GPS-merket på Hjem fremdeles har VoiceOver-etikett bare på bokmål selv ved engelsk språkvalg; AUTO-441 dekker tilgjengelig tekst for alle språkstilene. Neste kø: AUTO-439, AUTO-440 og AUTO-441."
 }
