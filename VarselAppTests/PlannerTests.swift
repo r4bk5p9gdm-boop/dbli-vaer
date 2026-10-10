@@ -9379,6 +9379,41 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    @MainActor
+    func testPlaceSearchPublishesOnlyNewestOverlappingRequest() async {
+        var pending: [String: CheckedContinuation<[PlaceSearchResult], Error>] = [:]
+        let oldStarted = expectation(description: "Older place search started")
+        let newStarted = expectation(description: "Newer place search started")
+        let model = PlaceSearchModel { query, _ in
+            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[PlaceSearchResult], Error>) in
+                pending[query] = continuation
+                (query == "old" ? oldStarted : newStarted).fulfill()
+            }
+        }
+
+        model.query = "old"
+        let oldSearch = Task { await model.search() }
+        await fulfillment(of: [oldStarted], timeout: 5)
+
+        model.query = "new"
+        let newSearch = Task { await model.search() }
+        await fulfillment(of: [newStarted], timeout: 5)
+
+        let newestResult = PlaceSearchResult(
+            id: "new", name: "Ny", subtitle: "", latitude: 64.4, longitude: 11.4
+        )
+        pending["new"]?.resume(returning: [newestResult])
+        await newSearch.value
+        XCTAssertEqual(model.results.map(\.id), ["new"])
+
+        let olderResult = PlaceSearchResult(
+            id: "old", name: "Gammel", subtitle: "", latitude: 64.5, longitude: 11.5
+        )
+        pending["old"]?.resume(returning: [olderResult])
+        await oldSearch.value
+        XCTAssertEqual(model.results.map(\.id), ["new"])
+    }
+
 
     private static let locationForecastFixture = Data("""
     {"properties":{"timeseries":[

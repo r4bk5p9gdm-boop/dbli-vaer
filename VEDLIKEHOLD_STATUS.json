@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-10T12:20:51Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-449 oppfølging fullført: De to siste typekontrolltunge forecast-fixture-uttrykkene er også erstattet med den typede testhjelperen. Sammen med JSON-sømmen for dokumentimport bygger XCTest-målet. Neste åpne kø etter fullskanning: AUTO-451, AUTO-452, AUTO-453."
+  "lastProgress": "AUTO-451 fullført: Stedsøk bruker en generasjonsvakt og injisert søkeleverandør, slik at bare nyeste svar kan endre resultater eller feilmelding. xcodebuild build-for-testing for iOS består; CoreSimulator mangler tilgjengelig runtime, så XCTest ble ikke kjørt. Bred gjennomgang fant også at fremtidige forecastUpdatedAt-verdier kan holde gammel prognose fersk; AUTO-454 er opprettet. Neste åpne kø fra fullskanning: AUTO-452, AUTO-453, AUTO-454."
 }

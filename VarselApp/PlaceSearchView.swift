@@ -1,7 +1,7 @@
 import MapKit
 import SwiftUI
 
-private struct PlaceSearchResult: Identifiable {
+struct PlaceSearchResult: Identifiable, Equatable {
     let id: String
     let name: String
     let subtitle: String
@@ -9,77 +9,103 @@ private struct PlaceSearchResult: Identifiable {
     let longitude: Double
 }
 
-private enum PlaceSearchScope: String, CaseIterable, Identifiable {
+enum PlaceSearchScope: String, CaseIterable, Identifiable {
     case norway = "Norge"
     case world = "Hele verden"
     var id: String { rawValue }
 }
 
 @MainActor
-private final class PlaceSearchModel: ObservableObject {
-    @Published var query = ""
+final class PlaceSearchModel: ObservableObject {
+    typealias SearchProvider = @MainActor (String, PlaceSearchScope) async throws -> [PlaceSearchResult]
+
+    @Published var query = "" {
+        didSet { searchGeneration &+= 1 }
+    }
     @Published var results: [PlaceSearchResult] = []
     @Published var isSearching = false
     @Published var message: String?
-    @Published var scope: PlaceSearchScope = .norway
+    @Published var scope: PlaceSearchScope = .norway {
+        didSet { searchGeneration &+= 1 }
+    }
+
+    private let searchProvider: SearchProvider
+    private var searchGeneration = 0
+
+    init(searchProvider: SearchProvider? = nil) {
+        self.searchProvider = searchProvider ?? Self.searchMapKit
+    }
 
     func search() async {
+        searchGeneration &+= 1
+        let generation = searchGeneration
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard trimmed.count >= 2 else {
             results = []
             message = nil
+            isSearching = false
             return
         }
         isSearching = true
         message = nil
-        defer { isSearching = false }
+        defer {
+            if generation == searchGeneration { isSearching = false }
+        }
 
         do {
-            let searchTerms = scope == .norway ? ["\(trimmed), Norge", trimmed] : [trimmed]
-            var items: [MKMapItem] = []
-            for term in searchTerms {
-                let request = MKLocalSearch.Request()
-                request.naturalLanguageQuery = term
-                request.resultTypes = [.address, .pointOfInterest]
-                if scope == .norway {
-                    request.region = MKCoordinateRegion(
-                        center: CLLocationCoordinate2D(latitude: 64.5, longitude: 11),
-                        span: MKCoordinateSpan(latitudeDelta: 15, longitudeDelta: 22)
-                    )
-                }
-                items.append(contentsOf: try await MKLocalSearch(request: request).start().mapItems)
-            }
-            guard !Task.isCancelled else { return }
-
-            var seen = Set<String>()
-            results = items.compactMap { item in
-                let placemark = item.placemark
-                if scope == .norway, placemark.isoCountryCode != "NO" { return nil }
-                let name = item.name ?? placemark.locality ?? trimmed
-                let latitude = placemark.coordinate.latitude
-                let longitude = placemark.coordinate.longitude
-                let key = "\(name.lowercased())|\(String(format: "%.4f", latitude))|\(String(format: "%.4f", longitude))"
-                guard seen.insert(key).inserted else { return nil }
-                let parts = [placemark.subLocality, placemark.locality, placemark.administrativeArea, placemark.country]
-                    .compactMap { $0 }
-                    .filter { $0.caseInsensitiveCompare(name) != .orderedSame }
-                return PlaceSearchResult(
-                    id: key,
-                    name: name,
-                    subtitle: parts.joined(separator: ", "),
-                    latitude: latitude,
-                    longitude: longitude
-                )
-            }.prefix(25).map { $0 }
+            let found = try await searchProvider(trimmed, scope)
+            guard !Task.isCancelled, generation == searchGeneration else { return }
+            results = Array(found.prefix(25))
             if results.isEmpty {
                 message = scope == .norway
                     ? "Fant ingen steder i Norge. Prøv «Hele verden» eller et navn i nærheten."
                     : "Fant ingen steder som passer."
             }
         } catch {
-            guard !Task.isCancelled else { return }
+            guard !Task.isCancelled, generation == searchGeneration else { return }
             results = []
             message = "Søket kunne ikke fullføres. Kontroller nettet og prøv igjen."
+        }
+    }
+
+    private static func searchMapKit(
+        _ query: String,
+        _ scope: PlaceSearchScope
+    ) async throws -> [PlaceSearchResult] {
+        let searchTerms = scope == .norway ? ["\(query), Norge", query] : [query]
+        var items: [MKMapItem] = []
+        for term in searchTerms {
+            let request = MKLocalSearch.Request()
+            request.naturalLanguageQuery = term
+            request.resultTypes = [.address, .pointOfInterest]
+            if scope == .norway {
+                request.region = MKCoordinateRegion(
+                    center: CLLocationCoordinate2D(latitude: 64.5, longitude: 11),
+                    span: MKCoordinateSpan(latitudeDelta: 15, longitudeDelta: 22)
+                )
+            }
+            items.append(contentsOf: try await MKLocalSearch(request: request).start().mapItems)
+        }
+
+        var seen = Set<String>()
+        return items.compactMap { item in
+            let placemark = item.placemark
+            if scope == .norway, placemark.isoCountryCode != "NO" { return nil }
+            let name = item.name ?? placemark.locality ?? query
+            let latitude = placemark.coordinate.latitude
+            let longitude = placemark.coordinate.longitude
+            let key = "\(name.lowercased())|\(String(format: "%.4f", latitude))|\(String(format: "%.4f", longitude))"
+            guard seen.insert(key).inserted else { return nil }
+            let parts = [placemark.subLocality, placemark.locality, placemark.administrativeArea, placemark.country]
+                .compactMap { $0 }
+                .filter { $0.caseInsensitiveCompare(name) != .orderedSame }
+            return PlaceSearchResult(
+                id: key,
+                name: name,
+                subtitle: parts.joined(separator: ", "),
+                latitude: latitude,
+                longitude: longitude
+            )
         }
     }
 }

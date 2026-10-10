@@ -121,6 +121,14 @@ tidligste tidspunkt ved suksess og feilrapportering ved avvisning.
 `xcodebuild build-for-testing` for iOS består; XCTest ble kompilert, men ikke
 kjørt i denne kjøringen.
 
+**AUTO-451 · FULLFØRT 2026-10-10** — Bare det nyeste stedsøket kan nå endre
+resultater eller feilmelding. Søkemodellen har en generasjonsvakt som
+ugyldiggjør eldre tastatursøk og debounce-søk når søketekst, søkeområde eller
+et nytt søk endres. En injisert søkeleverandør gir en deterministisk regresjon
+der det eldre svaret kommer sist. `xcodebuild build-for-testing` for iOS
+består; faktisk XCTest-kjøring ble blokkert fordi CoreSimulator ikke kunne
+starte eller finne en simulatorruntime i denne kjøringen.
+
 **AUTO-447 · FULLFØRT 2026-10-10** — Steder-kortenes åpne/lukkede
 VoiceOver-verdi og hint følger nå bokmål, inntrøndersk eller engelsk uten
 visuell eller handlingsmessig endring. Regresjonstest dekker begge tilstander
