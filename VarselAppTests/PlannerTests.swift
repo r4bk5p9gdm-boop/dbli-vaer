@@ -9227,6 +9227,21 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testAlertEditingAccessibilityLabelFollowsSelectedLanguageStyle() {
+        XCTAssertEqual(
+            AlertEditingAccessibilityCopy.label(placeName: "Klinga", languageStyle: .bokmal),
+            "Rediger varsler for Klinga"
+        )
+        XCTAssertEqual(
+            AlertEditingAccessibilityCopy.label(placeName: "Klinga", languageStyle: .inntrondersk),
+            "Rediger varsler for Klinga"
+        )
+        XCTAssertEqual(
+            AlertEditingAccessibilityCopy.label(placeName: "Klinga", languageStyle: .english),
+            "Edit alerts for Klinga"
+        )
+    }
+
     func testHomePageAccessibilityLabelFollowsSelectedLanguageStyle() {
         XCTAssertEqual(
             HomeSwipeSelection.pageAccessibilityLabel(index: 2, count: 5, languageStyle: .bokmal),

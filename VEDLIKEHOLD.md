@@ -54,6 +54,11 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-447 · ÅPEN** — Lokaliser Steder-radens VoiceOver-hint for åpning/lukking.
+`PlaceOverviewRow` har faste hint om å vise eller lukke værdetaljene, som
+ikke følger appens språkvalg. Lokaliser bare tilgjengelighetshintet, behold
+radpresentasjon og trykkhandling uendret, og dekk alle tre språkstiler.
+
 **AUTO-446 · ÅPEN** — Lokaliser tilgjengelighetsnavnene for Hjem-radvalg.
 Tilpass-sidens synlighetsbryter bruker en fast bokmåls-VoiceOver-etikett
 («Vis … på Hjem») selv når engelsk er valgt. Bruk valgt språkstil for
@@ -65,17 +70,19 @@ Steder-radene har faste VoiceOver-navn «Valgt sted» og «Hjemsted» uansett
 valgt språk. La tilgjengelighetsteksten følge valgt språkstil uten å endre
 radens synlige innhold, og dekk bokmål, inntrøndersk og engelsk.
 
-**AUTO-444 · ÅPEN** — Lokaliser VoiceOver-etiketten for redigering av varsler.
-Penneknappen ved værkortets varseloversikt har fast bokmålsnavn («Rediger
-varsler for …») også i engelsk modus. Bruk kortets språkstil for knappens
-tilgjengelighetsetikett, behold ikon og layout uendret, og dekk bokmål,
-inntrøndersk og engelsk med en regresjonstest.
+**AUTO-444 · FULLFØRT 2026-10-10** — Pennknappens synlige ikon og plassering er
+uendret, mens VoiceOver-navnet nå følger værkortets språkstil: «Rediger
+varsler for Klinga» på bokmål/inntrøndersk og «Edit alerts for Klinga» på
+engelsk. Regresjonstest dekker alle tre språkstilene. Swift-parsing,
+JSON-validering og diffkontroll består; XCTest kunne ikke kjøres grunnet kjent
+SwiftUIMacros-byggblokkering.
 
-**AUTO-443 · ÅPEN** — Lokaliser VoiceOver-sidetelleren i Hjem.
-Hjemmets «Stedside X av Y»-etikett på sideprikkene er fortsatt bokmål når
-engelsk er valgt. Bruk samme språkstil for VoiceOver-teksten og dekk
-bokmål, inntrøndersk og engelsk med en ren regresjonstest; behold den
-visuelle indikatorens størrelse og rekkefølge.
+**AUTO-443 · FULLFØRT 2026-10-10** — Hjemmets sideindikator beholder samme
+visuelle størrelse og plassering, mens VoiceOver nå sier «Place X of Y» på
+engelsk og bruker språkbehandlet bokmål/inntrøndersk ellers. Regresjonstest
+dekker alle tre språkstilene. Swift-parsing, JSON-validering og diffkontroll
+består; XCTest ble ikke kjørt fordi simulator/testinfrastruktur er
+utilgjengelig.
 
 **AUTO-442 · PÅ VENT 2026-10-10** — Verifiser hurtigmenyens faktiske layout
 med stor tekst.

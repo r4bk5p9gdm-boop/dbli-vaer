@@ -305,6 +305,13 @@ enum FixedNavigationDestination: CaseIterable {
     }
 }
 
+enum AlertEditingAccessibilityCopy {
+    static func label(placeName: String, languageStyle: AlertLanguageStyle) -> String {
+        if languageStyle == .english { return "Edit alerts for \(placeName)" }
+        return WeatherLanguage.text("Rediger varsler for \(placeName)", style: languageStyle)
+    }
+}
+
 enum WeatherTextSeparator: String, CaseIterable, Codable, Identifiable {
     case space, comma, bullet, dash
     var id: String { rawValue }

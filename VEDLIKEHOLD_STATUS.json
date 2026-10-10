@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-10T05:11:03Z",
+  "lastScheduledStart": "2026-10-10T05:41:04Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-442 ble satt PÅ VENT 2026-10-10: prosjektet mangler UI-testmål, og CoreSimulatorService avviser tilkobling uten tilgjengelig runtime. Køen fortsatte med AUTO-443, som nå bruker språkstil for Hjems sideindikators VoiceOver-navn uten visuell endring; regresjonstest dekker bokmål, inntrøndersk og engelsk. Swift-parsing, JSON-validering og diffkontroll består; XCTest ikke kjørt fordi simulator/testinfrastruktur er utilgjengelig. Bred gjennomgang fant også faste VoiceOver-rollemarkeringer i Steder-listen (AUTO-445) og en fast etikett for synlighetsbryteren i Tilpass (AUTO-446). Neste kø: AUTO-444, AUTO-445 og AUTO-446."
+  "lastProgress": "AUTO-444 fullført: varselkortets blyantknapp beholder ikon og plassering, og VoiceOver-navnet følger nå bokmål, inntrøndersk eller engelsk. Regresjonstest dekker Klinga på alle tre språk. Swift-parsing, JSON-validering og diffkontroll består; XCTest ikke kjørt grunnet kjent SwiftUIMacros-byggblokkering. Gjennomgang av Steder-visningen fant dessuten fast norsk hint for åpning/lukking av værdetaljer; AUTO-447 dekker dette uten visuell endring. AUTO-442 står PÅ VENT grunnet manglende UI-testmål og utilgjengelig CoreSimulatorService. Neste kø: AUTO-445, AUTO-446 og AUTO-447."
 }

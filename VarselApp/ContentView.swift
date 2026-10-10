@@ -924,7 +924,10 @@ private struct CurrentWeatherCard: View {
                 }
                 .buttonStyle(.bordered)
                 .controlSize(.small)
-                .accessibilityLabel("Rediger varsler for \(place.displayName)")
+                .accessibilityLabel(AlertEditingAccessibilityCopy.label(
+                    placeName: place.displayName,
+                    languageStyle: languageStyle
+                ))
             }
         }
     }
