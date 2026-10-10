@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-10T04:41:03Z",
+  "lastScheduledStart": "2026-10-10T05:11:03Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-441 fullført: GPS-merket beholder synlig «GPS», mens VoiceOver-etikett og hint følger valgt språkstil; samme lokalisering brukes på GPS-stedets samlede tilgjengelighetstekst. Regresjonstest dekker bokmål, inntrøndersk og engelsk. Swift-parsing, JSON-validering og diffkontroll består; XCTest ikke kjørt grunnet kjent SwiftUIMacros-byggblokkering. Bred Hjem-gjennomgang fant også den faste bokmåls-VoiceOver-teksten på varselredigeringsknappen; AUTO-444 dekker lokalisering uten layoutendring. Neste kø: AUTO-442, AUTO-443 og AUTO-444."
+  "lastProgress": "AUTO-442 ble satt PÅ VENT 2026-10-10: prosjektet mangler UI-testmål, og CoreSimulatorService avviser tilkobling uten tilgjengelig runtime. Køen fortsatte med AUTO-443, som nå bruker språkstil for Hjems sideindikators VoiceOver-navn uten visuell endring; regresjonstest dekker bokmål, inntrøndersk og engelsk. Swift-parsing, JSON-validering og diffkontroll består; XCTest ikke kjørt fordi simulator/testinfrastruktur er utilgjengelig. Bred gjennomgang fant også faste VoiceOver-rollemarkeringer i Steder-listen (AUTO-445) og en fast etikett for synlighetsbryteren i Tilpass (AUTO-446). Neste kø: AUTO-444, AUTO-445 og AUTO-446."
 }

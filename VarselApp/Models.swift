@@ -100,6 +100,15 @@ enum HomeSwipeSelection {
 
     static func shouldShowHint(placeCount: Int) -> Bool { placeCount > 1 }
 
+    static func pageAccessibilityLabel(
+        index: Int,
+        count: Int,
+        languageStyle: AlertLanguageStyle
+    ) -> String {
+        if languageStyle == .english { return "Place \(index) of \(count)" }
+        return WeatherLanguage.text("Stedside \(index) av \(count)", style: languageStyle)
+    }
+
     /// Builds the visible shortcut menu from valid saved destinations only.
     /// When roles refer to the same place, they share one item while retaining
     /// the GPS affordance and a readable combined title.

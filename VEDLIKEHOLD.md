@@ -54,6 +54,17 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-446 · ÅPEN** — Lokaliser tilgjengelighetsnavnene for Hjem-radvalg.
+Tilpass-sidens synlighetsbryter bruker en fast bokmåls-VoiceOver-etikett
+(«Vis … på Hjem») selv når engelsk er valgt. Bruk valgt språkstil for
+tilgjengelighetsnavnet og dekk bokmål, inntrøndersk og engelsk; behold synlig
+tekst og radlayout uendret.
+
+**AUTO-445 · ÅPEN** — Lokaliser rollemarkeringene i Steder-listen.
+Steder-radene har faste VoiceOver-navn «Valgt sted» og «Hjemsted» uansett
+valgt språk. La tilgjengelighetsteksten følge valgt språkstil uten å endre
+radens synlige innhold, og dekk bokmål, inntrøndersk og engelsk.
+
 **AUTO-444 · ÅPEN** — Lokaliser VoiceOver-etiketten for redigering av varsler.
 Penneknappen ved værkortets varseloversikt har fast bokmålsnavn («Rediger
 varsler for …») også i engelsk modus. Bruk kortets språkstil for knappens
@@ -66,12 +77,19 @@ engelsk er valgt. Bruk samme språkstil for VoiceOver-teksten og dekk
 bokmål, inntrøndersk og engelsk med en ren regresjonstest; behold den
 visuelle indikatorens størrelse og rekkefølge.
 
-**AUTO-442 · ÅPEN** — Verifiser hurtigmenyens faktiske layout med stor tekst.
+**AUTO-442 · PÅ VENT 2026-10-10** — Verifiser hurtigmenyens faktiske layout
+med stor tekst.
 AUTO-439 gjør etikettene Dynamic-Type-tilpasset og lar lange navn bruke to
 linjer, men PlannerTests kan ikke bekrefte SwiftUI-layout eller tilgjengelige
 trykkmål. Legg til en repeterbar simulator-/UI-kontroll for fem destinasjoner
 ved tilgjengelighetsstørrelse; kontroller klipping, rekkefølge og at hver
 knapp fortsatt kan aktiveres.
+
+Den visuelle stor-tekstkontrollen kan ikke kjøres eller etableres pålitelig i
+denne økten: prosjektet har ikke et
+UI-testmål, og `xcrun simctl` kan ikke koble til CoreSimulatorService
+(forbindelse avvist; ingen simulator-runtime tilgjengelig). Gjenoppta når
+simulatortjenesten er tilgjengelig og et UI-testmål kan kjøres.
 
 **AUTO-441 · FULLFØRT 2026-10-10** — GPS-merket på Hjem beholder den synlige,
 kompakte «GPS»-teksten, mens VoiceOver-etikett og hint nå følger valgt

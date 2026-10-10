@@ -398,7 +398,11 @@ struct HomeView: View {
                             .padding(.top, -3)
                             .padding(.bottom, -2)
                             .accessibilityElement(children: .ignore)
-                            .accessibilityLabel("Stedside \(activeIndexForSelectedPlace + 1) av \(pageCount)")
+                            .accessibilityLabel(HomeSwipeSelection.pageAccessibilityLabel(
+                                index: activeIndexForSelectedPlace + 1,
+                                count: pageCount,
+                                languageStyle: store.alertLanguageStyle
+                            ))
                         } else {
                             Text(store.error ?? "Henter prognose …")
                                 .font(.footnote)

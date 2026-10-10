@@ -9227,6 +9227,21 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testHomePageAccessibilityLabelFollowsSelectedLanguageStyle() {
+        XCTAssertEqual(
+            HomeSwipeSelection.pageAccessibilityLabel(index: 2, count: 5, languageStyle: .bokmal),
+            "Stedside 2 av 5"
+        )
+        XCTAssertEqual(
+            HomeSwipeSelection.pageAccessibilityLabel(index: 2, count: 5, languageStyle: .inntrondersk),
+            "Stedside 2 av 5"
+        )
+        XCTAssertEqual(
+            HomeSwipeSelection.pageAccessibilityLabel(index: 2, count: 5, languageStyle: .english),
+            "Place 2 of 5"
+        )
+    }
+
     func testQuickNavigationDropsMissingRolesAndDeduplicatesCabinOverlap() {
         let position = UUID(), cabin = UUID(), deletedHome = UUID()
         let destinations = HomeSwipeSelection.navigationDestinations(
