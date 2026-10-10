@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-10T13:50:52Z",
+  "lastScheduledStart": "2026-10-10T14:20:52Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-455 fullført: koordinater utenfor bredde-/lengdegradsgrenser avvises ved import/gjenoppretting, filtreres fra prognoseforespørsler og blokkeres ved ny/oppdatert Store-plassering; ugyldig persisted selectedID faller tilbake til første gyldige sted. Regresjoner dekker gyldige grenser, import, gjenoppretting og forespørselsgrunnlag. AUTO-452 står fortsatt PÅ VENT på grunn av overlapp med brukerens ucommittede sveipeendringer. Bred gjennomgang fant også ukontrollerte numeriske MET-felt i YrService (AUTO-458). Neste åpne AUTO-kø: AUTO-456, AUTO-457 og AUTO-458."
+  "lastProgress": "AUTO-456 fullført: WeatherConfigurationDocument avviser nå import over 5 MiB før JSON-dekoding, godtar nøyaktig grense, og har regresjoner for overskridelse, grense og normal import. Swift-parsing og JSON/diffkontroll bestod; XCTest ble ikke kjørt. Bred gjennomgang fant et konkret avvik: SharedWidgetData stopper deling av stedsnavn etter første sted selv om regresjonstesten krever inntil tre unike (AUTO-459). AUTO-452 står fortsatt PÅ VENT på grunn av overlapp med brukerens ucommittede sveipeendringer. Neste åpne AUTO-kø: AUTO-457, AUTO-458 og AUTO-459."
 }

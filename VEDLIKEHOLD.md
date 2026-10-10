@@ -79,11 +79,11 @@ Swift-parsing og diffkontroll består; iOS-bygg og XCTest er ikke kjørt i denne
 runden fordi maskinen har bare 10 GB ledig diskplass og testmålet har kjente
 kompileringsfeil.
 
-**AUTO-456 · ÅPEN** — Begrens ressursbruken ved import av værkonfigurasjon.
-`WeatherConfigurationDocument.init(data:)` dekoder hele den valgte JSON-filen
-uten størrelsesgrense. Avvis urimelig store filer før dekoding og dekk både
-grenseverdien og vanlig import med regresjonstest, slik at en utilsiktet stor
-fil ikke kan bruke opp appens minne.
+**AUTO-456 · FULLFØRT 2026-10-10** — Begrens ressursbruken ved import av værkonfigurasjon.
+`WeatherConfigurationDocument.init(data:)` avviser nå filer over 5 MiB før
+JSON-dekoding. Grensen er inkluderende, og tester dekker både nøyaktig grense,
+overskridelse og vanlig filimport. Dette begrenser dekoderens ekstra minnebruk;
+FileDocument mottar allerede data fra filvelgeren før denne kontrollen.
 
 **AUTO-457 · ÅPEN** — Kontroller hvor kort Yr-prognose fortsatt er brukbar.
 `Store.refreshForecasts()` godtar alle ikke-tomme timearrayer, også om et
@@ -98,6 +98,12 @@ dekodede temperatur-, vind-, sky-, nedbør- og fuktverdier uten felles kontroll
 av endelige tall eller plausible fysiske grenser. Kartlegg MET-feltene, velg
 forsiktig håndtering som ikke skjuler legitimt ekstremvær, og test at ugyldige
 verdier ikke skaper falske markeringer eller erstatter brukbar prognose.
+
+**AUTO-459 · ÅPEN** — Gjenopprett deling av inntil tre unike stedsnavn til
+widget/CarPlay. `SharedWidgetData.saveSharedPlaces` stopper for øyeblikket
+etter første element, mens regresjonstesten krever tre unike ID-er. Endre
+utvalget til å hoppe over duplikater og stoppe ved tre gyldige steder, og test
+rekkefølge, duplikater, grense og færre enn tre steder.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

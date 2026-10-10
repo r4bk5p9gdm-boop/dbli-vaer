@@ -6947,6 +6947,32 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(imported.alertLanguageStyle, .english)
     }
 
+    func testConfigurationImportRejectsDataAboveSizeLimit() {
+        let oversized = Data(
+            repeating: 0x20,
+            count: WeatherConfigurationDocument.maximumImportSizeBytes + 1
+        )
+
+        XCTAssertThrowsError(try WeatherConfigurationDocument(data: oversized)) { error in
+            XCTAssertEqual((error as? CocoaError)?.code, .fileReadTooLarge)
+        }
+    }
+
+    func testConfigurationImportAcceptsValidJSONAtSizeLimit() throws {
+        let place = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let encoded = try WeatherConfigurationDocument(
+            places: [place], selectedPlaceID: place.id, alertLanguageStyle: .english
+        ).serializedData()
+        let remainingBytes = WeatherConfigurationDocument.maximumImportSizeBytes - encoded.count
+        XCTAssertGreaterThanOrEqual(remainingBytes, 0)
+        var atLimit = encoded
+        atLimit.append(Data(repeating: 0x20, count: remainingBytes))
+
+        let imported = try WeatherConfigurationDocument(data: atLimit).configuration
+
+        XCTAssertEqual(imported.places.map(\.id), [place.id])
+    }
+
     func testConfigurationDocumentRejectsInvalidJSONFileContents() {
         let file = FileWrapper(regularFileWithContents: Data("this is not JSON".utf8))
 

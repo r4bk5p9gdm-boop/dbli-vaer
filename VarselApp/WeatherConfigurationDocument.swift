@@ -49,6 +49,7 @@ struct WeatherConfigurationExport: Codable {
 }
 
 struct WeatherConfigurationDocument: FileDocument {
+    static let maximumImportSizeBytes = 5 * 1_024 * 1_024
     static var readableContentTypes: [UTType] { [.json] }
     let configuration: WeatherConfigurationExport
 
@@ -66,6 +67,9 @@ struct WeatherConfigurationDocument: FileDocument {
     }
 
     init(data: Data) throws {
+        guard data.count <= Self.maximumImportSizeBytes else {
+            throw CocoaError(.fileReadTooLarge)
+        }
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         self.configuration = try decoder.decode(WeatherConfigurationExport.self, from: data)
