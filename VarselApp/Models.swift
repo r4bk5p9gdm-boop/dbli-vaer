@@ -1300,6 +1300,16 @@ struct Place: Codable, Identifiable, Hashable {
     var displaySunThreshold: Double? = nil
     var displaySunThreshold2: Double? = nil
     var displayGustThreshold: Double? = nil
+    var hasValidCoordinates: Bool {
+        Self.coordinatesAreValid(latitude: lat, longitude: lon)
+    }
+
+    static func coordinatesAreValid(latitude: Double, longitude: Double) -> Bool {
+        latitude.isFinite && longitude.isFinite
+            && (-90...90).contains(latitude)
+            && (-180...180).contains(longitude)
+    }
+
     func displayThreshold(for type: AlertType) -> Double {
         let value: Double?
         switch type {
@@ -1370,13 +1380,25 @@ struct Place: Codable, Identifiable, Hashable {
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         id = (try? values.decode(UUID.self, forKey: .id)) ?? UUID()
-        // Older or partially written snapshots must not prevent the app from
-        // starting. Keep a visible fallback name and neutral coordinates.
+        // LossyDecodable around place arrays lets other valid places survive
+        // when one persisted or imported coordinate pair is unusable.
         let decodedName = try? values.decode(String.self, forKey: .name)
         name = decodedName?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false ? decodedName! : "Ukjent sted"
         customName = try? values.decode(String.self, forKey: .customName)
-        lat = (try? values.decode(Double.self, forKey: .lat)).flatMap { $0.isFinite ? $0 : nil } ?? 0
-        lon = (try? values.decode(Double.self, forKey: .lon)).flatMap { $0.isFinite ? $0 : nil } ?? 0
+        guard let decodedLatitude = try? values.decode(Double.self, forKey: .lat),
+              decodedLatitude.isFinite, (-90...90).contains(decodedLatitude) else {
+            throw DecodingError.dataCorruptedError(
+                forKey: .lat, in: values, debugDescription: "Place latitude must be finite and between -90 and 90."
+            )
+        }
+        guard let decodedLongitude = try? values.decode(Double.self, forKey: .lon),
+              decodedLongitude.isFinite, (-180...180).contains(decodedLongitude) else {
+            throw DecodingError.dataCorruptedError(
+                forKey: .lon, in: values, debugDescription: "Place longitude must be finite and between -180 and 180."
+            )
+        }
+        lat = decodedLatitude
+        lon = decodedLongitude
         let rawPreposition = try? values.decode(String.self, forKey: .preposition)
         preposition = rawPreposition.flatMap { PlacePreposition(rawValue: $0) }
         rules = (try? values.decode([LossyDecodable<Rule>].self, forKey: .rules))?.compactMap(\.value) ?? []
@@ -1427,8 +1449,7 @@ struct Place: Codable, Identifiable, Hashable {
 
 extension Place {
     func distance(to location: CLLocation) -> CLLocationDistance? {
-        guard lat.isFinite, lon.isFinite,
-              (-90...90).contains(lat), (-180...180).contains(lon) else { return nil }
+        guard hasValidCoordinates else { return nil }
         let value = CLLocation(latitude: lat, longitude: lon).distance(from: location)
         return value.isFinite ? value : nil
     }

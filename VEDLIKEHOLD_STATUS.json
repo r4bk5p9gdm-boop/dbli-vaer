@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-10T12:50:51Z",
+  "lastScheduledStart": "2026-10-10T13:50:52Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-454 fullført: forecastUpdatedAt mer enn fem minutter fram regnes som foreldet og kan erstattes etter et vellykket svar; tester dekker toleransegrensen, klokke som stilles tilbake og tidsstempel gjenopprettet fra lagret tilstand. AUTO-452 står PÅ VENT grunnet overlapp med brukerens ucommittede sveipeendringer. AUTO-457 dekker nå risikoen for uvanlig korte, men ikke-tomme Yr-prognoser. Neste åpne AUTO-kø: AUTO-455, AUTO-456 og AUTO-457."
+  "lastProgress": "AUTO-455 fullført: koordinater utenfor bredde-/lengdegradsgrenser avvises ved import/gjenoppretting, filtreres fra prognoseforespørsler og blokkeres ved ny/oppdatert Store-plassering; ugyldig persisted selectedID faller tilbake til første gyldige sted. Regresjoner dekker gyldige grenser, import, gjenoppretting og forespørselsgrunnlag. AUTO-452 står fortsatt PÅ VENT på grunn av overlapp med brukerens ucommittede sveipeendringer. Bred gjennomgang fant også ukontrollerte numeriske MET-felt i YrService (AUTO-458). Neste åpne AUTO-kø: AUTO-456, AUTO-457 og AUTO-458."
 }

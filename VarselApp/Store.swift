@@ -108,7 +108,14 @@ struct PersistedStoreState: Codable {
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         places = (try? values.decode([LossyDecodable<Place>].self, forKey: .places))?.compactMap(\.value) ?? []
-        selectedID = try? values.decode(UUID.self, forKey: .selectedID)
+        let decodedSelection = try? values.decode(UUID.self, forKey: .selectedID)
+        if let decodedSelection {
+            selectedID = places.contains(where: { $0.id == decodedSelection })
+                ? decodedSelection
+                : places.first?.id
+        } else {
+            selectedID = nil
+        }
         log = (try? values.decode([LossyDecodable<LogEntry>].self, forKey: .log))?.compactMap(\.value) ?? []
         let lossyForecasts = (try? values.decode([UUID: LossyDecodable<[ForecastHour]>].self, forKey: .forecasts)) ?? [:]
         forecasts = lossyForecasts.compactMapValues(\.value)
@@ -513,6 +520,7 @@ final class Store: ObservableObject {
     }
 
     func update(_ place: Place) {
+        guard place.hasValidCoordinates else { return }
         if let i = places.firstIndex(where: { $0.id == place.id }) { places[i] = place } else { places.append(place) }
         proximityMonitor.configure(for: places)
     }
@@ -543,7 +551,7 @@ final class Store: ObservableObject {
     }
 
     static func groupedByForecastLocation(_ places: [Place]) -> [ForecastLocation: [Place]] {
-        Dictionary(grouping: places, by: ForecastLocation.init(place:))
+        Dictionary(grouping: places.filter(\.hasValidCoordinates), by: ForecastLocation.init(place:))
     }
 
     /// Returns one stable request location per API coordinate. Quantizing to
@@ -789,6 +797,7 @@ final class Store: ObservableObject {
     }
 
     func add(_ place: Place) async {
+        guard place.hasValidCoordinates else { return }
         places.append(place)
         selectedID = place.id
         selectionIsCurrentLocation = false

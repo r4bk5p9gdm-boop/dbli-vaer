@@ -92,12 +92,22 @@ faktiske Yr-responsmodellen og appens varsling-/tabellbehov, definer en minste
 dekning uten å avvise legitimt korte prognoser, og dekk både kort/avbrutt og
 normal horisont med regresjonstest.
 
+**AUTO-458 · ÅPEN** — Avgrens numeriske Yr-verdier før de påvirker visning og
+varsler. `YrService.decodeLocationForecast` og nowcast-påføringen kopierer
+dekodede temperatur-, vind-, sky-, nedbør- og fuktverdier uten felles kontroll
+av endelige tall eller plausible fysiske grenser. Kartlegg MET-feltene, velg
+forsiktig håndtering som ikke skjuler legitimt ekstremvær, og test at ugyldige
+verdier ikke skaper falske markeringer eller erstatter brukbar prognose.
+
 **AUTO-455 · ÅPEN** — Valider geografiske koordinater ved gjenoppretting og
-før prognoseforespørsler. `Place` erstatter ikke-finite verdier med null, men
-beholder endelige koordinater utenfor gyldig bredde-/lengdegrad; avstands- og
-solberegningene avviser dem, mens lagring og prognoseflyt kan behandle dem som
-steder. Velg en trygg, konsistent håndtering og dekk import/gjenoppretting og
-forespørsel med tester.
+før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig
+bredde-/lengdegrad ved dekoding; tapsfri arraydekoding bevarer andre steder i
+samme gjenoppretting/import. Ugyldige nyopprettede steder lagres ikke, og
+prognosegrupperingen filtrerer dem før URL-bygging. Et ugyldig lagret valg
+faller tilbake til første gyldige sted, mens manglende valg fortsatt forblir
+valgfritt. Regresjoner dekker grenseverdier, import, gjenoppretting, valgte
+steder og forespørselsgrunnlag. Swift-parsing, JSON-validering, diffkontroll og
+inkrementell iOS-bygging består; XCTest ble ikke kjørt i denne økten.
 
 **AUTO-454 · FULLFØRT 2026-10-10** — Prognosestempler mer enn fem minutter
 frem i forhold til gjeldende klokke regnes nå som foreldet, og et vellykket

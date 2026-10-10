@@ -815,12 +815,73 @@ final class PlannerTests: XCTestCase {
     }
 
     func testMalformedPlaceSnapshotUsesSafeDefaults() throws {
-        let data = Data(#"{"name":" ","lat":"bad","lon":null,"rules":[{"type":"vind","threshold":"bad"}]}"#.utf8)
+        let data = Data(#"{"name":" ","lat":64,"lon":11,"rules":[{"type":"vind","threshold":"bad"}]}"#.utf8)
         let place = try JSONDecoder().decode(Place.self, from: data)
         XCTAssertEqual(place.name, "Ukjent sted")
-        XCTAssertEqual(place.lat, 0)
-        XCTAssertEqual(place.lon, 0)
+        XCTAssertEqual(place.lat, 64)
+        XCTAssertEqual(place.lon, 11)
         XCTAssertTrue(place.rules.isEmpty)
+    }
+
+    func testPlaceDecodingRejectsOutOfRangeCoordinates() {
+        let invalidLatitude = Data(#"{"name":"Ugyldig","lat":91,"lon":11}"#.utf8)
+        let invalidLongitude = Data(#"{"name":"Ugyldig","lat":64,"lon":181}"#.utf8)
+
+        XCTAssertThrowsError(try JSONDecoder().decode(Place.self, from: invalidLatitude))
+        XCTAssertThrowsError(try JSONDecoder().decode(Place.self, from: invalidLongitude))
+        XCTAssertTrue(Place.coordinatesAreValid(latitude: -90, longitude: -180))
+        XCTAssertTrue(Place.coordinatesAreValid(latitude: 90, longitude: 180))
+        XCTAssertFalse(Place.coordinatesAreValid(latitude: .nan, longitude: 11))
+        XCTAssertFalse(Place.coordinatesAreValid(latitude: 64, longitude: .infinity))
+    }
+
+    func testPersistedStateSkipsOnlyPlacesWithInvalidCoordinates() throws {
+        let valid = Place(name: "Klinga", lat: 64, lon: 11)
+        let invalid = Place(name: "Ugyldig", lat: 91, lon: 11)
+        let state = PersistedStoreState(places: [valid, invalid], selectedID: invalid.id, log: [])
+
+        let restored = try JSONDecoder().decode(PersistedStoreState.self, from: JSONEncoder().encode(state))
+
+        XCTAssertEqual(restored.places.map(\.id), [valid.id])
+        XCTAssertEqual(restored.selectedID, valid.id)
+    }
+
+    func testConfigurationImportSkipsPlaceWithInvalidCoordinates() throws {
+        let invalid = Place(name: "Ugyldig", lat: 91, lon: 11)
+        let valid = Place(name: "Namsos", lat: 64.5, lon: 11.5)
+        let source = WeatherConfigurationExport(
+            places: [invalid, valid], selectedPlaceID: invalid.id, alertLanguageStyle: .bokmal
+        )
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let data = try encoder.encode(source)
+
+        let imported = try WeatherConfigurationDocument(data: data).configuration
+
+        XCTAssertEqual(imported.places.map(\.id), [valid.id])
+        XCTAssertEqual(imported.selectedPlaceID, valid.id)
+    }
+
+    @MainActor
+    func testForecastLocationsIgnorePlacesWithInvalidCoordinates() {
+        let invalid = Place(name: "Ugyldig", lat: 91, lon: 11)
+        let valid = Place(name: "Klinga", lat: 64, lon: 11)
+
+        XCTAssertEqual(Store.forecastLocations(in: [invalid, valid]), [ForecastLocation(place: valid)])
+    }
+
+    @MainActor
+    func testStoreRejectsInvalidPlacesBeforeSavingOrFetching() async {
+        let persistenceKey = "test.invalidPlace.\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
+        let store = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        let invalid = Place(name: "Ugyldig", lat: 91, lon: 11)
+        let originalIDs = Set(store.places.map(\.id))
+
+        await store.add(invalid)
+        store.update(invalid)
+
+        XCTAssertEqual(Set(store.places.map(\.id)), originalIDs)
     }
 
     func testPersistedStateWithoutSelectionRemainsUsable() throws {
