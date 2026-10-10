@@ -54,6 +54,13 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-439 · ÅPEN** — La hurtignavigasjonens tekst respektere større tekststørrelser.
+Snarveiknappenes titler bruker nå `.system(size: 10)` og
+`minimumScaleFactor`, som kan bli vanskelig å lese og ikke følger Dynamic Type.
+Bruk skalert typografi med en kompakt layout som fortsatt fungerer når fem
+destinasjoner vises, og verifiser stor tekst uten å endre rekkefølge eller
+trykkmål.
+
 **AUTO-438 · ÅPEN** — Avgrens «Vis alle varsler» til aktivt sted.
 Hjemmets kommende pushvarsler holder utvidet/kollapset tilstand i lokal
 SwiftUI-state. Når valgt sted byttes på samme Hjem-visning, kontroller om
@@ -68,10 +75,14 @@ varianter. Bruk appens valgte språkstil i disse tekstene, og dekk sammenslåtte
 posisjons-/hjemmeroller med regresjonstester uten å endre rekkefølge eller
 navigasjonsatferd.
 
-**AUTO-436 · ÅPEN** — Sørg for at timekort ikke viser solsymboler om natten.
-Skill værtype fra lokal dagslysstatus for klare og delvis skyete timer, og bruk
-egnede nattsymboler etter lokal solnedgang. Legg til grensetester rundt
-solnedgang for Klingas koordinater, uten å endre regn-, tåke- eller snøsymboler.
+**AUTO-436 · FULLFØRT 2026-10-10** — Timekortene får nå stedets koordinater
+og bruker `SolarCycle.isDaylight` ved prognosetimen. Klart vær viser
+månesymbol om natten, delvis skyet bruker skymåne, og regn/snø/tåke beholder
+sine egne symboler. VoiceOver beskriver klart eller delvis skyet i stedet for
+å si sol/solgløtt om natten. Regresjon finner den faktiske solnedgangsgrensen
+for Klinga 21. desember i Europe/Oslo og tester begge sider. Swift-parsing,
+JSON-validering og diffkontroll består; full Xcode-test/build ble ikke kjørt
+med 10 GB ledig disk og kjent makrofeil.
 
 **AUTO-435 · FULLFØRT 2026-10-10** — Byttet den egendefinerte, evigvarende
 fade-/skaleringstilstanden med SwiftUIs repeterende SF Symbol-puls på

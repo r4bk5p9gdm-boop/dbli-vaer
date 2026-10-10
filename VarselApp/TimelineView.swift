@@ -49,7 +49,15 @@ struct ForecastVariantsView: View {
                 ) {
                     switch mode {
                     case .timeCards:
-                        TimeCardsForecast(day: day, allForecast: forecast, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, languageStyle: languageStyle)
+                        TimeCardsForecast(
+                            day: day,
+                            allForecast: forecast,
+                            temperatureLowThreshold: temperatureLowThreshold,
+                            temperatureHighThreshold: temperatureHighThreshold,
+                            languageStyle: languageStyle,
+                            latitude: latitude,
+                            longitude: longitude
+                        )
                     case .weatherBands:
                         SwiftUI.TimelineView(.periodic(from: .now, by: 60)) { timeline in
                             WeatherBandsForecast(day: day, allForecast: forecast, rules: rules, frostMargin: frostMargin, sunThreshold: sunThreshold, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, now: timeline.date)
@@ -252,6 +260,8 @@ private struct TimeCardsForecast: View {
     let temperatureLowThreshold: Double
     let temperatureHighThreshold: Double
     let languageStyle: AlertLanguageStyle
+    let latitude: Double
+    let longitude: Double
 
     private var sampled: [ForecastHour] {
         day.hours.enumerated().compactMap { index, hour in index % 3 == 0 ? hour : nil }
@@ -272,10 +282,15 @@ private struct TimeCardsForecast: View {
                         hour,
                         precipitationIsFalling: hour.precipitationRate >= 0.1
                     )
+                    let isDaylight = SolarCycle.isDaylight(
+                        hour.time,
+                        latitude: latitude,
+                        longitude: longitude
+                    )
                     VStack(spacing: 6) {
                         Text(label.display)
                             .font(.caption.weight(.semibold))
-                        Image(systemName: condition.systemImage)
+                        Image(systemName: condition.systemImage(isDaylight: isDaylight))
                             .font(.title3)
                             .symbolRenderingMode(.multicolor)
                             .frame(height: 24)
@@ -295,7 +310,7 @@ private struct TimeCardsForecast: View {
                     }
                     .frame(width: 45)
                     .accessibilityElement(children: .combine)
-                    .accessibilityLabel("\(label.accessibility), \(condition.accessibilityLabel(languageStyle: languageStyle)), \(Int(hour.temp.rounded())) grader, \(hour.precip.formatted()) millimeter nedbør")
+                    .accessibilityLabel("\(label.accessibility), \(condition.accessibilityLabel(languageStyle: languageStyle, isDaylight: isDaylight)), \(Int(hour.temp.rounded())) grader, \(hour.precip.formatted()) millimeter nedbør")
                 }
             }
         }
@@ -1046,11 +1061,11 @@ func localHourComponent(_ date: Date, calendar: Calendar = .autoupdatingCurrent)
     calendar.component(.hour, from: date)
 }
 
-func forecastSymbol(_ hour: ForecastHour) -> String {
+func forecastSymbol(_ hour: ForecastHour, isDaylight: Bool = true) -> String {
     CurrentWeatherCondition.resolve(
         hour,
         precipitationIsFalling: hour.precipitationRate >= 0.1
-    ).systemImage
+    ).systemImage(isDaylight: isDaylight)
 }
 
 func solarBandFogLevel(_ hour: ForecastHour) -> Double? {

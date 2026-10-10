@@ -602,7 +602,17 @@ enum CurrentWeatherCondition: Equatable {
         }
     }
 
-    func accessibilityLabel(languageStyle: AlertLanguageStyle) -> String {
+    func accessibilityLabel(languageStyle: AlertLanguageStyle, isDaylight: Bool = true) -> String {
+        if !isDaylight {
+            switch self {
+            case .clear:
+                return languageStyle == .english ? "Clear" : WeatherLanguage.text("Klart", style: languageStyle)
+            case .partlyCloudy:
+                return languageStyle == .english ? "Partly cloudy" : WeatherLanguage.text("Delvis skyet", style: languageStyle)
+            default:
+                break
+            }
+        }
         guard languageStyle == .english else {
             return WeatherLanguage.text(label, style: languageStyle)
         }
@@ -616,7 +626,16 @@ enum CurrentWeatherCondition: Equatable {
         }
     }
 
-    var systemImage: String {
+    var systemImage: String { systemImage(isDaylight: true) }
+
+    func systemImage(isDaylight: Bool) -> String {
+        if !isDaylight {
+            switch self {
+            case .clear: return "moon.stars.fill"
+            case .partlyCloudy: return "cloud.moon.fill"
+            default: break
+            }
+        }
         switch self {
         case .snow: AlertType.sno.systemImage
         case .rain: AlertType.regn.systemImage

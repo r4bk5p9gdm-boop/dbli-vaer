@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-10T01:41:03Z",
+  "lastScheduledStart": "2026-10-10T02:11:03Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-435 fullført: den egendefinerte gjentakende GPS-fadeanimasjonen er erstattet med en SF Symbol-puls som deaktiveres når accessibilityReduceMotion er aktiv. Den statiske GPS-prikken og live-etiketten består. En policytest dekker redusert/normal bevegelse; Swift-parsing, JSON-validering og diffkontroll består, men full iPhone-verifikasjon er ikke utført. Bred gjennomgang av Hjems nylig tilføyde pushoversikt fant at lokal «Vis alle»-tilstand kan overleve stedsbytte; AUTO-438 avgrenser denne testen/tilstanden til det aktive stedet. Neste kø: AUTO-436, AUTO-437 og AUTO-438."
+  "lastProgress": "AUTO-436 fullført: TimeCardsForecast bruker nå stedets bredde-/lengdegrad og SolarCycle.isDaylight for prognosetimen. Etter lokal solnedgang viser klart vær måne og delvis skyet skymåne; nedbør beholder værikonet. En regresjonstest finner solnedgangsgrensen for Klinga 21. desember og sjekker begge sider samt nattregn. Swift-parsing, JSON-validering og diffkontroll består; full Xcode-test/build ble unngått med 10 GB ledig disk og kjent SwiftUIMacros-feil. Bred gjennomgang fant at egendefinert hurtignavigasjon bruker fast 10-punkts tekst som ikke følger Dynamic Type; AUTO-439 dekker lesbarhet med opptil fem punkter. Neste kø: AUTO-437, AUTO-438 og AUTO-439."
 }

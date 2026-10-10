@@ -1004,6 +1004,39 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testForecastSymbolChangesFromSunToNightAtKlingaSunset() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
+        let date = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 12, day: 21, hour: 12)))
+        var dayStart = date
+        var nightEnd = try XCTUnwrap(calendar.date(bySettingHour: 18, minute: 0, second: 0, of: date))
+        XCTAssertTrue(SolarCycle.isDaylight(dayStart, latitude: 64.46, longitude: 11.50, calendar: calendar))
+        XCTAssertFalse(SolarCycle.isDaylight(nightEnd, latitude: 64.46, longitude: 11.50, calendar: calendar))
+
+        for _ in 0..<40 {
+            let middle = dayStart.addingTimeInterval(nightEnd.timeIntervalSince(dayStart) / 2)
+            if SolarCycle.isDaylight(middle, latitude: 64.46, longitude: 11.50, calendar: calendar) {
+                dayStart = middle
+            } else {
+                nightEnd = middle
+            }
+        }
+
+        let clearBeforeSunset = ForecastHour(time: dayStart, temp: 4, precip: 0, wind: 1, cloud: 10, dew: 2)
+        let clearAfterSunset = ForecastHour(time: nightEnd, temp: 3, precip: 0, wind: 1, cloud: 10, dew: 2)
+        let partlyCloudyAtNight = ForecastHour(time: nightEnd, temp: 3, precip: 0, wind: 1, cloud: 40, dew: 2)
+        let rainAtNight = ForecastHour(time: nightEnd, temp: 3, precip: 0.2, wind: 1, cloud: 80, dew: 2)
+
+        XCTAssertEqual(forecastSymbol(clearBeforeSunset, isDaylight: true), "sun.max.fill")
+        XCTAssertEqual(forecastSymbol(clearAfterSunset, isDaylight: false), "moon.stars.fill")
+        XCTAssertEqual(forecastSymbol(partlyCloudyAtNight, isDaylight: false), "cloud.moon.fill")
+        XCTAssertEqual(forecastSymbol(rainAtNight, isDaylight: false), "cloud.rain.fill")
+        XCTAssertEqual(
+            CurrentWeatherCondition.clear.accessibilityLabel(languageStyle: .bokmal, isDaylight: false),
+            "Klart"
+        )
+    }
+
     func testFogMarkerInSolarBandUsesSunHazeOnlyWhenSolarCellShowsSun() {
         let foggy = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 95, dew: 7, fog: 50)
         let clearVisibility = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 95, dew: 7, fog: 49.9)
