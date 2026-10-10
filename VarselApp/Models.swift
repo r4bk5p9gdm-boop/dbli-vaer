@@ -1290,6 +1290,20 @@ extension Place {
     }
 }
 
+/// Text components for the live-location heading. The GPS prefix only changes
+/// the lead-in; the saved preposition and displayed place name remain intact.
+struct CurrentLocationPlaceHeading: Equatable {
+    let prefixedPreposition: String
+    let placeName: String
+
+    init(place: Place) {
+        prefixedPreposition = "her \(place.resolvedPreposition.rawValue)"
+        placeName = place.displayName
+    }
+
+    var visibleText: String { "\(prefixedPreposition) \(placeName)" }
+}
+
 enum PlaceOrdering {
     static func automatic(_ places: [Place], favorite1ID: UUID?, favorite2ID: UUID?, homeID: UUID?) -> [Place] {
         let byID = Dictionary(uniqueKeysWithValues: places.map { ($0.id, $0) })

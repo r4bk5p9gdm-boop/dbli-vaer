@@ -54,6 +54,11 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-435 · ÅPEN** — Respekter «Reduser bevegelse» i live-GPS-merket.
+Pilen pulserer nå kontinuerlig; behold tydelig GPS-/live-status uten
+evigvarende bevegelse når tilgjengelighetsinnstillingen er aktiv, og dekk
+valg av animasjonspolicy med en ren test.
+
 **AUTO-434 · ÅPEN** — Gjennomgå VoiceOver-presentasjonen av hurtigmenyen for
 «Her!», Hjem og Hytta. Når roller slås sammen for samme sted, skal etikett,
 live-posisjon og valgt status annonseres samlet uten at SF Symbol-navn gir
@@ -67,11 +72,13 @@ uavhengige terskler for nedbør, tåke og skydekke; en felles beslutning med
 grensetester vil hindre at et ikon og VoiceOver beskriver ulikt vær ved
 grenseverdiene.
 
-**AUTO-432 · ÅPEN** — Trekk «her [preposisjon] [stedsnavn]» for GPS-steds-
-overskriften ut i en liten, deterministisk presentasjonsverdi og test alle
-preposisjonene. Lås at bare «her » settes foran preposisjonen, at stedsnavnet
-returneres uendret, og at ikke-GPS-steder ikke får prefikset. Dette beskytter
-typografifiksens tekstgrunnlag uten SwiftUI-snapshot eller simulator.
+**AUTO-432 · FULLFØRT 2026-10-10** — Trakk GPS-overskriftens tekstverdier ut
+i `CurrentLocationPlaceHeading`. Visningen bruker nå den samme presentasjonen
+som testen: liten «her » foran den lagrede preposisjonen, med stedsnavnet
+uendret. Regresjonstest dekker alle 15 preposisjonene og verifiserer eksplisitt
+«her på Klinga» for standardvalget. Swift-parsing og diffkontroll består;
+XCTest ble utsatt fordi disken er 98 % full og prosjektet fortsatt har den
+kjente SwiftUIMacros-feilen.
 
 **BRUKER-144 · FULLFØRT 2026-10-10** — Rettet GPS-stedsoverskriften på
 Hjem etter presisering: teksten er nå «her [preposisjon] [sted]», der bare

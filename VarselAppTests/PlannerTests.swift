@@ -6644,6 +6644,20 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(PlacePreposition.allCases.count, 15)
     }
 
+    func testCurrentLocationHeadingAddsLowercasePrefixWithoutChangingPrepositionOrPlaceName() {
+        for preposition in PlacePreposition.allCases {
+            let place = Place(name: "Klinga", lat: 64.4, lon: 11.4, preposition: preposition)
+            let heading = CurrentLocationPlaceHeading(place: place)
+
+            XCTAssertEqual(heading.prefixedPreposition, "her \(preposition.rawValue)")
+            XCTAssertEqual(heading.placeName, "Klinga")
+            XCTAssertEqual(heading.visibleText, "her \(preposition.rawValue) Klinga")
+        }
+
+        let defaultKlinga = CurrentLocationPlaceHeading(place: Place(name: "Klinga", lat: 64.4, lon: 11.4))
+        XCTAssertEqual(defaultKlinga.visibleText, "her på Klinga")
+    }
+
     func testYrFixturePrefersDetailedHourOverOverlappingSixHourEstimate() throws {
         let forecast = try YrService.decodeLocationForecast(Self.locationForecastFixture)
         var calendar = Calendar(identifier: .gregorian)

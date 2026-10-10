@@ -633,8 +633,9 @@ private struct CurrentWeatherCard: View {
                 WeatherWordmark(languageStyle: languageStyle)
 
                 if isCurrentLocation {
+                    let heading = CurrentLocationPlaceHeading(place: place)
                     HStack(alignment: .center, spacing: 4) {
-                        Text("her " + place.resolvedPreposition.rawValue)
+                        Text(heading.prefixedPreposition)
                             .font(.caption.weight(.bold).italic())
                             .foregroundStyle(.white)
                             .fixedSize()
@@ -643,11 +644,11 @@ private struct CurrentWeatherCard: View {
                             Menu {
                                 placeMenuItems
                             } label: {
-                                currentLocationPlaceName(showsChevron: true)
+                                currentLocationPlaceName(showsChevron: true, heading: heading)
                             }
                             .layoutPriority(1)
                         } else {
-                            currentLocationPlaceName(showsChevron: false)
+                            currentLocationPlaceName(showsChevron: false, heading: heading)
                                 .layoutPriority(1)
                         }
                     }
@@ -822,9 +823,12 @@ private struct CurrentWeatherCard: View {
         }
     }
 
-    private func currentLocationPlaceName(showsChevron: Bool) -> some View {
+    private func currentLocationPlaceName(
+        showsChevron: Bool,
+        heading: CurrentLocationPlaceHeading
+    ) -> some View {
         HStack(spacing: 3) {
-            Text(place.displayName)
+            Text(heading.placeName)
                 .font(.system(size: 21, weight: .medium, design: .rounded))
                 .lineLimit(1)
                 .minimumScaleFactor(0.55)
@@ -836,7 +840,7 @@ private struct CurrentWeatherCard: View {
         .foregroundStyle(.white)
         .fixedSize(horizontal: false, vertical: true)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(languageStyle == .english ? "Here" : "Her") \(place.nameWithPreposition), GPS-posisjon")
+        .accessibilityLabel("\(languageStyle == .english ? "Here \(place.nameWithPreposition)" : heading.visibleText), GPS-posisjon")
         .accessibilityHint("Dette stedet følger telefonens aktuelle posisjon.")
     }
 
