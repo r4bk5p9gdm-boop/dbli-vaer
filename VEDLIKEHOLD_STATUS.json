@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-10T11:50:51Z",
+  "lastScheduledStart": "2026-10-10T12:20:51Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-450 fullført: Bakgrunnsoppdateringens innsending er nå injiserbar og feil loggføres i stedet for å bli ignorert; tester dekker vellykket og avvist innsending. xcodebuild build-for-testing for iOS består. Bred appgjennomgang fant også norsk-hardkodede tekster i stedsøket; AUTO-453 er opprettet. Neste åpne kø fra fullskanning: AUTO-451, AUTO-452, AUTO-453."
+  "lastProgress": "AUTO-449 oppfølging fullført: De to siste typekontrolltunge forecast-fixture-uttrykkene er også erstattet med den typede testhjelperen. Sammen med JSON-sømmen for dokumentimport bygger XCTest-målet. Neste åpne kø etter fullskanning: AUTO-451, AUTO-452, AUTO-453."
 }

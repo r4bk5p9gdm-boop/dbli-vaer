@@ -79,12 +79,6 @@ Swift-parsing og diffkontroll består; iOS-bygg og XCTest er ikke kjørt i denne
 runden fordi maskinen har bare 10 GB ledig diskplass og testmålet har kjente
 kompileringsfeil.
 
-**AUTO-453 · ÅPEN** — Lokaliser hele stedsøket etter appens valgte språkstil.
-`PlaceSearchView` viser fortsatt hardkodet norsk for søkefelt, søkeområde,
-preposisjonsvalg, tomt resultat og nettverksfeil, selv om resten av appen
-støtter engelsk. Bruk eksisterende språkmodell/katalog uten å endre søkelogikk,
-og legg til tester for synlige etiketter og resultatmeldinger.
-
 **AUTO-451 · ÅPEN** — Hindre at et eldre stedsøk overskriver resultater fra et
 nyere søk. `PlaceSearchView` starter både et kansellerbart debounce-søk og et
 frittstående søk ved tastaturets søkeknapp; det siste beholdes ikke som en
@@ -99,12 +93,26 @@ bevegelsen. Legg til målrettede tester for vertikale, diagonale, korte og
 horisontale bevegelser, og juster retningsavgjørelsen dersom en vertikal
 scrolling kan endre valgt sted eller en horisontal sveipretning blir snudd.
 
+**AUTO-453 · ÅPEN** — Lokaliser hele stedsøket etter appens valgte språkstil.
+`PlaceSearchView` viser fortsatt hardkodet norsk for søkefelt, søkeområde,
+preposisjonsvalg, tomt resultat og nettverksfeil, selv om resten av appen
+støtter engelsk. Bruk eksisterende språkmodell/katalog uten å endre søkelogikk,
+og legg til tester for synlige etiketter og resultatmeldinger.
+
+**AUTO-454 · ÅPEN** — Avgrens prognosenes ferskhetslogikk mot fremtidige
+tidsstempler. `Store.isForecastStale` og `shouldReplaceForecast` stoler på
+lokalt lagret `forecastUpdatedAt`; hvis enhetens klokke stilles tilbake eller
+lagrede data inneholder et fremtidig tidspunkt, kan gammel prognose bli regnet
+fersk og hindre nyere data i å erstatte den. Definer en trygg håndtering av
+urimelig framtidige tidsstempler og dekk klokkeendring/persistens med tester.
+
 **AUTO-449 · FULLFØRT 2026-10-10** — XCTest-målet kompilerer igjen.
 Forenklet gjentatte prognosedata-byggere i planleggertestene til en delt,
-typet hjelper og gjorde konfigurasjonsfilens JSON-koding testbar direkte uten
-å konstruere SwiftUIs interne `FileDocument`-konfigurasjoner. Eksisterende
-testdekning er beholdt. `xcodebuild build-for-testing` for iOS består; testene
-ble kompilert, men ikke kjørt på fysisk enhet.
+typet hjelper, inkludert de siste to typekontrolltunge tilfellene, og gjorde
+konfigurasjonsfilens JSON-koding testbar direkte uten å konstruere SwiftUIs
+interne `FileDocument`-konfigurasjoner. Eksisterende testdekning er beholdt.
+`xcodebuild build-for-testing` for iOS består; testene ble kompilert, men ikke
+kjørt på fysisk enhet.
 
 **AUTO-450 · FULLFØRT 2026-10-10** — Bakgrunnsoppdateringen skjuler ikke lenger
 avvist innsending. `BackgroundRefresh.schedule` logger nå feilen, og en

@@ -5079,16 +5079,7 @@ final class PlannerTests: XCTestCase {
         let secondPlaceRules = [rainRule(at: firstEventAt), rainRule(at: secondEventAt)]
         let firstPlace = Place(name: "Namsos", lat: 64.5, lon: 11.5, rules: firstPlaceRules)
         let secondPlace = Place(name: "Klinga", lat: 64.6, lon: 11.6, rules: secondPlaceRules)
-        let forecast = (0...5).map { offset in
-            ForecastHour(
-                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
-                temp: 8,
-                precip: offset == 2 || offset == 5 ? 1 : 0,
-                wind: 1,
-                cloud: 60,
-                dew: 7
-            )
-        }
+        let forecast = makeForecast(through: 5, precipitationOffsets: [2, 5])
 
         let alerts = Planner.planAll(
             places: [firstPlace, secondPlace],
@@ -5123,16 +5114,7 @@ final class PlannerTests: XCTestCase {
         let nearbyRule = rainRule(at: nearbyEventAt, onlyWhenNearby: true)
         let firstPlace = Place(name: "Namsos", lat: 64.5, lon: 11.5, rules: [firstRule])
         let nearbyPlace = Place(name: "Klinga", lat: 64.6, lon: 11.6, rules: [nearbyRule])
-        let forecast = (0...5).map { offset in
-            ForecastHour(
-                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
-                temp: 8,
-                precip: offset == 2 || offset == 5 ? 1 : 0,
-                wind: 1,
-                cloud: 60,
-                dew: 7
-            )
-        }
+        let forecast = makeForecast(through: 5, precipitationOffsets: [2, 5])
 
         let alerts = Planner.planAll(
             places: [firstPlace, nearbyPlace],
@@ -7164,12 +7146,8 @@ final class PlannerTests: XCTestCase {
             selectedPlaceID: imported.selectedPlaceID,
             alertLanguageStyle: imported.alertLanguageStyle ?? .bokmal
         )
-        let reexportedFile = try reexported.fileWrapper(configuration: .init(
-            contentType: .json, existingFile: nil
-        ))
-        let reimportedDocument = try WeatherConfigurationDocument(configuration: .init(
-            file: reexportedFile, contentType: .json
-        ))
+        let reexportedData = try reexported.serializedData()
+        let reimportedDocument = try WeatherConfigurationDocument(data: reexportedData)
         let reimported = reimportedDocument.configuration
         XCTAssertEqual(reimported.places.map(\.id), [selectedPlace.id, otherPlace.id])
         XCTAssertEqual(reimported.selectedPlaceID, selectedPlace.id)
