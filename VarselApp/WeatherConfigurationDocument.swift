@@ -57,16 +57,28 @@ struct WeatherConfigurationDocument: FileDocument {
     }
 
     init(configuration: ReadConfiguration) throws {
-        guard let data = configuration.file.regularFileContents else { throw CocoaError(.fileReadCorruptFile) }
+        try self.init(file: configuration.file)
+    }
+
+    init(file: FileWrapper) throws {
+        guard let data = file.regularFileContents else { throw CocoaError(.fileReadCorruptFile) }
+        try self.init(data: data)
+    }
+
+    init(data: Data) throws {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         self.configuration = try decoder.decode(WeatherConfigurationExport.self, from: data)
     }
 
     func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
+        FileWrapper(regularFileWithContents: try serializedData())
+    }
+
+    func serializedData() throws -> Data {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
         encoder.dateEncodingStrategy = .iso8601
-        return FileWrapper(regularFileWithContents: try encoder.encode(self.configuration))
+        return try encoder.encode(self.configuration)
     }
 }

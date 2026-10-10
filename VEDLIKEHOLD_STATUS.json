@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-10T08:15:26Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-448 fullført: VoiceOver-navnene for favorittstjernene følger nå valgt språk (Stjerne/Star 1 og 2) uten å endre synlige knapper eller favorittfunksjonen. Swift-parsing og diffkontroll består; iOS-bygg og XCTest ikke kjørt i denne runden grunnet 10 GB ledig diskplass og kjente XCTest-kompileringsfeil. Bred køgjennomgang fant også risiko for at et frittstående tastatursøk kan levere foreldede stedssøkeresultater; AUTO-451 er opprettet. Neste åpne kø fra fullskanning: AUTO-449, AUTO-450, AUTO-451."
+  "lastProgress": "AUTO-449 fullført: XCTest-målet bygger igjen etter typet prognosedatahjelper og direkte testbar JSON-koding i WeatherConfigurationDocument. xcodebuild build-for-testing for iOS består. Bred gjennomgang av Hjem-gestene avdekket behov for regresjonsdekning av konkurransen mellom vertikal scrolling og horisontalt sveip; AUTO-452 er opprettet. Neste åpne kø fra fullskanning: AUTO-450, AUTO-451, AUTO-452."
 }

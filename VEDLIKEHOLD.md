@@ -92,11 +92,19 @@ kansellerbar oppgave når søketekst eller søkeområde endres. Legg til en
 generasjonsvakt eller tilsvarende og en deterministisk test med injisert
 søkeleverandør, slik at bare nyeste søk kan endre resultater/feilmelding.
 
-**AUTO-449 · ÅPEN** — Få XCTest-målet til å kompilere igjen. Den avgrensede
-kjøringen for tilgjengelighetstester stoppet på eksisterende
-typekontroll-/nøkkelsti-feil flere steder i `PlannerTests.swift` (bl.a. linje
-5361–5777), før noen tester startet. Finn minste trygge oppdeling eller
-forenkling, bevar testdekningen og verifiser at målrettede tester kan kjøres.
+**AUTO-452 · ÅPEN** — Sikre at vertikal rulling og horisontalt Hjem-sveip ikke
+stjeler hverandres bevegelser. Hjem bruker samtidig `DragGesture` og lar
+`ScrollView` håndtere vertikale drag, mens sidebytte avgjøres ved slutten av
+bevegelsen. Legg til målrettede tester for vertikale, diagonale, korte og
+horisontale bevegelser, og juster retningsavgjørelsen dersom en vertikal
+scrolling kan endre valgt sted eller en horisontal sveipretning blir snudd.
+
+**AUTO-449 · FULLFØRT 2026-10-10** — XCTest-målet kompilerer igjen.
+Forenklet gjentatte prognosedata-byggere i planleggertestene til en delt,
+typet hjelper og gjorde konfigurasjonsfilens JSON-koding testbar direkte uten
+å konstruere SwiftUIs interne `FileDocument`-konfigurasjoner. Eksisterende
+testdekning er beholdt. `xcodebuild build-for-testing` for iOS består; testene
+ble kompilert, men ikke kjørt på fysisk enhet.
 
 **AUTO-447 · FULLFØRT 2026-10-10** — Steder-kortenes åpne/lukkede
 VoiceOver-verdi og hint følger nå bokmål, inntrøndersk eller engelsk uten

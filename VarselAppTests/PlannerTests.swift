@@ -559,6 +559,22 @@ final class PlannerTests: XCTestCase {
 
     private let base = Date(timeIntervalSince1970: 2_000_000_000)
 
+    private func makeForecast(
+        through finalOffset: Int,
+        startingAt start: Date? = nil,
+        precipitationOffsets: Set<Int>
+    ) -> [ForecastHour] {
+        let firstHour = start ?? base
+        return (0...finalOffset).map { offset in
+            let time = firstHour.addingTimeInterval(TimeInterval(offset) * 3_600)
+            let precipitation: Double = precipitationOffsets.contains(offset) ? 1 : 0
+            return ForecastHour(
+                time: time, temp: 8, precip: precipitation,
+                wind: 1, cloud: 60, dew: 7
+            )
+        }
+    }
+
     func testSharedPlaceSelectionResolvesOnlyExistingUniquePlacesAndCapsAtThree() {
         let a = Place(name: "A", lat: 1, lon: 1), b = Place(name: "B", lat: 2, lon: 2), c = Place(name: "C", lat: 3, lon: 3)
         XCTAssertEqual(SharedPlaceSelection(ids: [a.id, a.id, b.id, c.id, UUID()]).resolved(available: [a,b,c]), [a.id,b.id,c.id])
@@ -5154,16 +5170,7 @@ final class PlannerTests: XCTestCase {
         let laterRule = rainRule(at: laterEvent, leadMinutes: 240)
         let earlierPlace = Place(name: "Namsos", lat: 64.5, lon: 11.5, rules: [earlierRule])
         let laterPlace = Place(name: "Klinga", lat: 64.6, lon: 11.6, rules: [laterRule])
-        let forecast = (0...5).map { offset in
-            ForecastHour(
-                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
-                temp: 8,
-                precip: offset == 3 || offset == 5 ? 1 : 0,
-                wind: 1,
-                cloud: 60,
-                dew: 7
-            )
-        }
+        let forecast = makeForecast(through: 5, precipitationOffsets: [3, 5])
 
         let alerts = Planner.planAll(
             places: [earlierPlace, laterPlace],
@@ -5391,16 +5398,7 @@ final class PlannerTests: XCTestCase {
         isolateRule(&wind, at: windAt)
         isolateRule(&secondRain, at: secondRainAt)
 
-        var hours = (0...5).map { offset in
-            ForecastHour(
-                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
-                temp: 8,
-                precip: offset == 2 || offset == 5 ? 1 : 0,
-                wind: 1,
-                cloud: 60,
-                dew: 7
-            )
-        }
+        var hours = makeForecast(through: 5, precipitationOffsets: [2, 5])
         hours[4].gust = 12
         let place = Place(name: "Klinga", lat: 64.5, lon: 11.5, rules: [firstRain, wind, secondRain])
 
@@ -5447,16 +5445,7 @@ final class PlannerTests: XCTestCase {
         isolateRule(&firstRule, at: firstEventAt)
         isolateRule(&secondRule, at: secondEventAt)
 
-        let hours = (0...8).map { offset in
-            ForecastHour(
-                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
-                temp: 8,
-                precip: offset == 2 || offset == 8 ? 1 : 0,
-                wind: 1,
-                cloud: 60,
-                dew: 7
-            )
-        }
+        let hours = makeForecast(through: 8, precipitationOffsets: [2, 8])
         let place = Place(name: "Klinga", lat: 64.5, lon: 11.5, rules: [firstRule, secondRule])
 
         let alerts = Planner.planAll(
@@ -5493,16 +5482,7 @@ final class PlannerTests: XCTestCase {
         secondRule.activeToHour = 8
 
         let forecastStart = firstEventAt.addingTimeInterval(-3_600)
-        let hours = (0...7).map { offset in
-            ForecastHour(
-                time: forecastStart.addingTimeInterval(TimeInterval(offset * 3_600)),
-                temp: 8,
-                precip: offset == 1 || offset == 6 ? 1 : 0,
-                wind: 1,
-                cloud: 60,
-                dew: 7
-            )
-        }
+        let hours = makeForecast(through: 7, startingAt: forecastStart, precipitationOffsets: [1, 6])
         let place = Place(name: "Klinga", lat: 64.5, lon: 11.5, rules: [firstRule, secondRule])
 
         let alerts = Planner.planAll(
@@ -5534,16 +5514,7 @@ final class PlannerTests: XCTestCase {
         isolateRule(&firstRule, at: firstEventAt)
         isolateRule(&secondRule, at: secondEventAt)
 
-        let hours = (0...7).map { offset in
-            ForecastHour(
-                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
-                temp: 8,
-                precip: offset == 2 || offset == 7 ? 1 : 0,
-                wind: 1,
-                cloud: 60,
-                dew: 7
-            )
-        }
+        let hours = makeForecast(through: 7, precipitationOffsets: [2, 7])
         let place = Place(name: "Klinga", lat: 64.5, lon: 11.5, rules: [firstRule, secondRule])
 
         let alerts = Planner.planAll(
@@ -5574,16 +5545,7 @@ final class PlannerTests: XCTestCase {
         secondRule.activeToHour = (secondHour + 1) % 24
 
         let place = Place(name: "Klinga", lat: 64.5, lon: 11.5, rules: [firstRule, secondRule])
-        let forecast = (0...5).map { offset in
-            ForecastHour(
-                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
-                temp: 8,
-                precip: offset == 2 || offset == 5 ? 1 : 0,
-                wind: 1,
-                cloud: 60,
-                dew: 7
-            )
-        }
+        let forecast = makeForecast(through: 5, precipitationOffsets: [2, 5])
         let now = base.addingTimeInterval(-3_600)
         let firstFireAt = try XCTUnwrap(Planner.plan(
             rule: firstRule, forecast: forecast, placeName: place.name,
@@ -5630,16 +5592,7 @@ final class PlannerTests: XCTestCase {
             name: "Klinga", lat: 64.6, lon: 11.6,
             rules: [earlierSecond, laterFirst]
         )
-        let forecast = (0...5).map { offset in
-            ForecastHour(
-                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
-                temp: 8,
-                precip: offset == 2 || offset == 5 ? 1 : 0,
-                wind: 1,
-                cloud: 60,
-                dew: 7
-            )
-        }
+        let forecast = makeForecast(through: 5, precipitationOffsets: [2, 5])
         let now = base
         let earlyFireAt = try XCTUnwrap(Planner.plan(
             rule: earlierFirst, forecast: forecast, placeName: earlierPlace.name,
@@ -5679,16 +5632,7 @@ final class PlannerTests: XCTestCase {
             rule.activeToHour = (hour + 1) % 24
             return rule
         }
-        let forecast = (0...5).map { offset in
-            ForecastHour(
-                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
-                temp: 8,
-                precip: offset == 2 || offset == 5 ? 1 : 0,
-                wind: 1,
-                cloud: 60,
-                dew: 7
-            )
-        }
+        let forecast = makeForecast(through: 5, precipitationOffsets: [2, 5])
         func plan(with ignoredRule: Rule) -> (alerts: [PlannedAlert], validRuleID: UUID) {
             let validRule = rainRule(at: validEventAt)
             let place = Place(
@@ -5732,16 +5676,7 @@ final class PlannerTests: XCTestCase {
         let firstRule = rainRule(at: firstEventAt, leadMinutes: 60)
         let secondRule = rainRule(at: secondEventAt, leadMinutes: 480)
         let place = Place(name: "Klinga", lat: 64.5, lon: 11.5, rules: [secondRule, firstRule])
-        let forecast = (0...8).map { offset in
-            ForecastHour(
-                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
-                temp: 8,
-                precip: offset == 2 || offset == 8 ? 1 : 0,
-                wind: 1,
-                cloud: 60,
-                dew: 7
-            )
-        }
+        let forecast = makeForecast(through: 8, precipitationOffsets: [2, 8])
         let now = base.addingTimeInterval(-3_600)
         let firstFireAt = try XCTUnwrap(Planner.plan(
             rule: firstRule, forecast: forecast, placeName: place.name,
@@ -5787,16 +5722,7 @@ final class PlannerTests: XCTestCase {
             name: "Klinga", lat: 64.5, lon: 11.5,
             rules: [retainedRule, duplicateRule]
         )
-        let forecast = (0...5).map { offset in
-            ForecastHour(
-                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
-                temp: 8,
-                precip: offset == 2 || offset == 5 ? 1 : 0,
-                wind: 1,
-                cloud: 60,
-                dew: 7
-            )
-        }
+        let forecast = makeForecast(through: 5, precipitationOffsets: [2, 5])
 
         let alerts = Planner.planAll(
             places: [place], forecasts: [place.id: forecast],
@@ -5832,16 +5758,7 @@ final class PlannerTests: XCTestCase {
             name: "Klinga", lat: 64.5, lon: 11.5,
             rules: [ordinaryRule, nearbyRule]
         )
-        let forecast = (0...5).map { offset in
-            ForecastHour(
-                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
-                temp: 8,
-                precip: offset == 2 || offset == 5 ? 1 : 0,
-                wind: 1,
-                cloud: 60,
-                dew: 7
-            )
-        }
+        let forecast = makeForecast(through: 5, precipitationOffsets: [2, 5])
 
         let alertsWhenAway = Planner.planAll(
             places: [place], forecasts: [place.id: forecast], now: base
@@ -5880,16 +5797,7 @@ final class PlannerTests: XCTestCase {
         isolateRule(&firstRule, at: firstRadarEventAt)
         isolateRule(&secondRule, at: secondRadarEventAt)
 
-        var hours = (0...8).map { offset in
-            ForecastHour(
-                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
-                temp: 8,
-                precip: offset == 2 || offset == 8 ? 1 : 0,
-                wind: 1,
-                cloud: 60,
-                dew: 7
-            )
-        }
+        var hours = makeForecast(through: 8, precipitationOffsets: [2, 8])
         hours[2].radarSamples = [PrecipitationSample(time: firstRadarEventAt, rate: 0.8)]
         hours[8].radarSamples = [PrecipitationSample(time: secondRadarEventAt, rate: 0.8)]
         let place = Place(name: "Klinga", lat: 64.5, lon: 11.5, rules: [firstRule, secondRule])
@@ -5925,16 +5833,7 @@ final class PlannerTests: XCTestCase {
         secondRule.activeFromHour = secondHour
         secondRule.activeToHour = (secondHour + 2) % 24
 
-        var hours = (0...7).map { offset in
-            ForecastHour(
-                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
-                temp: 8,
-                precip: offset == 2 || offset == 7 ? 1 : 0,
-                wind: 1,
-                cloud: 60,
-                dew: 7
-            )
-        }
+        var hours = makeForecast(through: 7, precipitationOffsets: [2, 7])
         hours[2].radarSamples = [PrecipitationSample(time: firstRadarEventAt, rate: 0.8)]
         hours[7].radarSamples = [PrecipitationSample(time: secondRadarEventAt, rate: 0.8)]
         let place = Place(name: "Klinga", lat: 64.5, lon: 11.5, rules: [firstRule, secondRule])
@@ -5971,16 +5870,7 @@ final class PlannerTests: XCTestCase {
         isolateRule(&firstRule, at: firstRadarEventAt)
         isolateRule(&secondRule, at: secondRadarEventAt)
 
-        var hours = (0...7).map { offset in
-            ForecastHour(
-                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
-                temp: 8,
-                precip: offset == 2 || offset == 7 ? 1 : 0,
-                wind: 1,
-                cloud: 60,
-                dew: 7
-            )
-        }
+        var hours = makeForecast(through: 7, precipitationOffsets: [2, 7])
         hours[2].radarSamples = [PrecipitationSample(time: firstRadarEventAt, rate: 0.8)]
         hours[7].radarSamples = [PrecipitationSample(time: secondRadarEventAt, rate: 0.8)]
         let place = Place(name: "Klinga", lat: 64.5, lon: 11.5, rules: [firstRule, secondRule])
@@ -6029,16 +5919,7 @@ final class PlannerTests: XCTestCase {
         isolateRule(&firstRule, at: firstRadarEventAt)
         isolateRule(&secondRule, at: secondRadarEventAt)
 
-        var hours = (0...8).map { offset in
-            ForecastHour(
-                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
-                temp: 8,
-                precip: offset == 2 || offset == 8 ? 1 : 0,
-                wind: 1,
-                cloud: 60,
-                dew: 7
-            )
-        }
+        var hours = makeForecast(through: 8, precipitationOffsets: [2, 8])
         hours[2].radarSamples = [PrecipitationSample(time: firstRadarEventAt, rate: 0.8)]
         hours[8].radarSamples = [PrecipitationSample(time: secondRadarEventAt, rate: 0.8)]
         let place = Place(name: "Klinga", lat: 64.5, lon: 11.5, rules: [firstRule, secondRule])
@@ -6067,16 +5948,7 @@ final class PlannerTests: XCTestCase {
             rule.activeToHour = (hour + 1) % 24
             return rule
         }
-        let hours = (0...10).map { offset in
-            ForecastHour(
-                time: base.addingTimeInterval(TimeInterval(offset * 3_600)),
-                temp: 8,
-                precip: eventOffsets.contains(offset) ? 1 : 0,
-                wind: 1,
-                cloud: 60,
-                dew: 7
-            )
-        }
+        let hours = makeForecast(through: 10, precipitationOffsets: Set(eventOffsets))
         let place = Place(name: "Klinga", lat: 64.5, lon: 11.5, rules: rules)
 
         let alerts = Planner.planAll(
@@ -6102,16 +5974,7 @@ final class PlannerTests: XCTestCase {
         rule.previousDayNotificationHour = 21
         rule.notificationDayOffset = 0
 
-        let hours = (0...9).map { offset in
-            ForecastHour(
-                time: now.addingTimeInterval(TimeInterval(offset * 3_600)),
-                temp: 8,
-                precip: offset == 3 || offset == 8 ? 1 : 0,
-                wind: 1,
-                cloud: 60,
-                dew: 7
-            )
-        }
+        let hours = makeForecast(through: 9, startingAt: now, precipitationOffsets: [3, 8])
         let place = Place(name: "Klinga", lat: 64.5, lon: 11.5, rules: [rule])
 
         let alerts = Planner.planAll(
@@ -7001,16 +6864,13 @@ final class PlannerTests: XCTestCase {
             places: [home, place], selectedPlaceID: place.id, alertLanguageStyle: .english
         )
 
-        let file = try document.fileWrapper(configuration: .init(contentType: .json, existingFile: nil))
-        let data = try XCTUnwrap(file.regularFileContents)
+        let data = try document.serializedData()
         let json = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
         let exportedAtString = try XCTUnwrap(json["exportedAt"] as? String)
         XCTAssertTrue(exportedAtString.contains("T"))
         XCTAssertTrue(exportedAtString.hasSuffix("Z"))
 
-        let importedDocument = try WeatherConfigurationDocument(
-            configuration: .init(file: file, contentType: .json)
-        )
+        let importedDocument = try WeatherConfigurationDocument(data: data)
         let imported = importedDocument.configuration
 
         XCTAssertEqual(imported.formatVersion, 1)
@@ -7030,10 +6890,8 @@ final class PlannerTests: XCTestCase {
             places: [], selectedPlaceID: nil, alertLanguageStyle: .english
         )
 
-        let file = try document.fileWrapper(configuration: .init(contentType: .json, existingFile: nil))
-        let imported = try WeatherConfigurationDocument(
-            configuration: .init(file: file, contentType: .json)
-        ).configuration
+        let data = try document.serializedData()
+        let imported = try WeatherConfigurationDocument(data: data).configuration
 
         XCTAssertEqual(imported.places, [])
         XCTAssertNil(imported.selectedPlaceID)
@@ -7043,18 +6901,14 @@ final class PlannerTests: XCTestCase {
     func testConfigurationDocumentRejectsInvalidJSONFileContents() {
         let file = FileWrapper(regularFileWithContents: Data("this is not JSON".utf8))
 
-        XCTAssertThrowsError(try WeatherConfigurationDocument(
-            configuration: .init(file: file, contentType: .json)
-        ))
+        XCTAssertThrowsError(try WeatherConfigurationDocument(file: file))
     }
 
     func testConfigurationDocumentRejectsJSONWithNonObjectTopLevelValue() {
         for json in ["null", "[]", "42", "\"configuration\""] {
             let file = FileWrapper(regularFileWithContents: Data(json.utf8))
 
-            XCTAssertThrowsError(try WeatherConfigurationDocument(
-                configuration: .init(file: file, contentType: .json)
-            ), "Expected top-level JSON value to be rejected: \(json)")
+            XCTAssertThrowsError(try WeatherConfigurationDocument(file: file), "Expected top-level JSON value to be rejected: \(json)")
         }
     }
 
@@ -7069,9 +6923,7 @@ final class PlannerTests: XCTestCase {
         object["formatVersion"] = WeatherConfigurationExport.currentFormatVersion + 1
         let file = FileWrapper(regularFileWithContents: try JSONSerialization.data(withJSONObject: object))
 
-        XCTAssertThrowsError(try WeatherConfigurationDocument(
-            configuration: .init(file: file, contentType: .json)
-        )) { error in
+        XCTAssertThrowsError(try WeatherConfigurationDocument(file: file)) { error in
             guard case let DecodingError.dataCorrupted(context) = error else {
                 XCTFail("Expected an unsupported format version to be rejected, got: \(error)")
                 return
@@ -7084,9 +6936,7 @@ final class PlannerTests: XCTestCase {
     func testConfigurationDocumentRejectsDirectoryInsteadOfJSONFile() {
         let directory = FileWrapper(directoryWithFileWrappers: [:])
 
-        XCTAssertThrowsError(try WeatherConfigurationDocument(
-            configuration: .init(file: directory, contentType: .json)
-        )) { error in
+        XCTAssertThrowsError(try WeatherConfigurationDocument(file: directory)) { error in
             XCTAssertEqual((error as? CocoaError)?.code, .fileReadCorruptFile)
         }
     }
@@ -7094,9 +6944,7 @@ final class PlannerTests: XCTestCase {
     func testConfigurationDocumentRejectsEmptyRegularFile() {
         let emptyFile = FileWrapper(regularFileWithContents: Data())
 
-        XCTAssertThrowsError(try WeatherConfigurationDocument(
-            configuration: .init(file: emptyFile, contentType: .json)
-        ))
+        XCTAssertThrowsError(try WeatherConfigurationDocument(file: emptyFile))
     }
 
     func testLegacyConfigurationWithoutOptionalMetadataKeepsPlacesAndSelection() throws {
@@ -7113,9 +6961,7 @@ final class PlannerTests: XCTestCase {
 
         let legacyData = try JSONSerialization.data(withJSONObject: object)
         let legacyFile = FileWrapper(regularFileWithContents: legacyData)
-        let importedDocument = try WeatherConfigurationDocument(configuration: .init(
-            file: legacyFile, contentType: .json
-        ))
+        let importedDocument = try WeatherConfigurationDocument(file: legacyFile)
         let imported = importedDocument.configuration
 
         XCTAssertEqual(imported.formatVersion, 1)
@@ -7129,12 +6975,8 @@ final class PlannerTests: XCTestCase {
             selectedPlaceID: imported.selectedPlaceID,
             alertLanguageStyle: imported.alertLanguageStyle ?? .bokmal
         )
-        let reexportedFile = try reexportedDocument.fileWrapper(configuration: .init(
-            contentType: .json, existingFile: nil
-        ))
-        let reimported = try WeatherConfigurationDocument(configuration: .init(
-            file: reexportedFile, contentType: .json
-        )).configuration
+        let reexportedData = try reexportedDocument.serializedData()
+        let reimported = try WeatherConfigurationDocument(data: reexportedData).configuration
         XCTAssertEqual(reimported.places.map(\.id), [place.id])
         XCTAssertEqual(reimported.selectedPlaceID, place.id)
         XCTAssertEqual(reimported.alertLanguageStyle, .bokmal)
@@ -7192,9 +7034,7 @@ final class PlannerTests: XCTestCase {
 
         for sourceObject in [invalidSelectionObject, missingSelection] {
             let importedData = try JSONSerialization.data(withJSONObject: sourceObject)
-            let importedDocument = try WeatherConfigurationDocument(configuration: .init(
-                file: FileWrapper(regularFileWithContents: importedData), contentType: .json
-            ))
+            let importedDocument = try WeatherConfigurationDocument(data: importedData)
             let imported = importedDocument.configuration
 
             XCTAssertEqual(imported.selectedPlaceID, firstPlace.id)
@@ -7205,12 +7045,8 @@ final class PlannerTests: XCTestCase {
                 selectedPlaceID: imported.selectedPlaceID,
                 alertLanguageStyle: imported.alertLanguageStyle ?? .bokmal
             )
-            let exportedFile = try exportedAgain.fileWrapper(configuration: .init(
-                contentType: .json, existingFile: nil
-            ))
-            let reimportedDocument = try WeatherConfigurationDocument(configuration: .init(
-                file: exportedFile, contentType: .json
-            ))
+            let exportedData = try exportedAgain.serializedData()
+            let reimportedDocument = try WeatherConfigurationDocument(data: exportedData)
             let reimported = reimportedDocument.configuration
             XCTAssertEqual(reimported.selectedPlaceID, firstPlace.id)
             XCTAssertEqual(reimported.places.map(\.id), [firstPlace.id, secondPlace.id])
@@ -7235,9 +7071,7 @@ final class PlannerTests: XCTestCase {
         object["places"] = placeObjects
 
         let importedData = try JSONSerialization.data(withJSONObject: object)
-        let importedDocument = try WeatherConfigurationDocument(configuration: .init(
-            file: FileWrapper(regularFileWithContents: importedData), contentType: .json
-        ))
+        let importedDocument = try WeatherConfigurationDocument(data: importedData)
         let imported = importedDocument.configuration
 
         XCTAssertEqual(imported.places.map(\.id), [firstValidPlace.id, secondValidPlace.id])
@@ -7249,12 +7083,8 @@ final class PlannerTests: XCTestCase {
             selectedPlaceID: imported.selectedPlaceID,
             alertLanguageStyle: imported.alertLanguageStyle ?? .bokmal
         )
-        let reexportedFile = try reexportedDocument.fileWrapper(configuration: .init(
-            contentType: .json, existingFile: nil
-        ))
-        let reimportedDocument = try WeatherConfigurationDocument(configuration: .init(
-            file: reexportedFile, contentType: .json
-        ))
+        let reexportedData = try reexportedDocument.serializedData()
+        let reimportedDocument = try WeatherConfigurationDocument(data: reexportedData)
         let reimported = reimportedDocument.configuration
         XCTAssertEqual(reimported.places.map(\.id), [firstValidPlace.id, secondValidPlace.id])
         XCTAssertEqual(reimported.selectedPlaceID, firstValidPlace.id)
@@ -7318,9 +7148,7 @@ final class PlannerTests: XCTestCase {
         object["places"] = placeObjects
 
         let importedData = try JSONSerialization.data(withJSONObject: object)
-        let importedDocument = try WeatherConfigurationDocument(configuration: .init(
-            file: FileWrapper(regularFileWithContents: importedData), contentType: .json
-        ))
+        let importedDocument = try WeatherConfigurationDocument(data: importedData)
         let imported = importedDocument.configuration
         let importedSelected = try XCTUnwrap(imported.places.first)
 
