@@ -134,13 +134,20 @@ regel. Swift-parsing og diffkontroll består; XCTest/build ikke kjørt fordi
 CoreSimulatorService er utilgjengelig og testmålet har kjente typekontrollfeil
 i andre tester.
 
-**AUTO-462 · ÅPEN** — Beskytt delte widget-/Watch-data mot entitlement-drift.
-`SharedWidgetData` bruker appgruppen `group.no.mathias.dblivaer`, og appen,
-widgeten, Watch-appen og Watch-widgeten trenger samme entitlement for å lese
-de samme UserDefaults-dataene. De fire entitlement-filene samsvarer nå, men
-ingen regresjonskontroll varsler hvis en senere mål-/konfigurasjonsendring
-fjerner gruppen fra én av dem. Legg til en lett, repeterbar prosjektkontroll
-for alle relevante entitlements/buildkonfigurasjoner.
+**AUTO-465 · ÅPEN** — Skill visuelt mellom delvis sol og manglende Yr-time i
+værbåndene. Begge bruker skravering, men gul skravur betyr skydekke mellom
+solgrensene, mens grå skravur betyr at prognosen mangler og været er ukjent.
+En bruker tolket nylig skravuren på slutten av dag 3 som muligens manglende
+varsling. Legg til en kort forklaring der den er nyttig, og regresjonstest at
+forklaringene ikke blander prognosedekning med pushvarsler.
+
+**AUTO-462 · FULLFØRT 2026-10-10** — La til
+`verify_app_group_entitlements.sh`, en lett prosjektkontroll som spør Xcode om
+den effektive `CODE_SIGN_ENTITLEMENTS`-verdien for Debug og Release på appen,
+iOS-widgeten, Watch-appen og Watch-widgeten. Den kontrollerer også at hver
+referert plist inneholder appgruppe-ID-en som `SharedWidgetData` faktisk bruker.
+Skriptet feiler ved manglende fil, feil mål-/konfigurasjonskobling eller
+manglende appgruppe; det bygger eller endrer ikke signering.
 
 **AUTO-463 · ÅPEN** — Avvis gamle eller upresise GPS-fiks før «Her» velges.
 `LocationManager` godtar nå enhver posisjon med ikke-negativ
