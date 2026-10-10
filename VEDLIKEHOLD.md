@@ -114,14 +114,14 @@ Regresjonstesten kontrollerer rekkefølge, duplikater og grensen. Swift-parsing
 og diffkontroll består; XCTest/build ble ikke kjørt fordi CoreSimulatorService
 er utilgjengelig.
 
-**AUTO-460 · ÅPEN** — Ikke lag nye pushvarsler fra foreldede prognoser.
-`Store.isForecastStale` brukes i visningen, men `Store.replan()` gir alle
-lagrede prognoser videre til `Planner.planAll` og regner bare en tom prognose
-som manglende. Ved appstart eller endrede varselinnstillinger kan derfor en
-prognose eldre enn den etablerte to-timersgrensen fortsatt planlegge varsler.
-Avklar ønsket offline-fallback, filtrer foreldede data før planlegging uten å
-slette den viste cachen, og legg til tester ved grensen samt når oppdateringen
-feiler.
+**AUTO-460 · FULLFØRT 2026-10-10** — `Store.replan()` filtrerer nå prognoser
+eldre enn to timer (eller med manglende/urimelig framtidig tidsstempel) før
+`Planner.planAll`, og regner dem som manglende når varslingsplanen erstattes.
+Den lagrede prognosen beholdes for Hjem og widget som offline-visning, og
+eksisterende varsler for steder uten fersk prognose kan følge schedulerens
+offline-fallback. Regresjonstest dekker fersk, nøyaktig to timer gammel og
+foreldet prognose samt at cachen ikke endres. Swift-parsing og diffkontroll
+består; XCTest/build ble ikke kjørt fordi CoreSimulatorService er utilgjengelig.
 
 **AUTO-461 · ÅPEN** — Avgrens importerte varselregler før planlegging.
 `Rule.init(from:)` godtar nå vilkårlige `count`, `intervalMinutes`,
@@ -139,6 +139,15 @@ de samme UserDefaults-dataene. De fire entitlement-filene samsvarer nå, men
 ingen regresjonskontroll varsler hvis en senere mål-/konfigurasjonsendring
 fjerner gruppen fra én av dem. Legg til en lett, repeterbar prosjektkontroll
 for alle relevante entitlements/buildkonfigurasjoner.
+
+**AUTO-463 · ÅPEN** — Avvis gamle eller upresise GPS-fiks før «Her» velges.
+`LocationManager` godtar nå enhver posisjon med ikke-negativ
+`horizontalAccuracy`, uten å kontrollere når fiksens `timestamp` ble tatt
+eller hvor stor usikkerheten er. `Store.selectCurrentLocationIfPossible()` kan
+derfor merke et lagret sted eller nytt «Min posisjon»-sted som live GPS ut fra
+en gammel eller svært grov måling. Trekk en testbar ferskhets-/nøyaktighetspolicy
+ut, og test gamle, framtidige, upresise og gyldige målinger uten å forstyrre
+manuelt valgt sted når GPS-data avvises.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

@@ -594,6 +594,16 @@ final class Store: ObservableObject {
         return age > threshold || age < -forecastFutureTimestampTolerance
     }
 
+    /// Keep cached values available to the UI/widgets as an offline fallback,
+    /// but never use a stale cache to create a new push notification plan.
+    static func forecastsForPlanning(
+        _ forecasts: [UUID: [ForecastHour]],
+        updatedAt: [UUID: Date],
+        now: Date = Date()
+    ) -> [UUID: [ForecastHour]] {
+        forecasts.filter { id, _ in !isForecastStale(updatedAt[id], now: now) }
+    }
+
     static func shouldReplaceForecast(existingAt: Date?, incomingAt: Date, now: Date = Date()) -> Bool {
         guard let existingAt else { return true }
         if existingAt.timeIntervalSince(now) > forecastFutureTimestampTolerance { return true }
@@ -731,10 +741,13 @@ final class Store: ObservableObject {
         // three identical copies for planning, missing-data checks and Live
         // Activity synchronization.
         let currentForecasts = forecasts
-        let alerts = Planner.planAll(places: places, forecasts: currentForecasts, nearbyPlaceIDs: nearbyPlaceIDs)
+        let planningForecasts = Self.forecastsForPlanning(
+            currentForecasts, updatedAt: forecastUpdatedAt, now: now
+        )
+        let alerts = Planner.planAll(places: places, forecasts: planningForecasts, nearbyPlaceIDs: nearbyPlaceIDs)
         let scheduleResult = await NotificationScheduler.reschedule(
             alerts, languageStyle: alertLanguageStyle, places: places,
-            missingForecastPlaceIDs: Set(places.filter { (currentForecasts[$0.id] ?? []).isEmpty }.map(\.id)),
+            missingForecastPlaceIDs: Set(places.filter { (planningForecasts[$0.id] ?? []).isEmpty }.map(\.id)),
             nearbyPlaceIDs: nearbyPlaceIDs
         )
         await LiveWeatherActivityManager.sync(

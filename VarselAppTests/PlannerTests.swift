@@ -7435,6 +7435,36 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(Store.isForecastStale(nil, now: base))
     }
 
+    func testStaleForecastIsExcludedFromPushPlanningButRemainsCached() {
+        let stalePlace = Place(name: "Gammel prognose", lat: 64, lon: 11, rules: [Rule(type: .frost)])
+        let boundaryPlace = Place(name: "Grense", lat: 65, lon: 11, rules: [Rule(type: .frost)])
+        let freshPlace = Place(name: "Ny", lat: 66, lon: 11, rules: [Rule(type: .frost)])
+        let hour = ForecastHour(
+            time: base.addingTimeInterval(3_600), temp: -5, precip: 0,
+            wind: 1, cloud: 10, dew: -7
+        )
+        let cached = [stalePlace.id: [hour], boundaryPlace.id: [hour], freshPlace.id: [hour]]
+        let planning = Store.forecastsForPlanning(
+            cached,
+            updatedAt: [
+                stalePlace.id: base.addingTimeInterval(-2 * 3_600 - 1),
+                boundaryPlace.id: base.addingTimeInterval(-2 * 3_600),
+                freshPlace.id: base
+            ],
+            now: base
+        )
+
+        XCTAssertEqual(cached[stalePlace.id], [hour], "Offline display cache must remain intact")
+        XCTAssertNil(planning[stalePlace.id])
+        XCTAssertEqual(Set(planning.keys), [boundaryPlace.id, freshPlace.id])
+        let alerts = Planner.planAll(
+            places: [stalePlace, boundaryPlace, freshPlace],
+            forecasts: planning,
+            now: base
+        )
+        XCTAssertEqual(Set(alerts.map(\.placeID)), [boundaryPlace.id, freshPlace.id])
+    }
+
     func testFutureForecastTimestampIsStaleAfterClockMovesBack() {
         let now = base
         let fiveMinutesAhead = now.addingTimeInterval(Store.forecastFutureTimestampTolerance)
