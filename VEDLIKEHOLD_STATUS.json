@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-10T03:11:03Z",
+  "lastScheduledStart": "2026-10-10T03:41:03Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-438 fullført: Kommende pushvarsler knytter nå utvidet visning til aktivt steds ID via delt PlaceExpansionState, så utvidelse for Klinga ikke arves av Hytta; målrettet state-regresjon dekker bytte og lukking, uten ekstra varselberegning. Swift-parsing, JSON-validering og diffkontroll består; full Xcode-test/build er ikke kjørt. Bred appgjennomgang fant at GPS-merket på Hjem fremdeles har VoiceOver-etikett bare på bokmål selv ved engelsk språkvalg; AUTO-441 dekker tilgjengelig tekst for alle språkstilene. Neste kø: AUTO-439, AUTO-440 og AUTO-441."
+  "lastProgress": "AUTO-439 fullført: hurtigmenyens tekst bruker nå Dynamic-Type-skalert caption2 i stedet for fast 10-punkts tekst; lange etiketter kan gå over to linjer, med uendret rekkefølge og samme minimumsmål. Swift-parsing, JSON-validering og diffkontroll består. Simulator-/XCTest-layoutkontroll ble ikke kjørt; diskplassen er begrenset og den kjente SwiftUIMacros-feilen gjør full bygging upålitelig. Bred gjennomgang fant at UI-layout ikke kan verifiseres av PlannerTests alene; AUTO-442 dekker repeterbar tilgjengelighetsstørrelse-kontroll med fem destinasjoner. Neste kø: AUTO-440, AUTO-441 og AUTO-442."
 }

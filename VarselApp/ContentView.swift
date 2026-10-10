@@ -225,7 +225,7 @@ struct ContentView: View {
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
-            VStack(spacing: 3) {
+            VStack(spacing: 2) {
                 ZStack(alignment: .bottomTrailing) {
                     Image(systemName: systemImage)
                         .font(.system(size: 17, weight: isSelected ? .semibold : .regular))
@@ -239,13 +239,13 @@ struct ContentView: View {
                 }
                 .frame(height: 19)
                 Text(title)
-                    .font(.system(size: 10, weight: isSelected ? .semibold : .regular))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.72)
+                    .font(.caption2.weight(isSelected ? .semibold : .regular))
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .foregroundStyle(isSelected ? Color.indigo : Color.secondary)
             .frame(maxWidth: .infinity)
-            .frame(height: 43)
+            .frame(minHeight: 43)
             .background {
                 if isSelected {
                     RoundedRectangle(cornerRadius: 11, style: .continuous)

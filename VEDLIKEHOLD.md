@@ -54,6 +54,13 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-442 · ÅPEN** — Verifiser hurtigmenyens faktiske layout med stor tekst.
+AUTO-439 gjør etikettene Dynamic-Type-tilpasset og lar lange navn bruke to
+linjer, men PlannerTests kan ikke bekrefte SwiftUI-layout eller tilgjengelige
+trykkmål. Legg til en repeterbar simulator-/UI-kontroll for fem destinasjoner
+ved tilgjengelighetsstørrelse; kontroller klipping, rekkefølge og at hver
+knapp fortsatt kan aktiveres.
+
 **AUTO-441 · ÅPEN** — Lokaliser VoiceOver-teksten for GPS-merket på Hjem.
 `LocationPresenceBadge` viser visuelt bare «GPS», men den tilgjengelige
 etiketten er fast bokmål («GPS-posisjon, live») selv i engelsk språkstil.
@@ -66,12 +73,12 @@ samme navigasjonslinje er fortsatt bokmål. Bruk samme språkstil for synlige
 etiketter og VoiceOver-navn, og dekk bokmål, inntrøndersk og engelsk uten å
 endre fanenes handling eller plassering.
 
-**AUTO-439 · ÅPEN** — La hurtignavigasjonens tekst respektere større tekststørrelser.
-Snarveiknappenes titler bruker nå `.system(size: 10)` og
-`minimumScaleFactor`, som kan bli vanskelig å lese og ikke følger Dynamic Type.
-Bruk skalert typografi med en kompakt layout som fortsatt fungerer når fem
-destinasjoner vises, og verifiser stor tekst uten å endre rekkefølge eller
-trykkmål.
+**AUTO-439 · FULLFØRT 2026-10-10** — Hurtigmenyetikettene bruker nå den
+Dynamic-Type-skalerte `caption2`-stilen i stedet for fast 10-punkts tekst.
+Lange navn kan gå over to linjer; knappen beholder minst samme 43-punkts
+høyde, ikonplassering, rekkefølge og tilgjengelighetsetiketter. Swift-parsing
+og diffkontroll består. Simulator-/XCTest-layoutkontroll ble ikke kjørt; den
+konkrete visuelle verifikasjonen er lagt i AUTO-442.
 
 **AUTO-438 · FULLFØRT 2026-10-10** — Hjemmets kommende pushvarsler bruker nå
 den delte `PlaceExpansionState`-modellen i stedet for en ubundet boolsk
