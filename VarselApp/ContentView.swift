@@ -2442,7 +2442,10 @@ private struct PlaceRow: View {
                         Image(systemName: "house.fill")
                             .font(.caption2)
                             .foregroundStyle(.secondary)
-                            .accessibilityLabel("Hjemsted")
+                            .accessibilityLabel(PlaceRoleAccessibilityCopy.label(
+                                for: .home,
+                                languageStyle: store.alertLanguageStyle
+                            ))
                     }
                 }
                 Spacer()
@@ -2451,7 +2454,14 @@ private struct PlaceRow: View {
                         .foregroundStyle(current.cloud <= 20 ? .orange : .blue)
                     Text("\(Int(current.temp.rounded()))°").font(.title3.weight(.medium))
                 }
-                if place.id == store.selectedID { Image(systemName: "checkmark.circle.fill").foregroundStyle(.blue) }
+                if place.id == store.selectedID {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.blue)
+                        .accessibilityLabel(PlaceRoleAccessibilityCopy.label(
+                            for: .selected,
+                            languageStyle: store.alertLanguageStyle
+                        ))
+                }
             }
             HStack {
                 if place.enabledRuleCount == 0 {

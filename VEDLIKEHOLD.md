@@ -54,10 +54,17 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-448 · ÅPEN** — Lokaliser VoiceOver-navnene på favorittstjernene.
+Stedskortene viser fortsatt de faste tilgjengelighetsnavnene «Stjerne 1» og
+«Stjerne 2» uansett språkvalg. La stjernenes VoiceOver-navn følge språkstil
+uten å endre ikoner, favorittrekkefølge eller trykkhandling; test alle tre
+språkene.
+
 **AUTO-447 · ÅPEN** — Lokaliser Steder-radens VoiceOver-hint for åpning/lukking.
-`PlaceOverviewRow` har faste hint om å vise eller lukke værdetaljene, som
-ikke følger appens språkvalg. Lokaliser bare tilgjengelighetshintet, behold
-radpresentasjon og trykkhandling uendret, og dekk alle tre språkstiler.
+Værkortene under Steder har faste VoiceOver-hint «Dobbeltrykk for å åpne/lukke
+tredagersvarselet» og åpne/lukkede verdier også i engelsk modus. Lokaliser
+disse tilgjengelighetstekstene uten å endre kortenes visning eller handling;
+dekk bokmål, inntrøndersk og engelsk.
 
 **AUTO-446 · ÅPEN** — Lokaliser tilgjengelighetsnavnene for Hjem-radvalg.
 Tilpass-sidens synlighetsbryter bruker en fast bokmåls-VoiceOver-etikett
@@ -65,10 +72,12 @@ Tilpass-sidens synlighetsbryter bruker en fast bokmåls-VoiceOver-etikett
 tilgjengelighetsnavnet og dekk bokmål, inntrøndersk og engelsk; behold synlig
 tekst og radlayout uendret.
 
-**AUTO-445 · ÅPEN** — Lokaliser rollemarkeringene i Steder-listen.
-Steder-radene har faste VoiceOver-navn «Valgt sted» og «Hjemsted» uansett
-valgt språk. La tilgjengelighetsteksten følge valgt språkstil uten å endre
-radens synlige innhold, og dekk bokmål, inntrøndersk og engelsk.
+**AUTO-445 · FULLFØRT 2026-10-10** — Steder-listens valgte-sted- og
+hjemstedmarkører har nå språkstyrte VoiceOver-navn («Selected place» og «Home
+location» på engelsk), uten endring av synlig innhold eller handling.
+Regresjonstest dekker begge roller på bokmål, inntrøndersk og engelsk.
+Swift-parsing, JSON-validering og diffkontroll består; XCTest ikke kjørt på
+grunn av kjent SwiftUIMacros-byggblokkering.
 
 **AUTO-444 · FULLFØRT 2026-10-10** — Pennknappens synlige ikon og plassering er
 uendret, mens VoiceOver-navnet nå følger værkortets språkstil: «Rediger

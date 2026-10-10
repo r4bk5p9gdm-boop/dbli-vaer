@@ -9242,6 +9242,33 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testPlaceRoleAccessibilityLabelsFollowSelectedLanguageStyle() {
+        XCTAssertEqual(
+            PlaceRoleAccessibilityCopy.label(for: .selected, languageStyle: .bokmal),
+            "Valgt sted"
+        )
+        XCTAssertEqual(
+            PlaceRoleAccessibilityCopy.label(for: .home, languageStyle: .bokmal),
+            "Hjemsted"
+        )
+        XCTAssertEqual(
+            PlaceRoleAccessibilityCopy.label(for: .selected, languageStyle: .inntrondersk),
+            "Valgt sted"
+        )
+        XCTAssertEqual(
+            PlaceRoleAccessibilityCopy.label(for: .home, languageStyle: .inntrondersk),
+            "Hjemsted"
+        )
+        XCTAssertEqual(
+            PlaceRoleAccessibilityCopy.label(for: .selected, languageStyle: .english),
+            "Selected place"
+        )
+        XCTAssertEqual(
+            PlaceRoleAccessibilityCopy.label(for: .home, languageStyle: .english),
+            "Home location"
+        )
+    }
+
     func testHomePageAccessibilityLabelFollowsSelectedLanguageStyle() {
         XCTAssertEqual(
             HomeSwipeSelection.pageAccessibilityLabel(index: 2, count: 5, languageStyle: .bokmal),

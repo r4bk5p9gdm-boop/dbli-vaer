@@ -312,6 +312,28 @@ enum AlertEditingAccessibilityCopy {
     }
 }
 
+enum PlaceRoleAccessibilityCopy {
+    enum Role {
+        case selected
+        case home
+    }
+
+    static func label(for role: Role, languageStyle: AlertLanguageStyle) -> String {
+        let bokmal: String
+        let english: String
+        switch role {
+        case .selected:
+            bokmal = "Valgt sted"
+            english = "Selected place"
+        case .home:
+            bokmal = "Hjemsted"
+            english = "Home location"
+        }
+        if languageStyle == .english { return english }
+        return WeatherLanguage.text(bokmal, style: languageStyle)
+    }
+}
+
 enum WeatherTextSeparator: String, CaseIterable, Codable, Identifiable {
     case space, comma, bullet, dash
     var id: String { rawValue }

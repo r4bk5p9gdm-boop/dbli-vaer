@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-10T05:41:04Z",
+  "lastScheduledStart": "2026-10-10T06:11:04Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-444 fullført: varselkortets blyantknapp beholder ikon og plassering, og VoiceOver-navnet følger nå bokmål, inntrøndersk eller engelsk. Regresjonstest dekker Klinga på alle tre språk. Swift-parsing, JSON-validering og diffkontroll består; XCTest ikke kjørt grunnet kjent SwiftUIMacros-byggblokkering. Gjennomgang av Steder-visningen fant dessuten fast norsk hint for åpning/lukking av værdetaljer; AUTO-447 dekker dette uten visuell endring. AUTO-442 står PÅ VENT grunnet manglende UI-testmål og utilgjengelig CoreSimulatorService. Neste kø: AUTO-445, AUTO-446 og AUTO-447."
+  "lastProgress": "AUTO-445 fullført: Hjemsted- og valgt-sted-markørene i Steder-listen får språktilpassede VoiceOver-navn uten visuell endring. Regresjonstest dekker begge roller på bokmål, inntrøndersk og engelsk. Swift-parsing, JSON-validering og diffkontroll består; XCTest ikke kjørt grunnet kjent SwiftUIMacros-byggblokkering. Bred Steder-gjennomgang fant faste åpne/lukkede hint på værkort og faste tilgjengelighetsverdier; AUTO-447 dekker dem. Den samme gjennomgangen fant favorittstjernenes faste «Stjerne 1/2»-navn; AUTO-448 dekker lokalisering uten visuell endring. AUTO-442 står PÅ VENT grunnet manglende UI-testmål og utilgjengelig CoreSimulatorService. Neste kø: AUTO-446, AUTO-447 og AUTO-448."
 }
