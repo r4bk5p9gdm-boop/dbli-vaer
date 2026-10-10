@@ -99,7 +99,7 @@ av endelige tall eller plausible fysiske grenser. Kartlegg MET-feltene, velg
 forsiktig håndtering som ikke skjuler legitimt ekstremvær, og test at ugyldige
 verdier ikke skaper falske markeringer eller erstatter brukbar prognose.
 
-**AUTO-455 · ÅPEN** — Valider geografiske koordinater ved gjenoppretting og
+**AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig
 bredde-/lengdegrad ved dekoding; tapsfri arraydekoding bevarer andre steder i
 samme gjenoppretting/import. Ugyldige nyopprettede steder lagres ikke, og
