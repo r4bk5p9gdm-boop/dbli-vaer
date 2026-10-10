@@ -85,6 +85,13 @@ uten størrelsesgrense. Avvis urimelig store filer før dekoding og dekk både
 grenseverdien og vanlig import med regresjonstest, slik at en utilsiktet stor
 fil ikke kan bruke opp appens minne.
 
+**AUTO-457 · ÅPEN** — Kontroller hvor kort Yr-prognose fortsatt er brukbar.
+`Store.refreshForecasts()` godtar alle ikke-tomme timearrayer, også om et
+vellykket svar bare dekker en liten del av forventet horisont. Undersøk den
+faktiske Yr-responsmodellen og appens varsling-/tabellbehov, definer en minste
+dekning uten å avvise legitimt korte prognoser, og dekk både kort/avbrutt og
+normal horisont med regresjonstest.
+
 **AUTO-455 · ÅPEN** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` erstatter ikke-finite verdier med null, men
 beholder endelige koordinater utenfor gyldig bredde-/lengdegrad; avstands- og
@@ -92,12 +99,14 @@ solberegningene avviser dem, mens lagring og prognoseflyt kan behandle dem som
 steder. Velg en trygg, konsistent håndtering og dekk import/gjenoppretting og
 forespørsel med tester.
 
-**AUTO-454 · ÅPEN** — Avgrens prognosenes ferskhetslogikk mot fremtidige
-tidsstempler. `Store.isForecastStale` og `shouldReplaceForecast` stoler på
-lokalt lagret `forecastUpdatedAt`; hvis enhetens klokke stilles tilbake eller
-lagrede data inneholder et fremtidig tidspunkt, kan gammel prognose bli regnet
-fersk og hindre nyere data i å erstatte den. Definer en trygg håndtering av
-urimelig framtidige tidsstempler og dekk klokkeendring/persistens med tester.
+**AUTO-454 · FULLFØRT 2026-10-10** — Prognosestempler mer enn fem minutter
+frem i forhold til gjeldende klokke regnes nå som foreldet, og et vellykket
+nytt svar kan erstatte en slik cache. Fem minutters slingringsmonn bevarer
+normale, samtidige forespørsler. Regresjonstester dekker toleransegrensen,
+klokke som stilles tilbake og et framtidig tidsstempel gjenopprettet fra lagret
+tilstand. Swift-parsing og diffkontroll består; full Xcode/XCTest-kjøring er
+ikke utført fordi testmiljøet har kjent SwiftUIMacros-blokkering og maskinen
+har 14 GB ledig diskplass.
 
 **AUTO-453 · FULLFØRT 2026-10-10** — Hele stedsøket følger nå valgt språkstil:
 søkefelt, søkeområde, preposisjoner, skjermleseretiketter, tomme resultater,

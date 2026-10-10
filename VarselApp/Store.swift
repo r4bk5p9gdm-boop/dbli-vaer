@@ -578,13 +578,17 @@ final class Store: ObservableObject {
         successfulPlaceCount > 0 || failedPlaceCount == 0
     }
 
+    static let forecastFutureTimestampTolerance: TimeInterval = 5 * 60
+
     static func isForecastStale(_ updatedAt: Date?, now: Date = Date(), threshold: TimeInterval = 2 * 3_600) -> Bool {
         guard let updatedAt else { return true }
-        return now.timeIntervalSince(updatedAt) > threshold
+        let age = now.timeIntervalSince(updatedAt)
+        return age > threshold || age < -forecastFutureTimestampTolerance
     }
 
-    static func shouldReplaceForecast(existingAt: Date?, incomingAt: Date) -> Bool {
+    static func shouldReplaceForecast(existingAt: Date?, incomingAt: Date, now: Date = Date()) -> Bool {
         guard let existingAt else { return true }
+        if existingAt.timeIntervalSince(now) > forecastFutureTimestampTolerance { return true }
         return incomingAt >= existingAt
     }
 

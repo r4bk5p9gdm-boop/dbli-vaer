@@ -933,6 +933,12 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(pushDew.threshold, 2.5)
     }
 
+    func testLanguageCatalogIsBundledAndDoesNotTranslateInsertedPlaceholders() {
+        XCTAssertFalse(LanguageCatalog.entries.isEmpty)
+        XCTAssertEqual(LanguageCatalog.value("weekday.monday", language: "tr", fallback: "MISSING"), "manda'n")
+        XCTAssertEqual(LanguageCatalog.value("app.name", language: "en", fallback: "MISSING"), "It’s Weather")
+        XCTAssertEqual(LanguageCatalog.value("push.title", language: "nb", fallback: "MISSING", arguments: ["sted": "på {vaertype}", "vaertype": "Regn"]), "D bli Regn! på {vaertype}")
+    }
 
     func testNotificationCopyCatalogHasAllLanguagesForEveryUsedKey() {
         for key in NotificationCopy.catalogKeys {
@@ -7304,10 +7310,48 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(Store.isForecastStale(nil, now: base))
     }
 
+    func testFutureForecastTimestampIsStaleAfterClockMovesBack() {
+        let now = base
+        let fiveMinutesAhead = now.addingTimeInterval(Store.forecastFutureTimestampTolerance)
+        let sixMinutesAhead = now.addingTimeInterval(Store.forecastFutureTimestampTolerance + 60)
+
+        XCTAssertFalse(Store.isForecastStale(fiveMinutesAhead, now: now))
+        XCTAssertTrue(Store.isForecastStale(sixMinutesAhead, now: now))
+    }
+
+    func testPersistedFutureForecastTimestampIsConsideredStale() throws {
+        let place = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let future = base.addingTimeInterval(Store.forecastFutureTimestampTolerance + 60)
+        let persistenceKey = "test.futureForecastTimestamp.\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
+        let cachedHour = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 20, dew: 4)
+        let state = PersistedStoreState(
+            places: [place], selectedID: place.id, log: [],
+            forecasts: [place.id: [cachedHour]], forecastUpdatedAt: [place.id: future]
+        )
+        UserDefaults.standard.set(try JSONEncoder().encode(state), forKey: persistenceKey)
+
+        let store = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        let restoredTimestamp = try XCTUnwrap(store.forecastUpdatedAt(for: place.id))
+
+        XCTAssertEqual(restoredTimestamp, future)
+        XCTAssertTrue(Store.isForecastStale(restoredTimestamp, now: base))
+    }
+
     func testOlderForecastCannotReplaceNewerCache() {
         XCTAssertFalse(Store.shouldReplaceForecast(existingAt: base, incomingAt: base.addingTimeInterval(-1)))
         XCTAssertTrue(Store.shouldReplaceForecast(existingAt: base, incomingAt: base.addingTimeInterval(1)))
         XCTAssertTrue(Store.shouldReplaceForecast(existingAt: nil, incomingAt: base))
+    }
+
+    func testForecastWithImplausibleFutureTimestampCanBeReplaced() {
+        let now = base
+        let future = now.addingTimeInterval(Store.forecastFutureTimestampTolerance + 60)
+
+        XCTAssertTrue(Store.shouldReplaceForecast(existingAt: future, incomingAt: now, now: now))
+        XCTAssertFalse(Store.shouldReplaceForecast(
+            existingAt: now.addingTimeInterval(60), incomingAt: now, now: now
+        ))
     }
 
     func testWatchTransferPolicyRejectsDuplicateTimestamp() {

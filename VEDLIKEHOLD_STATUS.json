@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-10T12:50:51Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-453 fullført: Stedsøket lokaliserer kontroller, preposisjoner, tilgjengelighetstekster og tom-/feiltilstander etter valgt språk; meldinger følger også språkbytte under søk. AUTO-452 satt PÅ VENT fordi brukerens ucommittede ContentView.swift og PlannerTests.swift endrer akkurat sveipegesten og retningstestene. Bred gjennomgang fant ugyldige lagrede koordinater som kan nå prognoseflyten (AUTO-455) og import uten filstørrelsesgrense (AUTO-456). Neste åpne AUTO-kø: AUTO-454, AUTO-455 og AUTO-456."
+  "lastProgress": "AUTO-454 fullført: forecastUpdatedAt mer enn fem minutter fram regnes som foreldet og kan erstattes etter et vellykket svar; tester dekker toleransegrensen, klokke som stilles tilbake og tidsstempel gjenopprettet fra lagret tilstand. AUTO-452 står PÅ VENT grunnet overlapp med brukerens ucommittede sveipeendringer. AUTO-457 dekker nå risikoen for uvanlig korte, men ikke-tomme Yr-prognoser. Neste åpne AUTO-kø: AUTO-455, AUTO-456 og AUTO-457."
 }
