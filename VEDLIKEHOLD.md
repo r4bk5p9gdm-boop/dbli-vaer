@@ -54,6 +54,13 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-438 · ÅPEN** — Avgrens «Vis alle varsler» til aktivt sted.
+Hjemmets kommende pushvarsler holder utvidet/kollapset tilstand i lokal
+SwiftUI-state. Når valgt sted byttes på samme Hjem-visning, kontroller om
+utvidelsen feilaktig følger med til det nye stedet; knytt tilstanden til
+stedets ID og legg til en målrettet regresjon for identitet/bytte uten å
+beregne varsler for andre steder.
+
 **AUTO-437 · ÅPEN** — Lokaliser hurtigmenyen for valgt språk.
 Stedsfanene «Her!», «Hjem» og «Hytta» samt VoiceOver-etikettene og hintene
 bygges nå med faste bokmålstekster, mens resten av Hjem-visningen har engelske
@@ -66,10 +73,13 @@ Skill værtype fra lokal dagslysstatus for klare og delvis skyete timer, og bruk
 egnede nattsymboler etter lokal solnedgang. Legg til grensetester rundt
 solnedgang for Klingas koordinater, uten å endre regn-, tåke- eller snøsymboler.
 
-**AUTO-435 · ÅPEN** — Respekter «Reduser bevegelse» i live-GPS-merket.
-Pilen pulserer nå kontinuerlig; behold tydelig GPS-/live-status uten
-evigvarende bevegelse når tilgjengelighetsinnstillingen er aktiv, og dekk
-valg av animasjonspolicy med en ren test.
+**AUTO-435 · FULLFØRT 2026-10-10** — Byttet den egendefinerte, evigvarende
+fade-/skaleringstilstanden med SwiftUIs repeterende SF Symbol-puls på
+posisjonspilen. `accessibilityReduceMotion` slår pulsen av når brukeren ber om
+redusert bevegelse; den statiske grønne GPS-prikken og tilgjengelighetsteksten
+beholder live-signalet. En ren regresjonstest dekker begge policyvalg.
+Swift-parsing og diffkontroll består; fysisk animasjons-/VoiceOver-sjekk er
+ikke utført.
 
 **AUTO-434 · FULLFØRT 2026-10-10** — Hurtigmenyknappene skjuler nå ikonets
 automatiske SF Symbol-beskrivelse og bruker én kontrollert VoiceOver-etikett.

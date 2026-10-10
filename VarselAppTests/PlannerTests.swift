@@ -6682,6 +6682,11 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(defaultKlinga.visibleText, "her på Klinga")
     }
 
+    func testLiveLocationBadgeOnlyPulsesWhenReduceMotionIsDisabled() {
+        XCTAssertTrue(LiveLocationBadgeMotionPolicy.shouldPulse(reduceMotion: false))
+        XCTAssertFalse(LiveLocationBadgeMotionPolicy.shouldPulse(reduceMotion: true))
+    }
+
     func testYrFixturePrefersDetailedHourOverOverlappingSixHourEstimate() throws {
         let forecast = try YrService.decodeLocationForecast(Self.locationForecastFixture)
         var calendar = Calendar(identifier: .gregorian)

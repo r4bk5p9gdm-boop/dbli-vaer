@@ -16,6 +16,10 @@ enum PlaceOrderingSettings {
     static let sortModeKey = "varsel.placeSortMode"
 }
 
+enum LiveLocationBadgeMotionPolicy {
+    static func shouldPulse(reduceMotion: Bool) -> Bool { !reduceMotion }
+}
+
 func compactTemperatureText(_ temperature: Double) -> String {
     guard temperature.isFinite else { return "–°" }
     let rounded = temperature.rounded()

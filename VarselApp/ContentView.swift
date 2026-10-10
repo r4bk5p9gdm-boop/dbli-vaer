@@ -3,7 +3,11 @@ import CoreLocation
 
 private struct LocationPresenceBadge: View {
     let course: CLLocationDirection?
-    @State private var arrowIsVisible = true
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    private var shouldPulse: Bool {
+        LiveLocationBadgeMotionPolicy.shouldPulse(reduceMotion: reduceMotion)
+    }
 
     var body: some View {
         HStack(spacing: 5) {
@@ -15,18 +19,12 @@ private struct LocationPresenceBadge: View {
                     .font(.system(size: 12, weight: .bold))
                     .foregroundStyle(.indigo.gradient)
                     .rotationEffect(.degrees(course ?? 0))
-                    .opacity(arrowIsVisible ? 1 : 0.38)
+                    .symbolEffect(.pulse, options: .repeating, isActive: shouldPulse)
                     .animation(.easeInOut(duration: 0.35), value: course)
-                    .animation(
-                        .easeInOut(duration: 1.2).repeatForever(autoreverses: true),
-                        value: arrowIsVisible
-                    )
                 Circle()
                     .fill(Color.green)
                     .frame(width: 6, height: 6)
                     .overlay(Circle().stroke(Color(uiColor: .systemBackground), lineWidth: 1.2))
-                    .scaleEffect(arrowIsVisible ? 1 : 0.82)
-                    .opacity(arrowIsVisible ? 1 : 0.72)
             }
             Text("GPS")
                 .font(.system(size: 11, weight: .bold, design: .rounded))
@@ -36,7 +34,6 @@ private struct LocationPresenceBadge: View {
         .fixedSize()
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("GPS-posisjon, live")
-        .onAppear { arrowIsVisible = false }
     }
 }
 
