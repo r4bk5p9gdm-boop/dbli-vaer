@@ -79,11 +79,11 @@ Swift-parsing og diffkontroll består; iOS-bygg og XCTest er ikke kjørt i denne
 runden fordi maskinen har bare 10 GB ledig diskplass og testmålet har kjente
 kompileringsfeil.
 
-**AUTO-450 · ÅPEN** — Gjør feil ved planlegging av bakgrunnsoppdatering synlige
-og testbare. `BackgroundRefresh.schedule()` ignorerer nå alle innsendingfeil
-med `try?`; undersøk hvordan appen kan registrere eller håndtere at iOS avviser
-oppgaven, uten å gjøre bakgrunnsoppdatering til et krav for vanlig bruk. Legg
-til en deterministisk kontroll av både vellykket og feilet innsending.
+**AUTO-453 · ÅPEN** — Lokaliser hele stedsøket etter appens valgte språkstil.
+`PlaceSearchView` viser fortsatt hardkodet norsk for søkefelt, søkeområde,
+preposisjonsvalg, tomt resultat og nettverksfeil, selv om resten av appen
+støtter engelsk. Bruk eksisterende språkmodell/katalog uten å endre søkelogikk,
+og legg til tester for synlige etiketter og resultatmeldinger.
 
 **AUTO-451 · ÅPEN** — Hindre at et eldre stedsøk overskriver resultater fra et
 nyere søk. `PlaceSearchView` starter både et kansellerbart debounce-søk og et
@@ -105,6 +105,13 @@ typet hjelper og gjorde konfigurasjonsfilens JSON-koding testbar direkte uten
 å konstruere SwiftUIs interne `FileDocument`-konfigurasjoner. Eksisterende
 testdekning er beholdt. `xcodebuild build-for-testing` for iOS består; testene
 ble kompilert, men ikke kjørt på fysisk enhet.
+
+**AUTO-450 · FULLFØRT 2026-10-10** — Bakgrunnsoppdateringen skjuler ikke lenger
+avvist innsending. `BackgroundRefresh.schedule` logger nå feilen, og en
+injiserbar innsending lar regresjonstestene kontrollere både request-ID/
+tidligste tidspunkt ved suksess og feilrapportering ved avvisning.
+`xcodebuild build-for-testing` for iOS består; XCTest ble kompilert, men ikke
+kjørt i denne kjøringen.
 
 **AUTO-447 · FULLFØRT 2026-10-10** — Steder-kortenes åpne/lukkede
 VoiceOver-verdi og hint følger nå bokmål, inntrøndersk eller engelsk uten

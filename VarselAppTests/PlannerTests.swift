@@ -9325,6 +9325,38 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testBackgroundRefreshReportsSuccessfulSubmission() {
+        var submittedIdentifier: String?
+        var submittedDate: Date?
+        var reportedError: Error?
+
+        BackgroundRefresh.schedule(
+            now: base,
+            submit: {
+                submittedIdentifier = $0.identifier
+                submittedDate = $0.earliestBeginDate
+            },
+            onFailure: { reportedError = $0 }
+        )
+
+        XCTAssertNil(reportedError)
+        XCTAssertEqual(submittedIdentifier, BackgroundRefresh.id)
+        XCTAssertEqual(submittedDate, base.addingTimeInterval(30 * 60))
+    }
+
+    func testBackgroundRefreshReportsRejectedSubmission() {
+        let expectedError = NSError(domain: "BackgroundRefreshTests", code: 17)
+        var reportedError: Error?
+
+        BackgroundRefresh.schedule(
+            now: base,
+            submit: { _ in throw expectedError },
+            onFailure: { reportedError = $0 }
+        )
+
+        XCTAssertEqual((reportedError as NSError?)?.code, expectedError.code)
+    }
+
     @MainActor
     func testForecastRequestsDeduplicateCoordinatesAtApiPrecision() {
         let first = Place(name: "Namsos", lat: 64.466241, lon: 11.495719)

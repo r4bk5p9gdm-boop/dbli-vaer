@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-10T08:15:26Z",
+  "lastScheduledStart": "2026-10-10T11:50:51Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-449 fullført: XCTest-målet bygger igjen etter typet prognosedatahjelper og direkte testbar JSON-koding i WeatherConfigurationDocument. xcodebuild build-for-testing for iOS består. Bred gjennomgang av Hjem-gestene avdekket behov for regresjonsdekning av konkurransen mellom vertikal scrolling og horisontalt sveip; AUTO-452 er opprettet. Neste åpne kø fra fullskanning: AUTO-450, AUTO-451, AUTO-452."
+  "lastProgress": "AUTO-450 fullført: Bakgrunnsoppdateringens innsending er nå injiserbar og feil loggføres i stedet for å bli ignorert; tester dekker vellykket og avvist innsending. xcodebuild build-for-testing for iOS består. Bred appgjennomgang fant også norsk-hardkodede tekster i stedsøket; AUTO-453 er opprettet. Neste åpne kø fra fullskanning: AUTO-451, AUTO-452, AUTO-453."
 }
