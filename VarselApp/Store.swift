@@ -608,11 +608,24 @@ final class Store: ObservableObject {
         return now.timeIntervalSince(lastAt) < interval
     }
 
-    /// A successful HTTP response is not useful when decoding produced no
-    /// hours. Treat it as a failed place so the previous forecast remains
-    /// available instead of being replaced by an empty result.
-    nonisolated static func isUsableForecast(_ forecast: [ForecastHour]) -> Bool {
-        !forecast.isEmpty
+    /// MET's location forecast can be shorter than its usual horizon, but a
+    /// response with fewer than three distinct future hours is not enough for
+    /// the app's near-term bands and alert planning. Three hours is deliberately
+    /// modest: it accepts a single six-hour MET block (expanded to hourly
+    /// values) while rejecting truncated one- or two-hour responses.
+    nonisolated static let minimumUsableForecastHours = 3
+
+    nonisolated static func isUsableForecast(_ forecast: [ForecastHour], now: Date = Date()) -> Bool {
+        let usableTimes = Set(forecast.lazy.map(\.time).filter { $0 >= now }).sorted()
+        guard usableTimes.count >= minimumUsableForecastHours,
+              let first = usableTimes.first,
+              let latest = usableTimes.last else { return false }
+        let firstHours = usableTimes.prefix(minimumUsableForecastHours)
+        guard zip(firstHours, firstHours.dropFirst()).allSatisfy({ pair in
+            abs(pair.1.timeIntervalSince(pair.0) - 3_600) <= 60
+        }) else { return false }
+        return first.timeIntervalSince(now) <= 6 * 3_600
+            && latest.timeIntervalSince(now) >= TimeInterval(minimumUsableForecastHours - 1) * 3_600
     }
 
     @discardableResult

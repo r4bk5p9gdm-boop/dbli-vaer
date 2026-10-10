@@ -85,12 +85,16 @@ JSON-dekoding. Grensen er inkluderende, og tester dekker både nøyaktig grense,
 overskridelse og vanlig filimport. Dette begrenser dekoderens ekstra minnebruk;
 FileDocument mottar allerede data fra filvelgeren før denne kontrollen.
 
-**AUTO-457 · ÅPEN** — Kontroller hvor kort Yr-prognose fortsatt er brukbar.
-`Store.refreshForecasts()` godtar alle ikke-tomme timearrayer, også om et
-vellykket svar bare dekker en liten del av forventet horisont. Undersøk den
-faktiske Yr-responsmodellen og appens varsling-/tabellbehov, definer en minste
-dekning uten å avvise legitimt korte prognoser, og dekk både kort/avbrutt og
-normal horisont med regresjonstest.
+**AUTO-457 · FULLFØRT 2026-10-10** — Kort Yr-prognose godtas fortsatt når den
+gir minst tre sammenhengende, framtidige timer og starter innen seks timer.
+Grensen er tilpasset METs korte `next_1_hours`- og `next_6_hours`-intervaller;
+den avviser ikke en legitim seks-timersblokk, men beskytter cache mot tomme,
+utløpte, dupliserte, avbrutte eller langt-framtidige svar. Både stedstillegg
+og vanlig oppdatering bruker samme kontroll, så forrige gode prognose bevares
+ved et for kort svar. Regresjonstest dekker kort og normal dekning samt at en
+avvist oppdatering ikke erstatter lagret prognose. Swift-parsing og
+diffkontroll består, og begge målrettede XCTest-regresjoner består på en
+iPhone-simulator.
 
 **AUTO-458 · ÅPEN** — Avgrens numeriske Yr-verdier før de påvirker visning og
 varsler. `YrService.decodeLocationForecast` og nowcast-påføringen kopierer
@@ -104,6 +108,15 @@ widget/CarPlay. `SharedWidgetData.saveSharedPlaces` stopper for øyeblikket
 etter første element, mens regresjonstesten krever tre unike ID-er. Endre
 utvalget til å hoppe over duplikater og stoppe ved tre gyldige steder, og test
 rekkefølge, duplikater, grense og færre enn tre steder.
+
+**AUTO-460 · ÅPEN** — Ikke lag nye pushvarsler fra foreldede prognoser.
+`Store.isForecastStale` brukes i visningen, men `Store.replan()` gir alle
+lagrede prognoser videre til `Planner.planAll` og regner bare en tom prognose
+som manglende. Ved appstart eller endrede varselinnstillinger kan derfor en
+prognose eldre enn den etablerte to-timersgrensen fortsatt planlegge varsler.
+Avklar ønsket offline-fallback, filtrer foreldede data før planlegging uten å
+slette den viste cachen, og legg til tester ved grensen samt når oppdateringen
+feiler.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

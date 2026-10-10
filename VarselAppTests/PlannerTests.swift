@@ -7900,13 +7900,54 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(Store.shouldFinalizeRefresh(successfulPlaceCount: 0, failedPlaceCount: 5))
     }
 
-    func testEmptyForecastCannotReplaceLastValidSnapshot() {
-        XCTAssertFalse(Store.isUsableForecast([]))
-        XCTAssertTrue(Store.isUsableForecast(forecast(values: [(8, 0, 1, 40, 3)])))
+    func testForecastUsabilityRequiresThreeDistinctHoursOfRemainingCoverage() {
+        let minimum = makeForecast(through: 2, precipitationOffsets: [])
+        let truncated = Array(minimum.prefix(2))
+        let duplicates = [minimum[0], minimum[0], minimum[2]]
+        let interrupted = [minimum[0], minimum[1], ForecastHour(
+            time: minimum[2].time.addingTimeInterval(12 * 3_600), temp: 8,
+            precip: 0, wind: 1, cloud: 60, dew: 7
+        )]
+        let startsTooLate = makeForecast(through: 2, startingAt: base.addingTimeInterval(7 * 3_600), precipitationOffsets: [])
+        let expired = makeForecast(through: 2, startingAt: base.addingTimeInterval(-3 * 3_600), precipitationOffsets: [])
+
+        XCTAssertFalse(Store.isUsableForecast([], now: base))
+        XCTAssertFalse(Store.isUsableForecast(truncated, now: base))
+        XCTAssertFalse(Store.isUsableForecast(duplicates, now: base))
+        XCTAssertFalse(Store.isUsableForecast(interrupted, now: base))
+        XCTAssertFalse(Store.isUsableForecast(startsTooLate, now: base))
+        XCTAssertFalse(Store.isUsableForecast(expired, now: base))
+        XCTAssertTrue(Store.isUsableForecast(minimum, now: base))
+        XCTAssertTrue(Store.isUsableForecast(makeForecast(through: 8, precipitationOffsets: []), now: base))
     }
 
     func testManualPlaceRefreshRejectsEmptyYrResponseBeforeCaching() {
         XCTAssertFalse(Store.isUsableForecast([]), "Tomt Yr-svar skal ikke bli ny cache")
+    }
+
+    @MainActor
+    func testShortForecastRefreshPreservesLastValidSnapshot() async throws {
+        let persistenceKey = "varsel.test.short-forecast-refresh.\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
+        let place = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let oldForecast = makeForecast(through: 5, startingAt: Date().addingTimeInterval(-12 * 3_600), precipitationOffsets: [])
+        let oldUpdatedAt = Date().addingTimeInterval(-3 * 3_600)
+        UserDefaults.standard.set(try JSONEncoder().encode(PersistedStoreState(
+            places: [place], selectedID: place.id, log: [],
+            forecasts: [place.id: oldForecast],
+            forecastUpdatedAt: [place.id: oldUpdatedAt], lastUpdate: oldUpdatedAt
+        )), forKey: persistenceKey)
+        let now = Date()
+        let truncated = makeForecast(through: 1, startingAt: now, precipitationOffsets: [])
+        let store = Store(
+            forecastFetcher: { _, _ in truncated },
+            persistenceKey: persistenceKey
+        )
+
+        let refreshSucceeded = await store.refreshAll()
+        XCTAssertFalse(refreshSucceeded)
+        XCTAssertEqual(store.forecasts[place.id], oldForecast)
+        XCTAssertEqual(store.forecastUpdatedAt(for: place.id), oldUpdatedAt)
     }
 
     @MainActor
@@ -8015,16 +8056,16 @@ final class PlannerTests: XCTestCase {
     func testAddingPlacePersistsSuccessfulFirstForecastAndTimestamp() async throws {
         let persistenceKey = "varsel.test.add-successful-forecast-place.\(UUID().uuidString)"
         defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
-        let hour = ForecastHour(time: base, temp: 8, precip: 0, wind: 2, cloud: 40, dew: 4)
-        let store = Store(forecastFetcher: { _, _ in [hour] }, persistenceKey: persistenceKey)
+        let hours = makeForecast(through: 2, precipitationOffsets: [])
+        let store = Store(forecastFetcher: { _, _ in hours }, persistenceKey: persistenceKey)
         let place = Place(name: "Hytte", lat: 64.0, lon: 11.0, preposition: .pa)
 
         await store.add(place)
 
-        XCTAssertEqual(store.forecasts[place.id], [hour])
+        XCTAssertEqual(store.forecasts[place.id], hours)
         XCTAssertNotNil(store.forecastUpdatedAt(for: place.id))
         let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
-        XCTAssertEqual(restored.forecasts[place.id], [hour])
+        XCTAssertEqual(restored.forecasts[place.id], hours)
         XCTAssertNotNil(restored.forecastUpdatedAt(for: place.id))
         XCTAssertEqual(restored.selectedID, place.id)
     }
@@ -8070,20 +8111,19 @@ final class PlannerTests: XCTestCase {
             forecasts: [existing.id: [oldHour]],
             forecastUpdatedAt: [existing.id: oldUpdatedAt], lastUpdate: oldUpdatedAt
         )), forKey: persistenceKey)
-        let newHour = ForecastHour(time: base.addingTimeInterval(3_600), temp: 8,
-                                   precip: 0, wind: 2, cloud: 40, dew: 4)
-        let store = Store(forecastFetcher: { _, _ in [newHour] }, persistenceKey: persistenceKey)
+        let newForecast = makeForecast(through: 2, startingAt: base.addingTimeInterval(3_600), precipitationOffsets: [])
+        let store = Store(forecastFetcher: { _, _ in newForecast }, persistenceKey: persistenceKey)
         let added = Place(name: "Hytte", lat: 64.0, lon: 11.0, preposition: .pa)
 
         await store.add(added)
 
         XCTAssertEqual(store.forecasts[existing.id], [oldHour])
-        XCTAssertEqual(store.forecasts[added.id], [newHour])
+        XCTAssertEqual(store.forecasts[added.id], newForecast)
         XCTAssertEqual(store.forecastUpdatedAt(for: existing.id), oldUpdatedAt)
         XCTAssertNotNil(store.forecastUpdatedAt(for: added.id))
         let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
         XCTAssertEqual(restored.forecasts[existing.id], [oldHour])
-        XCTAssertEqual(restored.forecasts[added.id], [newHour])
+        XCTAssertEqual(restored.forecasts[added.id], newForecast)
         XCTAssertEqual(restored.forecastUpdatedAt(for: existing.id), oldUpdatedAt)
         XCTAssertNotNil(restored.forecastUpdatedAt(for: added.id))
     }
@@ -8117,7 +8157,7 @@ final class PlannerTests: XCTestCase {
 
         let successful = Place(name: "Svarer", lat: 64.0, lon: 11.0)
         let failing = Place(name: "Feiler", lat: 65.0, lon: 11.0)
-        let fetchedHour = ForecastHour(time: base, temp: 8, precip: 0, wind: 2, cloud: 40, dew: 4)
+        let fetchedForecast = makeForecast(through: 2, precipitationOffsets: [])
         let oldHour = ForecastHour(time: base, temp: 2, precip: 0, wind: 1, cloud: 90, dew: 0)
         let oldUpdate = Date().addingTimeInterval(-3 * 3_600)
         UserDefaults.standard.set(try JSONEncoder().encode(PersistedStoreState(
@@ -8127,7 +8167,7 @@ final class PlannerTests: XCTestCase {
         )), forKey: persistenceKey)
         let store = Store(
             forecastFetcher: { latitude, _ in
-                if latitude < 64.5 { return [fetchedHour] }
+                if latitude < 64.5 { return fetchedForecast }
                 throw URLError(.notConnectedToInternet)
             },
             persistenceKey: persistenceKey
@@ -8139,7 +8179,7 @@ final class PlannerTests: XCTestCase {
         // successful cache must survive the subsequent notification replan.
         let refreshSucceeded = await store.refreshAll()
         XCTAssertFalse(refreshSucceeded)
-        XCTAssertEqual(store.forecasts[successful.id], [fetchedHour])
+        XCTAssertEqual(store.forecasts[successful.id], fetchedForecast)
         XCTAssertEqual(store.forecasts[failing.id], [oldHour])
         XCTAssertEqual(store.forecastUpdatedAt(for: failing.id), oldUpdate)
         XCTAssertTrue(Store.isForecastStale(store.forecastUpdatedAt(for: failing.id)))
@@ -8147,7 +8187,7 @@ final class PlannerTests: XCTestCase {
 
         let data = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
         let persisted = try JSONDecoder().decode(PersistedStoreState.self, from: data)
-        XCTAssertEqual(persisted.forecasts[successful.id], [fetchedHour])
+        XCTAssertEqual(persisted.forecasts[successful.id], fetchedForecast)
         XCTAssertEqual(persisted.forecasts[failing.id], [oldHour])
         XCTAssertEqual(persisted.forecastUpdatedAt[failing.id], oldUpdate)
     }
@@ -9182,6 +9222,24 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testHomeAndCabinShortcutLabelsCanBeCustomizedIndependently() {
+        let home = UUID(), cabin = UUID()
+        let destinations = HomeSwipeSelection.navigationDestinations(
+            positionID: nil,
+            homeID: home,
+            cabinID: cabin,
+            availableIDs: [home, cabin],
+            homeShortcutTitle: "  Bosted  ",
+            cabinShortcutTitle: "Fjellhytte"
+        )
+
+        XCTAssertEqual(destinations.map(\.title), ["Bosted", "Fjellhytte"])
+        XCTAssertEqual(
+            PlaceOrderingSettings.shortcutTitle(" \n ", fallback: "Hytta"),
+            "Hytta"
+        )
+    }
+
     func testFixedNavigationLabelsFollowSelectedLanguageStyle() {
         XCTAssertEqual(
             FixedNavigationDestination.allCases.map { $0.title(languageStyle: .bokmal) },
@@ -9481,7 +9539,7 @@ final class PlannerTests: XCTestCase {
             [ForecastLocation(place: other), ForecastLocation(place: first)]
         )
         XCTAssertFalse(Store.isUsableForecast([]))
-        XCTAssertTrue(Store.isUsableForecast([ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 0, dew: 5)]))
+        XCTAssertTrue(Store.isUsableForecast(makeForecast(through: 2, precipitationOffsets: []), now: base))
     }
 
     @MainActor
