@@ -149,14 +149,21 @@ referert plist inneholder appgruppe-ID-en som `SharedWidgetData` faktisk bruker.
 Skriptet feiler ved manglende fil, feil mål-/konfigurasjonskobling eller
 manglende appgruppe; det bygger eller endrer ikke signering.
 
-**AUTO-463 · ÅPEN** — Avvis gamle eller upresise GPS-fiks før «Her» velges.
-`LocationManager` godtar nå enhver posisjon med ikke-negativ
-`horizontalAccuracy`, uten å kontrollere når fiksens `timestamp` ble tatt
-eller hvor stor usikkerheten er. `Store.selectCurrentLocationIfPossible()` kan
-derfor merke et lagret sted eller nytt «Min posisjon»-sted som live GPS ut fra
-en gammel eller svært grov måling. Trekk en testbar ferskhets-/nøyaktighetspolicy
-ut, og test gamle, framtidige, upresise og gyldige målinger uten å forstyrre
-manuelt valgt sted når GPS-data avvises.
+**AUTO-466 · ÅPEN** — Ikke presenter en kort prognose som full oversikt over
+kommende pushvarsler. Yr-data med bare tre sammenhengende timer godtas nå som
+brukbar prognose, men Hjem-seksjonen kan vise «Ingen pushvarsler er ventet» selv
+om den ikke har data for resten av varslingshorisonten. Skill mellom ingen
+treff i de tilgjengelige timene og manglende dekning for hele perioden; test
+kort og full prognosedekning uten å endre selve pushplanleggingen.
+
+**AUTO-463 · FULLFØRT 2026-10-10** — GPS-fiks må nå være høyst to minutter
+gammel, ikke mer enn ett minutt fram i tid, ha endelig nøyaktighet på maks 100 m
+og gyldige koordinater før «Her» kan velges. Ferskhet kontrolleres også etter
+omvendt stedsoppslag, slik at en treg geokoding ikke bruker en utløpt fiks.
+Regresjonstest dekker gyldig fiks, begge tidsgrenser, grov/ugyldig nøyaktighet,
+foreldet og framtidig fiks samt at en manuelt valgt side ikke overstyres.
+Swift-parsing og diffkontroll består; full XCTest er ikke kjørt fordi testmålet
+har kjente eksisterende feil og CoreSimulatorService ikke er tilgjengelig.
 
 **AUTO-464 · ÅPEN** — Ikke vis varsler beregnet fra foreldet cache på Hjem.
 `CurrentPlacePushAlertsSection.plannedPushAlerts` kaller fortsatt

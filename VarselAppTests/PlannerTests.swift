@@ -646,6 +646,43 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(Store.shouldApplyCurrentLocation(selectionAtRequestStart: nil, currentSelection: initial))
     }
 
+    func testCurrentLocationSelectionRequiresFreshAndPreciseFix() {
+        let now = Date(timeIntervalSince1970: 1_800_000_000)
+        let selection = UUID()
+        func fix(age: TimeInterval, accuracy: CLLocationAccuracy = 50) -> CLLocation {
+            CLLocation(
+                coordinate: CLLocationCoordinate2D(latitude: 64.4, longitude: 11.5),
+                altitude: 0,
+                horizontalAccuracy: accuracy,
+                verticalAccuracy: 5,
+                course: -1,
+                speed: -1,
+                timestamp: now.addingTimeInterval(-age)
+            )
+        }
+
+        XCTAssertTrue(Store.shouldApplyCurrentLocationFix(
+            selectionAtRequestStart: selection, currentSelection: selection,
+            location: fix(age: 30), now: now
+        ))
+        XCTAssertTrue(LocationFixPolicy.accepts(fix(age: 120, accuracy: 100), now: now))
+        XCTAssertFalse(LocationFixPolicy.accepts(fix(age: 120.01), now: now))
+        XCTAssertTrue(LocationFixPolicy.accepts(fix(age: -60), now: now))
+        XCTAssertFalse(LocationFixPolicy.accepts(fix(age: -60.01), now: now))
+        XCTAssertFalse(LocationFixPolicy.accepts(fix(age: 0, accuracy: 100.01), now: now))
+        XCTAssertFalse(LocationFixPolicy.accepts(fix(age: 0, accuracy: -1), now: now))
+
+        let manuallySelectedPlace = UUID()
+        XCTAssertFalse(Store.shouldApplyCurrentLocationFix(
+            selectionAtRequestStart: selection, currentSelection: manuallySelectedPlace,
+            location: fix(age: 30), now: now
+        ))
+        XCTAssertFalse(Store.shouldApplyCurrentLocationFix(
+            selectionAtRequestStart: selection, currentSelection: selection,
+            location: fix(age: 121), now: now
+        ))
+    }
+
     @MainActor
     func testNewLocationCourseDoesNotChangeSelectedPlaceOrForecast() {
         let persistenceKey = "varsel.test.location-course.\(UUID().uuidString)"

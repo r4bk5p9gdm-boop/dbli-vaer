@@ -1,5 +1,25 @@
 import CoreLocation
 
+enum LocationFixPolicy {
+    static let maximumAge: TimeInterval = 120
+    static let maximumFutureOffset: TimeInterval = 60
+    static let maximumHorizontalAccuracy: CLLocationAccuracy = 100
+
+    static func accepts(_ location: CLLocation, now: Date = Date()) -> Bool {
+        let age = now.timeIntervalSince(location.timestamp)
+        let coordinate = location.coordinate
+        return age <= maximumAge
+            && age >= -maximumFutureOffset
+            && location.horizontalAccuracy.isFinite
+            && location.horizontalAccuracy >= 0
+            && location.horizontalAccuracy <= maximumHorizontalAccuracy
+            && coordinate.latitude.isFinite
+            && (-90...90).contains(coordinate.latitude)
+            && coordinate.longitude.isFinite
+            && (-180...180).contains(coordinate.longitude)
+    }
+}
+
 enum LocationAuthorizationDecision: Equatable {
     case requestWhenInUseAuthorization
     case requestLocation
@@ -97,7 +117,7 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
     nonisolated func locationManager(_ m: CLLocationManager, didUpdateLocations locs: [CLLocation]) {
         Task { @MainActor in
             guard self.manager === m, let l = locs.last,
-                  l.horizontalAccuracy >= 0 else { return }
+                  LocationFixPolicy.accepts(l) else { return }
             finish(.success(l))
         }
     }

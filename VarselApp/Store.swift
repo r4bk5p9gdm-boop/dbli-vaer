@@ -173,6 +173,18 @@ final class Store: ObservableObject {
         selectionAtRequestStart == currentSelection
     }
 
+    static func shouldApplyCurrentLocationFix(
+        selectionAtRequestStart: UUID?,
+        currentSelection: UUID?,
+        location: CLLocation,
+        now: Date = Date()
+    ) -> Bool {
+        shouldApplyCurrentLocation(
+            selectionAtRequestStart: selectionAtRequestStart,
+            currentSelection: currentSelection
+        ) && LocationFixPolicy.accepts(location, now: now)
+    }
+
     static func nearestSavedPlace(
         in places: [Place], to location: CLLocation, maxDistance: CLLocationDistance = 15_000
     ) -> Place? {
@@ -498,16 +510,23 @@ final class Store: ObservableObject {
         // existing notifications remain fully usable when access is denied.
         let locationManager = LocationManager()
         guard let location = try? await locationManager.current() else { return }
-        updateCurrentLocationCourse(from: location)
-        guard Self.shouldApplyCurrentLocation(
+        guard Self.shouldApplyCurrentLocationFix(
             selectionAtRequestStart: selectionAtRequestStart,
-            currentSelection: selectedID
+            currentSelection: selectedID,
+            location: location
         ) else { return }
         if let nearest = Self.nearestSavedPlace(in: places, to: location) {
+            updateCurrentLocationCourse(from: location)
             select(nearest, fromCurrentLocation: true)
             return
         }
         let name = await LocationManager.name(for: location)
+        guard Self.shouldApplyCurrentLocationFix(
+            selectionAtRequestStart: selectionAtRequestStart,
+            currentSelection: selectedID,
+            location: location
+        ) else { return }
+        updateCurrentLocationCourse(from: location)
         if let existing = places.first(where: {
             $0.name.compare(name, options: [.caseInsensitive, .diacriticInsensitive]) == .orderedSame
         }) {
