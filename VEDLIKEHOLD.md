@@ -123,14 +123,16 @@ offline-fallback. Regresjonstest dekker fersk, nøyaktig to timer gammel og
 foreldet prognose samt at cachen ikke endres. Swift-parsing og diffkontroll
 består; XCTest/build ble ikke kjørt fordi CoreSimulatorService er utilgjengelig.
 
-**AUTO-461 · ÅPEN** — Avgrens importerte varselregler før planlegging.
-`Rule.init(from:)` godtar nå vilkårlige `count`, `intervalMinutes`,
-`durationHours` og `leadMinutes`. `Rule.alertCount` har ingen øvre grense, og
-`Planner.notificationCandidates` itererer over den direkte; en stor eller
-negativ verdi fra en importert konfigurasjon kan derfor skape urimelig arbeid
-eller ugyldig varselplan. Definer kompatible grenser/sanering for lagrede og
-importerte regler, og test både historiske standardverdier og ekstreme JSON-
-verdier uten å endre vanlige brukerinnstillinger.
+**AUTO-461 · FULLFØRT 2026-10-10** — Dekoding av lagrede og importerte
+varselregler begrenser nå sammenhengende varighet til 1–12 timer, forvarsel til
+15–1440 minutter, antall påminnelser til 2–10 og mellomrom til 10–120 minutter.
+Grensene samsvarer med valgene i editoren, historiske manglende felter beholder
+standardverdiene, og `alertCount` setter i tillegg en øvre grense før
+planleggeren itererer. Regresjonstest dekker gamle standardverdier, gyldige
+maksimum og ekstreme JSON-verdier over og under grensene, samt direkte opprettet
+regel. Swift-parsing og diffkontroll består; XCTest/build ikke kjørt fordi
+CoreSimulatorService er utilgjengelig og testmålet har kjente typekontrollfeil
+i andre tester.
 
 **AUTO-462 · ÅPEN** — Beskytt delte widget-/Watch-data mot entitlement-drift.
 `SharedWidgetData` bruker appgruppen `group.no.mathias.dblivaer`, og appen,
@@ -148,6 +150,15 @@ derfor merke et lagret sted eller nytt «Min posisjon»-sted som live GPS ut fra
 en gammel eller svært grov måling. Trekk en testbar ferskhets-/nøyaktighetspolicy
 ut, og test gamle, framtidige, upresise og gyldige målinger uten å forstyrre
 manuelt valgt sted når GPS-data avvises.
+
+**AUTO-464 · ÅPEN** — Ikke vis varsler beregnet fra foreldet cache på Hjem.
+`CurrentPlacePushAlertsSection.plannedPushAlerts` kaller fortsatt
+`Planner.planAll` direkte med kortets prognose og får ikke med hentetid eller
+ferskhetsstatus. Etter nettfeil kan den derfor vise planlagte pushvarsler fra
+den gamle offline-cachen, selv om `Store.replan()` nå avviser samme prognose.
+Send ferskhetsstatus inn i seksjonen, skill tydelig mellom tom prognose og
+foreldet offline-visning, og test at en foreldet, vist cache ikke blir omtalt
+som kommende pushvarsler.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

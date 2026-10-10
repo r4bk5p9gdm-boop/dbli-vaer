@@ -829,14 +829,26 @@ struct Rule: Codable, Identifiable, Hashable {
         // Preserve the historical wind default for older saved rules.
         threshold = try values.decodeIfPresent(Double.self, forKey: .threshold) ?? (type == .vind ? 10 : type.defaultThreshold)
         temperatureDirection = try values.decodeIfPresent(TemperatureDirection.self, forKey: .temperatureDirection) ?? .below
-        durationHours = try values.decodeIfPresent(Int.self, forKey: .durationHours) ?? 4
-        leadMinutes = try values.decodeIfPresent(Int.self, forKey: .leadMinutes) ?? 120
+        durationHours = Self.clamp(
+            try values.decodeIfPresent(Int.self, forKey: .durationHours) ?? 4,
+            to: 1...12
+        )
+        leadMinutes = Self.clamp(
+            try values.decodeIfPresent(Int.self, forKey: .leadMinutes) ?? 120,
+            to: 15...1440
+        )
         previousDayNotificationHour = try values.decodeIfPresent(Int.self, forKey: .previousDayNotificationHour)
         previousDayNotificationMinute = try values.decodeIfPresent(Int.self, forKey: .previousDayNotificationMinute) ?? 0
         notificationWeekday = try values.decodeIfPresent(Int.self, forKey: .notificationWeekday)
         notificationDayOffset = try values.decodeIfPresent(Int.self, forKey: .notificationDayOffset)
-        count = try values.decodeIfPresent(Int.self, forKey: .count) ?? 2
-        intervalMinutes = try values.decodeIfPresent(Int.self, forKey: .intervalMinutes) ?? 30
+        count = Self.clamp(
+            try values.decodeIfPresent(Int.self, forKey: .count) ?? 2,
+            to: 2...10
+        )
+        intervalMinutes = Self.clamp(
+            try values.decodeIfPresent(Int.self, forKey: .intervalMinutes) ?? 30,
+            to: 10...120
+        )
         repeatsEnabled = try values.decodeIfPresent(Bool.self, forKey: .repeatsEnabled) ?? false
         quiet = try values.decodeIfPresent(Bool.self, forKey: .quiet) ?? true
         quietFrom = try values.decodeIfPresent(Int.self, forKey: .quietFrom) ?? 22
@@ -849,7 +861,11 @@ struct Rule: Codable, Identifiable, Hashable {
         isDisplayOnly = try values.decodeIfPresent(Bool.self, forKey: .isDisplayOnly) ?? false
     }
 
-    var alertCount: Int { repeatsEnabled ? max(2, count) : 1 }
+    var alertCount: Int { repeatsEnabled ? Self.clamp(count, to: 2...10) : 1 }
+
+    private static func clamp(_ value: Int, to bounds: ClosedRange<Int>) -> Int {
+        min(max(value, bounds.lowerBound), bounds.upperBound)
+    }
     static func filtered(_ rules: [Rule], by type: AlertType?) -> [Rule] {
         guard let type else { return rules }
         return rules.filter { $0.type == type }

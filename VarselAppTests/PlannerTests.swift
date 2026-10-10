@@ -903,6 +903,49 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(legacy.temperatureDirection, .below)
     }
 
+    func testRuleDecodingPreservesHistoricalDefaultsAndClampsSchedulingValues() throws {
+        let legacy = try JSONDecoder().decode(
+            Rule.self,
+            from: Data(#"{"type":"regn","threshold":0.5}"#.utf8)
+        )
+        XCTAssertEqual(legacy.durationHours, 4)
+        XCTAssertEqual(legacy.leadMinutes, 120)
+        XCTAssertEqual(legacy.count, 2)
+        XCTAssertEqual(legacy.intervalMinutes, 30)
+
+        let supported = try JSONDecoder().decode(
+            Rule.self,
+            from: Data(#"{"type":"regn","threshold":0.5,"durationHours":12,"leadMinutes":1440,"count":10,"intervalMinutes":120,"repeatsEnabled":true}"#.utf8)
+        )
+        XCTAssertEqual(supported.durationHours, 12)
+        XCTAssertEqual(supported.leadMinutes, 1440)
+        XCTAssertEqual(supported.alertCount, 10)
+        XCTAssertEqual(supported.intervalMinutes, 120)
+
+        let oversized = try JSONDecoder().decode(
+            Rule.self,
+            from: Data(#"{"type":"regn","threshold":0.5,"durationHours":999,"leadMinutes":999999,"count":1000000,"intervalMinutes":999999,"repeatsEnabled":true}"#.utf8)
+        )
+        XCTAssertEqual(oversized.durationHours, 12)
+        XCTAssertEqual(oversized.leadMinutes, 1440)
+        XCTAssertEqual(oversized.alertCount, 10)
+        XCTAssertEqual(oversized.intervalMinutes, 120)
+
+        var directlyCreated = Rule(type: .regn)
+        directlyCreated.repeatsEnabled = true
+        directlyCreated.count = Int.max
+        XCTAssertEqual(directlyCreated.alertCount, 10)
+
+        let undersized = try JSONDecoder().decode(
+            Rule.self,
+            from: Data(#"{"type":"regn","threshold":0.5,"durationHours":-99,"leadMinutes":-999999,"count":-100,"intervalMinutes":-100,"repeatsEnabled":true}"#.utf8)
+        )
+        XCTAssertEqual(undersized.durationHours, 1)
+        XCTAssertEqual(undersized.leadMinutes, 15)
+        XCTAssertEqual(undersized.alertCount, 2)
+        XCTAssertEqual(undersized.intervalMinutes, 10)
+    }
+
     func testTemperatureRuleDoesNotMatchExactThresholdInEitherDirection() {
         let sample = ForecastHour(time: base, temp: 10, precip: 0, wind: 1, cloud: 0, dew: 5)
 
