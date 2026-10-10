@@ -334,6 +334,16 @@ enum PlaceRoleAccessibilityCopy {
     }
 }
 
+enum FavoriteSlotAccessibilityCopy {
+    static func label(for slot: Int, languageStyle: AlertLanguageStyle) -> String {
+        let norwegian = slot == 1 ? "Stjerne 1" : "Stjerne 2"
+        guard languageStyle != .english else {
+            return slot == 1 ? "Star 1" : "Star 2"
+        }
+        return WeatherLanguage.text(norwegian, style: languageStyle)
+    }
+}
+
 enum HomeRowVisibilityAccessibilityCopy {
     static func label(for type: AlertType, languageStyle: AlertLanguageStyle) -> String {
         let norwegianTitle = type == .sol ? "Sollys / skydekke" : type.label

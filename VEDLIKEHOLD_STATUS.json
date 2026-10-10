@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-10T07:43:26Z",
+  "lastScheduledStart": "2026-10-10T08:15:26Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-146 fullført: værbånd for vind og dugg følger nå Tilpass-verdiene selv når pushreglene har andre terskler; originalreglene/pushvarsler endres ikke. Inkrementell iOS-bygging, Swift-parsing, JSON-validering og diffkontroll består; XCTest blokkert av kjente kompileringsfeil andre steder i PlannerTests.swift. Neste kø fra fullskanning: AUTO-448, AUTO-449, AUTO-450."
+  "lastProgress": "AUTO-448 fullført: VoiceOver-navnene for favorittstjernene følger nå valgt språk (Stjerne/Star 1 og 2) uten å endre synlige knapper eller favorittfunksjonen. Swift-parsing og diffkontroll består; iOS-bygg og XCTest ikke kjørt i denne runden grunnet 10 GB ledig diskplass og kjente XCTest-kompileringsfeil. Bred køgjennomgang fant også risiko for at et frittstående tastatursøk kan levere foreldede stedssøkeresultater; AUTO-451 er opprettet. Neste åpne kø fra fullskanning: AUTO-449, AUTO-450, AUTO-451."
 }

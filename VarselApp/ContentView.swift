@@ -2620,7 +2620,10 @@ private struct PlaceRow: View {
                         if compact { Image(systemName: isFavorite1 ? "star.fill" : "star") }
                         else { Label("Stjerne 1", systemImage: isFavorite1 ? "star.fill" : "star") }
                     }
-                    .accessibilityLabel("Stjerne 1")
+                    .accessibilityLabel(FavoriteSlotAccessibilityCopy.label(
+                        for: 1,
+                        languageStyle: store.alertLanguageStyle
+                    ))
                     .tint(isFavorite1 ? .orange : nil)
                     Button {
                         toggleFavorite(slot: 2)
@@ -2628,7 +2631,10 @@ private struct PlaceRow: View {
                         if compact { Image(systemName: isFavorite2 ? "star.fill" : "star") }
                         else { Label("Stjerne 2", systemImage: isFavorite2 ? "star.fill" : "star") }
                     }
-                    .accessibilityLabel("Stjerne 2")
+                    .accessibilityLabel(FavoriteSlotAccessibilityCopy.label(
+                        for: 2,
+                        languageStyle: store.alertLanguageStyle
+                    ))
                     .tint(isFavorite2 ? .orange : nil)
             }
             .font(.caption.weight(.medium))

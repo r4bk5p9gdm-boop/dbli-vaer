@@ -71,17 +71,26 @@ rulling samt menyrekkefølge er uendret. Inkrementell iOS-bygging, Swift-parsing
 og diffkontroll består; fysisk iPhone-visuell kontroll/installasjon er ikke
 utført.
 
-**AUTO-448 · ÅPEN** — Lokaliser VoiceOver-navnene på favorittstjernene.
-Stedskortene viser fortsatt de faste tilgjengelighetsnavnene «Stjerne 1» og
-«Stjerne 2» uansett språkvalg. La stjernenes VoiceOver-navn følge språkstil
-uten å endre ikoner, favorittrekkefølge eller trykkhandling; test alle tre
-språkene.
+**AUTO-448 · FULLFØRT 2026-10-10** — VoiceOver-navnene for favorittstjernene
+følger nå valgt språk: «Stjerne 1/2» på norsk og «Star 1/2» på engelsk.
+Synlige knapper, ikoner, favorittrekkefølge og trykkhandling er uendret.
+Regresjonstest dekker begge plassene i bokmål, inntrøndersk og engelsk.
+Swift-parsing og diffkontroll består; iOS-bygg og XCTest er ikke kjørt i denne
+runden fordi maskinen har bare 10 GB ledig diskplass og testmålet har kjente
+kompileringsfeil.
 
 **AUTO-450 · ÅPEN** — Gjør feil ved planlegging av bakgrunnsoppdatering synlige
 og testbare. `BackgroundRefresh.schedule()` ignorerer nå alle innsendingfeil
 med `try?`; undersøk hvordan appen kan registrere eller håndtere at iOS avviser
 oppgaven, uten å gjøre bakgrunnsoppdatering til et krav for vanlig bruk. Legg
 til en deterministisk kontroll av både vellykket og feilet innsending.
+
+**AUTO-451 · ÅPEN** — Hindre at et eldre stedsøk overskriver resultater fra et
+nyere søk. `PlaceSearchView` starter både et kansellerbart debounce-søk og et
+frittstående søk ved tastaturets søkeknapp; det siste beholdes ikke som en
+kansellerbar oppgave når søketekst eller søkeområde endres. Legg til en
+generasjonsvakt eller tilsvarende og en deterministisk test med injisert
+søkeleverandør, slik at bare nyeste søk kan endre resultater/feilmelding.
 
 **AUTO-449 · ÅPEN** — Få XCTest-målet til å kompilere igjen. Den avgrensede
 kjøringen for tilgjengelighetstester stoppet på eksisterende

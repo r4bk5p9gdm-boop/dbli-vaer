@@ -531,6 +531,15 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testFavoriteSlotAccessibilityNamesFollowSelectedLanguage() {
+        XCTAssertEqual(FavoriteSlotAccessibilityCopy.label(for: 1, languageStyle: .bokmal), "Stjerne 1")
+        XCTAssertEqual(FavoriteSlotAccessibilityCopy.label(for: 2, languageStyle: .bokmal), "Stjerne 2")
+        XCTAssertEqual(FavoriteSlotAccessibilityCopy.label(for: 1, languageStyle: .inntrondersk), "Stjerne 1")
+        XCTAssertEqual(FavoriteSlotAccessibilityCopy.label(for: 2, languageStyle: .inntrondersk), "Stjerne 2")
+        XCTAssertEqual(FavoriteSlotAccessibilityCopy.label(for: 1, languageStyle: .english), "Star 1")
+        XCTAssertEqual(FavoriteSlotAccessibilityCopy.label(for: 2, languageStyle: .english), "Star 2")
+    }
+
     func testWatchFixedPlaceFallsBackWhenSavedUUIDIsMissing() {
         let selected = UUID()
         let deleted = UUID()
