@@ -96,12 +96,16 @@ avvist oppdatering ikke erstatter lagret prognose. Swift-parsing og
 diffkontroll består, og begge målrettede XCTest-regresjoner består på en
 iPhone-simulator.
 
-**AUTO-458 · ÅPEN** — Avgrens numeriske Yr-verdier før de påvirker visning og
-varsler. `YrService.decodeLocationForecast` og nowcast-påføringen kopierer
-dekodede temperatur-, vind-, sky-, nedbør- og fuktverdier uten felles kontroll
-av endelige tall eller plausible fysiske grenser. Kartlegg MET-feltene, velg
-forsiktig håndtering som ikke skjuler legitimt ekstremvær, og test at ugyldige
-verdier ikke skaper falske markeringer eller erstatter brukbar prognose.
+**AUTO-458 · FULLFØRT 2026-10-10** — Yr Locationforecast- og Nowcast-tall
+kontrolleres nå mot brede fysiske grenser før de påvirker tabell eller
+varsler: temperatur −100 til 70 °C, vind 0 til 150 m/s, prosenter 0–100 og
+nedbør 0–1000 mm per periode eller mm/t. Det tillater sjeldent ekstremvær,
+men forkaster korrupte verdier; en ugyldig Locationforecast-time droppes,
+mens ugyldige enkeltverdier i Nowcast-observasjonen ignoreres. Tester dekker
+ugyldig vind, gyldig kraftig regn og sterk vind samt at Nowcast ikke erstatter
+brukbare tabellverdier. Swift-parsing og diffkontroll består; XCTest/build ble
+ikke kjørt fordi CoreSimulatorService er utilgjengelig og maskinen har 10 GB
+ledig diskplass.
 
 **AUTO-459 · ÅPEN** — Gjenopprett deling av inntil tre unike stedsnavn til
 widget/CarPlay. `SharedWidgetData.saveSharedPlaces` stopper for øyeblikket
@@ -117,6 +121,15 @@ prognose eldre enn den etablerte to-timersgrensen fortsatt planlegge varsler.
 Avklar ønsket offline-fallback, filtrer foreldede data før planlegging uten å
 slette den viste cachen, og legg til tester ved grensen samt når oppdateringen
 feiler.
+
+**AUTO-461 · ÅPEN** — Avgrens importerte varselregler før planlegging.
+`Rule.init(from:)` godtar nå vilkårlige `count`, `intervalMinutes`,
+`durationHours` og `leadMinutes`. `Rule.alertCount` har ingen øvre grense, og
+`Planner.notificationCandidates` itererer over den direkte; en stor eller
+negativ verdi fra en importert konfigurasjon kan derfor skape urimelig arbeid
+eller ugyldig varselplan. Definer kompatible grenser/sanering for lagrede og
+importerte regler, og test både historiske standardverdier og ekstreme JSON-
+verdier uten å endre vanlige brukerinnstillinger.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

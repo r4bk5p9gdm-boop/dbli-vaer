@@ -6718,6 +6718,43 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(forecast[2].temp, 2)
     }
 
+    func testYrDecodersIgnoreCorruptNumbersWithoutLosingValidWeather() throws {
+        let location = Data("""
+        {"properties":{"timeseries":[
+          {"time":"2033-05-18T10:00:00Z","data":{"instant":{"details":{"air_temperature":7,"relative_humidity":70,"wind_speed":2,"cloud_area_fraction":90}},"next_1_hours":{"details":{"precipitation_amount":0.7,"probability_of_precipitation":80}}}},
+          {"time":"2033-05-18T11:00:00Z","data":{"instant":{"details":{"air_temperature":7,"relative_humidity":70,"wind_speed":151,"cloud_area_fraction":90}},"next_1_hours":{"details":{"precipitation_amount":99,"probability_of_precipitation":100}}}},
+          {"time":"2033-05-18T12:00:00Z","data":{"instant":{"details":{"air_temperature":-89,"relative_humidity":100,"wind_speed":130,"wind_speed_of_gust":145,"cloud_area_fraction":100,"dew_point_temperature":-90}},"next_1_hours":{"details":{"precipitation_amount":900,"probability_of_precipitation":100}}}}
+        ]}}
+        """.utf8)
+
+        let forecast = try YrService.decodeLocationForecast(location)
+        XCTAssertEqual(forecast.count, 2)
+        XCTAssertEqual(forecast[0].precip, 0.7, accuracy: 0.001)
+        XCTAssertFalse(AlertType.vind.matches(forecast[0], threshold: 12))
+        XCTAssertTrue(AlertType.regn.matches(forecast[0], threshold: 0.5))
+        XCTAssertEqual(forecast[1].temp, -89)
+        XCTAssertEqual(forecast[1].wind, 130)
+        XCTAssertEqual(forecast[1].precip, 900)
+
+        let nowcast = Data("""
+        {"properties":{"meta":{"radar_coverage":"ok"},"timeseries":[
+          {"time":"2033-05-18T10:00:00Z","data":{"instant":{"details":{"precipitation_rate":2000,"air_temperature":999,"relative_humidity":150,"wind_speed":151,"wind_speed_of_gust":-1}}}},
+          {"time":"2033-05-18T10:05:00Z","data":{"instant":{"details":{"precipitation_rate":0.8}}}}
+        ]}}
+        """.utf8)
+        let decodedNowcast = try YrService.decodeNowcast(nowcast)
+        XCTAssertEqual(decodedNowcast.samples.map(\.rate), [0.8])
+        XCTAssertNil(decodedNowcast.observation?.temperature)
+        XCTAssertNil(decodedNowcast.observation?.relativeHumidity)
+        XCTAssertNil(decodedNowcast.observation?.wind)
+        XCTAssertNil(decodedNowcast.observation?.gust)
+
+        let merged = YrService.applying(nowcast: decodedNowcast, to: [forecast[0]])
+        XCTAssertEqual(merged[0].temp, forecast[0].temp)
+        XCTAssertEqual(merged[0].wind, forecast[0].wind)
+        XCTAssertTrue(AlertType.regn.matches(merged[0], threshold: 0.5))
+    }
+
     func testWetNowcastOverridesDryTableAndUsesExactOnset() throws {
         let table = try YrService.decodeLocationForecast(Self.dryLocationForecastFixture)
         let nowcast = try YrService.decodeNowcast(Self.nowcastFixture(rateAtFiveMinutes: 0.8))
