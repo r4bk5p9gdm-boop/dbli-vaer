@@ -25,6 +25,8 @@ struct ForecastVariantsView: View {
     let sunThreshold2: Double
     let temperatureLowThreshold: Double
     let temperatureHighThreshold: Double
+    var displayDewThreshold: Double = AlertType.dugg.defaultThreshold
+    var displayGustThreshold: Double = AlertType.vind.defaultThreshold
     let latitude: Double
     let longitude: Double
     let todayTitle: String
@@ -59,14 +61,31 @@ struct ForecastVariantsView: View {
                             longitude: longitude
                         )
                     case .weatherBands:
+                        let bandRules = WeatherBandDisplayRuleOverrides.applying(
+                            to: rules,
+                            dewThreshold: displayDewThreshold,
+                            gustThreshold: displayGustThreshold
+                        )
                         SwiftUI.TimelineView(.periodic(from: .now, by: 60)) { timeline in
-                            WeatherBandsForecast(day: day, allForecast: forecast, rules: rules, frostMargin: frostMargin, sunThreshold: sunThreshold, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, now: timeline.date)
+                            WeatherBandsForecast(day: day, allForecast: forecast, rules: bandRules, frostMargin: frostMargin, sunThreshold: sunThreshold, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, now: timeline.date)
                         }
                     case .events:
                         WeatherEventsForecast(day: day, rules: rules, frostMargin: frostMargin)
                     }
                 }
             }
+        }
+    }
+}
+
+enum WeatherBandDisplayRuleOverrides {
+    /// Keeps table thresholds independent from enabled push-alert thresholds.
+    static func applying(to rules: [Rule], dewThreshold: Double, gustThreshold: Double) -> [Rule] {
+        rules.map { source in
+            guard source.type == .dugg || source.type == .vind else { return source }
+            var displayRule = source
+            displayRule.threshold = source.type == .dugg ? dewThreshold : gustThreshold
+            return displayRule
         }
     }
 }

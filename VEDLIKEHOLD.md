@@ -54,6 +54,16 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-146 · FULLFØRT 2026-10-10** — Værbåndenes vind- og duggmarkeringer
+bruker nå de egne verdiene fra «Tilpass», også når pushvarsler har andre
+terskler. Tabellen bruker kopier av reglene, så pushvarslene er uendret.
+Sol-, temperatur- og frostmarkeringene bruker allerede sine egne
+tilpasningsverdier; regn og snø har ikke egne visningsterskler i «Tilpass».
+Regresjonstest dekker at vind/dugg følger tilpasningsverdien uten å endre
+pushregelen. Inkrementell iOS-bygging, Swift-parsing, JSON-validering og
+diffkontroll består; XCTest kunne ikke kjøres fordi testmålet fortsatt har
+kjente typekontroll-/nøkkelsti-feil andre steder i `PlannerTests.swift`.
+
 **BRUKER-145 · FULLFØRT 2026-10-10** — Nabostedets værkort og værbånd er nå
 synlige fra kanten og følger fingeren inn allerede under et sakte horisontalt
 sveip på Hjem. Sveip uten nabosted lar gjeldende side stå stille, og vertikal

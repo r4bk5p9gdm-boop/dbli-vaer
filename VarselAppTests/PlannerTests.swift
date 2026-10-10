@@ -884,6 +884,30 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(LanguageCatalog.value("app.name", language: "en", fallback: "MISSING"), "It’s Weather")
         XCTAssertEqual(LanguageCatalog.value("push.title", language: "nb", fallback: "MISSING", arguments: ["sted": "på {vaertype}", "vaertype": "Regn"]), "D bli Regn! på {vaertype}")
     }
+    func testWeatherBandDisplayThresholdsOverridePushRulesWithoutMutatingThem() throws {
+        var pushWind = Rule(type: .vind)
+        pushWind.threshold = 18
+        var pushDew = Rule(type: .dugg)
+        pushDew.threshold = 2.5
+        let forecast = ForecastHour(
+            time: base, temp: 8, precip: 0, wind: 5, cloud: 50, dew: 4,
+            gust: 9
+        )
+
+        let displayRules = WeatherBandDisplayRuleOverrides.applying(
+            to: [pushWind, pushDew], dewThreshold: 1, gustThreshold: 8
+        )
+
+        let displayWind = try XCTUnwrap(displayRules.first { $0.type == .vind })
+        let displayDew = try XCTUnwrap(displayRules.first { $0.type == .dugg })
+        XCTAssertEqual(displayWind.threshold, 8)
+        XCTAssertTrue(displayWind.matches(forecast))
+        XCTAssertEqual(displayDew.threshold, 1)
+        XCTAssertFalse(displayDew.matches(forecast))
+        XCTAssertEqual(pushWind.threshold, 18)
+        XCTAssertEqual(pushDew.threshold, 2.5)
+    }
+
 
     func testNotificationCopyCatalogHasAllLanguagesForEveryUsedKey() {
         for key in NotificationCopy.catalogKeys {
