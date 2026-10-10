@@ -9269,6 +9269,68 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testHomeRowVisibilityAccessibilityLabelsFollowSelectedLanguageStyle() {
+        let expected: [(AlertType, String, String, String)] = [
+            (.regn, "Vis Regn på Hjem", "Vis Regn på Hjem", "Show rain on Home"),
+            (.frost, "Vis Frost på Hjem", "Vis Frost på Hjem", "Show frost on Home"),
+            (.temperatur, "Vis Temperatur på Hjem", "Vis Temperatur på Hjem", "Show temperature on Home"),
+            (.sno, "Vis Snø på Hjem", "Vis Snø på Hjem", "Show snow on Home"),
+            (.vind, "Vis Vindkast på Hjem", "Vis Vindkast på Hjem", "Show wind on Home"),
+            (.dugg, "Vis Duggpunkt på Hjem", "Vis Doggpunkt på Hjem", "Show dew point on Home"),
+            (.sol, "Vis Sollys / skydekke på Hjem", "Vis Sollys / skydekke på Hjem", "Show sunlight / cloud cover on Home")
+        ]
+
+        for (type, bokmal, inntrondersk, english) in expected {
+            XCTAssertEqual(
+                HomeRowVisibilityAccessibilityCopy.label(for: type, languageStyle: .bokmal),
+                bokmal
+            )
+            XCTAssertEqual(
+                HomeRowVisibilityAccessibilityCopy.label(for: type, languageStyle: .inntrondersk),
+                inntrondersk
+            )
+            XCTAssertEqual(
+                HomeRowVisibilityAccessibilityCopy.label(for: type, languageStyle: .english),
+                english
+            )
+        }
+    }
+
+    func testPlaceForecastExpansionAccessibilityCopyFollowsSelectedLanguageStyle() {
+        XCTAssertEqual(
+            PlaceForecastExpansionAccessibilityCopy.value(isExpanded: true, languageStyle: .bokmal),
+            "Tredagersvarsel åpent"
+        )
+        XCTAssertEqual(
+            PlaceForecastExpansionAccessibilityCopy.value(isExpanded: false, languageStyle: .inntrondersk),
+            "Tredagersvarsel lukket"
+        )
+        XCTAssertEqual(
+            PlaceForecastExpansionAccessibilityCopy.hint(isExpanded: false, languageStyle: .bokmal),
+            "Dobbeltrykk for å åpne tredagersvarselet."
+        )
+        XCTAssertEqual(
+            PlaceForecastExpansionAccessibilityCopy.hint(isExpanded: true, languageStyle: .inntrondersk),
+            "Dobbeltrykk for å lukke tredagersvarselet."
+        )
+        XCTAssertEqual(
+            PlaceForecastExpansionAccessibilityCopy.value(isExpanded: true, languageStyle: .english),
+            "Three-day forecast expanded"
+        )
+        XCTAssertEqual(
+            PlaceForecastExpansionAccessibilityCopy.value(isExpanded: false, languageStyle: .english),
+            "Three-day forecast collapsed"
+        )
+        XCTAssertEqual(
+            PlaceForecastExpansionAccessibilityCopy.hint(isExpanded: false, languageStyle: .english),
+            "Double-tap to open the three-day forecast."
+        )
+        XCTAssertEqual(
+            PlaceForecastExpansionAccessibilityCopy.hint(isExpanded: true, languageStyle: .english),
+            "Double-tap to collapse the three-day forecast."
+        )
+    }
+
     func testHomePageAccessibilityLabelFollowsSelectedLanguageStyle() {
         XCTAssertEqual(
             HomeSwipeSelection.pageAccessibilityLabel(index: 2, count: 5, languageStyle: .bokmal),

@@ -1570,7 +1570,9 @@ struct RulesView: View {
                                     ))
                                     .labelsHidden()
                                     .fixedSize()
-                                    .accessibilityLabel("Vis \(type.label) på Hjem")
+                                    .accessibilityLabel(HomeRowVisibilityAccessibilityCopy.label(
+                                        for: type, languageStyle: store.alertLanguageStyle
+                                    ))
                                 }
                             }
                             .padding(.vertical, 3)
@@ -2104,14 +2106,16 @@ struct PlacesView: View {
                                         .accessibilityElement(children: .combine)
                                         .accessibilityAddTraits(.isButton)
                                         .accessibilityValue(
-                                            placeExpansion.expandedPlaceID == place.id
-                                                ? "Tredagersvarsel åpent"
-                                                : "Tredagersvarsel lukket"
+                                            PlaceForecastExpansionAccessibilityCopy.value(
+                                                isExpanded: placeExpansion.expandedPlaceID == place.id,
+                                                languageStyle: store.alertLanguageStyle
+                                            )
                                         )
                                         .accessibilityHint(
-                                            placeExpansion.expandedPlaceID == place.id
-                                                ? "Dobbeltrykk for å lukke tredagersvarselet."
-                                                : "Dobbeltrykk for å åpne tredagersvarselet."
+                                            PlaceForecastExpansionAccessibilityCopy.hint(
+                                                isExpanded: placeExpansion.expandedPlaceID == place.id,
+                                                languageStyle: store.alertLanguageStyle
+                                            )
                                         )
                                         .accessibilityAction(.default) {
                                             toggleExpansion(for: place.id)

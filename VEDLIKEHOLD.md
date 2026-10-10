@@ -60,17 +60,33 @@ Stedskortene viser fortsatt de faste tilgjengelighetsnavnene «Stjerne 1» og
 uten å endre ikoner, favorittrekkefølge eller trykkhandling; test alle tre
 språkene.
 
-**AUTO-447 · ÅPEN** — Lokaliser Steder-radens VoiceOver-hint for åpning/lukking.
-Værkortene under Steder har faste VoiceOver-hint «Dobbeltrykk for å åpne/lukke
-tredagersvarselet» og åpne/lukkede verdier også i engelsk modus. Lokaliser
-disse tilgjengelighetstekstene uten å endre kortenes visning eller handling;
-dekk bokmål, inntrøndersk og engelsk.
+**AUTO-450 · ÅPEN** — Gjør feil ved planlegging av bakgrunnsoppdatering synlige
+og testbare. `BackgroundRefresh.schedule()` ignorerer nå alle innsendingfeil
+med `try?`; undersøk hvordan appen kan registrere eller håndtere at iOS avviser
+oppgaven, uten å gjøre bakgrunnsoppdatering til et krav for vanlig bruk. Legg
+til en deterministisk kontroll av både vellykket og feilet innsending.
 
-**AUTO-446 · ÅPEN** — Lokaliser tilgjengelighetsnavnene for Hjem-radvalg.
-Tilpass-sidens synlighetsbryter bruker en fast bokmåls-VoiceOver-etikett
-(«Vis … på Hjem») selv når engelsk er valgt. Bruk valgt språkstil for
-tilgjengelighetsnavnet og dekk bokmål, inntrøndersk og engelsk; behold synlig
-tekst og radlayout uendret.
+**AUTO-449 · ÅPEN** — Få XCTest-målet til å kompilere igjen. Den avgrensede
+kjøringen for tilgjengelighetstester stoppet på eksisterende
+typekontroll-/nøkkelsti-feil flere steder i `PlannerTests.swift` (bl.a. linje
+5361–5777), før noen tester startet. Finn minste trygge oppdeling eller
+forenkling, bevar testdekningen og verifiser at målrettede tester kan kjøres.
+
+**AUTO-447 · FULLFØRT 2026-10-10** — Steder-kortenes åpne/lukkede
+VoiceOver-verdi og hint følger nå bokmål, inntrøndersk eller engelsk uten
+visuell eller handlingsmessig endring. Regresjonstest dekker begge tilstander
+og språkstilene. Appkoden bygger og Swift-parsing/prosjektvalidering består;
+XCTest-kjøringen ble blokkert før testene av eksisterende typekontroll- og
+nøkkelsti-feil andre steder i `PlannerTests.swift` (linje 5361–5777).
+
+**AUTO-446 · PÅ VENT 2026-10-10** — Lokaliser tilgjengelighetsnavnene for
+Hjem-radvalg. Koden bruker nå språkstyrte navn for alle sju værrader og har
+regresjonstest for bokmål, inntrøndersk og engelsk; synlig tekst og layout er
+uendret. Appmålet kompilerer, og Swift-parsing, prosjektvalidering og
+diffkontroll består. Den avgrensede XCTest-kjøringen stoppet før testene kunne
+kjøres fordi `PlannerTests.swift` har eksisterende typekontroll-/nøkkelsti-feil
+i andre tester (bl.a. rundt linje 5361–5777). Gjenoppta når testmålet kan
+kompileres; gå videre til AUTO-448.
 
 **AUTO-445 · FULLFØRT 2026-10-10** — Steder-listens valgte-sted- og
 hjemstedmarkører har nå språkstyrte VoiceOver-navn («Selected place» og «Home

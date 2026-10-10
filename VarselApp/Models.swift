@@ -334,6 +334,49 @@ enum PlaceRoleAccessibilityCopy {
     }
 }
 
+enum HomeRowVisibilityAccessibilityCopy {
+    static func label(for type: AlertType, languageStyle: AlertLanguageStyle) -> String {
+        let norwegianTitle = type == .sol ? "Sollys / skydekke" : type.label
+        guard languageStyle == .english else {
+            return WeatherLanguage.text("Vis \(norwegianTitle) på Hjem", style: languageStyle)
+        }
+
+        let englishTitle: String
+        switch type {
+        case .regn: englishTitle = "rain"
+        case .frost: englishTitle = "frost"
+        case .temperatur: englishTitle = "temperature"
+        case .sno: englishTitle = "snow"
+        case .vind: englishTitle = "wind"
+        case .dugg: englishTitle = "dew point"
+        case .sol: englishTitle = "sunlight / cloud cover"
+        }
+        return "Show \(englishTitle) on Home"
+    }
+}
+
+enum PlaceForecastExpansionAccessibilityCopy {
+    static func value(isExpanded: Bool, languageStyle: AlertLanguageStyle) -> String {
+        if languageStyle == .english {
+            return isExpanded ? "Three-day forecast expanded" : "Three-day forecast collapsed"
+        }
+        let value = isExpanded ? "Tredagersvarsel åpent" : "Tredagersvarsel lukket"
+        return WeatherLanguage.text(value, style: languageStyle)
+    }
+
+    static func hint(isExpanded: Bool, languageStyle: AlertLanguageStyle) -> String {
+        if languageStyle == .english {
+            return isExpanded
+                ? "Double-tap to collapse the three-day forecast."
+                : "Double-tap to open the three-day forecast."
+        }
+        let hint = isExpanded
+            ? "Dobbeltrykk for å lukke tredagersvarselet."
+            : "Dobbeltrykk for å åpne tredagersvarselet."
+        return WeatherLanguage.text(hint, style: languageStyle)
+    }
+}
+
 enum WeatherTextSeparator: String, CaseIterable, Codable, Identifiable {
     case space, comma, bullet, dash
     var id: String { rawValue }
@@ -700,7 +743,7 @@ enum CurrentWeatherCondition: Equatable {
             default: break
             }
         }
-        switch self {
+        return switch self {
         case .snow: AlertType.sno.systemImage
         case .rain: AlertType.regn.systemImage
         case .fog: "cloud.fog.fill"
