@@ -194,6 +194,7 @@ struct ContentView: View {
                     systemImage: item.systemImage,
                     isSelected: selectedTab == .home && selectedQuickPlaceID == item.placeID,
                     showsLiveDot: item.representsCurrentPosition,
+                    accessibilityLabel: item.accessibilityLabel,
                     accessibilityHint: item.representsCurrentPosition ? "Viser vær for live-posisjonen" : "Viser vær for dette stedet"
                 ) {
                     guard let place = store.places.first(where: { $0.id == item.placeID }) else { return }
@@ -219,6 +220,7 @@ struct ContentView: View {
         systemImage: String,
         isSelected: Bool,
         showsLiveDot: Bool = false,
+        accessibilityLabel: String? = nil,
         accessibilityHint: String? = nil,
         action: @escaping () -> Void
     ) -> some View {
@@ -254,6 +256,8 @@ struct ContentView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(accessibilityLabel ?? title)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
         .accessibilityHint(accessibilityHint ?? "")
     }

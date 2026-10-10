@@ -85,6 +85,10 @@ enum HomeSwipeSelection {
         var representsCurrentPosition: Bool
 
         var id: UUID { placeID }
+
+        var accessibilityLabel: String {
+            representsCurrentPosition ? "\(title), GPS-posisjon, live" : title
+        }
     }
 
     static func shouldShowHint(placeCount: Int) -> Bool { placeCount > 1 }

@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-10T00:41:03Z",
+  "lastScheduledStart": "2026-10-10T01:11:03Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-433 fullført: timekortets værikon deler nå CurrentWeatherCondition-klassifiseringen med etiketten i stedet for å ha parallelle terskler. Regresjonstest dekker regn/snø, tåke og skygrenser på begge sider. Swift-parsing, JSON-validering og diffkontroll består; full bygg/test ble utsatt med 8,2 GB ledig diskplass og kjent SwiftUIMacros-feil. Bred køgjennomgang avdekket AUTO-436: timekort kan vise solsymbol etter lokal solnedgang. Neste kø: AUTO-434, AUTO-435 og AUTO-436."
+  "lastProgress": "AUTO-434 fullført: hurtigmenyknappene har nå én eksplisitt, testbar VoiceOver-etikett uten automatisk SF Symbol-opplesning. Sammenslåtte posisjonsroller annonserer GPS/live, mens valgt status fortsatt bruker SwiftUIs isSelected-trait. Swift-parsing, JSON-validering og diffkontroll består; fysisk VoiceOver-verifisering avventer iPhone. Bred gjennomgang fant at Her!/Hjem/Hytta og hintene fortsatt er hardkodet på bokmål selv om appen har engelske tekster; AUTO-437 dekker lokaliseringsgapet uten å endre nav-rekkefølgen. Neste kø: AUTO-435, AUTO-436 og AUTO-437."
 }

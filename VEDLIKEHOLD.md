@@ -54,6 +54,13 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**AUTO-437 · ÅPEN** — Lokaliser hurtigmenyen for valgt språk.
+Stedsfanene «Her!», «Hjem» og «Hytta» samt VoiceOver-etikettene og hintene
+bygges nå med faste bokmålstekster, mens resten av Hjem-visningen har engelske
+varianter. Bruk appens valgte språkstil i disse tekstene, og dekk sammenslåtte
+posisjons-/hjemmeroller med regresjonstester uten å endre rekkefølge eller
+navigasjonsatferd.
+
 **AUTO-436 · ÅPEN** — Sørg for at timekort ikke viser solsymboler om natten.
 Skill værtype fra lokal dagslysstatus for klare og delvis skyete timer, og bruk
 egnede nattsymboler etter lokal solnedgang. Legg til grensetester rundt
@@ -64,12 +71,13 @@ Pilen pulserer nå kontinuerlig; behold tydelig GPS-/live-status uten
 evigvarende bevegelse når tilgjengelighetsinnstillingen er aktiv, og dekk
 valg av animasjonspolicy med en ren test.
 
-**AUTO-434 · ÅPEN** — Gjennomgå VoiceOver-presentasjonen av hurtigmenyen for
-«Her!», Hjem og Hytta. Når roller slås sammen for samme sted, skal etikett,
-live-posisjon og valgt status annonseres samlet uten at SF Symbol-navn gir
-duplisert eller misvisende tale. Dekk den rollebaserte etiketten med en
-deterministisk test, og kontroller SwiftUI-atferden på iPhone når enhet er
-tilgjengelig.
+**AUTO-434 · FULLFØRT 2026-10-10** — Hurtigmenyknappene skjuler nå ikonets
+automatiske SF Symbol-beskrivelse og bruker én kontrollert VoiceOver-etikett.
+«Her! · Hjem» og «Her! · Hytta» annonserer også GPS-posisjon/live; vanlige
+destinasjoner beholder bare stedsetiketten, og valgt status videreformidles
+med SwiftUIs `isSelected`-egenskap. Regresjonstester dekker sammenslåtte,
+vanlige og foreldreløse destinasjoner. Swift-parsing og diffkontroll består;
+VoiceOver på fysisk iPhone er ikke verifisert.
 
 **AUTO-433 · FULLFØRT 2026-10-10** — Timekortet bruker nå samme
 `CurrentWeatherCondition`-klassifisering som værbeskrivelsen i stedet for å

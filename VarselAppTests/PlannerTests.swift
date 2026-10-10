@@ -9116,6 +9116,10 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(destinations.map(\.title), ["Her! · Hjem", "Hytta"])
         XCTAssertEqual(destinations.map(\.representsCurrentPosition), [true, false])
         XCTAssertEqual(destinations.first?.systemImage, "location.fill")
+        XCTAssertEqual(
+            destinations.map(\.accessibilityLabel),
+            ["Her! · Hjem, GPS-posisjon, live", "Hytta"]
+        )
     }
 
     func testQuickNavigationDropsMissingRolesAndDeduplicatesCabinOverlap() {
@@ -9130,6 +9134,7 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(destinations.map(\.placeID), [position])
         XCTAssertEqual(destinations.map(\.title), ["Her! · Hytta"])
         XCTAssertTrue(destinations[0].representsCurrentPosition)
+        XCTAssertEqual(destinations[0].accessibilityLabel, "Her! · Hytta, GPS-posisjon, live")
 
         let afterDeletedPosition = HomeSwipeSelection.navigationDestinations(
             positionID: UUID(),
@@ -9139,6 +9144,7 @@ final class PlannerTests: XCTestCase {
         )
         XCTAssertEqual(afterDeletedPosition.map(\.placeID), [cabin])
         XCTAssertEqual(afterDeletedPosition.map(\.title), ["Hytta"])
+        XCTAssertEqual(afterDeletedPosition.map(\.accessibilityLabel), ["Hytta"])
     }
 
     func testQuickNavigationSelectionTracksSwipedPlaceAndFallsBackAfterDeletion() {
