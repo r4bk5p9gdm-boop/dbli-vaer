@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-10T07:43:26Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-446 PÅ VENT: Hjem-radenes VoiceOver-navn følger nå språkstil med regresjonstest, men PlannerTests.swift kompilerer ikke grunnet eksisterende typekontroll-/nøkkelsti-feil rundt linje 5361–5777. AUTO-447 fullført: Steder-kortenes åpne/lukkede tilgjengelighetsverdi og hint er språkstyrt uten visuell/handlingsmessig endring; appkoden bygger og Swift-parsing, prosjektvalidering og diffkontroll består. XCTest stoppet før tester startet av samme testmålsfeil. Bred gjennomgang av ferske endringer, nylige AUTO-punkter og bakgrunns-/lagrings-/varselkode fant `BackgroundRefresh.schedule()` som ignorerer innsendingfeil (`try?`) og PlannerTests.swift-typekontrollproblemene som gir reell testblokkering; AUTO-449 og AUTO-450 lagt til. Neste åpne kø er AUTO-448, AUTO-449, AUTO-450."
+  "lastProgress": "BRUKER-145 fullført: Hjem viser nå nabostedets værkort og værbånd fra kanten under selve horisontale sveipet, slik at Hytta er synlig før slipp; vertikalsveip og menyrekkefølge er uendret. Inkrementell iOS-bygging, Swift-parsing og diffkontroll består; ingen iPhone-installering eller fysisk visuell kontroll. Neste åpne kø fra fullskanning: AUTO-448, AUTO-449, AUTO-450."
 }

@@ -429,7 +429,7 @@ struct HomeView: View {
                         .padding(.horizontal, 4)
                     }
                 }
-                .offset(x: liveSwipeOffset)
+                .offset(x: effectiveSwipeOffset)
                 .padding()
                     .id(store.selectedID)
                     .transition(.asymmetric(
@@ -464,6 +464,36 @@ struct HomeView: View {
                         currentID: current.id,
                         placeIDs: uniqueIDs,
                         horizontalTranslation: value.translation.width,
+                .overlay(alignment: .topLeading) {
+                    GeometryReader { geometry in
+                        if let place = interactiveSwipeNeighbor,
+                           let forecast = interactiveSwipeForecast,
+                           !forecast.isEmpty {
+                            HomeSwipeIncomingPage(
+                                place: place,
+                                places: store.places,
+                                forecast: forecast,
+                                languageStyle: store.alertLanguageStyle,
+                                isCurrentLocation: place.id == store.currentLocationPlaceID,
+                                frostMargin: place.localFrostMargin,
+                                sunThreshold: place.displayThreshold(for: .sol),
+                                sunThreshold2: place.resolvedDisplaySunThreshold2,
+                                temperatureLowThreshold: place.resolvedDisplayTemperatureThreshold,
+                                temperatureHighThreshold: place.resolvedDisplayTemperatureHighThreshold,
+                                todayTitle: forecastHeaderTitle,
+                                updatedAt: store.forecastUpdatedAt(for: place.id),
+                                isRefreshing: store.isRefreshing
+                            )
+                            .frame(width: geometry.size.width)
+                            .offset(x: effectiveSwipeOffset < 0
+                                ? geometry.size.width + effectiveSwipeOffset
+                                : -geometry.size.width + effectiveSwipeOffset)
+                            .zIndex(2)
+                            .allowsHitTesting(false)
+                            .accessibilityHidden(true)
+                        }
+                    }
+                }
                         verticalTranslation: value.translation.height
                       ),
                       uniqueIDs.indices.contains(next) else { return }
@@ -521,6 +551,90 @@ private struct CurrentPlacePushAlertsSection: View {
                     Text(localized("Kommende pushvarsler", english: "Upcoming push alerts"))
                         .font(.headline)
                     Text(place.nameWithPreposition)
+
+    private var interactiveSwipeNeighbor: Place? {
+        guard abs(liveSwipeOffset) > 8,
+              let selectedID = store.selected?.id,
+              let selectedIndex = swipePlaces.firstIndex(where: { $0.id == selectedID }) else { return nil }
+        let neighborIndex = selectedIndex + (liveSwipeOffset < 0 ? 1 : -1)
+        guard swipePlaces.indices.contains(neighborIndex) else { return nil }
+        return swipePlaces[neighborIndex]
+    }
+
+    private var effectiveSwipeOffset: CGFloat {
+        interactiveSwipeNeighbor == nil ? 0 : liveSwipeOffset
+    }
+
+    private var interactiveSwipeForecast: [ForecastHour]? {
+        guard let place = interactiveSwipeNeighbor else { return nil }
+        return ForecastDaySelection.hoursForVisibleDays(from: store.forecasts[place.id] ?? [])
+    }
+}
+
+private struct HomeSwipeIncomingPage: View {
+    let place: Place
+    let places: [Place]
+    let forecast: [ForecastHour]
+    let languageStyle: AlertLanguageStyle
+    let isCurrentLocation: Bool
+    let frostMargin: Double
+    let sunThreshold: Double
+    let sunThreshold2: Double
+    let temperatureLowThreshold: Double
+    let temperatureHighThreshold: Double
+    let todayTitle: String
+    let updatedAt: Date?
+    let isRefreshing: Bool
+
+    var body: some View {
+        VStack(spacing: 0) {
+            CurrentWeatherCard(
+                place: place,
+                places: places,
+                forecast: forecast,
+                languageStyle: languageStyle,
+                isCurrentLocation: isCurrentLocation,
+                onSelect: { _ in },
+                showsPlaceMenu: false,
+                showsContainer: false
+            )
+            .background(
+                LinearGradient(
+                    colors: isCurrentLocation
+                        ? [Color.indigo.opacity(0.12), Color.cyan.opacity(0.08)]
+                        : [Color.white, Color(red: 0.96, green: 0.98, blue: 1.0)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                ),
+                in: RoundedRectangle(cornerRadius: 18)
+            )
+            .padding(.horizontal, 4)
+            .padding(.top, 4)
+
+            ForecastVariantsView(
+                forecast: forecast,
+                rules: place.rulesForDisplay,
+                languageStyle: languageStyle,
+                frostMargin: frostMargin,
+                mode: .weatherBands,
+                sunThreshold: sunThreshold,
+                sunThreshold2: sunThreshold2,
+                temperatureLowThreshold: temperatureLowThreshold,
+                temperatureHighThreshold: temperatureHighThreshold,
+                latitude: place.lat,
+                longitude: place.lon,
+                todayTitle: todayTitle,
+                updatedAt: updatedAt,
+                isRefreshing: isRefreshing,
+                isStale: Store.isForecastStale(updatedAt)
+            )
+            .padding(.horizontal, 12)
+            .padding(.top, 16)
+            .padding(.bottom, 4)
+        }
+        .padding()
+        .background(Color(uiColor: .systemBackground))
+    }
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

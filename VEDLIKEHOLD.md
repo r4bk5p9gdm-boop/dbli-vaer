@@ -54,6 +54,13 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-145 · FULLFØRT 2026-10-10** — Nabostedets værkort og værbånd er nå
+synlige fra kanten og følger fingeren inn allerede under et sakte horisontalt
+sveip på Hjem. Sveip uten nabosted lar gjeldende side stå stille, og vertikal
+rulling samt menyrekkefølge er uendret. Inkrementell iOS-bygging, Swift-parsing
+og diffkontroll består; fysisk iPhone-visuell kontroll/installasjon er ikke
+utført.
+
 **AUTO-448 · ÅPEN** — Lokaliser VoiceOver-navnene på favorittstjernene.
 Stedskortene viser fortsatt de faste tilgjengelighetsnavnene «Stjerne 1» og
 «Stjerne 2» uansett språkvalg. La stjernenes VoiceOver-navn følge språkstil
