@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T19:52:42Z",
+  "lastScheduledStart": "2026-10-11T20:07:42Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-492 fullført 2026-10-11: SharedWidgetData faller ikke lenger tilbake til UserDefaults.standard ved utilgjengelig App Group; alle delte operasjoner avbrytes, og feilen logges. De fire app-/widget-/Watch-entitlementfilene bruker samme suite. Injiserbar regresjon bekrefter feilrapportering og at lagringsoperasjonen ikke kjøres. Swift-parsing og diffkontroll består; full Xcode-bygg/test ikke kjørt fordi CoreSimulator nylig var utilgjengelig og disken har 20 GB ledig (96 % brukt). Bred gjennomgang fant AUTO-495: WeatherTextSeparator.defaults i Models.swift har fortsatt samme stille standardlager-fallback. Neste kø: AUTO-493, AUTO-494 og AUTO-495."
+  "lastProgress": "AUTO-493 fullført 2026-10-11: Store bruker nå injiserbar NotificationRescheduler og slipper in-flight debounce-vakten igjen bare hvis samme plan feilet; en nyere replans vakt beholdes. Testen dekker delvis/total feil, umiddelbart retry av identisk plan med suksess og normal debounce etterpå. Swift-parsing og diffkontroll består; XCTest ikke kjørt fordi CoreSimulator er utilgjengelig og disken nylig var 96 % brukt (20 GB ledig). Bred gjennomgang av varslingsflyten fant AUTO-496: Store.replan mangler kanselleringssjekk etter await reschedule og kan logge fullført/holde debounce-vakt etter avbrutt bakgrunnsarbeid. Neste kø: AUTO-494, AUTO-495 og AUTO-496."
 }

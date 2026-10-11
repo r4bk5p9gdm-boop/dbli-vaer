@@ -276,6 +276,9 @@ final class ForecastRefreshQueue {
 @MainActor
 final class Store: ObservableObject {
     typealias ForecastFetcher = @Sendable (_ latitude: Double, _ longitude: Double) async throws -> [ForecastHour]
+    typealias NotificationRescheduler = @MainActor (
+        [PlannedAlert], AlertLanguageStyle, [Place], Set<UUID>, Set<UUID>
+    ) async -> NotificationScheduleResult
     static func shouldApplyCurrentLocation(selectionAtRequestStart: UUID?, currentSelection: UUID?) -> Bool {
         selectionAtRequestStart == currentSelection
     }
@@ -398,6 +401,7 @@ final class Store: ObservableObject {
 
     private let key: String
     private let forecastFetcher: ForecastFetcher
+    private let notificationRescheduler: NotificationRescheduler
     private let languageStyleKey = "varsel.alertLanguageStyle"
     private let launchPlacesVersionKey = "varsel.launchPlacesVersion"
     private let launchPlacesVersion = 9
@@ -433,10 +437,18 @@ final class Store: ObservableObject {
         forecastFetcher: @escaping ForecastFetcher = { latitude, longitude in
             try await YrService.fetch(lat: latitude, lon: longitude)
         },
-        persistenceKey: String = "varsel.state"
+        persistenceKey: String = "varsel.state",
+        notificationRescheduler: @escaping NotificationRescheduler = {
+            alerts, languageStyle, places, missingForecastPlaceIDs, nearbyPlaceIDs in
+            await NotificationScheduler.reschedule(
+                alerts, languageStyle: languageStyle, places: places,
+                missingForecastPlaceIDs: missingForecastPlaceIDs, nearbyPlaceIDs: nearbyPlaceIDs
+            )
+        }
     ) {
         self.forecastFetcher = forecastFetcher
         self.key = persistenceKey
+        self.notificationRescheduler = notificationRescheduler
         alertLanguageStyle = AlertLanguageStyle.persisted(
             UserDefaults.standard.string(forKey: "varsel.alertLanguageStyle") ?? ""
         ) ?? .bokmal
@@ -904,11 +916,18 @@ final class Store: ObservableObject {
             currentForecasts, updatedAt: forecastUpdatedAt, now: now
         )
         let alerts = Planner.planAll(places: places, forecasts: planningForecasts, nearbyPlaceIDs: nearbyPlaceIDs)
-        let scheduleResult = await NotificationScheduler.reschedule(
-            alerts, languageStyle: alertLanguageStyle, places: places,
-            missingForecastPlaceIDs: Set(places.filter { (planningForecasts[$0.id] ?? []).isEmpty }.map(\.id)),
-            nearbyPlaceIDs: nearbyPlaceIDs
+        let scheduleResult = await notificationRescheduler(
+            alerts, alertLanguageStyle, places,
+            Set(places.filter { (planningForecasts[$0.id] ?? []).isEmpty }.map(\.id)),
+            nearbyPlaceIDs
         )
+        if scheduleResult.failedCount > 0,
+           lastReplanSignature == signature, lastReplanAt == now {
+            // Keep the in-flight guard during the await, but let an unchanged
+            // plan retry promptly when any notification replacement failed.
+            lastReplanSignature = nil
+            lastReplanAt = nil
+        }
         await LiveWeatherActivityManager.sync(
             places: places,
             forecasts: currentForecasts,

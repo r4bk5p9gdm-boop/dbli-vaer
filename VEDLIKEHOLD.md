@@ -385,13 +385,14 @@ Alle fire app-/widget-/Watch-entitlements ble kontrollert og bruker samme
 App Group. En injisert regresjon bekrefter at utilgjengelig suite rapporterer
 feil, returnerer uten resultat og ikke kjører skriveoperasjonen.
 
-**AUTO-493 · ÅPEN** — La varslingsplanens debounce ta hensyn til mislykket
-planlegging. `Store.replan()` lagrer signaturen og tidspunktet før den
-asynkrone `NotificationScheduler.reschedule()` er ferdig; dermed kan et
-umiddelbart nytt forsøk med uendret plan bli ignorert selv om forrige forsøk
-rapporterte delvise eller totale feil. Flytt eller juster debounce-registreringen
-slik at feil ikke undertrykker retry, og legg til injisert regresjon for delvis
-feil etterfulgt av vellykket gjentakelse uten konfigurasjonsendring.
+**AUTO-493 · FULLFØRT 2026-10-11** — `Store` kan nå motta en injisert
+varslingsplanlegger. Den registrerer fortsatt signatur/tidspunkt før `await` som
+in-flight-vakt, men fjerner vakten igjen når planleggingen rapporterer én eller
+flere feil (uten å overskrive en nyere plans vakt). Dermed kan samme plan prøves
+på nytt umiddelbart etter delvis eller total feil, mens vellykket planlegging
+fortsatt debounces normalt. Injisert regresjon bekrefter feil → umiddelbar
+vellykket repetisjon uten konfigurasjonsendring → debounce av neste identiske
+forsøk.
 
 **AUTO-494 · ÅPEN** — Skjul utdaterte stedsøkeresultater mens et nytt søk
 venter eller kjører. `PlaceSearchModel` beholder dagens `results` når query eller
@@ -406,6 +407,14 @@ fortsatt `UserDefaults.standard` dersom App Group-suiten ikke kan åpnes; da kan
 språk-/tekstinnstillingen på telefonen avvike fra teksten som deles med widget
 og Watch. Bruk samme eksplisitte App Group-feilhåndtering som delt værdata og
 test at mislykket gruppelagring ikke skriver innstillingen til standardlageret.
+
+**AUTO-496 · ÅPEN** — Ikke rapporter fullført replanlegging etter at tasken er
+kansellert mens varslingsplanleggeren venter. `Store.replan()` sjekker
+kansellering bare før `await NotificationScheduler.reschedule()`; en kansellert
+bakgrunnsoppgave kan derfor logge suksess og beholde debounce-vakten selv om
+forespørsler ble stående ubehandlet. Legg til kontroll etter `await`, rydd bare
+denne taskens vakt og test kansellering under injisert planlegging uten å endre
+en nyere replans vakt.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig
