@@ -10585,6 +10585,29 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testPlaceSearchInvalidatesDisplayedResultsImmediatelyWhenInputsChange() {
+        let model = PlaceSearchModel { _, _ in [] }
+        let stale = PlaceSearchResult(id: "old", name: "Gammel", subtitle: "", latitude: 64.5, longitude: 11.5)
+        model.results = [stale]
+        model.message = "Old search message"
+        model.isSearching = true
+
+        model.query = "New place"
+
+        XCTAssertTrue(model.results.isEmpty)
+        XCTAssertNil(model.message)
+        XCTAssertFalse(model.isSearching)
+
+        model.results = [stale]
+        model.message = "Old search message"
+        model.scope = .world
+
+        XCTAssertTrue(model.results.isEmpty)
+        XCTAssertNil(model.message)
+        XCTAssertFalse(model.isSearching)
+    }
+
+    @MainActor
     func testPlaceSearchCancellationCancelsTheUnderlyingOperation() async {
         let cancelled = expectation(description: "The active MapKit operation is cancelled")
         let search = Task {

@@ -394,12 +394,11 @@ fortsatt debounces normalt. Injisert regresjon bekrefter feil → umiddelbar
 vellykket repetisjon uten konfigurasjonsendring → debounce av neste identiske
 forsøk.
 
-**AUTO-494 · ÅPEN** — Skjul utdaterte stedsøkeresultater mens et nytt søk
-venter eller kjører. `PlaceSearchModel` beholder dagens `results` når query eller
-scope endres, og tømmer dem først når det nye søket starter etter debounce.
-Dermed kan et gammelt sted fortsatt vises og velges for den nye søketeksten.
-Ugyldiggjør eller skjul resultatene umiddelbart ved endring, og legg til en
-regresjon som hindrer valg av gammelt resultat mens erstatningssøket pågår.
+**AUTO-494 · FULLFØRT 2026-10-11** — `PlaceSearchModel` ugyldiggjør nå den
+aktive søkegenerasjonen og tømmer resultater, statusmelding og fremdriftsindikator
+umiddelbart når query eller scope faktisk endres. Gamle treff blir dermed ikke
+stående synlige eller valgbare mens erstatningssøket venter på debounce. En
+regresjon dekker både query- og scope-endring.
 
 **AUTO-495 · ÅPEN** — Fjern stille standardlager-fallback for
 `WeatherTextSeparator`. `WeatherTextSeparator.defaults` i `Models.swift` bruker
@@ -415,6 +414,12 @@ bakgrunnsoppgave kan derfor logge suksess og beholde debounce-vakten selv om
 forespørsler ble stående ubehandlet. Legg til kontroll etter `await`, rydd bare
 denne taskens vakt og test kansellering under injisert planlegging uten å endre
 en nyere replans vakt.
+
+**AUTO-497 · ÅPEN** — Skill mellom avslag og feil ved forespørsel om
+varslingsgodkjenning. `NotificationScheduler.requestPermission()` gjør i dag
+midlertidig/systemfeil om til `false`, som `Store` og innstillingsvisningen viser
+som om brukeren uttrykkelig avslo varsler. Bevar en egen ukjent/feiltilstand og
+test at forespørselsfeil ikke presenteres som et avslag.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

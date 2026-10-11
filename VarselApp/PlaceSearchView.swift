@@ -91,13 +91,19 @@ final class PlaceSearchModel: ObservableObject {
     typealias SearchProvider = @MainActor (String, PlaceSearchScope) async throws -> [PlaceSearchResult]
 
     @Published var query = "" {
-        didSet { searchGeneration &+= 1 }
+        didSet {
+            guard oldValue != query else { return }
+            invalidateCurrentSearch()
+        }
     }
     @Published var results: [PlaceSearchResult] = []
     @Published var isSearching = false
     @Published var message: String?
     @Published var scope: PlaceSearchScope = .norway {
-        didSet { searchGeneration &+= 1 }
+        didSet {
+            guard oldValue != scope else { return }
+            invalidateCurrentSearch()
+        }
     }
 
     private let searchProvider: SearchProvider
@@ -105,6 +111,13 @@ final class PlaceSearchModel: ObservableObject {
 
     init(searchProvider: SearchProvider? = nil) {
         self.searchProvider = searchProvider ?? Self.searchMapKit
+    }
+
+    private func invalidateCurrentSearch() {
+        searchGeneration &+= 1
+        results = []
+        isSearching = false
+        message = nil
     }
 
     func search(languageStyle: AlertLanguageStyle = .bokmal) async {
