@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T10:35:44Z",
+  "lastScheduledStart": "2026-10-11T18:13:53Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-485 fullført 2026-10-11: Nærhetsgrensen på 20 sted-ID-er vises i regelredigeringen med opptil tre berørte stedsnavn og restantall. Også teksten er nå isolert og regresjonstestet for bokmål/engelsk, 1/5 steder og tom liste; testen av grense og frigjort plass består som eksisterende kontroll. Swift-parsing og diffkontroll består; XCTest/build ikke kjørt fordi ulagret ContentView.swift fortsatt blokkerer typekontroll (AUTO-483). AUTO-486 fullført i c2b4365: stale nærlokasjons-ID-er slettes uten Alltid-tilgang. Kø fra fullskanningen: AUTO-468 krever uttrykkelig godkjenning, AUTO-481 venter på anonymiserte arkivmålinger, AUTO-483 venter på avklaring av brukerens lokale byggfeil."
+  "lastProgress": "AUTO-468 fullført 2026-10-11 etter brukerens godkjenning: import fra JSON-sikkerhetskopi viser forhåndsvisning og lar brukeren slå sammen eller erstatte steder; tomme kopier kan ikke fjerne steder, språk/valg følger kopien, andre innstillinger bevares, og feilmeldinger lekker ikke systemdetaljer. Swift-parsing og diffkontroll består. Full XCTest/build blokkert av eksisterende ulagret LocalCalibrationCopy.surface-typefeil i ContentView.swift. Fra fullskanning står AUTO-481, AUTO-483, AUTO-466 og AUTO-464 på vent; eldre blokkerte AUTO-452, AUTO-446 og AUTO-442 er også med i køen."
 }

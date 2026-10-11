@@ -1034,6 +1034,23 @@ final class Store: ObservableObject {
         removePlaces(at: offsets)
     }
 
+    @discardableResult
+    func applyConfigurationImport(_ plan: ConfigurationImportPlan) -> Bool {
+        guard plan.canApply else { return false }
+        places = plan.places
+        selectedID = plan.selectedPlaceID
+        selectionIsCurrentLocation = false
+        if let currentLocationPlaceID, !places.contains(where: { $0.id == currentLocationPlaceID }) {
+            self.currentLocationPlaceID = nil
+            currentLocationCourse = nil
+        }
+        alertLanguageStyle = plan.alertLanguageStyle
+        proximityMonitor.configure(for: places)
+        save()
+        Task { await replan() }
+        return true
+    }
+
     private func save() {
         let cachedForecasts = rawForecasts.filter { !$0.value.isEmpty }
         let cachedTimestamps = forecastUpdatedAt.filter { cachedForecasts[$0.key] != nil }

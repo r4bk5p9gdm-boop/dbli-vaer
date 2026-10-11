@@ -7455,6 +7455,89 @@ final class PlannerTests: XCTestCase {
         ))
     }
 
+    func testConfigurationImportPreviewPlansReplaceAndMergeWithoutMutatingCurrentPlaces() {
+        let sharedID = UUID()
+        let preserved = Place(name: "Namsos", lat: 64.4, lon: 11.4)
+        let existing = Place(id: sharedID, name: "Old name", lat: 64.5, lon: 11.5)
+        var updated = existing
+        updated.name = "New name"
+        let added = Place(name: "Åfjord", lat: 64.8, lon: 10.2)
+        let configuration = WeatherConfigurationExport(
+            places: [updated, added], selectedPlaceID: added.id, alertLanguageStyle: .english
+        )
+
+        let merge = ConfigurationImportPlan(
+            configuration: configuration,
+            currentPlaces: [preserved, existing],
+            currentSelection: existing.id,
+            currentLanguageStyle: .bokmal,
+            mode: .merge
+        )
+        let replace = ConfigurationImportPlan(
+            configuration: configuration,
+            currentPlaces: [preserved, existing],
+            currentSelection: existing.id,
+            currentLanguageStyle: .bokmal,
+            mode: .replace
+        )
+
+        XCTAssertEqual(merge.places.map(\.id), [preserved.id, existing.id, added.id])
+        XCTAssertEqual(merge.places.first(where: { $0.id == existing.id })?.name, "New name")
+        XCTAssertEqual(merge.addedPlaceCount, 1)
+        XCTAssertEqual(merge.updatedPlaceCount, 1)
+        XCTAssertEqual(merge.preservedPlaceCount, 1)
+        XCTAssertEqual(merge.selectedPlaceID, added.id)
+        XCTAssertEqual(merge.alertLanguageStyle, .english)
+        XCTAssertEqual(replace.places.map(\.id), [existing.id, added.id])
+        XCTAssertEqual(replace.preservedPlaceCount, 0)
+        XCTAssertEqual(replace.selectedPlaceID, added.id)
+        XCTAssertEqual([preserved.name, existing.name], ["Namsos", "Old name"])
+    }
+
+    func testConfigurationImportPreviewRefusesEmptyBackupAndDoesNotLeakReadErrors() throws {
+        let emptyBackup = WeatherConfigurationExport(places: [], selectedPlaceID: nil, alertLanguageStyle: .english)
+        let plan = ConfigurationImportPlan(
+            configuration: emptyBackup,
+            currentPlaces: [Place(name: "Klinga", lat: 64.4, lon: 11.4)],
+            currentSelection: nil,
+            currentLanguageStyle: .bokmal,
+            mode: .replace
+        )
+        XCTAssertFalse(plan.canApply)
+        let mergePlan = ConfigurationImportPlan(
+            configuration: emptyBackup,
+            currentPlaces: [Place(name: "Klinga", lat: 64.4, lon: 11.4)],
+            currentSelection: nil,
+            currentLanguageStyle: .bokmal,
+            mode: .merge
+        )
+        XCTAssertFalse(mergePlan.canApply)
+
+        let error = NSError(
+            domain: "Importer", code: 1,
+            userInfo: [NSLocalizedDescriptionKey: "/private/user/Documents/secret.json"]
+        )
+        let norwegian = try XCTUnwrap(ConfigurationImportFailure.message(for: error, languageStyle: .bokmal))
+        XCTAssertTrue(norwegian.contains("oppsettet er ikke endret"))
+        XCTAssertFalse(norwegian.contains("secret.json"))
+        let english = try XCTUnwrap(ConfigurationImportFailure.message(for: error, languageStyle: .english))
+        XCTAssertTrue(english.contains("current setup has not been changed"))
+        XCTAssertFalse(english.contains("secret.json"))
+        XCTAssertNil(ConfigurationImportFailure.message(for: CancellationError(), languageStyle: .bokmal))
+    }
+
+    func testConfigurationImportReadsAtMostTheConfiguredFileLimit() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let url = directory.appendingPathComponent("oversized.json")
+        try Data(repeating: 0x20, count: WeatherConfigurationDocument.maximumImportSizeBytes + 1).write(to: url)
+
+        XCTAssertThrowsError(try WeatherConfigurationDocument.readImportData(from: url)) { error in
+            XCTAssertEqual((error as? CocoaError)?.code, .fileReadTooLarge)
+        }
+    }
+
     func testConfigurationDocumentRejectsJSONWithNonObjectTopLevelValue() {
         for json in ["null", "[]", "42", "\"configuration\""] {
             let file = FileWrapper(regularFileWithContents: Data(json.utf8))

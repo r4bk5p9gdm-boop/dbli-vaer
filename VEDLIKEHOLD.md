@@ -183,11 +183,17 @@ og systemets feiltekst, filsti og innhold vises aldri. Regresjonstest dekker
 bokmål/engelsk, kansellering og at detaljer ikke lekker. Swift-parsing og
 diffkontroll består; XCTest ikke kjørt på grunn av eksisterende testmålfeil.
 
-**AUTO-468 · ÅPEN · KREVER GODKJENNING** — `WeatherConfigurationDocument`
-kan dekode sikkerhetskopier, men appen tilbyr ikke en tilsvarende
-gjenopprettingshandling. Vurder en trygg importflyt med forhåndsvisning og
-bekreftelse før steder erstattes eller flettes; be om godkjenning før den
-større brukerflytendringen implementeres.
+**AUTO-468 · FULLFØRT 2026-10-11** — Etter godkjenning finnes nå «Importer
+oppsett» ved siden av eksporten. JSON-kopien kontrolleres mot filstørrelses-
+grensen før innlesing, og en forhåndsvisning viser antall nye, oppdaterte og
+beholdte steder før brukeren velger å slå sammen eller erstatte. Samme steds-ID
+oppdateres ved sammenslåing; valgt sted og varslingsspråk følger kopien.
+Andre appvalg som ikke finnes i sikkerhetskopien forblir uendret. En tom kopi
+kan ikke brukes til å slette steder, kansellering er stille, og importfeil
+viser aldri filsti eller systemdetaljer. Tester dekker begge planer, valg,
+språk, tom kopi og skjult feildetalj. Swift-parsing og diffkontroll består;
+full XCTest/build er blokkert av en eksisterende typefeil i ulagret
+`LocalCalibrationCopy.surface` i `ContentView.swift`.
 
 **AUTO-469 · FULLFØRT 2026-10-11** — Oppsettdekoderen avviser nå både
 `formatVersion` 0 og negative versjoner, i tillegg til versjoner over støttet

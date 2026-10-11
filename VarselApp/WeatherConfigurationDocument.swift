@@ -54,8 +54,65 @@ struct WeatherConfigurationExport: Codable {
     }
 }
 
+enum ConfigurationImportMode {
+    case replace
+    case merge
+}
+
+struct ConfigurationImportPlan {
+    let places: [Place]
+    let selectedPlaceID: UUID?
+    let alertLanguageStyle: AlertLanguageStyle
+    let addedPlaceCount: Int
+    let updatedPlaceCount: Int
+    let preservedPlaceCount: Int
+    let importedPlaceCount: Int
+
+    var canApply: Bool { importedPlaceCount > 0 && !places.isEmpty }
+
+    init(
+        configuration: WeatherConfigurationExport,
+        currentPlaces: [Place],
+        currentSelection: UUID?,
+        currentLanguageStyle: AlertLanguageStyle,
+        mode: ConfigurationImportMode
+    ) {
+        let incoming = configuration.places
+        importedPlaceCount = incoming.count
+        let currentByID = Dictionary(currentPlaces.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let incomingIDs = Set(incoming.map(\.id))
+
+        switch mode {
+        case .replace:
+            places = incoming
+            addedPlaceCount = incoming.filter { currentByID[$0.id] == nil }.count
+            updatedPlaceCount = incoming.filter { currentByID[$0.id] != nil }.count
+            preservedPlaceCount = 0
+            selectedPlaceID = configuration.selectedPlaceID.flatMap { id in
+                incoming.contains(where: { $0.id == id }) ? id : nil
+            } ?? incoming.first?.id
+        case .merge:
+            var merged = currentPlaces.map { existing in
+                incoming.first(where: { $0.id == existing.id }) ?? existing
+            }
+            let newPlaces = incoming.filter { currentByID[$0.id] == nil }
+            merged.append(contentsOf: newPlaces)
+            places = merged
+            addedPlaceCount = newPlaces.count
+            updatedPlaceCount = incoming.filter { currentByID[$0.id] != nil }.count
+            preservedPlaceCount = currentPlaces.filter { !incomingIDs.contains($0.id) }.count
+            selectedPlaceID = configuration.selectedPlaceID.flatMap { id in
+                merged.contains(where: { $0.id == id }) ? id : nil
+            } ?? currentSelection.flatMap { id in merged.contains(where: { $0.id == id }) ? id : nil }
+                ?? merged.first?.id
+        }
+        alertLanguageStyle = configuration.alertLanguageStyle ?? currentLanguageStyle
+    }
+}
+
 struct WeatherConfigurationDocument: FileDocument {
     static let maximumImportSizeBytes = 5 * 1_024 * 1_024
+    private static let importReadChunkSize = 64 * 1_024
     static var readableContentTypes: [UTType] { [.json] }
     let configuration: WeatherConfigurationExport
 
@@ -81,6 +138,26 @@ struct WeatherConfigurationDocument: FileDocument {
         self.configuration = try decoder.decode(WeatherConfigurationExport.self, from: data)
     }
 
+    static func readImportData(from url: URL) throws -> Data {
+        if let fileSize = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize,
+           fileSize > maximumImportSizeBytes {
+            throw CocoaError(.fileReadTooLarge)
+        }
+        let handle = try FileHandle(forReadingFrom: url)
+        defer { try? handle.close() }
+        var data = Data()
+        while data.count <= maximumImportSizeBytes {
+            let remaining = maximumImportSizeBytes + 1 - data.count
+            let count = min(importReadChunkSize, remaining)
+            guard let chunk = try handle.read(upToCount: count), !chunk.isEmpty else { break }
+            data.append(chunk)
+        }
+        guard data.count <= maximumImportSizeBytes else {
+            throw CocoaError(.fileReadTooLarge)
+        }
+        return data
+    }
+
     func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
         FileWrapper(regularFileWithContents: try serializedData())
     }
@@ -104,6 +181,22 @@ enum ConfigurationExportFailure {
         }
         return WeatherLanguage.text(
             "Prøv eksporten på nytt, og velg en annen plassering hvis problemet fortsetter.",
+            style: languageStyle
+        )
+    }
+}
+
+enum ConfigurationImportFailure {
+    static func message(for error: Error, languageStyle: AlertLanguageStyle) -> String? {
+        let systemError = error as NSError
+        let wasCancelled = error is CancellationError
+            || (systemError.domain == NSCocoaErrorDomain && systemError.code == NSUserCancelledError)
+        guard !wasCancelled else { return nil }
+        if languageStyle == .english {
+            return "Choose a valid setup backup and try again. The current setup has not been changed."
+        }
+        return WeatherLanguage.text(
+            "Velg en gyldig oppsettkopi og prøv på nytt. Det nåværende oppsettet er ikke endret.",
             style: languageStyle
         )
     }

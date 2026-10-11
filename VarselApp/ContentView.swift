@@ -2138,13 +2138,28 @@ private enum PlaceSortMode: String, CaseIterable, Identifiable {
 }
 
 struct PlacesView: View {
+    private enum PresentedSheet: Identifiable {
+        case search
+        case importPreview(WeatherConfigurationExport)
+
+        var id: String {
+            switch self {
+            case .search: "search"
+            case .importPreview: "import-preview"
+            }
+        }
+    }
+
     @EnvironmentObject var store: Store
     @StateObject private var loc = LocationManager()
     @State private var busy = false
-    @State private var showingSearch = false
+    @State private var presentedSheet: PresentedSheet?
     @State private var locationError: String?
     @State private var showingExporter = false
     @State private var exportFailureMessage: String?
+    @State private var operationFailureTitle = ""
+    @State private var showingImporter = false
+    @State private var importFailureMessage: String?
     @State private var editingPlaces = false
     @State private var placeExpansion = PlaceExpansionState()
     @AppStorage(PlaceOrderingSettings.homePlaceIDKey) private var homePlaceID = ""
@@ -2227,7 +2242,7 @@ struct PlacesView: View {
 
                     Section {
                     Button("Søk etter sted", systemImage: "magnifyingglass") {
-                        showingSearch = true
+                        presentedSheet = .search
                     }
                     Button(busy ? "Finner posisjon …" : "Legg til min posisjon") {
                         busy = true
@@ -2335,12 +2350,22 @@ struct PlacesView: View {
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     ContextHelpButton(topic: .places)
                     Button(editingPlaces ? "Ferdig" : "Rediger") { editingPlaces.toggle() }
+                    Button(localized("Importer oppsett", english: "Import setup"), systemImage: "square.and.arrow.down") {
+                        showingImporter = true
+                    }
                     Button("Eksporter oppsett", systemImage: "square.and.arrow.up") {
                         showingExporter = true
                     }
                 }
             }
-            .sheet(isPresented: $showingSearch) { PlaceSearchView() }
+            .sheet(item: $presentedSheet) { sheet in
+                switch sheet {
+                case .search:
+                    PlaceSearchView()
+                case let .importPreview(configuration):
+                    configurationImportPreview(configuration)
+                }
+            }
             .fileExporter(
                 isPresented: $showingExporter,
                 document: WeatherConfigurationDocument(places: store.places, selectedPlaceID: store.selectedID, alertLanguageStyle: store.alertLanguageStyle),
@@ -2352,27 +2377,170 @@ struct PlacesView: View {
                         for: error,
                         languageStyle: store.alertLanguageStyle
                     )
+                    operationFailureTitle = store.alertLanguageStyle == .english
+                        ? "Could not export setup"
+                        : WeatherLanguage.text("Kunne ikke eksportere oppsettet", style: store.alertLanguageStyle)
                 } else {
                     exportFailureMessage = nil
                 }
             }
+            .fileImporter(
+                isPresented: $showingImporter,
+                allowedContentTypes: [.json],
+                allowsMultipleSelection: false
+            ) { result in
+                guard case let .success(urls) = result, let url = urls.first else {
+                    if case let .failure(error) = result {
+                        importFailureMessage = ConfigurationImportFailure.message(
+                            for: error,
+                            languageStyle: store.alertLanguageStyle
+                        )
+                        operationFailureTitle = localized("Kunne ikke lese oppsettet", english: "Could not read setup")
+                    }
+                    return
+                }
+                do {
+                    let hasScopedAccess = url.startAccessingSecurityScopedResource()
+                    defer {
+                        if hasScopedAccess { url.stopAccessingSecurityScopedResource() }
+                    }
+                    if let fileSize = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize,
+                       fileSize > WeatherConfigurationDocument.maximumImportSizeBytes {
+                        throw CocoaError(.fileReadTooLarge)
+                    }
+                    let document = try WeatherConfigurationDocument(data: Data(contentsOf: url))
+                    presentedSheet = .importPreview(document.configuration)
+                } catch {
+                    importFailureMessage = ConfigurationImportFailure.message(
+                        for: error,
+                        languageStyle: store.alertLanguageStyle
+                    )
+                    operationFailureTitle = localized("Kunne ikke lese oppsettet", english: "Could not read setup")
+                }
+            }
             .alert(
-                store.alertLanguageStyle == .english
-                    ? "Could not export setup"
-                    : WeatherLanguage.text("Kunne ikke eksportere oppsettet", style: store.alertLanguageStyle),
+                operationFailureTitle,
                 isPresented: Binding(
-                    get: { exportFailureMessage != nil },
-                    set: { if !$0 { exportFailureMessage = nil } }
+                    get: { exportFailureMessage != nil || importFailureMessage != nil },
+                    set: { if !$0 { exportFailureMessage = nil; importFailureMessage = nil } }
                 )
             ) {
-                Button("OK", role: .cancel) { exportFailureMessage = nil }
+                Button(localized("OK", english: "OK"), role: .cancel) {
+                    exportFailureMessage = nil
+                    importFailureMessage = nil
+                }
             } message: {
-                Text(exportFailureMessage ?? "")
+                Text(importFailureMessage ?? exportFailureMessage ?? "")
             }
             .onChange(of: store.places.map(\.id)) { _, placeIDs in
                 placeExpansion.reconcile(availablePlaceIDs: Set(placeIDs))
             }
         }
+    }
+
+    private func localized(_ bokmal: String, english: String) -> String {
+        store.alertLanguageStyle == .english ? english : WeatherLanguage.text(bokmal, style: store.alertLanguageStyle)
+    }
+
+    private func configurationImportPreview(_ configuration: WeatherConfigurationExport) -> some View {
+        NavigationStack {
+            let mergePlan = ConfigurationImportPlan(
+                configuration: configuration,
+                currentPlaces: store.places,
+                currentSelection: store.selectedID,
+                currentLanguageStyle: store.alertLanguageStyle,
+                mode: .merge
+            )
+            let replacePlan = ConfigurationImportPlan(
+                configuration: configuration,
+                currentPlaces: store.places,
+                currentSelection: store.selectedID,
+                currentLanguageStyle: store.alertLanguageStyle,
+                mode: .replace
+            )
+            List {
+                Section(localized("Kopien inneholder", english: "Backup contains")) {
+                    LabeledContent(
+                        localized("Steder og varslingsregler", english: "Places and alert rules"),
+                        value: "\(configuration.places.count)"
+                    )
+                    if let selected = configuration.places.first(where: { $0.id == configuration.selectedPlaceID }) {
+                        LabeledContent(localized("Valgt sted", english: "Selected place"), value: selected.name)
+                    }
+                    LabeledContent(
+                        localized("Varslingsspråk", english: "Alert language"),
+                        value: configuration.alertLanguageStyle?.label ?? localized("Uendret", english: "Unchanged")
+                    )
+                    Text(localized(
+                        "Andre appvalg utenfor denne kopien forblir uendret.",
+                        english: "Other app preferences not included in this backup remain unchanged."
+                    )).font(.footnote).foregroundStyle(.secondary)
+                }
+                Section(localized("Hvis du slår sammen", english: "If you merge")) {
+                    Text(localized(
+                        "Steder med samme ID oppdateres fra kopien. Andre steder beholdes, og nye steder legges til. Valgt sted og varslingsspråk følger også kopien.",
+                        english: "Places with a matching ID are updated from the backup. Other places stay, and new places are added. The selected place and alert language also follow the backup."
+                    ))
+                    LabeledContent(localized("Nye", english: "Added"), value: "\(mergePlan.addedPlaceCount)")
+                    LabeledContent(localized("Oppdateres", english: "Updated"), value: "\(mergePlan.updatedPlaceCount)")
+                    LabeledContent(localized("Beholdes", english: "Kept"), value: "\(mergePlan.preservedPlaceCount)")
+                }
+                Section(localized("Hvis du erstatter", english: "If you replace")) {
+                    Text(localized(
+                        "Alle lagrede steder og varslingsregler erstattes. Valgt sted og varslingsspråk følger kopien.",
+                        english: "All saved places and alert rules are replaced. The selected place and alert language follow the backup."
+                    ))
+                    LabeledContent(localized("Etterpå", english: "Afterward"), value: "\(replacePlan.places.count) \(localized("steder", english: "places"))")
+                }
+                if !mergePlan.canApply {
+                    Text(localized(
+                        "Kopien har ingen gyldige steder og kan derfor ikke gjenopprettes.",
+                        english: "The backup has no valid places, so it cannot be restored."
+                    )).foregroundStyle(.secondary)
+                }
+            }
+            .navigationTitle(localized("Forhåndsvis kopi", english: "Preview backup"))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(localized("Avbryt", english: "Cancel")) { presentedSheet = nil }
+                }
+            }
+            .safeAreaInset(edge: .bottom) {
+                VStack(spacing: 10) {
+                    Button(localized("Slå sammen steder", english: "Merge places")) {
+                        applyImport(configuration, mode: .merge)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(!mergePlan.canApply)
+                    Button(localized("Erstatt steder og regler", english: "Replace places and rules"), role: .destructive) {
+                        applyImport(configuration, mode: .replace)
+                    }
+                    .disabled(!replacePlan.canApply)
+                }
+                .padding()
+                .background(.bar)
+            }
+        }
+    }
+
+    private func applyImport(_ configuration: WeatherConfigurationExport, mode: ConfigurationImportMode) {
+        let plan = ConfigurationImportPlan(
+            configuration: configuration,
+            currentPlaces: store.places,
+            currentSelection: store.selectedID,
+            currentLanguageStyle: store.alertLanguageStyle,
+            mode: mode
+        )
+        guard store.applyConfigurationImport(plan) else {
+            presentedSheet = nil
+            importFailureMessage = localized(
+                "Kopien inneholder ingen gyldige steder. Det nåværende oppsettet er uendret.",
+                english: "The backup contains no valid places. The current setup is unchanged."
+            )
+            return
+        }
+        presentedSheet = nil
     }
 
     private func toggleExpansion(for placeID: UUID) {
