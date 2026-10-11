@@ -7109,6 +7109,60 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(forecast[2].temp, 2)
     }
 
+    func testYrWeatherBodiesAreReadWithinEndpointLimits() async throws {
+        let locationFixture = Self.locationForecastFixture
+        let locationBody = try await YrService.readLimitedBody(
+            from: Self.byteStream(locationFixture),
+            maximumBytes: YrService.maximumLocationForecastPayloadBytes,
+            expectedContentLength: Int64(locationFixture.count)
+        )
+        XCTAssertEqual(try YrService.decodeLocationForecast(locationBody).count, 6)
+
+        let nowcastFixture = Self.nowcastFixture(rateAtFiveMinutes: 0.8)
+        let nowcastBody = try await YrService.readLimitedBody(
+            from: Self.byteStream(nowcastFixture),
+            maximumBytes: YrService.maximumNowcastPayloadBytes,
+            expectedContentLength: Int64(nowcastFixture.count)
+        )
+        XCTAssertEqual(try YrService.decodeNowcast(nowcastBody).samples.count, 1)
+
+        let exactLimit = try await YrService.readLimitedBody(
+            from: Self.byteStream(Data([1, 2, 3, 4])),
+            maximumBytes: 4,
+            expectedContentLength: -1
+        )
+        XCTAssertEqual(Array(exactLimit), [1, 2, 3, 4])
+
+        do {
+            _ = try await YrService.readLimitedBody(
+                from: Self.byteStream(Data([1, 2, 3, 4, 5])),
+                maximumBytes: 4,
+                expectedContentLength: -1
+            )
+            XCTFail("A body exceeding the cap must be rejected even without Content-Length")
+        } catch {
+            XCTAssertEqual(error as? YrForecastPayloadError, .tooLarge)
+        }
+
+        do {
+            _ = try await YrService.readLimitedBody(
+                from: Self.byteStream(Data([1, 2, 3, 4, 5])),
+                maximumBytes: 4,
+                expectedContentLength: 5
+            )
+            XCTFail("A declared oversized body must be rejected before it is read")
+        } catch {
+            XCTAssertEqual(error as? YrForecastPayloadError, .tooLarge)
+        }
+    }
+
+    private static func byteStream(_ data: Data) -> AsyncStream<UInt8> {
+        AsyncStream { continuation in
+            for byte in data { continuation.yield(byte) }
+            continuation.finish()
+        }
+    }
+
     func testYrLocationForecastRejectsOversizedPayloadBeforeDecoding() {
         let oversized = Data(repeating: 0, count: YrService.maximumLocationForecastPayloadBytes + 1)
         XCTAssertThrowsError(try YrService.decodeLocationForecast(oversized)) { error in

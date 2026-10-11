@@ -359,13 +359,15 @@ sted, regel og språk; bekreftet foreldede forespørsler ryddes fortsatt bort.
 Injisert-center-regresjon kansellerer etter første erstatning og bekrefter at
 bare den aktuelle, ubehandlede varslingen beholdes.
 
-**AUTO-490 · ÅPEN** — Begrens vær-API-svar mens de lastes ned, ikke bare etter
-at `URLSession.data(for:)` allerede har buffered hele kroppen. AUTO-480 og
-AUTO-488 avviser store Locationforecast- og Nowcast-data før JSON-dekoding,
-men nettverkslaget kan fortsatt bruke minne på en uventet stor respons. Bruk en
-strømmet eller tilsvarende begrenset leser som håndterer manglende eller feil
-`Content-Length`, og test avbrudd når en kropp passerer grensen samt normal
-respons for begge endepunktene.
+**AUTO-490 · FULLFØRT 2026-10-11** — Begge Yr-endepunktene leser nå svar via
+`URLSession.AsyncBytes` med henholdsvis 2 MB- og 512 KB-grense. En deklarert
+overskridelse avvises før lesing; ukjent, manglende eller uriktig lengde er
+fortsatt beskyttet av byte-for-byte-grensen, og nettverksoppgaven avbrytes ved
+overskridelse. Regresjonen dekker normale Locationforecast- og Nowcast-fixtures,
+nøyaktig grense, ukjent lengde over grensen og forhåndsavvisning av for stor
+deklarert lengde. Swift-kompileringen av `YrService.swift` lykkes; full appbygg
+og XCTest blokkeres av eksisterende feil i ulagrede `ContentView.swift`-endringer
+og utilgjengelig CoreSimulator.
 
 **AUTO-491 · ÅPEN** — Avbryt utdaterte MapKit-stedsøk, ikke bare ignorer
 resultatet etter at det er ferdig. `PlaceSearchModel` avviser allerede svar
@@ -382,6 +384,14 @@ kan åpnes; appen tror da at delingen lyktes, mens widget og Watch leser en anne
 database. Kontroller at alle mål har samme entitlement, og legg til en
 injiserbar lagringsregresjon som verifiserer feilbanen uten å skrive feilaktig
 til lokal standardlagring.
+
+**AUTO-493 · ÅPEN** — La varslingsplanens debounce ta hensyn til mislykket
+planlegging. `Store.replan()` lagrer signaturen og tidspunktet før den
+asynkrone `NotificationScheduler.reschedule()` er ferdig; dermed kan et
+umiddelbart nytt forsøk med uendret plan bli ignorert selv om forrige forsøk
+rapporterte delvise eller totale feil. Flytt eller juster debounce-registreringen
+slik at feil ikke undertrykker retry, og legg til injisert regresjon for delvis
+feil etterfulgt av vellykket gjentakelse uten konfigurasjonsendring.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

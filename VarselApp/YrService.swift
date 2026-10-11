@@ -11,6 +11,47 @@ enum YrService {
     static let maximumNowcastPayloadBytes = 512_000
     static let maximumNowcastTimeSteps = 500
 
+    /// Read a response incrementally so an absent or inaccurate Content-Length
+    /// cannot make URLSession buffer an unbounded weather payload in memory.
+    static func readLimitedBody<Bytes: AsyncSequence>(
+        from bytes: Bytes,
+        maximumBytes: Int,
+        expectedContentLength: Int64
+    ) async throws -> Data where Bytes.Element == UInt8 {
+        guard maximumBytes >= 0 else { throw YrForecastPayloadError.tooLarge }
+        if expectedContentLength > Int64(maximumBytes) {
+            throw YrForecastPayloadError.tooLarge
+        }
+
+        var data = Data()
+        data.reserveCapacity(expectedContentLength > 0
+            ? min(maximumBytes, Int(expectedContentLength))
+            : min(maximumBytes, 64 * 1024))
+        for try await byte in bytes {
+            guard data.count < maximumBytes else { throw YrForecastPayloadError.tooLarge }
+            data.append(byte)
+        }
+        return data
+    }
+
+    private static func fetchBody(for request: URLRequest, maximumBytes: Int) async throws -> Data {
+        let (bytes, response) = try await URLSession.shared.bytes(for: request)
+        guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
+            bytes.task.cancel()
+            throw URLError(.badServerResponse)
+        }
+        do {
+            return try await readLimitedBody(
+                from: bytes,
+                maximumBytes: maximumBytes,
+                expectedContentLength: response.expectedContentLength
+            )
+        } catch {
+            bytes.task.cancel()
+            throw error
+        }
+    }
+
     // Deliberately broad physical limits: these reject corrupted payloads, not
     // rare but credible weather. MET publishes temperatures in °C, wind in
     // m/s, fractions/probabilities in %, and precipitation in mm or mm/h.
@@ -173,10 +214,7 @@ enum YrService {
         var req = URLRequest(url: comps.url!)
         req.setValue(userAgent, forHTTPHeaderField: "User-Agent")
         req.timeoutInterval = 20
-        let (data, resp) = try await URLSession.shared.data(for: req)
-        guard let http = resp as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
-            throw URLError(.badServerResponse)
-        }
+        let data = try await fetchBody(for: req, maximumBytes: maximumLocationForecastPayloadBytes)
         return try decodeLocationForecast(data)
     }
 
@@ -269,10 +307,7 @@ enum YrService {
         var req = URLRequest(url: comps.url!)
         req.setValue(userAgent, forHTTPHeaderField: "User-Agent")
         req.timeoutInterval = 12
-        let (data, resp) = try await URLSession.shared.data(for: req)
-        guard let http = resp as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
-            throw URLError(.badServerResponse)
-        }
+        let data = try await fetchBody(for: req, maximumBytes: maximumNowcastPayloadBytes)
         return try decodeNowcast(data)
     }
 

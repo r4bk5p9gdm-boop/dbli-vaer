@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T19:07:42Z",
+  "lastScheduledStart": "2026-10-11T19:22:42Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-489 fullført 2026-10-11: Varselopprydding etter kansellering bevarer nå ubehandlede ID-er bare hvis eksisterende plan-kontekst fortsatt stemmer med gjeldende sted, regel og språk. Injisert center kansellerer etter første erstatning; regresjonen bekrefter at aktuell ubehandlet varsling beholdes og foreldet varsel fjernes. Swift-parsing og diffkontroll består; XCTest ble ikke kjørt på grunn av ulagrede brukerendringer som blokkerer typekontroll. Bred appgjennomgang fant AUTO-492: App Group-feil faller stille tilbake til standard UserDefaults og kan skjule at Widget/Watch-deling feiler. Neste kø: AUTO-490, AUTO-491 og AUTO-492."
+  "lastProgress": "AUTO-490 fullført 2026-10-11: Locationforecast (2 MB) og Nowcast (512 KB) går nå gjennom strømmet URLSession.AsyncBytes-lesing med både Content-Length-forhåndssjekk og hard grense under lesing; overstor respons avbryter nettverksoppgaven. Regresjon dekker begge gyldige MET-fixtures, eksakt grense, ukjent lengde over grensen og deklarert overskridelse. Swift-parsing og YrService-kompilering består; XCTest/fullbygg ble hindret av utilgjengelig CoreSimulator og eksisterende feil i ulagrede ContentView.swift-endringer. Bred gjennomgang fant AUTO-493: Store.replan registrerer debounce-signaturen før asynkron varslingsplanlegging rapporterer delvise/totale feil, noe som kan undertrykke et umiddelbart retry. Neste kø: AUTO-491, AUTO-492 og AUTO-493."
 }
