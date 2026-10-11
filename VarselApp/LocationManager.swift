@@ -341,3 +341,15 @@ enum NearbyMonitoringRegionPolicy {
         Set(orderedPlaceIDs.dropFirst(maximumCount))
     }
 }
+
+enum NearbyMonitoringOverflowSummary {
+    static func text(placeNames: [String], languageStyle: AlertLanguageStyle) -> String {
+        guard !placeNames.isEmpty else { return "" }
+        let visibleNames = Array(placeNames.prefix(3)).joined(separator: ", ")
+        let remainingCount = max(0, placeNames.count - 3)
+        let names = visibleNames + (remainingCount > 0 ? " +\(remainingCount)" : "")
+        return languageStyle == .english
+            ? "Not monitored: \(names). iOS supports nearby alerts for up to 20 places; turn off nearby-only for a place that does not need it to free a slot."
+            : "Overvåkes ikke: \(names). iOS støtter nærhetsvarsler for opptil 20 steder; slå av «Bare når jeg er i nærheten» for et sted som ikke trenger det, for å frigjøre en plass."
+    }
+}

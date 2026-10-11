@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T10:31:14Z",
+  "lastScheduledStart": "2026-10-11T10:35:44Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-486 fullført 2026-10-11: Nærhetsstatus krever nå Alltid-posisjon; avslag, begrensning, uavklart status og Kun ved bruk tømmer lagrede nearby-ID-er, og regionhendelser kan ikke gjenopprette dem. Regelredigeringen viser pausetilstand og åpner appinnstillinger. Regresjonstest dekker autorisasjonsstatusene. Swift-parsing og diffkontroll består; XCTest/build ikke kjørt fordi urelatert ulagret ContentView.swift fortsatt blokkerer typekontroll (AUTO-483). Kø etter fullskanning: AUTO-468 krever eksplisitt godkjenning; AUTO-481 venter på anonymiserte størrelses-/tidsdata; AUTO-483 venter på at brukerens lokale byggfeil avklares. AUTO-485 står fortsatt UNDER ARBEID."
+  "lastProgress": "AUTO-485 fullført 2026-10-11: Nærhetsgrensen på 20 sted-ID-er vises i regelredigeringen med opptil tre berørte stedsnavn og restantall. Også teksten er nå isolert og regresjonstestet for bokmål/engelsk, 1/5 steder og tom liste; testen av grense og frigjort plass består som eksisterende kontroll. Swift-parsing og diffkontroll består; XCTest/build ikke kjørt fordi ulagret ContentView.swift fortsatt blokkerer typekontroll (AUTO-483). AUTO-486 fullført i c2b4365: stale nærlokasjons-ID-er slettes uten Alltid-tilgang. Kø fra fullskanningen: AUTO-468 krever uttrykkelig godkjenning, AUTO-481 venter på anonymiserte arkivmålinger, AUTO-483 venter på avklaring av brukerens lokale byggfeil."
 }

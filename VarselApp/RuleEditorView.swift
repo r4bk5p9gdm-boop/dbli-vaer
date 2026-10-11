@@ -12,12 +12,9 @@ struct RuleEditorView: View {
         let overflowNames = store.places
             .filter { store.nearbyMonitoringOverflowPlaceIDs.contains($0.id) }
             .map(\.displayName)
-        let visibleNames = Array(overflowNames.prefix(3)).joined(separator: ", ")
-        let remainingCount = max(0, overflowNames.count - 3)
-        let names = visibleNames + (remainingCount > 0 ? " +\(remainingCount)" : "")
-        return store.alertLanguageStyle == .english
-            ? "Not monitored: \(names). iOS supports nearby alerts for up to 20 places; turn off nearby-only for a place that does not need it to free a slot."
-            : "Overvåkes ikke: \(names). iOS støtter nærhetsvarsler for opptil 20 steder; slå av «Bare når jeg er i nærheten» for et sted som ikke trenger det, for å frigjøre en plass."
+        return NearbyMonitoringOverflowSummary.text(
+            placeNames: overflowNames, languageStyle: store.alertLanguageStyle
+        )
     }
 
     var body: some View {

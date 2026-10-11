@@ -1402,6 +1402,23 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(NearbyMonitoringRegionPolicy.overflowIDs(for: afterRemovingFirstPlace), [ids[21]])
     }
 
+    func testNearbyMonitoringOverflowSummaryNamesAffectedPlacesAndCountsRemainingInBothLanguages() {
+        let names = ["Klinga", "Hytta", "Hjem", "Naust", "Sæter"]
+        XCTAssertEqual(
+            NearbyMonitoringOverflowSummary.text(placeNames: names, languageStyle: .bokmal),
+            "Overvåkes ikke: Klinga, Hytta, Hjem +2. iOS støtter nærhetsvarsler for opptil 20 steder; slå av «Bare når jeg er i nærheten» for et sted som ikke trenger det, for å frigjøre en plass."
+        )
+        XCTAssertEqual(
+            NearbyMonitoringOverflowSummary.text(placeNames: names, languageStyle: .english),
+            "Not monitored: Klinga, Hytta, Hjem +2. iOS supports nearby alerts for up to 20 places; turn off nearby-only for a place that does not need it to free a slot."
+        )
+        XCTAssertEqual(
+            NearbyMonitoringOverflowSummary.text(placeNames: ["Klinga"], languageStyle: .bokmal),
+            "Overvåkes ikke: Klinga. iOS støtter nærhetsvarsler for opptil 20 steder; slå av «Bare når jeg er i nærheten» for et sted som ikke trenger det, for å frigjøre en plass."
+        )
+        XCTAssertEqual(NearbyMonitoringOverflowSummary.text(placeNames: [], languageStyle: .bokmal), "")
+    }
+
     func testNearbyAuthorizationPolicyRequiresAlwaysAccessAndRejectsDeniedRestrictedOrUnknown() {
         XCTAssertFalse(NearbyAuthorizationPolicy.isUnavailable(CLAuthorizationStatus.authorizedAlways.rawValue))
         for status in [CLAuthorizationStatus.notDetermined, .authorizedWhenInUse, .denied, .restricted] {
