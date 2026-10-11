@@ -233,17 +233,25 @@ beholder samme nøkkel for den beholdte ID-en. Regresjonstest dekker duplikat,
 et etterfølgende unikt sted, valgt ID og cache. Swift-parsing og diffkontroll
 består; XCTest er ikke kjørt på grunn av kjente feil i andre ulagrede tester.
 
-**AUTO-475 · ÅPEN** — Undersøk skalerbar lagring og visning av manuelle
-kalibreringsobservasjoner. `recordObservation` legger hver oppføring foran i
-en array som lagres samlet i `UserDefaults`, mens visningen filtrerer og viser
-hele historikken. Definer en trygg kapasitetsstrategi som ikke stilltiende
-sletter brukerens registreringer, og test store historikker.
+**AUTO-475 · FULLFØRT 2026-10-11** — Manuelle observasjoner flyttes nå fra den
+samlede `UserDefaults`-blobben til en atomisk JSON-arkivfil i Application
+Support; rullerende prognosehistorikk lagres separat. Legacy-data beholdes til
+begge nye lagre er skrevet. Mislykket arkivering eller sletting rulles tilbake
+og vises i skjermbildet. Registreringslisten viser 50 oppføringer om gangen og
+lar brukeren hente flere uten å kappe historikken. Regresjonstest migrerer og
+gjenoppretter 1 200 observasjoner. Swift-parsing og diffkontroll består; XCTest
+ikke kjørt på grunn av kjente feil i andre ulagrede tester og lav diskreserve.
 
 **AUTO-476 · ÅPEN** — Legg til en målrettet regresjon for grå skravur når Yr-
 prognosen mangler timer mot slutten av tredje prognosedag. Bekreft at markeringen
 følger manglende prognosetimer uavhengig av pushregler, og at den ikke antyder
 at varslinger mangler. Dagens tester dekker generelle timehull og tegnforklaring,
 men ikke eksplisitt denne synlige tre-dagersgrensen.
+
+**AUTO-477 · ÅPEN** — Lokaliser hele skjermbildet for lokale målinger etter
+appens valgte språk. Kildegjennomgangen fant at overskrifter, felter,
+tilbakemeldinger, slettehandling og hjelpetekst er hardkodet på bokmål selv om
+resten av appen støtter engelsk. Behold samme måleflyt og test begge språk.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

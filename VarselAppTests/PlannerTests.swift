@@ -2754,6 +2754,44 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(decoded.observations.first?.evidence.first?.temp, 4)
     }
 
+    func testCalibrationLargeObservationHistoryMigratesOutOfUserDefaults() throws {
+        let place = Place(name: "Test", lat: 64, lon: 11)
+        let observations = (0..<1_200).map { index in
+            LocalWeatherObservation(
+                place: place,
+                observedAt: base.addingTimeInterval(TimeInterval(-index * 60)),
+                registeredAt: base,
+                measuredTemperature: Double(index % 30),
+                frost: nil,
+                surface: "",
+                forecastFetchedAt: nil,
+                evidence: [],
+                nightForecast: nil
+            )
+        }
+        let legacyHistory = CalibrationHistory(observations: observations)
+        let suiteName = "varsel.test.calibration-migration.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("calibration-test-\(UUID().uuidString)", isDirectory: true)
+        let archiveURL = directory.appendingPathComponent("observations.json")
+        defer {
+            defaults.removePersistentDomain(forName: suiteName)
+            try? FileManager.default.removeItem(at: directory)
+        }
+        defaults.set(try JSONEncoder().encode(legacyHistory), forKey: "varsel.calibrationHistory.v1")
+
+        let restored = CalibrationHistory.load(now: base, defaults: defaults, observationsURL: archiveURL)
+
+        XCTAssertEqual(restored.observations.count, observations.count)
+        XCTAssertEqual(restored.observations.first?.id, observations.first?.id)
+        XCTAssertEqual(restored.observations.last?.id, observations.last?.id)
+        XCTAssertNil(defaults.object(forKey: "varsel.calibrationHistory.v1"))
+        let storedForecasts = try XCTUnwrap(defaults.data(forKey: "varsel.calibrationForecasts.v1"))
+        XCTAssertTrue(try JSONDecoder().decode([CalibrationForecast].self, from: storedForecasts).isEmpty)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: archiveURL.path))
+    }
+
     func testFrostObservationUsesForecastFromBeforeNight() {
         let morning = Calendar.current.startOfDay(for: base).addingTimeInterval(7 * 3600)
         let place = Place(name: "Test", lat: 64, lon: 11)

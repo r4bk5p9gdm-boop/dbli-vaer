@@ -31,7 +31,13 @@ struct CalibrationHistory: Codable {
     var forecasts: [CalibrationForecast] = []
     var observations: [LocalWeatherObservation] = []
     static let retention: TimeInterval = 48 * 3600
-    private static let key = "varsel.calibrationHistory.v1"
+    private static let legacyKey = "varsel.calibrationHistory.v1"
+    private static let forecastsKey = "varsel.calibrationForecasts.v1"
+    private static var observationsFileURL: URL? {
+        FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?
+            .appendingPathComponent("D bli Vær", isDirectory: true)
+            .appendingPathComponent("calibration-observations-v1.json")
+    }
 
     mutating func prune(now: Date) {
         forecasts.removeAll { $0.fetchedAt < now.addingTimeInterval(-Self.retention) || $0.fetchedAt > now }
@@ -44,7 +50,7 @@ struct CalibrationHistory: Codable {
         // available when an earlier observation was made.
         forecasts.append(CalibrationForecast(place: place, fetchedAt: fetchedAt,
             hours: hours.filter { $0.time <= fetchedAt.addingTimeInterval(Self.retention) }.map { $0.locallyAdjusted(by: 0) }))
-        save()
+        saveForecasts()
     }
 
     func observation(place: Place, at date: Date, temperature: Double?, frost: Bool?, surface: String, now: Date = Date()) -> LocalWeatherObservation {
@@ -72,14 +78,53 @@ struct CalibrationHistory: Codable {
             forecastFetchedAt: source?.fetchedAt, evidence: evidence, nightForecast: night)
     }
 
-    func save() {
-        if let data = try? JSONEncoder().encode(self) { UserDefaults.standard.set(data, forKey: Self.key) }
+    @discardableResult
+    func saveForecasts(defaults: UserDefaults = .standard) -> Bool {
+        guard let data = try? JSONEncoder().encode(forecasts) else { return false }
+        defaults.set(data, forKey: Self.forecastsKey)
+        return true
     }
 
-    static func load() -> Self {
-        guard let data = UserDefaults.standard.data(forKey: key), var history = try? JSONDecoder().decode(Self.self, from: data) else { return Self() }
-        history.prune(now: Date())
-        history.save()
+    @discardableResult
+    func saveObservations(to url: URL? = nil) -> Bool {
+        guard let url = url ?? Self.observationsFileURL,
+              let data = try? JSONEncoder().encode(observations) else { return false }
+        do {
+            try FileManager.default.createDirectory(
+                at: url.deletingLastPathComponent(), withIntermediateDirectories: true
+            )
+            try data.write(to: url, options: .atomic)
+            return true
+        } catch {
+            return false
+        }
+    }
+
+    static func load(
+        now: Date = Date(), defaults: UserDefaults = .standard,
+        observationsURL: URL? = nil
+    ) -> Self {
+        let legacy = defaults.data(forKey: legacyKey).flatMap { try? JSONDecoder().decode(Self.self, from: $0) }
+        let forecasts = defaults.data(forKey: forecastsKey)
+            .flatMap { try? JSONDecoder().decode([CalibrationForecast].self, from: $0) }
+            ?? legacy?.forecasts ?? []
+        let archiveURL = observationsURL ?? Self.observationsFileURL
+        let observations = archiveURL.flatMap { try? Data(contentsOf: $0) }
+            .flatMap { try? JSONDecoder().decode([LocalWeatherObservation].self, from: $0) }
+            ?? legacy?.observations ?? []
+        var history = Self(forecasts: forecasts, observations: observations)
+        let forecastCountBeforePruning = history.forecasts.count
+        history.prune(now: now)
+
+        if legacy != nil {
+            // Keep the old combined archive until both new stores are safely
+            // written, so a file-system failure cannot discard observations.
+            if history.saveObservations(to: archiveURL), history.saveForecasts(defaults: defaults) {
+                defaults.removeObject(forKey: legacyKey)
+            }
+        } else if history.forecasts.count != forecastCountBeforePruning {
+            history.saveForecasts(defaults: defaults)
+        }
         return history
     }
 }
@@ -551,15 +596,27 @@ final class Store: ObservableObject {
         proximityMonitor.configure(for: places)
     }
 
-    func recordObservation(place: Place, at date: Date, temperature: Double?, frost: Bool?, surface: String) {
+    @discardableResult
+    func recordObservation(place: Place, at date: Date, temperature: Double?, frost: Bool?, surface: String) -> Bool {
         calibration.prune(now: Date())
-        calibration.observations.insert(calibration.observation(place: place, at: date, temperature: temperature, frost: frost, surface: surface), at: 0)
-        calibration.save()
+        let observation = calibration.observation(place: place, at: date, temperature: temperature, frost: frost, surface: surface)
+        calibration.observations.insert(observation, at: 0)
+        guard calibration.saveObservations() else {
+            calibration.observations.removeAll { $0.id == observation.id }
+            return false
+        }
+        return true
     }
 
-    func removeObservation(id: UUID) {
+    @discardableResult
+    func removeObservation(id: UUID) -> Bool {
+        let previous = calibration.observations
         calibration.observations.removeAll { $0.id == id }
-        calibration.save()
+        guard calibration.saveObservations() else {
+            calibration.observations = previous
+            return false
+        }
+        return true
     }
 
     static func placesNeededForBackgroundRefresh(_ places: [Place], selectedID: UUID?) -> [Place] {
@@ -673,7 +730,7 @@ final class Store: ObservableObject {
     private func performRefresh(backgroundOnly: Bool) async -> Bool {
         guard !Task.isCancelled else { return false }
         calibration.prune(now: Date())
-        calibration.save()
+        calibration.saveForecasts()
         isRefreshing = true
         defer { isRefreshing = false }
 

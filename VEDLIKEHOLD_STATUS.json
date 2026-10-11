@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T03:50:55Z",
+  "lastScheduledStart": "2026-10-11T04:20:55Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-474 fullført 2026-10-11: PersistedStoreState beholder nå første sted ved gjentatte ID-er; valgt sted og forecast-cache peker fortsatt på beholdt ID. Regresjonstest lagt til. Swift-parsing og diffkontroll består; XCTest ikke kjørt på grunn av kjente feil i andre ulagrede tester. Fullskann viste bare AUTO-468 (krever godkjenning), AUTO-475 og AUTO-476 åpne; bred gjennomgang fant manglende eksplisitt test for Yr-timehull ved slutten av dag tre, så AUTO-476 lagt til."
+  "lastProgress": "AUTO-475 fullført 2026-10-11: manuelle observasjoner er nå migrert fra den samlede UserDefaults-blobben til en atomisk Application Support-JSON-arkivfil, mens den tidsbegrensede prognosehistorikken fortsatt ligger separat. Migreringen beholder legacy-data fram til arkivskriving lykkes; feilet lagring/sletting rulles tilbake og vises for brukeren. Listen viser 50 registreringer om gangen med Vis flere. Regresjonstest migrerer og gjenoppretter 1 200 observasjoner. Swift-parsing, JSON og diffkontroll består; XCTest ikke kjørt på grunn av kjente feil i andre ulagrede tester og maskinens lave diskreserve. Bred gjennomgang av vær, varsler, posisjon, lagring, bakgrunn og widget/Watch fant også at skjermbildet Lokale målinger har hardkodet bokmål; AUTO-477 lagt til. Neste kø: AUTO-468 (krever godkjenning), AUTO-476 og AUTO-477."
 }

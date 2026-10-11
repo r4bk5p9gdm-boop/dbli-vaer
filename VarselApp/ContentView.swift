@@ -45,7 +45,8 @@ struct LocalCalibrationView: View {
     @State private var temperature = ""
     @State private var frost = "Vet ikke"
     @State private var surface = "Gress"
-    @State private var saved = false
+    @State private var visibleObservationCount = 50
+    @State private var saveSucceeded: Bool?
 
     private var measured: Double? { Double(temperature.replacingOccurrences(of: ",", with: ".").trimmingCharacters(in: .whitespaces)) }
     private var valid: Bool {
@@ -71,15 +72,18 @@ struct LocalCalibrationView: View {
                     Text("Temperatur gjelder valgt tidspunkt. Frost gjelder natten før dette tidspunktet. Rim på en overflate er ikke en måling av lufttemperatur.")
                         .font(.caption).foregroundStyle(.secondary)
                     Button("Lagre observasjon") {
-                        store.recordObservation(place: place, at: date, temperature: measured,
+                        let succeeded = store.recordObservation(place: place, at: date, temperature: measured,
                             frost: frost == "Vet ikke" ? nil : frost == "Ja", surface: frost == "Ja" ? surface : "")
-                        temperature = ""; frost = "Vet ikke"; saved = true
+                        saveSucceeded = succeeded
+                        if succeeded {
+                            temperature = ""; frost = "Vet ikke"
+                        }
                     }.disabled(!valid)
                 }
                 Section("Registreringer") {
                     let observations = store.calibration.observations.filter { $0.place.id == placeID }
                     if observations.isEmpty { Text("Ingen registreringer ennå.").foregroundStyle(.secondary) }
-                    ForEach(observations) { observation in
+                    ForEach(observations.prefix(visibleObservationCount)) { observation in
                         DisclosureGroup {
                             if let offset = observation.suggestedTemperatureOffset {
                                 Text("Målt avvik fra Yr: \(offset.formatted(.number.precision(.fractionLength(1)))) °C")
@@ -107,7 +111,16 @@ struct LocalCalibrationView: View {
                                 if let temp = observation.measuredTemperature { Text("Målt \(temp.formatted()) °C").font(.caption) }
                             }
                         }
-                        .swipeActions { Button("Slett", role: .destructive) { store.removeObservation(id: observation.id) } }
+                        .swipeActions {
+                            Button("Slett", role: .destructive) {
+                                if !store.removeObservation(id: observation.id) { saveSucceeded = false }
+                            }
+                        }
+                    }
+                    if observations.count > visibleObservationCount {
+                        Button("Vis flere registreringer") {
+                            visibleObservationCount += 50
+                        }
                     }
                 }
                 Section {
@@ -117,7 +130,15 @@ struct LocalCalibrationView: View {
             }
         }
         .navigationTitle("Lokale målinger")
-        .alert("Observasjonen er lagret", isPresented: $saved) { Button("OK", role: .cancel) {} }
+        .onChange(of: placeID) { _, _ in visibleObservationCount = 50 }
+        .alert("Registrering", isPresented: Binding(
+            get: { saveSucceeded != nil },
+            set: { if !$0 { saveSucceeded = nil } }
+        )) {
+            Button("OK", role: .cancel) { saveSucceeded = nil }
+        } message: {
+            Text(saveSucceeded == true ? "Observasjonen er lagret." : "Kunne ikke lagre endringen. Kontroller ledig lagringsplass og prøv igjen.")
+        }
     }
 }
 
