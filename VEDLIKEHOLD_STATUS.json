@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T19:37:42Z",
+  "lastScheduledStart": "2026-10-11T19:52:42Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-491 fullført 2026-10-11: Stedsøkets view-task eier nå MapKit-søkets levetid og kaller MKLocalSearch.cancel() ved kansellering, inkludert endret query/scope/språk, ny innsending eller lukking. Regresjon bekrefter at kansellert Swift-task kaller avbryteren og kaster CancellationError; eksisterende test verifiserer at gamle svar ikke overstyrer nyeste resultater. Swift-parsing og diffkontroll består; full simulatorbygg/test blokkert av CoreSimulator-tjenesten og eksisterende feil i ulagrede ContentView.swift-endringer. Bred gjennomgang av stedsøk fant AUTO-494: gamle resultater forblir synlige og valgbare under debounce/forespørsel for ny query eller scope. Neste kø: AUTO-492, AUTO-493 og AUTO-494."
+  "lastProgress": "AUTO-492 fullført 2026-10-11: SharedWidgetData faller ikke lenger tilbake til UserDefaults.standard ved utilgjengelig App Group; alle delte operasjoner avbrytes, og feilen logges. De fire app-/widget-/Watch-entitlementfilene bruker samme suite. Injiserbar regresjon bekrefter feilrapportering og at lagringsoperasjonen ikke kjøres. Swift-parsing og diffkontroll består; full Xcode-bygg/test ikke kjørt fordi CoreSimulator nylig var utilgjengelig og disken har 20 GB ledig (96 % brukt). Bred gjennomgang fant AUTO-495: WeatherTextSeparator.defaults i Models.swift har fortsatt samme stille standardlager-fallback. Neste kø: AUTO-493, AUTO-494 og AUTO-495."
 }

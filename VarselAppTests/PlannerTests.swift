@@ -6738,6 +6738,25 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(summaries.map(\.id), [first.id, second.id, third.id])
     }
 
+    func testSharedWidgetStorageDoesNotRunWhenAppGroupIsUnavailable() {
+        var attemptedWrite = false
+        var reportedFailure = false
+
+        let result = SharedWidgetData.withAppGroupDefaults(
+            suiteName: SharedWidgetData.appGroup,
+            defaultsProvider: { _ in nil },
+            onUnavailable: { reportedFailure = true },
+            operation: { _ in
+                attemptedWrite = true
+                return true
+            }
+        )
+
+        XCTAssertNil(result)
+        XCTAssertFalse(attemptedWrite)
+        XCTAssertTrue(reportedFailure)
+    }
+
     func testSharedWidgetPlacesOnlyWriteWhenOrderOrContentChanges() {
         let first = Place(name: "Klinga", lat: 64, lon: 11)
         let second = Place(name: "Hornburu", lat: 64.1, lon: 11.1)

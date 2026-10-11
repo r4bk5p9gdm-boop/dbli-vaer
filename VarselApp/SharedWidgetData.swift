@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 
 /// A glance shows the nearest event per weather type, not one tile per rule.
 enum WeatherGlance {
@@ -153,9 +154,33 @@ enum SharedWidgetData {
     static let appGroup = "group.no.mathias.dblivaer"
     private static let snapshotKey = "widget.weather.snapshot"
     private static let placesKey = "widget.weather.places"
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier ?? "no.mathias.dblivaer",
+        category: "SharedWidgetData"
+    )
 
-    private static var defaults: UserDefaults {
-        UserDefaults(suiteName: appGroup) ?? .standard
+    static func withAppGroupDefaults<Value>(
+        suiteName: String,
+        defaultsProvider: (String) -> UserDefaults?,
+        onUnavailable: () -> Void,
+        operation: (UserDefaults) -> Value
+    ) -> Value? {
+        guard let defaults = defaultsProvider(suiteName) else {
+            onUnavailable()
+            return nil
+        }
+        return operation(defaults)
+    }
+
+    private static func withDefaults<Value>(_ operation: (UserDefaults) -> Value) -> Value? {
+        withAppGroupDefaults(
+            suiteName: appGroup,
+            defaultsProvider: { UserDefaults(suiteName: $0) },
+            onUnavailable: {
+                logger.error("App Group UserDefaults unavailable for \(appGroup, privacy: .public); shared weather data access was skipped.")
+            },
+            operation: operation
+        )
     }
 
     static func shouldWrite(existing: Data?, new: Data) -> Bool {
@@ -168,21 +193,25 @@ enum SharedWidgetData {
         guard !forecast.isEmpty else { return false }
         let snapshot = WidgetWeatherSnapshot(place: place, forecast: forecast, updatedAt: updatedAt, languageStyle: languageStyle, textSeparator: textSeparator)
         if let data = try? JSONEncoder().encode(snapshot) {
-            guard shouldWrite(existing: defaults.data(forKey: snapshotKey), new: data) else { return false }
-            defaults.set(data, forKey: snapshotKey)
-            return true
+            return withDefaults { defaults in
+                guard shouldWrite(existing: defaults.data(forKey: snapshotKey), new: data) else { return false }
+                defaults.set(data, forKey: snapshotKey)
+                return true
+            } ?? false
         }
         return false
     }
 
     static func load() -> WidgetWeatherSnapshot? {
-        guard let data = defaults.data(forKey: snapshotKey) else { return nil }
+        guard let data = withDefaults({ $0.data(forKey: snapshotKey) }) ?? nil else { return nil }
         return try? JSONDecoder().decode(WidgetWeatherSnapshot.self, from: data)
     }
 
     static func clear() {
-        defaults.removeObject(forKey: snapshotKey)
-        defaults.removeObject(forKey: placesKey)
+        _ = withDefaults { defaults in
+            defaults.removeObject(forKey: snapshotKey)
+            defaults.removeObject(forKey: placesKey)
+        }
     }
 
     @discardableResult
@@ -194,15 +223,18 @@ enum SharedWidgetData {
             guard seenIDs.insert(place.id).inserted else { continue }
             summaries.append(WidgetPlaceSummary(id: place.id, name: place.displayName, preposition: place.preposition))
         }
-        if let data = try? JSONEncoder().encode(summaries), shouldWrite(existing: defaults.data(forKey: placesKey), new: data) {
-            defaults.set(data, forKey: placesKey)
-            return true
+        if let data = try? JSONEncoder().encode(summaries) {
+            return withDefaults { defaults in
+                guard shouldWrite(existing: defaults.data(forKey: placesKey), new: data) else { return false }
+                defaults.set(data, forKey: placesKey)
+                return true
+            } ?? false
         }
         return false
     }
 
     static func loadSharedPlaces() -> [WidgetPlaceSummary] {
-        guard let data = defaults.data(forKey: placesKey) else { return [] }
+        guard let data = withDefaults({ $0.data(forKey: placesKey) }) ?? nil else { return [] }
         return (try? JSONDecoder().decode([WidgetPlaceSummary].self, from: data)) ?? []
     }
 }

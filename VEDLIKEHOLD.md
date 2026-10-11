@@ -377,13 +377,13 @@ nettverksarbeidet i bakgrunnen. Regresjonen bekrefter at task-kansellering
 kaller operasjonens avbryter og gir `CancellationError`; eksisterende test
 bekrefter fortsatt at et gammelt søkeresultat ikke erstatter det nyeste.
 
-**AUTO-492 · ÅPEN** — Gjør feil i App Group-oppsettet synlige i stedet for å
-skrive widget-/Watch-data til `UserDefaults.standard`. `SharedWidgetData.defaults`
-faller i dag stille tilbake til standard-databasen hvis App Group-suiten ikke
-kan åpnes; appen tror da at delingen lyktes, mens widget og Watch leser en annen
-database. Kontroller at alle mål har samme entitlement, og legg til en
-injiserbar lagringsregresjon som verifiserer feilbanen uten å skrive feilaktig
-til lokal standardlagring.
+**AUTO-492 · FULLFØRT 2026-10-11** — `SharedWidgetData` bruker ikke lenger
+`UserDefaults.standard` hvis App Group-suiten mangler. Lagring, lesing og
+opprydding stopper nå ved utilgjengelig App Group, og feilen logges via
+`Logger`; ingen delt værdata skrives feilaktig til appens lokale standardlager.
+Alle fire app-/widget-/Watch-entitlements ble kontrollert og bruker samme
+App Group. En injisert regresjon bekrefter at utilgjengelig suite rapporterer
+feil, returnerer uten resultat og ikke kjører skriveoperasjonen.
 
 **AUTO-493 · ÅPEN** — La varslingsplanens debounce ta hensyn til mislykket
 planlegging. `Store.replan()` lagrer signaturen og tidspunktet før den
@@ -399,6 +399,13 @@ scope endres, og tømmer dem først når det nye søket starter etter debounce.
 Dermed kan et gammelt sted fortsatt vises og velges for den nye søketeksten.
 Ugyldiggjør eller skjul resultatene umiddelbart ved endring, og legg til en
 regresjon som hindrer valg av gammelt resultat mens erstatningssøket pågår.
+
+**AUTO-495 · ÅPEN** — Fjern stille standardlager-fallback for
+`WeatherTextSeparator`. `WeatherTextSeparator.defaults` i `Models.swift` bruker
+fortsatt `UserDefaults.standard` dersom App Group-suiten ikke kan åpnes; da kan
+språk-/tekstinnstillingen på telefonen avvike fra teksten som deles med widget
+og Watch. Bruk samme eksplisitte App Group-feilhåndtering som delt værdata og
+test at mislykket gruppelagring ikke skriver innstillingen til standardlageret.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig
