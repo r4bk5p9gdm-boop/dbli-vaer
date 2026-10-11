@@ -8657,6 +8657,18 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testWeatherBandHatchLegendDistinguishesPartialSunFromForecastGapsNotAlerts() {
+        let norwegian = WeatherBandHatchLegend.texts(for: .bokmal)
+        XCTAssertEqual(norwegian.partialSun, "Gul skravur: delvis sol")
+        XCTAssertEqual(norwegian.missingForecast, "Grå skravur: Yr mangler timer")
+        XCTAssertTrue(norwegian.accessibility.contains("ikke manglende varsling"))
+
+        let english = WeatherBandHatchLegend.texts(for: .english)
+        XCTAssertEqual(english.partialSun, "Yellow hatch: partial sun")
+        XCTAssertEqual(english.missingForecast, "Gray hatch: missing Yr hours")
+        XCTAssertTrue(english.accessibility.contains("does not mean an alert is missing"))
+    }
+
     func testRepeatedAutumnHourProducesOneMissingVisualCell() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))

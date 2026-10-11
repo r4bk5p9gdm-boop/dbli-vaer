@@ -67,7 +67,7 @@ struct ForecastVariantsView: View {
                             gustThreshold: displayGustThreshold
                         )
                         SwiftUI.TimelineView(.periodic(from: .now, by: 60)) { timeline in
-                            WeatherBandsForecast(day: day, allForecast: forecast, rules: bandRules, frostMargin: frostMargin, sunThreshold: sunThreshold, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, now: timeline.date)
+                            WeatherBandsForecast(day: day, allForecast: forecast, rules: bandRules, frostMargin: frostMargin, sunThreshold: sunThreshold, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, languageStyle: languageStyle, now: timeline.date)
                         }
                     case .events:
                         WeatherEventsForecast(day: day, rules: rules, frostMargin: frostMargin)
@@ -347,6 +347,7 @@ private struct WeatherBandsForecast: View {
     let temperatureHighThreshold: Double
     let latitude: Double
     let longitude: Double
+    let languageStyle: AlertLanguageStyle
     let now: Date
 
     private let labelWidth: CGFloat = 85
@@ -363,6 +364,10 @@ private struct WeatherBandsForecast: View {
         AlertType.allCases.filter { type in
             otherRules.contains { $0.type == type } || (type == .temperatur && !temperatureRules.isEmpty)
         }
+    }
+
+    private var hatchLegend: WeatherBandHatchLegend.Texts {
+        WeatherBandHatchLegend.texts(for: languageStyle)
     }
 
     private func rulesForType(_ type: AlertType) -> [Rule] {
@@ -460,6 +465,23 @@ private struct WeatherBandsForecast: View {
                             CombinedDayBandTrack(hours: bandHours, rules: typeRules, type: type, day: day.date, frostMargin: frostMargin, sunThreshold: sunThreshold, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, includeEarlyMorning: includesEarlyMorningCell, compressForMorning: isMorningCompression && !isToday)
                         }
                     }
+                    HStack(spacing: 12) {
+                        HStack(spacing: 4) {
+                            SolarHatchMark()
+                                .frame(width: 12, height: 12)
+                                .background(SolarCellMarkerStyle.hatchColor.opacity(0.18))
+                            Text(hatchLegend.partialSun)
+                        }
+                        HStack(spacing: 4) {
+                            ForecastGapMark()
+                                .frame(width: 12, height: 12)
+                            Text(hatchLegend.missingForecast)
+                        }
+                    }
+                    .font(.system(size: 9))
+                    .foregroundStyle(.secondary)
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel(hatchLegend.accessibility)
                 }
             }
 
@@ -493,6 +515,30 @@ private struct WeatherBandsForecast: View {
                 .allowsHitTesting(false)
             }
         }
+    }
+
+}
+
+enum WeatherBandHatchLegend {
+    struct Texts {
+        let partialSun: String
+        let missingForecast: String
+        let accessibility: String
+    }
+
+    static func texts(for languageStyle: AlertLanguageStyle) -> Texts {
+        if languageStyle == .english {
+            return Texts(
+                partialSun: "Yellow hatch: partial sun",
+                missingForecast: "Gray hatch: missing Yr hours",
+                accessibility: "Yellow hatch means partial sun. Gray hatch means Yr forecast hours are missing. Hatching does not mean an alert is missing."
+            )
+        }
+        return Texts(
+            partialSun: WeatherLanguage.text("Gul skravur: delvis sol", style: languageStyle),
+            missingForecast: WeatherLanguage.text("Grå skravur: Yr mangler timer", style: languageStyle),
+            accessibility: WeatherLanguage.text("Gul skravur betyr delvis sol. Grå skravur betyr at Yr mangler prognosetimer. Skravur betyr ikke manglende varsling.", style: languageStyle)
+        )
     }
 }
 

@@ -134,12 +134,12 @@ regel. Swift-parsing og diffkontroll består; XCTest/build ikke kjørt fordi
 CoreSimulatorService er utilgjengelig og testmålet har kjente typekontrollfeil
 i andre tester.
 
-**AUTO-465 · ÅPEN** — Skill visuelt mellom delvis sol og manglende Yr-time i
-værbåndene. Begge bruker skravering, men gul skravur betyr skydekke mellom
-solgrensene, mens grå skravur betyr at prognosen mangler og været er ukjent.
-En bruker tolket nylig skravuren på slutten av dag 3 som muligens manglende
-varsling. Legg til en kort forklaring der den er nyttig, og regresjonstest at
-forklaringene ikke blander prognosedekning med pushvarsler.
+**AUTO-465 · FULLFØRT 2026-10-11** — Værbåndene forklarer nå skravuren med en
+liten tegnforklaring: gul betyr delvis sol, grå betyr at Yr mangler
+prognosetimer. VoiceOver-teksten presiserer også at skravuren ikke betyr at et
+pushvarsel mangler. Bokmål og engelsk er regresjonstestet. Swift-parsing og
+diffkontroll består; full XCTest er ikke kjørt fordi testmålet har kjente
+kompileringsfeil fra andre ulagrede endringer.
 
 **AUTO-462 · FULLFØRT 2026-10-10** — La til
 `verify_app_group_entitlements.sh`, en lett prosjektkontroll som spør Xcode om
@@ -165,7 +165,11 @@ foreldet og framtidig fiks samt at en manuelt valgt side ikke overstyres.
 Swift-parsing og diffkontroll består; full XCTest er ikke kjørt fordi testmålet
 har kjente eksisterende feil og CoreSimulatorService ikke er tilgjengelig.
 
-**AUTO-464 · ÅPEN** — Ikke vis varsler beregnet fra foreldet cache på Hjem.
+**AUTO-464 · PÅ VENT 2026-10-11** — Arbeidet er utsatt fordi
+`ContentView.swift` allerede har ulagrede brukerendringer i nøyaktig den
+kommende-pushvisningen som må endres. En isolert endring av ferskhetsstatus
+ville risikere å overskrive eller endre brukerens pågående UI-arbeid. Ta den
+opp igjen når disse endringene er avklart eller innarbeidet.
 `CurrentPlacePushAlertsSection.plannedPushAlerts` kaller fortsatt
 `Planner.planAll` direkte med kortets prognose og får ikke med hentetid eller
 ferskhetsstatus. Etter nettfeil kan den derfor vise planlagte pushvarsler fra
@@ -173,6 +177,18 @@ den gamle offline-cachen, selv om `Store.replan()` nå avviser samme prognose.
 Send ferskhetsstatus inn i seksjonen, skill tydelig mellom tom prognose og
 foreldet offline-visning, og test at en foreldet, vist cache ikke blir omtalt
 som kommende pushvarsler.
+
+**AUTO-467 · ÅPEN** — Vis en handlingsbar, lokalisert melding hvis
+oppsetteksporten feiler. `fileExporter`-resultatet på Steder ignoreres nå;
+undersøk hvordan SwiftUI rapporterer avbrudd kontra reell skrivefeil, og vis
+bare feil som krever brukerhandling. Regresjonstest feilmappingen uten å
+eksponere filsti eller innhold.
+
+**AUTO-468 · ÅPEN · KREVER GODKJENNING** — `WeatherConfigurationDocument`
+kan dekode sikkerhetskopier, men appen tilbyr ikke en tilsvarende
+gjenopprettingshandling. Vurder en trygg importflyt med forhåndsvisning og
+bekreftelse før steder erstattes eller flettes; be om godkjenning før den
+større brukerflytendringen implementeres.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

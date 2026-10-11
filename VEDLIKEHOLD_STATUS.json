@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-10T16:50:52Z",
+  "lastScheduledStart": "2026-10-11T00:20:54Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-463 fullført: GPS-fiks avvises nå hvis den er eldre enn 2 minutter, mer enn 1 minutt fram i tid, har nøyaktighet over 100 m eller ugyldige koordinater. Ferskhet kontrolleres på nytt etter omvendt stedsoppslag; manuelt sted forblir valgt hvis det endres mens forespørselen går. Swift-parsing og diffkontroll består, XCTest ikke kjørt på grunn av eksisterende testmålfeil/CoreSimulatorService. Bred gjennomgang fant at kort, men gyldig Yr-prognose kan gi et misvisende tomt kommende-pushfelt; AUTO-466 opprettet for å skille ingen treff fra manglende prognosedekning. Neste åpne kø: AUTO-464, AUTO-465 og AUTO-466."
+  "lastProgress": "AUTO-465 fullført: Værbåndene har nå en kort tegnforklaring som skiller gul skravur for delvis sol fra grå skravur for manglende Yr-timer, og VoiceOver sier uttrykkelig at skravuren ikke betyr manglende pushvarsel. Bokmål/engelsk-regresjonstest, Swift-parsing og diffkontroll består; XCTest ikke kjørt grunnet kjente feil i andre ulagrede testendringer. AUTO-464 satt på vent 2026-10-11 fordi samme ContentView-seksjon har ulagrede brukerendringer. Bred appgjennomgang ga AUTO-467 (eksportfeil) og AUTO-468 (gjenopprettingsflyt krever godkjenning). Neste åpne kø: AUTO-466, AUTO-467 og AUTO-468."
 }
