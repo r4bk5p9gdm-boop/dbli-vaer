@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T01:20:54Z",
+  "lastScheduledStart": "2026-10-11T01:50:54Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-469 fullført 2026-10-11: oppsettdekoderen avviser null og negative formatversjoner, samtidig som manglende/feiltypet versjon fortsatt støttes som versjon 1. Regresjonstest lagt til. Swift-parsing og diffkontroll består; XCTest ikke kjørt på grunn av eksisterende typekontrollfeil i ulagrede tester. Bred gjennomgang av den nylig endrede skravurvisningen fant en gul tegnforklaring uten aktiv solrad; lagt til AUTO-471. Neste kø: AUTO-468 (krever godkjenning), AUTO-470 og AUTO-471."
+  "lastProgress": "AUTO-470 fullført 2026-10-11: importerte værkonfigurasjoner beholder nå første forekomst av hver steds-ID og øvrige unike steder. Regresjonstest dekker stabil valgt ID og bevarte steder. Swift-parsing og diffkontroll består; XCTest ikke kjørt på grunn av typekontrollfeil i andre ulagrede tester. Bred gjennomgang av konfigurasjonsdekoderen fant også at manglende/feiltypet places-felt blir tolket som tomt oppsett; AUTO-472 lagt til. Neste kø: AUTO-468 (krever godkjenning), AUTO-471 og AUTO-472."
 }

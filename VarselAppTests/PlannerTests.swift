@@ -7179,6 +7179,28 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testConfigurationImportKeepsFirstPlaceForDuplicateIDsAndPreservesOtherPlaces() throws {
+        let duplicateID = UUID()
+        let first = Place(id: duplicateID, name: "Første", lat: 64.4, lon: 11.4)
+        let duplicate = Place(id: duplicateID, name: "Duplikat", lat: 65.0, lon: 12.0)
+        let other = Place(name: "Annet sted", lat: 64.8, lon: 10.2)
+        let source = WeatherConfigurationExport(
+            places: [first, duplicate, other],
+            selectedPlaceID: duplicateID,
+            alertLanguageStyle: .bokmal
+        )
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+
+        let imported = try decoder.decode(WeatherConfigurationExport.self, from: encoder.encode(source))
+
+        XCTAssertEqual(imported.places.map(\.id), [duplicateID, other.id])
+        XCTAssertEqual(imported.places.map(\.name), ["Første", "Annet sted"])
+        XCTAssertEqual(imported.selectedPlaceID, duplicateID)
+    }
+
     func testConfigurationDocumentRejectsDirectoryInsteadOfJSONFile() {
         let directory = FileWrapper(directoryWithFileWrappers: [:])
 

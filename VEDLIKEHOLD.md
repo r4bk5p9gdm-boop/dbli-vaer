@@ -196,17 +196,24 @@ til versjon 1 for bakoverkompatibilitet. Regresjonstest dekker begge ugyldige
 grenseverdiene; Swift-parsing og diffkontroll består. XCTest er ikke kjørt
 fordi testmålet fortsatt har kjente typekontrollfeil i andre ulagrede tester.
 
-**AUTO-470 · ÅPEN** — Håndter dupliserte steds-ID-er i importerte oppsett før
-de eventuelt brukes i visning eller gjenoppretting. `WeatherConfigurationExport`
-bevarer nå hvert dekodede sted uten å kontrollere ID-kollisjoner, som kan gi
-ustabile SwiftUI-identifikatorer og tvetydig valgt sted. Definer en forutsigbar
-kollisjonspolicy og test at andre gyldige steder bevares.
+**AUTO-470 · FULLFØRT 2026-10-11** — Oppsettimport fjerner nå gjentatte
+steds-ID-er deterministisk: første forekomst beholdes i opprinnelig rekkefølge,
+andre gyldige steder bevares, og valgt ID forblir stabil. Regresjonstest dekker
+duplikat, beholdt første forekomst og et etterfølgende unikt sted. Swift-parsing
+og diffkontroll består; XCTest er ikke kjørt på grunn av kjente typekontrollfeil
+i andre ulagrede tester.
 
 **AUTO-471 · ÅPEN** — Vis bare relevante tegnforklaringsnøkler for skravur i
 værbåndene. Den gule nøkkelen for delvis sol vises også når ingen solrad er
 aktiv, selv om den gule skravuren bare tegnes i solraden. Knytt nøkkelens
 synlighet til viste værtyper og legg til en regresjonstest for oppsett uten
 solrad.
+
+**AUTO-472 · ÅPEN** — Avvis manglende eller feiltypet `places`-felt i en
+værkonfigurasjonsfil i stedet for å tolke filen som et gyldig, tomt oppsett.
+Behold tapsfri dekoding av enkelte ugyldige stedsoppføringer slik at andre
+gyldige steder kan overleve; test manglende felt, feil JSON-type og delvis
+skadet array.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

@@ -25,6 +25,11 @@ struct WeatherConfigurationExport: Codable {
         return places.first?.id
     }
 
+    private static func uniquePlaces(_ places: [Place]) -> [Place] {
+        var seenIDs = Set<UUID>()
+        return places.filter { seenIDs.insert($0.id).inserted }
+    }
+
     private enum CodingKeys: String, CodingKey {
         case formatVersion, exportedAt, selectedPlaceID, alertLanguageStyle, places
     }
@@ -42,7 +47,8 @@ struct WeatherConfigurationExport: Codable {
         formatVersion = decodedFormatVersion
         exportedAt = (try? values.decode(Date.self, forKey: .exportedAt)) ?? .distantPast
         alertLanguageStyle = try? values.decode(AlertLanguageStyle.self, forKey: .alertLanguageStyle)
-        places = (try? values.decode([LossyDecodable<Place>].self, forKey: .places))?.compactMap(\.value) ?? []
+        let decodedPlaces = (try? values.decode([LossyDecodable<Place>].self, forKey: .places))?.compactMap(\.value) ?? []
+        places = Self.uniquePlaces(decodedPlaces)
         let decodedSelection = try? values.decode(UUID.self, forKey: .selectedPlaceID)
         selectedPlaceID = Self.resolvedSelection(decodedSelection, in: places)
     }
