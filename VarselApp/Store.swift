@@ -391,6 +391,7 @@ final class Store: ObservableObject {
     }
     @Published private(set) var nearbyPlaceIDs: Set<UUID> = []
     @Published private(set) var nearbyMonitoringFailedPlaceIDs: Set<UUID> = []
+    @Published private(set) var nearbyMonitoringOverflowPlaceIDs: Set<UUID> = []
     private var lastReplanSignature: Int?
     private var lastReplanAt: Date?
 
@@ -594,6 +595,9 @@ final class Store: ObservableObject {
         }
         monitor.onMonitoringFailureChange = { [weak self] failedIDs in
             self?.nearbyMonitoringFailedPlaceIDs = failedIDs
+        }
+        monitor.onMonitoringOverflowChange = { [weak self] overflowIDs in
+            self?.nearbyMonitoringOverflowPlaceIDs = overflowIDs
         }
         monitor.configure(for: places)
         if !restoredSavedPlaces || needsPersistedStateRepair { save() }

@@ -1392,6 +1392,16 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(failedIDs.isEmpty, "Removing the nearby-only rule should clear its stale issue")
     }
 
+    func testNearbyMonitoringOverflowMatchesTwentyRegionLimitAndFreesSlots() {
+        let ids = (0..<22).map { _ in UUID() }
+
+        XCTAssertTrue(NearbyMonitoringRegionPolicy.overflowIDs(for: Array(ids.prefix(20))).isEmpty)
+        XCTAssertEqual(NearbyMonitoringRegionPolicy.overflowIDs(for: ids), [ids[20], ids[21]])
+
+        let afterRemovingFirstPlace = Array(ids.dropFirst())
+        XCTAssertEqual(NearbyMonitoringRegionPolicy.overflowIDs(for: afterRemovingFirstPlace), [ids[21]])
+    }
+
     func testDisabledRuleNeverCreatesPushAlert() {
         var rule = Rule(type: .regn)
         rule.enabled = false

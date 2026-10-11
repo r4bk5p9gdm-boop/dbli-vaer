@@ -137,6 +137,7 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
 @MainActor
 final class ProximityMonitor: NSObject, CLLocationManagerDelegate {
     static let radiusMeters: CLLocationDistance = 5_000
+    static let maximumMonitoredRegions = NearbyMonitoringRegionPolicy.maximumCount
 
     private let manager = CLLocationManager()
     private let identifierPrefix = "weather-place-"
@@ -144,8 +145,10 @@ final class ProximityMonitor: NSObject, CLLocationManagerDelegate {
     private var wantsAlwaysAuthorization = false
     private(set) var nearbyPlaceIDs: Set<UUID>
     private(set) var failedPlaceIDs: Set<UUID> = []
+    private(set) var overflowPlaceIDs: Set<UUID> = []
     var onChange: ((Set<UUID>) -> Void)?
     var onMonitoringFailureChange: ((Set<UUID>) -> Void)?
+    var onMonitoringOverflowChange: ((Set<UUID>) -> Void)?
 
     override init() {
         let saved = UserDefaults.standard.stringArray(forKey: savedNearbyKey) ?? []
@@ -155,9 +158,12 @@ final class ProximityMonitor: NSObject, CLLocationManagerDelegate {
     }
 
     func configure(for places: [Place]) {
-        let monitoredPlaces = Array(places.filter {
+        let nearbyPlaces = places.filter {
             $0.rules.contains { $0.enabled && $0.onlyWhenNearby }
-        }.prefix(20))
+        }
+        let monitoredPlaces = Array(nearbyPlaces.prefix(Self.maximumMonitoredRegions))
+        let overflowIDs = NearbyMonitoringRegionPolicy.overflowIDs(for: nearbyPlaces.map(\.id))
+        updateOverflowPlaceIDs(overflowIDs)
         let wantedIDs = Set(monitoredPlaces.map(\.id))
         updateFailedPlaceIDs(NearbyMonitoringFailureState.reconciled(failedPlaceIDs, wantedPlaceIDs: wantedIDs))
 
@@ -275,6 +281,12 @@ final class ProximityMonitor: NSObject, CLLocationManagerDelegate {
         failedPlaceIDs = updated
         onMonitoringFailureChange?(updated)
     }
+
+    private func updateOverflowPlaceIDs(_ updated: Set<UUID>) {
+        guard updated != overflowPlaceIDs else { return }
+        overflowPlaceIDs = updated
+        onMonitoringOverflowChange?(updated)
+    }
 }
 
 enum NearbyMonitoringFailureState {
@@ -288,5 +300,13 @@ enum NearbyMonitoringFailureState {
 
     static func markedStarted(_ placeID: UUID, in failedIDs: Set<UUID>) -> Set<UUID> {
         failedIDs.subtracting([placeID])
+    }
+}
+
+enum NearbyMonitoringRegionPolicy {
+    static let maximumCount = 20
+
+    static func overflowIDs(for orderedPlaceIDs: [UUID]) -> Set<UUID> {
+        Set(orderedPlaceIDs.dropFirst(maximumCount))
     }
 }

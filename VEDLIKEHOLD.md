@@ -312,11 +312,14 @@ fjernes og lagres ved tom prognose. Swift-parsing består. Fullt bygg stopper n�
 senere på ulagrede brukerendringer i `ContentView.swift` (manglende `return` i
 språkbytte-funksjon), så XCTest ble ikke kjørt.
 
-**AUTO-485 · ÅPEN** — Varsle tydelig når flere enn 20 steder har aktive
+**AUTO-485 · UNDER ARBEID** — Varsle tydelig når flere enn 20 steder har aktive
 nærhetsregler. `ProximityMonitor.configure` tar nå bare de første 20 stedene,
 uten å vise at senere steder ikke kan trigge «bare når jeg er i nærheten».
-Gjør grensen og hvilke steder som ikke overvåkes synlige, og test grense,
-rekkefølge og at oppsettet kan gjenopprettes når plasser frigjøres.
+Monitoren rapporterer nå overflødige ID-er separat, og regelredigeringen viser
+opptil tre berørte stedsnavn pluss antall øvrige, med en konkret måte å frigjøre
+en plass på. Regresjon dekker 20/22 steder og at en frigjort plass reduserer
+overløpet. Swift-parsing består; XCTest venter fordi Xcode-bygg stopper på
+den urelaterte, ulagrede `ContentView.swift`-feilen omtalt under AUTO-483.
 
 **AUTO-486 · ÅPEN** — Fjern utdatert nærhetsstatus når posisjonstillatelse
 trekkes tilbake eller blir begrenset. `nearbyPlaceIDs` gjenopprettes fra
