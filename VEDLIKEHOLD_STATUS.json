@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T07:20:56Z",
+  "lastScheduledStart": "2026-10-11T08:48:31Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-481 framdrift 2026-10-11: Lokale målinger henter nå bare sidens 51 første treff per sted, slik at visningen kan tilby 50 om gangen uten å materialisere alle matchende oppføringer ved hver oppdatering. Regresjon dekker stedfiltrering, siderekkefølge og tom grense. Arkivlasting og atomisk helfilskriving er fortsatt O(n), så AUTO-481 står UNDER ARBEID mens realistisk vekst måles og en append-vennlig løsning vurderes uten historikkap. AUTO-482 gjelder skadet arkiv. Swift-parsing og diffkontroll består; XCTest ikke kjørt på grunn av lav diskreserve og kjente typekontrollfeil i andre ulagrede tester. Neste kø: AUTO-468 (krever godkjenning), AUTO-481 (pågår) og AUTO-482."
+  "lastProgress": "AUTO-481 framdrift 2026-10-11: Kildegjennomgang bekrefter at arkivregistrering skjer kun når brukeren trykker Lagre observasjon; bakgrunnsoppdatering legger ikke til historikk. 1 200-observasjonsmigrasjonstesten er en robusthetsfixture, ikke et produksjonsmål. Sidevisningen begrenser nå materialisering til 51 treff. Hele arkivet dekodes ved oppstart og skrives atomisk ved endringer; før lagringsmigrering bør faktisk størrelse og lagringstid måles med stor realistisk historikk. Swift-parsing, JSON- og diffkontroll består; XCTest ikke kjørt på grunn av urelaterte ulagrede testendringer og begrenset diskreserve. Neste kø: AUTO-468 (krever godkjenning), AUTO-481 (pågår) og AUTO-482."
 }

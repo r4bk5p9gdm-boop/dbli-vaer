@@ -278,8 +278,13 @@ eksisterende Yr-fixtures bekrefter normal respons.
 uten å forkorte brukerens historikk. Listen henter nå bare 51 treff for den
 valgte siden, stopper søket når siden pluss eventuell «Vis flere» rad er funnet,
 og viser fortsatt 50 oppføringer om gangen. Regresjon dekker filtrering mellom
-steder og tom side. Gjenstår å måle realistisk arkivvekst og vurdere at lasting
-og atomisk omskriving av hele lagringsfilen fortsatt skalerer med historikken.
+steder og tom side. Kildegjennomgang bekrefter at observasjoner bare legges til
+ved det manuelle «Lagre observasjon»-valget, ikke ved bakgrunnsoppdatering; den
+eksisterende 1 200-raders migrasjonstesten er en robusthetsfixture, ikke et mål
+på faktisk bruk. Hele arkivet dekodes fortsatt ved oppstart og skrives atomisk
+ved hver lagring/sletting. Før en større lagringsmigrering bør faktisk arkivstørrelse
+og lagringstid måles på en stor, realistisk historikk; nåværende kildekode viser
+ingen automatisk vekst som begrunner den kompleksiteten.
 
 **AUTO-482 · ÅPEN** — Bevar et uleselig observasjonsarkiv for gjenoppretting.
 `CalibrationHistory.load` faller tilbake til legacy-data eller tom liste når
