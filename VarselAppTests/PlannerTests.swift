@@ -87,6 +87,25 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(decoded.places.map(\.id), [second.id, first.id])
     }
 
+    func testPersistedStateKeepsFirstPlaceForDuplicateIDsAndRetainsSelectionAndCache() throws {
+        let duplicateID = UUID()
+        let first = Place(id: duplicateID, name: "Første", lat: 64, lon: 11)
+        let duplicate = Place(id: duplicateID, name: "Duplikat", lat: 65, lon: 12)
+        let other = Place(name: "Annet", lat: 66, lon: 13)
+        let cachedForecast = [ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 40, dew: 6)]
+        let state = PersistedStoreState(
+            places: [first, duplicate, other], selectedID: duplicateID, log: [],
+            forecasts: [duplicateID: cachedForecast]
+        )
+
+        let decoded = try JSONDecoder().decode(PersistedStoreState.self, from: JSONEncoder().encode(state))
+
+        XCTAssertEqual(decoded.places.map(\.id), [duplicateID, other.id])
+        XCTAssertEqual(decoded.places.map(\.name), ["Første", "Annet"])
+        XCTAssertEqual(decoded.selectedID, duplicateID)
+        XCTAssertEqual(decoded.forecasts[duplicateID], cachedForecast)
+    }
+
     func testSolarCycleSuppressesSunAfterLocalSunset() {
         let evening = Calendar.current.date(from: DateComponents(year: 2026, month: 6, day: 21, hour: 23))!
         XCTAssertTrue(SolarCycle.isAfterSunset(evening, latitude: 64, longitude: 11))

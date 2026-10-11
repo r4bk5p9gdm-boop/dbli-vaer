@@ -107,7 +107,9 @@ struct PersistedStoreState: Codable {
 
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        places = (try? values.decode([LossyDecodable<Place>].self, forKey: .places))?.compactMap(\.value) ?? []
+        let decodedPlaces = (try? values.decode([LossyDecodable<Place>].self, forKey: .places))?.compactMap(\.value) ?? []
+        var seenPlaceIDs = Set<UUID>()
+        places = decodedPlaces.filter { seenPlaceIDs.insert($0.id).inserted }
         let decodedSelection = try? values.decode(UUID.self, forKey: .selectedID)
         if let decodedSelection {
             selectedID = places.contains(where: { $0.id == decodedSelection })

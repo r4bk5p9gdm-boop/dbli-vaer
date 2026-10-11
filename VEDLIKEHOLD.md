@@ -226,18 +226,24 @@ Bokmål/engelsk-tekstene er fortsatt dekket av tegnforklaringstestene. Swift-
 parsing og diffkontroll består; visuell størrelsesklassekontroll og XCTest er
 ikke kjørt i denne runden på grunn av kjente feil i andre ulagrede tester.
 
-**AUTO-474 · ÅPEN** — Avvis gjentatte steds-ID-er også når `PersistedStoreState`
-gjenopprettes fra lokal lagring. Oppsettimport beholder nå første forekomst,
-men lagret tilstand dekoder fortsatt alle forekomster direkte inn i
-`Place`-listen; duplikater kan gi ustabile listeidentifikatorer etter
-gjenoppretting. Behold første forekomst, bevar andre steder og kontroller at
-valgt sted/cache fortsatt peker på en beholdt ID.
+**AUTO-474 · FULLFØRT 2026-10-11** — `PersistedStoreState` fjerner nå gjentatte
+steds-ID-er ved dekoding, med første gyldige forekomst beholdt i opprinnelig
+rekkefølge. Valgt sted kontrolleres mot den ryddede listen, og forecast-cache
+beholder samme nøkkel for den beholdte ID-en. Regresjonstest dekker duplikat,
+et etterfølgende unikt sted, valgt ID og cache. Swift-parsing og diffkontroll
+består; XCTest er ikke kjørt på grunn av kjente feil i andre ulagrede tester.
 
 **AUTO-475 · ÅPEN** — Undersøk skalerbar lagring og visning av manuelle
 kalibreringsobservasjoner. `recordObservation` legger hver oppføring foran i
 en array som lagres samlet i `UserDefaults`, mens visningen filtrerer og viser
 hele historikken. Definer en trygg kapasitetsstrategi som ikke stilltiende
 sletter brukerens registreringer, og test store historikker.
+
+**AUTO-476 · ÅPEN** — Legg til en målrettet regresjon for grå skravur når Yr-
+prognosen mangler timer mot slutten av tredje prognosedag. Bekreft at markeringen
+følger manglende prognosetimer uavhengig av pushregler, og at den ikke antyder
+at varslinger mangler. Dagens tester dekker generelle timehull og tegnforklaring,
+men ikke eksplisitt denne synlige tre-dagersgrensen.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig
