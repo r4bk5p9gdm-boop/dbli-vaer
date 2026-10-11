@@ -242,16 +242,24 @@ lar brukeren hente flere uten å kappe historikken. Regresjonstest migrerer og
 gjenoppretter 1 200 observasjoner. Swift-parsing og diffkontroll består; XCTest
 ikke kjørt på grunn av kjente feil i andre ulagrede tester og lav diskreserve.
 
-**AUTO-476 · ÅPEN** — Legg til en målrettet regresjon for grå skravur når Yr-
-prognosen mangler timer mot slutten av tredje prognosedag. Bekreft at markeringen
-følger manglende prognosetimer uavhengig av pushregler, og at den ikke antyder
-at varslinger mangler. Dagens tester dekker generelle timehull og tegnforklaring,
-men ikke eksplisitt denne synlige tre-dagersgrensen.
+**AUTO-476 · FULLFØRT 2026-10-11** — La til en regresjon som lar den tredje
+synlige prognosedagen ha manglende Yr-timer i kveldens siste felt. Testen
+bekrefter at de to manglende feltene fortsatt får skravur selv om ingen pushregel
+planlegger et varsel; skravuren betyr ukjent Yr-prognose, ikke et manglende push.
+Swift-parsing og diffkontroll består. XCTest ble ikke kjørt på grunn av lav
+diskreserve og kjente typekontrollfeil i andre ulagrede tester.
 
 **AUTO-477 · ÅPEN** — Lokaliser hele skjermbildet for lokale målinger etter
 appens valgte språk. Kildegjennomgangen fant at overskrifter, felter,
 tilbakemeldinger, slettehandling og hjelpetekst er hardkodet på bokmål selv om
 resten av appen støtter engelsk. Behold samme måleflyt og test begge språk.
+
+**AUTO-478 · ÅPEN** — Sikre at en utløpt bakgrunnsoppdatering alltid avslutter
+`BGAppRefreshTask` med `success: false`, også når kansellering treffer mens
+`Store.refreshAll` fortsatt arbeider. Kildegjennomgangen fant at utløperen nå
+bare kansellerer den ustrukturerte arbeidsoppgaven, mens fullføring kalles først
+når arbeidet returnerer. Legg til en isolert regresjon for utløps-/fullføringsløpet
+slik at systemet ikke står igjen med en uavsluttet oppgave.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

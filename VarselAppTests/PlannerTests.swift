@@ -3021,6 +3021,44 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testThirdForecastDayHatchesMissingYrHoursWithoutPlanningPushAlerts() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 0))
+        let firstDay = try XCTUnwrap(calendar.date(from: DateComponents(year: 2030, month: 6, day: 1)))
+        let days = (0..<3).compactMap { calendar.date(byAdding: .day, value: $0, to: firstDay) }
+        let visibleDays = ForecastDaySelection.visibleDays(
+            from: days.map { ForecastDay(date: $0, hours: []) },
+            now: firstDay.addingTimeInterval(12 * 3_600),
+            calendar: calendar
+        )
+        let thirdDay = try XCTUnwrap(visibleDays.last?.date)
+        let interval = try XCTUnwrap(ForecastHourSelection.bandInterval(
+            on: thirdDay, startingAt: 15, slotCount: 8, calendar: calendar
+        ))
+        var hours: [ForecastHour] = []
+        var time = interval.lowerBound
+        while time < interval.upperBound {
+            if calendar.component(.hour, from: time) < 21 {
+                hours.append(ForecastHour(time: time, temp: 8, precip: 0, wind: 1, cloud: 60, dew: 7))
+            }
+            time = try XCTUnwrap(calendar.date(byAdding: .hour, value: 1, to: time))
+        }
+
+        XCTAssertEqual(
+            ForecastHourSelection.missingHourOffsets(
+                in: interval, startingAt: 15, slotCount: 8, forecast: hours, calendar: calendar
+            ),
+            [6, 7],
+            "The visible third day's unprovided evening cells should remain visibly hatched."
+        )
+
+        var place = Place(name: "Klinga", lat: 64, lon: 11)
+        var pushRule = Rule(type: .vind)
+        pushRule.threshold = 100
+        place.rules = [pushRule]
+        XCTAssertTrue(Planner.planAll(places: [place], forecasts: [place.id: hours], now: firstDay).isEmpty)
+    }
+
     func testRollingStatusesUseDisplaySolarThresholdWithoutPushRule() {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let now = base.addingTimeInterval(6 * 3_600)
