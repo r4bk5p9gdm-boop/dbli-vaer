@@ -279,7 +279,7 @@ enum YrService {
         decoder.dateDecodingStrategy = .iso8601
         let response = try decoder.decode(NowcastResponse.self, from: data)
         let ordered = response.properties.timeseries.sorted { $0.time < $1.time }
-        let samples = ordered.compactMap { series in
+        let samples: [PrecipitationSample] = ordered.compactMap { series -> PrecipitationSample? in
             guard let rate = series.data.instant.details.precipitation_rate,
                   isPlausible(rate, in: NumericRange.precipitation) else { return nil }
             return PrecipitationSample(time: series.time, rate: rate)

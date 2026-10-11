@@ -2754,6 +2754,28 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(decoded.observations.first?.evidence.first?.temp, 4)
     }
 
+    func testRecordingEmptyForecastPersistsPrunedCalibrationHistory() throws {
+        let key = "varsel.calibrationForecasts.v1"
+        let defaults = UserDefaults.standard
+        let previousValue = defaults.data(forKey: key)
+        defer {
+            if let previousValue { defaults.set(previousValue, forKey: key) }
+            else { defaults.removeObject(forKey: key) }
+        }
+
+        let place = Place(name: "Test", lat: 64, lon: 11)
+        let expired = CalibrationForecast(
+            place: place, fetchedAt: base.addingTimeInterval(-49 * 3_600), hours: []
+        )
+        var history = CalibrationHistory(forecasts: [expired])
+
+        history.record(place: place, hours: [], fetchedAt: base)
+
+        let saved = try XCTUnwrap(defaults.data(forKey: key))
+        XCTAssertTrue(try JSONDecoder().decode([CalibrationForecast].self, from: saved).isEmpty)
+        XCTAssertTrue(history.forecasts.isEmpty)
+    }
+
     func testCalibrationObservationPageStopsAfterRequestedNumberOfPlaceMatches() {
         let reference = base
         let home = Place(name: "Home", lat: 64, lon: 11)

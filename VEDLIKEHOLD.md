@@ -303,6 +303,28 @@ bli stille uteblitt. Reconcile monitorstatus etter feil, gi brukeren en tydelig
 status/handling for ny prøve, og test feil etterfulgt av vellykket
 rekonfigurering uten å logge koordinater.
 
+**AUTO-484 · FULLFØRT 2026-10-11** — Rettet to feil som Xcode-bygg avdekket:
+tom Yr-prognose lagret ikke den oppryddede kalibreringshistorikken, og
+Nowcast-dekoderens `compactMap` manglet eksplisitt resultat-/optionaltype for
+Swift-kompilatoren. Den tomme historikkbanen lagrer nå riktig forecast-liste;
+typeannotasjonen endrer ikke filtreringen. Regresjon dekker at utløpt historikk
+fjernes og lagres ved tom prognose. Swift-parsing består. Fullt bygg stopper nå
+senere på ulagrede brukerendringer i `ContentView.swift` (manglende `return` i
+språkbytte-funksjon), så XCTest ble ikke kjørt.
+
+**AUTO-485 · ÅPEN** — Varsle tydelig når flere enn 20 steder har aktive
+nærhetsregler. `ProximityMonitor.configure` tar nå bare de første 20 stedene,
+uten å vise at senere steder ikke kan trigge «bare når jeg er i nærheten».
+Gjør grensen og hvilke steder som ikke overvåkes synlige, og test grense,
+rekkefølge og at oppsettet kan gjenopprettes når plasser frigjøres.
+
+**AUTO-486 · ÅPEN** — Fjern utdatert nærhetsstatus når posisjonstillatelse
+trekkes tilbake eller blir begrenset. `nearbyPlaceIDs` gjenopprettes fra
+UserDefaults, mens `locationManagerDidChangeAuthorization` nå bare håndterer
+eskalering av tillatelse. Kontroller at gamle «i nærheten»-ID-er ikke fortsetter
+å kvalifisere pushvarsler etter avslag, og vis en tydelig vei til å aktivere
+tillatelsen igjen uten å logge posisjonsdata.
+
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig
 bredde-/lengdegrad ved dekoding; tapsfri arraydekoding bevarer andre steder i

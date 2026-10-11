@@ -79,7 +79,7 @@ struct CalibrationHistory: Codable {
 
     mutating func record(place: Place, hours: [ForecastHour], fetchedAt: Date) {
         prune(now: fetchedAt)
-        guard !hours.isEmpty else { save(); return }
+        guard !hours.isEmpty else { saveForecasts(); return }
         // Retain forecast versions: a later update must not erase what was
         // available when an earlier observation was made.
         forecasts.append(CalibrationForecast(place: place, fetchedAt: fetchedAt,

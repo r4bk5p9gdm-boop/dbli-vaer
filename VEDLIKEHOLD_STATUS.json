@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T09:14:21Z",
+  "lastScheduledStart": "2026-10-11T09:21:17Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-482 fullført 2026-10-11: Karantene for uleselig observasjonsarkiv, sperre mot overskriving dersom flytting feiler og to regresjonstester ble committed i 4993edc. Swift-parsing består; XCTest ikke kjørt på grunn av urelaterte ulagrede testendringer og begrenset diskreserve. AUTO-481 står PÅ VENT i påvente av anonymiserte størrelses-/tidsmålinger fra realistisk arkiv/enhet. Neste kø fra fullskanningen: AUTO-468 (krever uttrykkelig godkjenning), AUTO-483 (åpen), AUTO-481 (venter på måledata)."
+  "lastProgress": "AUTO-484 fullført 2026-10-11: Rettet feil i tom CalibrationHistory.record-bane og eksplisitterte Nowcast compactMap-typen; regresjon dekker lagring etter pruning. Swift-parsing, JSON og diffkontroll består. iOS-bygg kommer forbi de to feilene, men stopper på urelatert ulagret ContentView.swift-språkbytte uten return; XCTest ikke kjørt. Bred kø-/risikogjennomgang registrerte AUTO-485 (over 20 nærhetsregioner) og AUTO-486 (tilbaketrukket posisjonstillatelse) som konkrete åpne oppgaver. Neste kø fra fullskanningen: AUTO-468 (krever uttrykkelig godkjenning), AUTO-481 (venter på anonymiserte måledata), AUTO-483 (åpen/pågår)."
 }
