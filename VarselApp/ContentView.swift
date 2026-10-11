@@ -49,6 +49,10 @@ struct LocalCalibrationView: View {
     @State private var saveSucceeded: Bool?
 
     private var measured: Double? { Double(temperature.replacingOccurrences(of: ",", with: ".").trimmingCharacters(in: .whitespaces)) }
+    private var languageStyle: AlertLanguageStyle { store.alertLanguageStyle }
+    private func copy(_ bokmal: String, _ english: String) -> String {
+        LocalCalibrationCopy.text(bokmal, english: english, style: languageStyle)
+    }
     private var valid: Bool {
         (temperature.isEmpty || measured.map { $0.isFinite && (-60...60).contains($0) } == true)
             && (measured != nil || frost != "Vet ikke")
@@ -57,21 +61,29 @@ struct LocalCalibrationView: View {
     var body: some View {
         Form {
             if let place = store.places.first(where: { $0.id == placeID }) {
-                Section("Observasjon \(place.nameWithPreposition)") {
-                    DatePicker("Tidspunkt", selection: $date, in: Date().addingTimeInterval(-48 * 3600)...Date())
-                    TextField("Målt lufttemperatur (valgfritt)", text: $temperature)
+                Section(copy("Observasjon \(place.nameWithPreposition)", "Observation \(place.nameWithPreposition)")) {
+                    DatePicker(copy("Tidspunkt", "Time"), selection: $date, in: Date().addingTimeInterval(-48 * 3600)...Date())
+                    TextField(copy("Målt lufttemperatur (valgfritt)", "Measured air temperature (optional)"), text: $temperature)
                         .keyboardType(.numbersAndPunctuation)
-                    Picker("Frost i natt", selection: $frost) {
-                        ForEach(["Vet ikke", "Ja", "Nei"], id: \.self) { Text($0) }
+                    Picker(copy("Frost i natt", "Frost last night"), selection: $frost) {
+                        Text(copy("Vet ikke", "Unknown")).tag("Vet ikke")
+                        Text(copy("Ja", "Yes")).tag("Ja")
+                        Text(copy("Nei", "No")).tag("Nei")
                     }
                     if frost == "Ja" {
-                        Picker("Hvor?", selection: $surface) {
-                            ForEach(["Gress", "Bil/tak", "Gress og bil/tak", "Annet"], id: \.self) { Text($0) }
+                        Picker(copy("Hvor?", "Where?"), selection: $surface) {
+                            Text(copy("Gress", "Grass")).tag("Gress")
+                            Text(copy("Bil/tak", "Car/roof")).tag("Bil/tak")
+                            Text(copy("Gress og bil/tak", "Grass and car/roof")).tag("Gress og bil/tak")
+                            Text(copy("Annet", "Other")).tag("Annet")
                         }
                     }
-                    Text("Temperatur gjelder valgt tidspunkt. Frost gjelder natten før dette tidspunktet. Rim på en overflate er ikke en måling av lufttemperatur.")
+                    Text(copy(
+                        "Temperatur gjelder valgt tidspunkt. Frost gjelder natten før dette tidspunktet. Rim på en overflate er ikke en måling av lufttemperatur.",
+                        "Temperature is for the selected time. Frost is for the night before it. Frost on a surface is not an air-temperature measurement."
+                    ))
                         .font(.caption).foregroundStyle(.secondary)
-                    Button("Lagre observasjon") {
+                    Button(copy("Lagre observasjon", "Save observation")) {
                         let succeeded = store.recordObservation(place: place, at: date, temperature: measured,
                             frost: frost == "Vet ikke" ? nil : frost == "Ja", surface: frost == "Ja" ? surface : "")
                         saveSucceeded = succeeded
@@ -80,64 +92,70 @@ struct LocalCalibrationView: View {
                         }
                     }.disabled(!valid)
                 }
-                Section("Registreringer") {
+                Section(copy("Registreringer", "Records")) {
                     let observations = store.calibration.observations.filter { $0.place.id == placeID }
-                    if observations.isEmpty { Text("Ingen registreringer ennå.").foregroundStyle(.secondary) }
+                    if observations.isEmpty { Text(copy("Ingen registreringer ennå.", "No records yet.")).foregroundStyle(.secondary) }
                     ForEach(observations.prefix(visibleObservationCount)) { observation in
                         DisclosureGroup {
                             if let offset = observation.suggestedTemperatureOffset {
-                                Text("Målt avvik fra Yr: \(offset.formatted(.number.precision(.fractionLength(1)))) °C")
-                                Text("Én måling er ikke nok til å fastslå en fast justering. Endre innstillingen manuelt når du har nok grunnlag.")
+                                Text(copy("Målt avvik fra Yr: \(offset.formatted(.number.precision(.fractionLength(1)))) °C", "Measured difference from Yr: \(offset.formatted(.number.precision(.fractionLength(1)))) °C"))
+                                Text(copy("Én måling er ikke nok til å fastslå en fast justering. Endre innstillingen manuelt når du har nok grunnlag.", "One measurement is not enough to establish a permanent adjustment. Change the setting manually when you have enough evidence."))
                                     .font(.caption).foregroundStyle(.secondary)
                             }
-                            if let frost = observation.frost { Text(frost ? "Frost: \(observation.surface)" : "Ingen frost observert") }
+                            if let frost = observation.frost {
+                                Text(frost
+                                     ? copy("Frost: \(observation.surface)", "Frost: \(LocalCalibrationCopy.surface(observation.surface, style: languageStyle))")
+                                     : copy("Ingen frost observert", "No frost observed"))
+                            }
                             if observation.measuredTemperature != nil, observation.frost != nil {
                                 if let night = observation.nightForecast, let minimum = night.hours.map(\.temp).min() {
-                                    Text("Nattens varslede minimum: \(minimum.formatted()) °C (hentet \(night.fetchedAt.formatted(date: .abbreviated, time: .shortened)))")
+                                    Text(copy("Nattens varslede minimum: \(minimum.formatted()) °C (hentet \(night.fetchedAt.formatted(date: .abbreviated, time: .shortened)))", "Forecast low overnight: \(minimum.formatted()) °C (fetched \(night.fetchedAt.formatted(date: .abbreviated, time: .shortened)))"))
                                         .font(.caption)
-                                } else { Text("Ingen prognose fra før natten lagret.").font(.caption) }
+                                } else { Text(copy("Ingen prognose fra før natten lagret.", "No forecast from before that night was saved.")).font(.caption) }
                             }
-                            if observation.evidence.isEmpty { Text("Ingen lagret prognose for sammenligning.").foregroundStyle(.secondary) }
+                            if observation.evidence.isEmpty { Text(copy("Ingen lagret prognose for sammenligning.", "No saved forecast is available for comparison.")).foregroundStyle(.secondary) }
                             if let fetched = observation.forecastFetchedAt {
-                                Text("Prognose hentet \(fetched.formatted(date: .abbreviated, time: .shortened))").font(.caption)
+                                Text(copy("Prognose hentet \(fetched.formatted(date: .abbreviated, time: .shortened))", "Forecast fetched \(fetched.formatted(date: .abbreviated, time: .shortened))")).font(.caption)
                             }
                             ForEach(observation.evidence) { hour in
-                                Text("\(hour.time.formatted(date: .omitted, time: .shortened)) · Yr \(hour.temp.formatted(.number.precision(.fractionLength(1))))° · duggpunkt \(hour.dew.formatted(.number.precision(.fractionLength(1))))° · vind \(hour.wind.formatted()) m/s · skyer \(hour.cloud.formatted()) %")
+                                Text(copy("\(hour.time.formatted(date: .omitted, time: .shortened)) · Yr \(hour.temp.formatted(.number.precision(.fractionLength(1))))° · duggpunkt \(hour.dew.formatted(.number.precision(.fractionLength(1))))° · vind \(hour.wind.formatted()) m/s · skyer \(hour.cloud.formatted()) %", "\(hour.time.formatted(date: .omitted, time: .shortened)) · Yr \(hour.temp.formatted(.number.precision(.fractionLength(1))))° · dew point \(hour.dew.formatted(.number.precision(.fractionLength(1))))° · wind \(hour.wind.formatted()) m/s · clouds \(hour.cloud.formatted()) %"))
                                     .font(.caption)
                             }
                         } label: {
                             VStack(alignment: .leading) {
                                 Text(observation.observedAt.formatted(date: .abbreviated, time: .shortened))
-                                if let temp = observation.measuredTemperature { Text("Målt \(temp.formatted()) °C").font(.caption) }
+                                if let temp = observation.measuredTemperature { Text(copy("Målt \(temp.formatted()) °C", "Measured \(temp.formatted()) °C")).font(.caption) }
                             }
                         }
                         .swipeActions {
-                            Button("Slett", role: .destructive) {
+                            Button(copy("Slett", "Delete"), role: .destructive) {
                                 if !store.removeObservation(id: observation.id) { saveSucceeded = false }
                             }
                         }
                     }
                     if observations.count > visibleObservationCount {
-                        Button("Vis flere registreringer") {
+                        Button(copy("Vis flere registreringer", "Show more records")) {
                             visibleObservationCount += 50
                         }
                     }
                 }
                 Section {
-                    Text("Prognoser beholdes rullerende i 48 timer og ryddes ved neste oppdatering eller oppstart. Registrerte observasjoner beholder sitt sammenligningsgrunnlag. Netatmo og automatisk kurvejustering er ikke aktivert.")
+                    Text(copy("Prognoser beholdes rullerende i 48 timer og ryddes ved neste oppdatering eller oppstart. Registrerte observasjoner beholder sitt sammenligningsgrunnlag. Netatmo og automatisk kurvejustering er ikke aktivert.", "Forecasts are retained for a rolling 48 hours and cleared on the next update or app launch. Saved observations keep their comparison data. Netatmo and automatic curve adjustment are not enabled."))
                         .font(.caption).foregroundStyle(.secondary)
                 }
             }
         }
-        .navigationTitle("Lokale målinger")
+        .navigationTitle(copy("Lokale målinger", "Local measurements"))
         .onChange(of: placeID) { _, _ in visibleObservationCount = 50 }
-        .alert("Registrering", isPresented: Binding(
+        .alert(copy("Registrering", "Record"), isPresented: Binding(
             get: { saveSucceeded != nil },
             set: { if !$0 { saveSucceeded = nil } }
         )) {
-            Button("OK", role: .cancel) { saveSucceeded = nil }
+            Button(copy("OK", "OK"), role: .cancel) { saveSucceeded = nil }
         } message: {
-            Text(saveSucceeded == true ? "Observasjonen er lagret." : "Kunne ikke lagre endringen. Kontroller ledig lagringsplass og prøv igjen.")
+            Text(saveSucceeded == true
+                 ? copy("Observasjonen er lagret.", "The observation was saved.")
+                 : copy("Kunne ikke lagre endringen. Kontroller ledig lagringsplass og prøv igjen.", "Could not save the change. Check available storage and try again."))
         }
     }
 }
@@ -2777,5 +2795,22 @@ extension View {
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .overlay(RoundedRectangle(cornerRadius: 16).stroke(Color(white: 0.87)))
+    }
+}
+
+enum LocalCalibrationCopy {
+    static func text(_ bokmal: String, english: String, style: AlertLanguageStyle) -> String {
+        style == .english ? english : WeatherLanguage.text(bokmal, style: style)
+    }
+
+    static func surface(_ bokmal: String, style: AlertLanguageStyle) -> String {
+        guard style == .english else { return WeatherLanguage.text(bokmal, style: style) }
+        switch bokmal {
+        case "Gress": "grass"
+        case "Bil/tak": "car/roof"
+        case "Gress og bil/tak": "grass and car/roof"
+        case "Annet": "other"
+        default: bokmal
+        }
     }
 }

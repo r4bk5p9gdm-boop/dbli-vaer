@@ -6880,6 +6880,27 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testLocalCalibrationCopyFollowsBokmalAndEnglishSelections() {
+        let strings = [
+            ("Lokale målinger", "Local measurements"),
+            ("Målt lufttemperatur (valgfritt)", "Measured air temperature (optional)"),
+            ("Frost i natt", "Frost last night"),
+            ("Lagre observasjon", "Save observation"),
+            ("Registreringer", "Records"),
+            ("Ingen registreringer ennå.", "No records yet."),
+            ("Slett", "Delete"),
+            ("Vis flere registreringer", "Show more records"),
+            ("Observasjonen er lagret.", "The observation was saved.")
+        ]
+
+        for (bokmal, english) in strings {
+            XCTAssertEqual(LocalCalibrationCopy.text(bokmal, english: english, style: .bokmal), bokmal)
+            XCTAssertEqual(LocalCalibrationCopy.text(bokmal, english: english, style: .english), english)
+        }
+        XCTAssertEqual(LocalCalibrationCopy.surface("Gress og bil/tak", style: .bokmal), "Gress og bil/tak")
+        XCTAssertEqual(LocalCalibrationCopy.surface("Gress og bil/tak", style: .english), "grass and car/roof")
+    }
+
     func testYrFixturePrefersDetailedHourOverOverlappingSixHourEstimate() throws {
         let forecast = try YrService.decodeLocationForecast(Self.locationForecastFixture)
         var calendar = Calendar(identifier: .gregorian)

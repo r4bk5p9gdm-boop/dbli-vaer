@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T04:50:55Z",
+  "lastScheduledStart": "2026-10-11T05:20:55Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-476 fullført 2026-10-11: regresjonstest låser manglende Yr-timer i kveldens siste celler på tredje synlige prognosedag til grå skravur, samtidig som pushplanen er tom. Dermed er markeringen entydig knyttet til manglende Yr-data, ikke manglende varsling. Bred gjennomgang av oppstart, varsler, værvisning, lagring og bakgrunnsoppdatering fant også at BGAppRefreshTask-utløp bare kansellerer arbeidet og ikke garanterer setTaskCompleted(false); AUTO-478 lagt til. Swift-parsing og diffkontroll består; XCTest ikke kjørt på grunn av lav diskreserve og kjente typekontrollfeil i andre ulagrede tester. Neste kø: AUTO-468 (krever godkjenning), AUTO-477 og AUTO-478."
+  "lastProgress": "AUTO-477 fullført 2026-10-11: hele skjermbildet for lokale målinger følger nå valgt bokmål, inntrøndersk eller engelsk, samtidig som frost-/overflateverdier i lagring beholdes uendret. Regresjonstest dekker bokmål og engelsk. Bred gjennomgang av oppstart, varsler, værvisning, lagring og bakgrunnsoppdatering fant også at frostobservasjoner uten lufttemperatur mangler sammendrag i sammenfoldet liste; AUTO-479 lagt til. Swift-parsing og diffkontroll består; XCTest ikke kjørt på grunn av lav diskreserve og kjente typekontrollfeil i andre ulagrede tester. Neste kø: AUTO-468 (krever godkjenning), AUTO-478 og AUTO-479."
 }

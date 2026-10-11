@@ -249,10 +249,13 @@ planlegger et varsel; skravuren betyr ukjent Yr-prognose, ikke et manglende push
 Swift-parsing og diffkontroll består. XCTest ble ikke kjørt på grunn av lav
 diskreserve og kjente typekontrollfeil i andre ulagrede tester.
 
-**AUTO-477 · ÅPEN** — Lokaliser hele skjermbildet for lokale målinger etter
-appens valgte språk. Kildegjennomgangen fant at overskrifter, felter,
-tilbakemeldinger, slettehandling og hjelpetekst er hardkodet på bokmål selv om
-resten av appen støtter engelsk. Behold samme måleflyt og test begge språk.
+**AUTO-477 · FULLFØRT 2026-10-11** — Hele skjermbildet for lokale målinger
+følger nå valgt bokmål, inntrøndersk eller engelsk for felter, valg,
+tilbakemeldinger, detaljer, slettehandling og hjelpetekst. De lagrede verdiene
+for frost og overflate beholdes uendret selv om etikettene vises på engelsk.
+Regresjonstest dekker bokmål/engelsk og overflateetiketter. Swift-parsing og
+diffkontroll består; XCTest er ikke kjørt på grunn av lav diskreserve og kjente
+typekontrollfeil i andre ulagrede tester.
 
 **AUTO-478 · ÅPEN** — Sikre at en utløpt bakgrunnsoppdatering alltid avslutter
 `BGAppRefreshTask` med `success: false`, også når kansellering treffer mens
@@ -260,6 +263,12 @@ resten av appen støtter engelsk. Behold samme måleflyt og test begge språk.
 bare kansellerer den ustrukturerte arbeidsoppgaven, mens fullføring kalles først
 når arbeidet returnerer. Legg til en isolert regresjon for utløps-/fullføringsløpet
 slik at systemet ikke står igjen med en uavsluttet oppgave.
+
+**AUTO-479 · ÅPEN** — Vis et kort sammendrag av frostregistreringen i den
+sammenfoldede raden i Lokale målinger. Kildegjennomgangen fant at raden nå bare
+viser dato og eventuell lufttemperatur; observasjoner med bare frostdata blir
+derfor umulige å skille fra hverandre uten å åpne hver rad. Behold detaljene i
+utvidet visning og test frost ja/nei sammen med manglende temperatur.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig
