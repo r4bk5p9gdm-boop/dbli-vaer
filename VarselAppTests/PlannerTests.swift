@@ -27,6 +27,21 @@ private final class FakeNotificationCenter: NotificationCenterClient {
 }
 
 @MainActor
+private final class FakeOneShotLocationClient: OneShotLocationClient {
+    var authorizationStatusRawValue = CLAuthorizationStatus.authorizedWhenInUse.rawValue
+    var onAuthorizationChange: ((Int32) -> Void)?
+    var onLocations: (([CLLocation]) -> Void)?
+    var onFailure: ((Error) -> Void)?
+    private(set) var locationRequestCount = 0
+
+    func requestWhenInUseAuthorization() {}
+    func requestLocation() { locationRequestCount += 1 }
+    // Keep callbacks available to model a callback already queued when invalidated.
+    func invalidate() {}
+    func deliver(_ location: CLLocation) { onLocations?([location]) }
+}
+
+@MainActor
 final class PlannerTests: XCTestCase {
     func testPlaceDistanceRejectsMalformedCoordinates() {
         let home = CLLocation(latitude: 64, longitude: 11)
@@ -1478,6 +1493,51 @@ final class PlannerTests: XCTestCase {
         } catch {
             XCTAssertTrue(error is CancellationError)
         }
+    }
+
+    func testCancelledLocationRequestCanRetryAndIgnoresLateOldClientCallback() async throws {
+        var clients: [FakeOneShotLocationClient] = []
+        let locationManager = LocationManager {
+            let client = FakeOneShotLocationClient()
+            clients.append(client)
+            return client
+        }
+
+        let firstRequest = Task { @MainActor in try await locationManager.current() }
+        for _ in 0..<20 where clients.first?.locationRequestCount != 1 { await Task.yield() }
+        XCTAssertEqual(clients.first?.locationRequestCount, 1)
+        firstRequest.cancel()
+        do {
+            _ = try await firstRequest.value
+            XCTFail("Cancelled request should throw")
+        } catch {
+            XCTAssertTrue(error is CancellationError)
+        }
+
+        var secondRequestCompleted = false
+        let secondRequest = Task { @MainActor in
+            defer { secondRequestCompleted = true }
+            return try await locationManager.current()
+        }
+        for _ in 0..<20 where clients.count < 2 || clients[1].locationRequestCount != 1 { await Task.yield() }
+        XCTAssertEqual(clients.count, 2)
+        XCTAssertEqual(clients[1].locationRequestCount, 1)
+
+        clients[0].deliver(CLLocation(
+            coordinate: CLLocationCoordinate2D(latitude: 10, longitude: 20),
+            altitude: 0, horizontalAccuracy: 5, verticalAccuracy: 5, timestamp: Date()
+        ))
+        for _ in 0..<10 { await Task.yield() }
+        XCTAssertFalse(secondRequestCompleted, "A stale callback must not finish the newer request")
+
+        let expectedLocation = CLLocation(
+            coordinate: CLLocationCoordinate2D(latitude: 30, longitude: 40),
+            altitude: 0, horizontalAccuracy: 5, verticalAccuracy: 5, timestamp: Date()
+        )
+        clients[1].deliver(expectedLocation)
+        let result = try await secondRequest.value
+        XCTAssertEqual(result.coordinate.latitude, expectedLocation.coordinate.latitude)
+        XCTAssertEqual(result.coordinate.longitude, expectedLocation.coordinate.longitude)
     }
 
     func testLocationAuthorizationDecisionFailsImmediatelyForDeniedRestrictedAndUnknownStatus() {

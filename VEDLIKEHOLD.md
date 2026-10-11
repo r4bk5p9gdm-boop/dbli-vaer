@@ -427,12 +427,11 @@ Det hindrer at import av et nytt klokkeslettskilletegn først sender den gamle
 verdien til klokken. Regresjonen importerer et nytt skilletegn med et lagret
 værvarsel og bekrefter at snapshotet bruker den importerte innstillingen.
 
-**AUTO-499 · ÅPEN** — Dekk kansellering og opprydding i engangsforespørselen for
-GPS med en injiserbar posisjonsklient. `LocationManager.current()` holder en
-continuation, timeout-task og delegate-manager synkronisert på tvers av
-CoreLocation-callbacks og task-kansellering; en regresjon bør bekrefte at
-kansellering lar neste posisjonsforespørsel starte, og at et sent callback fra
-den gamle manageren ikke kan fullføre den nye forespørselen.
+**AUTO-499 · FULLFØRT 2026-10-11** — Skill engangs-GPS-forespørselen fra
+CoreLocation bak en injiserbar klient. Kansellering rydder nå samme klient,
+continuation og timeout før en ny forespørsel kan begynne; regresjonen kansellerer
+en aktiv forespørsel, starter en ny, leverer et sent svar fra den gamle klienten
+og bekrefter at bare den nye posisjonen fullfører oppgaven.
 
 **AUTO-500 · ÅPEN** — Hold førstegangs oppstart responsiv mens nåværende GPS-sted
 slås opp. Appens oppstartsoppgave venter nå på posisjon og omvendt geokoding før
@@ -447,6 +446,12 @@ kanselleringshåndtering, og brukes både ved oppstart og når brukeren legger t
 eller velger GPS-sted. Innfør en trygg avbrytbar/fristsatt løsning som beholder
 koordinatene selv om navneoppslaget feiler, med regresjon for sen respons og
 fallback-navn.
+
+**AUTO-502 · ÅPEN** — Gjør Watch-overføring robust mot forbigående feil fra
+`WCSession.updateApplicationContext`. `WatchSyncManager` beholder riktig nok
+nyeste payload når sending feiler, men forsøker den bare igjen ved en senere
+aktivering eller ny vær-/innstillingsendring. Injiser Watch-klienten og dekk at
+en forbigående feil prøves på nytt uten å sende en eldre snapshot over en nyere.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

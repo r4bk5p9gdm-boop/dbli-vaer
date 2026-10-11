@@ -40,11 +40,64 @@ enum LocationAuthorizationDecision: Equatable {
 }
 
 @MainActor
-final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
-    private var manager: CLLocationManager?
+protocol OneShotLocationClient: AnyObject {
+    var authorizationStatusRawValue: Int32 { get }
+    var onAuthorizationChange: ((Int32) -> Void)? { get set }
+    var onLocations: (([CLLocation]) -> Void)? { get set }
+    var onFailure: ((Error) -> Void)? { get set }
+    func requestWhenInUseAuthorization()
+    func requestLocation()
+    func invalidate()
+}
+
+@MainActor
+private final class CoreLocationOneShotClient: NSObject, OneShotLocationClient, CLLocationManagerDelegate {
+    private let manager = CLLocationManager()
+    var onAuthorizationChange: ((Int32) -> Void)?
+    var onLocations: (([CLLocation]) -> Void)?
+    var onFailure: ((Error) -> Void)?
+
+    var authorizationStatusRawValue: Int32 { manager.authorizationStatus.rawValue }
+
+    override init() {
+        super.init()
+        manager.delegate = self
+    }
+
+    func requestWhenInUseAuthorization() { manager.requestWhenInUseAuthorization() }
+    func requestLocation() { manager.requestLocation() }
+
+    func invalidate() {
+        manager.delegate = nil
+        onAuthorizationChange = nil
+        onLocations = nil
+        onFailure = nil
+    }
+
+    nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            self.onAuthorizationChange?(manager.authorizationStatus.rawValue)
+        }
+    }
+
+    nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        Task { @MainActor [weak self] in self?.onLocations?(locations) }
+    }
+
+    nonisolated func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        Task { @MainActor [weak self] in self?.onFailure?(error) }
+    }
+}
+
+@MainActor
+final class LocationManager: NSObject, ObservableObject {
+    private let clientFactory: () -> any OneShotLocationClient
+    private var client: (any OneShotLocationClient)?
     private var continuation: CheckedContinuation<CLLocation, Error>?
     private var requestID: UUID?
     private var timeout: Task<Void, Never>?
+    private let clientFactory: () -> any OneShotLocationClient
 
     enum RequestError: LocalizedError {
         case busy, timedOut
@@ -54,6 +107,16 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
             case .timedOut: "Posisjonen lot vente på seg. Prøv igjen."
             }
         }
+    }
+
+    override init() {
+        clientFactory = { CoreLocationOneShotClient() }
+        super.init()
+    }
+
+    init(clientFactory: @escaping () -> any OneShotLocationClient) {
+        self.clientFactory = clientFactory
+        super.init()
     }
 
     func current() async throws -> CLLocation {
@@ -66,16 +129,29 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
                 requestID = id
                 // A fresh manager prevents late callbacks from a previous request
                 // from completing the next request.
-                let source = CLLocationManager()
-                manager = source
-                source.delegate = self
+                let source = clientFactory()
+                client = source
+                source.onAuthorizationChange = { [weak self, weak source] status in
+                    guard let self, let source, self.client === source, self.requestID == id else { return }
+                    self.requestIfAuthorized(source, statusRawValue: status)
+                }
+                source.onLocations = { [weak self, weak source] locations in
+                    guard let self, let source, self.client === source, self.requestID == id,
+                          let location = locations.last,
+                          LocationFixPolicy.accepts(location) else { return }
+                    self.finish(.success(location))
+                }
+                source.onFailure = { [weak self, weak source] error in
+                    guard let self, let source, self.client === source, self.requestID == id else { return }
+                    self.finish(.failure(error))
+                }
                 timeout = Task { [weak self] in
                     do { try await Task.sleep(nanoseconds: 30_000_000_000) }
                     catch { return }
                     guard self?.requestID == id else { return }
                     self?.finish(.failure(RequestError.timedOut))
                 }
-                requestIfAuthorized(source)
+                requestIfAuthorized(source, statusRawValue: source.authorizationStatusRawValue)
             }
         } onCancel: {
             Task { @MainActor [weak self] in
@@ -91,40 +167,19 @@ final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelega
         requestID = nil
         timeout?.cancel()
         timeout = nil
-        manager?.delegate = nil
-        manager = nil
+        client?.invalidate()
+        client = nil
         pending?.resume(with: result)
     }
 
-    private func requestIfAuthorized(_ source: CLLocationManager) {
-        switch LocationAuthorizationDecision.forRawStatus(source.authorizationStatus.rawValue) {
+    private func requestIfAuthorized(_ source: any OneShotLocationClient, statusRawValue: Int32) {
+        switch LocationAuthorizationDecision.forRawStatus(statusRawValue) {
         case .requestWhenInUseAuthorization:
             source.requestWhenInUseAuthorization()
         case .requestLocation:
             source.requestLocation()
         case let .fail(code):
             finish(.failure(CLError(code)))
-        }
-    }
-
-    nonisolated func locationManagerDidChangeAuthorization(_ source: CLLocationManager) {
-        Task { @MainActor in
-            guard self.manager === source else { return }
-            self.requestIfAuthorized(source)
-        }
-    }
-
-    nonisolated func locationManager(_ m: CLLocationManager, didUpdateLocations locs: [CLLocation]) {
-        Task { @MainActor in
-            guard self.manager === m, let l = locs.last,
-                  LocationFixPolicy.accepts(l) else { return }
-            finish(.success(l))
-        }
-    }
-    nonisolated func locationManager(_ m: CLLocationManager, didFailWithError e: Error) {
-        Task { @MainActor in
-            guard self.manager === m else { return }
-            finish(.failure(e))
         }
     }
 
