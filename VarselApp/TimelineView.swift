@@ -373,6 +373,26 @@ private struct WeatherBandsForecast: View {
         )
     }
 
+    @ViewBuilder
+    private var partialSunLegendItem: some View {
+        if let partialSun = hatchLegend.partialSun {
+            HStack(spacing: 4) {
+                SolarHatchMark()
+                    .frame(width: 12, height: 12)
+                    .background(SolarCellMarkerStyle.hatchColor.opacity(0.18))
+                Text(partialSun)
+            }
+        }
+    }
+
+    private var missingForecastLegendItem: some View {
+        HStack(spacing: 4) {
+            ForecastGapMark()
+                .frame(width: 12, height: 12)
+            Text(hatchLegend.missingForecast)
+        }
+    }
+
     private func rulesForType(_ type: AlertType) -> [Rule] {
         type == .temperatur ? temperatureRules : otherRules.filter { $0.type == type }
     }
@@ -468,22 +488,18 @@ private struct WeatherBandsForecast: View {
                             CombinedDayBandTrack(hours: bandHours, rules: typeRules, type: type, day: day.date, frostMargin: frostMargin, sunThreshold: sunThreshold, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, includeEarlyMorning: includesEarlyMorningCell, compressForMorning: isMorningCompression && !isToday)
                         }
                     }
-                    HStack(spacing: 12) {
-                        if let partialSun = hatchLegend.partialSun {
-                            HStack(spacing: 4) {
-                                SolarHatchMark()
-                                    .frame(width: 12, height: 12)
-                                    .background(SolarCellMarkerStyle.hatchColor.opacity(0.18))
-                                Text(partialSun)
-                            }
+                    ViewThatFits(in: .horizontal) {
+                        HStack(spacing: 12) {
+                            partialSunLegendItem
+                            missingForecastLegendItem
                         }
-                        HStack(spacing: 4) {
-                            ForecastGapMark()
-                                .frame(width: 12, height: 12)
-                            Text(hatchLegend.missingForecast)
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            partialSunLegendItem
+                            missingForecastLegendItem
                         }
                     }
-                    .font(.system(size: 9))
+                    .font(.caption2)
                     .foregroundStyle(.secondary)
                     .accessibilityElement(children: .combine)
                     .accessibilityLabel(hatchLegend.accessibility)

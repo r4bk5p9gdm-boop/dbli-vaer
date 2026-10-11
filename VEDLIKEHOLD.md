@@ -218,11 +218,13 @@ delvis skadet array. Regresjonstest dekker manglende felt og feil container;
 eksisterende tester dekker skadde elementer. Swift-parsing og diffkontroll
 består; XCTest ikke kjørt på grunn av typekontrollfeil i andre ulagrede tester.
 
-**AUTO-473 · ÅPEN** — Gjør tegnforklaringen for skravur lesbar med stor
-Dynamic Type og på smale iPhone-skjermer. Den bruker nå fast 9-punkts skrift i
-en horisontal rad, så lange oversettelser kan bli for små eller klemt. Behold
-den kompakte standardvisningen, men la teksten skalere og brytes på en
-tilgjengelig måte; test eller dokumenter størrelsesklassene.
+**AUTO-473 · FULLFØRT 2026-10-11** — Skravurtegnforklaringen bruker nå
+Dynamic-Type-støttende `caption2` i stedet for fast 9-punkts skrift. Den holder
+seg på én kompakt rad når innholdet får plass, og går automatisk over til en
+venstrejustert kolonne når stor tekst eller smal skjermbredde krever det.
+Bokmål/engelsk-tekstene er fortsatt dekket av tegnforklaringstestene. Swift-
+parsing og diffkontroll består; visuell størrelsesklassekontroll og XCTest er
+ikke kjørt i denne runden på grunn av kjente feil i andre ulagrede tester.
 
 **AUTO-474 · ÅPEN** — Avvis gjentatte steds-ID-er også når `PersistedStoreState`
 gjenopprettes fra lokal lagring. Oppsettimport beholder nå første forekomst,
@@ -230,6 +232,12 @@ men lagret tilstand dekoder fortsatt alle forekomster direkte inn i
 `Place`-listen; duplikater kan gi ustabile listeidentifikatorer etter
 gjenoppretting. Behold første forekomst, bevar andre steder og kontroller at
 valgt sted/cache fortsatt peker på en beholdt ID.
+
+**AUTO-475 · ÅPEN** — Undersøk skalerbar lagring og visning av manuelle
+kalibreringsobservasjoner. `recordObservation` legger hver oppføring foran i
+en array som lagres samlet i `UserDefaults`, mens visningen filtrerer og viser
+hele historikken. Definer en trygg kapasitetsstrategi som ikke stilltiende
+sletter brukerens registreringer, og test store historikker.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T02:50:55Z",
+  "lastScheduledStart": "2026-10-11T03:20:55Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-472 fullført 2026-10-11: værkonfigurasjoner avvises hvis places-feltet mangler eller ikke er en array, mens tapsfri håndtering av enkelte skadde arrayelementer er uendret. Regresjonstest lagt til, og eksisterende tester dekker delvis skadet liste. Swift-parsing og diffkontroll består; XCTest ikke kjørt på grunn av typekontrollfeil i andre ulagrede tester. Bred gjennomgang av lokal gjenoppretting fant at PersistedStoreState fortsatt godtar dupliserte steds-ID-er; AUTO-474 lagt til. Neste kø: AUTO-468 (krever godkjenning), AUTO-473 og AUTO-474."
+  "lastProgress": "AUTO-473 fullført 2026-10-11: skravurtegnforklaringen skalerer nå med Dynamic Type og bytter fra kompakt rad til vertikal layout når bredden ikke strekker til. Swift-parsing og diffkontroll består; visuell størrelsesklassekontroll og XCTest ikke kjørt. Gjennomgang av manuelle kalibreringsobservasjoner fant ubegrenset UserDefaults-array som vises samlet; AUTO-475 lagt til. Neste kø: AUTO-468 (krever godkjenning), AUTO-474 og AUTO-475."
 }
