@@ -1,6 +1,14 @@
 import Foundation
 
+enum YrForecastPayloadError: Error, Equatable {
+    case tooLarge
+    case tooManyTimeSteps
+}
+
 enum YrService {
+    static let maximumLocationForecastPayloadBytes = 2_000_000
+    static let maximumLocationForecastTimeSteps = 500
+
     // Deliberately broad physical limits: these reject corrupted payloads, not
     // rare but credible weather. MET publishes temperatures in °C, wind in
     // m/s, fractions/probabilities in %, and precipitation in mm or mm/h.
@@ -171,9 +179,15 @@ enum YrService {
     }
 
     static func decodeLocationForecast(_ data: Data) throws -> [ForecastHour] {
+        guard data.count <= maximumLocationForecastPayloadBytes else {
+            throw YrForecastPayloadError.tooLarge
+        }
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         let response = try decoder.decode(Response.self, from: data)
+        guard response.properties.timeseries.count <= maximumLocationForecastTimeSteps else {
+            throw YrForecastPayloadError.tooManyTimeSteps
+        }
         var hoursByTime: [Date: (resolution: Int, hour: ForecastHour)] = [:]
 
         for series in response.properties.timeseries {

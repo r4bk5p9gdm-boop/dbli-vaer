@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T06:20:55Z",
+  "lastScheduledStart": "2026-10-11T06:50:56Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-479 fullført 2026-10-11: sammenfoldede lokale målinger viser nå målt temperatur og/eller kort froststatus med overflate, lokalisert for alle støttede språk. Regresjoner dekker frost ja/nei uten temperatur, ukjent status, engelsk overflate og kombinasjonen temperatur/frost. Bred gjennomgang fant også kostnaden ved å omskrive og laste hele observasjonsarkivet (AUTO-481) og risikoen for å overskrive et arkiv som ikke kan dekodes (AUTO-482). Swift-parsing og diffkontroll består; XCTest ikke kjørt grunnet lav diskreserve og kjente typekontrollfeil i andre ulagrede tester. Neste kø: AUTO-468 (krever godkjenning), AUTO-480, AUTO-481 og AUTO-482."
+  "lastProgress": "AUTO-480 fullført 2026-10-11: Yr Locationforecast-avkoding begrenser nå nyttelasten til 2 MB og tidsserielisten til 500 oppføringer før verdier transformeres/sorteres; tester dekker begge overskridelser, mens vanlige fixtures fortsatt dekodes. Bred gjennomgang lar observasjonsarkivets kostnad ved økende historikk (AUTO-481) og gjenoppretting av skadet JSON-arkiv (AUTO-482) stå som neste konkrete funn. Swift-parsing og diffkontroll består; XCTest ikke kjørt grunnet lav diskreserve og kjente typekontrollfeil i andre ulagrede tester. Neste kø: AUTO-468 (krever godkjenning), AUTO-481 og AUTO-482."
 }

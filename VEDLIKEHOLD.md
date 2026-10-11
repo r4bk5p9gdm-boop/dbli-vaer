@@ -269,11 +269,10 @@ Oppsummeringen følger bokmål, inntrøndersk og engelsk. Regresjoner dekker fro
 ja/nei uten temperatur, ukjent frost, engelsk overflate og kombinert temperatur
 og frost.
 
-**AUTO-480 · ÅPEN** — Begrens ressursbruken når Yr-svar dekodes. Gjennomgangen
-fant at `decodeLocationForecast` dekoder og sorterer hele `timeseries`-listen
-før resultatet avkortes til ni døgn. Avvis urimelig store svar eller
-timeseries-lister før kostbar transformasjon, og legg til grense-/regresjonstester
-som bevarer normale Yr-svar.
+**AUTO-480 · FULLFØRT 2026-10-11** — `decodeLocationForecast` avviser nå svar
+over 2 MB før JSON-dekoding og prognoser med mer enn 500 tidspunkter før
+værverdiene transformeres og sorteres. Regresjoner dekker begge grenser, og
+eksisterende Yr-fixtures bekrefter normal respons.
 
 **AUTO-481 · ÅPEN** — Gjennomgå kostnaden ved voksende observasjonsarkiv.
 `CalibrationHistory.saveObservations` koder og skriver hele arkivet atomisk ved

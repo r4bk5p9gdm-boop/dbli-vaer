@@ -6932,6 +6932,30 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(forecast[2].temp, 2)
     }
 
+    func testYrLocationForecastRejectsOversizedPayloadBeforeDecoding() {
+        let oversized = Data(repeating: 0, count: YrService.maximumLocationForecastPayloadBytes + 1)
+        XCTAssertThrowsError(try YrService.decodeLocationForecast(oversized)) { error in
+            XCTAssertEqual(error as? YrForecastPayloadError, .tooLarge)
+        }
+    }
+
+    func testYrLocationForecastRejectsUnreasonableTimeseriesCount() throws {
+        var root = try XCTUnwrap(JSONSerialization.jsonObject(with: Self.locationForecastFixture) as? [String: Any])
+        var properties = try XCTUnwrap(root["properties"] as? [String: Any])
+        let series = try XCTUnwrap(properties["timeseries"] as? [[String: Any]])
+        let first = try XCTUnwrap(series.first)
+        properties["timeseries"] = Array(
+            repeating: first,
+            count: YrService.maximumLocationForecastTimeSteps + 1
+        )
+        root["properties"] = properties
+        let excessive = try JSONSerialization.data(withJSONObject: root)
+
+        XCTAssertThrowsError(try YrService.decodeLocationForecast(excessive)) { error in
+            XCTAssertEqual(error as? YrForecastPayloadError, .tooManyTimeSteps)
+        }
+    }
+
     func testYrDecodersIgnoreCorruptNumbersWithoutLosingValidWeather() throws {
         let location = Data("""
         {"properties":{"timeseries":[
