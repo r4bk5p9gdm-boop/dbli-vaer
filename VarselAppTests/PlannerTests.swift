@@ -8,6 +8,7 @@ private final class FakeNotificationCenter: NotificationCenterClient {
     enum Failure: Error { case rejected }
     var pending: [UNNotificationRequest]
     var failedIDs: Set<String> = []
+    var afterAdd: (() -> Void)?
 
     init(pending: [UNNotificationRequest] = []) { self.pending = pending }
 
@@ -17,6 +18,7 @@ private final class FakeNotificationCenter: NotificationCenterClient {
         if failedIDs.contains(request.identifier) { throw Failure.rejected }
         pending.removeAll { $0.identifier == request.identifier }
         pending.append(request)
+        afterAdd?()
     }
 
     func removePendingNotificationRequests(withIdentifiers identifiers: [String]) {
@@ -8611,6 +8613,55 @@ final class PlannerTests: XCTestCase {
 
         XCTAssertEqual(result.failedCount, 1)
         XCTAssertEqual(center.pending.map(\.identifier), [alert.id])
+    }
+
+    @MainActor
+    func testCancelledNotificationReplacementRetainsOnlyUnattemptedCurrentRequest() async throws {
+        let firstRule = Rule(type: .regn)
+        let secondRule = Rule(type: .vind)
+        let place = Place(name: "Klinga", lat: 64, lon: 11, rules: [firstRule, secondRule])
+        let firstFireAt = Date().addingTimeInterval(3_600)
+        let secondFireAt = Date().addingTimeInterval(7_200)
+        let alerts = [
+            PlannedAlert(rule: firstRule, placeID: place.id, placeName: place.nameWithPreposition,
+                         eventAt: firstFireAt, fireAt: firstFireAt, index: 1, total: 1,
+                         quiet: false, possible: false, eventDetail: nil),
+            PlannedAlert(rule: secondRule, placeID: place.id, placeName: place.nameWithPreposition,
+                         eventAt: secondFireAt, fireAt: secondFireAt, index: 1, total: 1,
+                         quiet: false, possible: false, eventDetail: nil)
+        ]
+        func existingRequest(for alert: PlannedAlert) throws -> UNNotificationRequest {
+            let content = UNMutableNotificationContent()
+            content.userInfo[NotificationScheduler.planContextKey] = try JSONEncoder().encode(
+                NotificationPlanContext(place: place, rule: alert.rule, languageStyle: .bokmal)
+            )
+            return UNNotificationRequest(
+                identifier: alert.id, content: content,
+                trigger: UNTimeIntervalNotificationTrigger(timeInterval: 3_600, repeats: false)
+            )
+        }
+        let firstOld = try existingRequest(for: alerts[0])
+        let secondOld = try existingRequest(for: alerts[1])
+        let obsolete = UNNotificationRequest(
+            identifier: "obsolete", content: UNMutableNotificationContent(),
+            trigger: UNTimeIntervalNotificationTrigger(timeInterval: 5_400, repeats: false)
+        )
+        let center = FakeNotificationCenter(pending: [firstOld, secondOld, obsolete])
+        var schedulingTask: Task<NotificationScheduleResult, Never>?
+        center.afterAdd = { schedulingTask?.cancel() }
+
+        schedulingTask = Task {
+            await NotificationScheduler.replacePendingAlerts(
+                alerts, languageStyle: .bokmal, places: [place],
+                missingForecastPlaceIDs: [], nearbyPlaceIDs: [], center: center
+            )
+        }
+        let task = try XCTUnwrap(schedulingTask)
+        let result = await task.value
+
+        XCTAssertEqual(result.scheduledCount, 1)
+        XCTAssertEqual(Set(center.pending.map(\.identifier)), Set([alerts[0].id, alerts[1].id]))
+        XCTAssertFalse(center.pending.contains { $0.identifier == "obsolete" })
     }
 
     @MainActor

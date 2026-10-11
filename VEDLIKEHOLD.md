@@ -352,13 +352,12 @@ switch i `ContentView.swift` fortsatt stopper typekontroll.
 før JSON-dekoding og mer enn 500 tidsserier før sortering. Regresjoner dekker
 normal MET-fixture, nøyaktig byte- og seriegrense samt overskridelse.
 
-**AUTO-489 · ÅPEN** — Bevar trygt eksisterende varsler når en
-`replacePendingAlerts`-runde avbrytes midt i planleggingen. Løkken stopper ved
-`Task.isCancelled`, men den etterfølgende oppryddingen kan fortsatt fjerne
-ventende forespørsler som ennå ikke ble forsøkt erstattet. Spor ubehandlede
-ID-er som bevaringskandidater ved kansellering, uten å beholde varsler som er
-bekreftet foreldet; legg til en injisert-center-regresjon for kansellering
-etter første erstatning.
+**AUTO-489 · FULLFØRT 2026-10-11** — Ved kansellering midt i
+`replacePendingAlerts` blir ubehandlede forespørsler nå bevaringskandidater.
+De beholdes bare når lagret plan-kontekst fortsatt samsvarer med gjeldende
+sted, regel og språk; bekreftet foreldede forespørsler ryddes fortsatt bort.
+Injisert-center-regresjon kansellerer etter første erstatning og bekrefter at
+bare den aktuelle, ubehandlede varslingen beholdes.
 
 **AUTO-490 · ÅPEN** — Begrens vær-API-svar mens de lastes ned, ikke bare etter
 at `URLSession.data(for:)` allerede har buffered hele kroppen. AUTO-480 og
@@ -375,6 +374,14 @@ fra eldre søk med generasjonsnummer, men `searchMapKit` beholder ikke
 brukeren endrer søket eller lukker visningen. Koble avbrytelse av Swift-task
 til aktivt MapKit-søk og test at et erstattet søk kansellerer forrige operasjon
 uten å la et gammelt svar endre resultatlisten.
+
+**AUTO-492 · ÅPEN** — Gjør feil i App Group-oppsettet synlige i stedet for å
+skrive widget-/Watch-data til `UserDefaults.standard`. `SharedWidgetData.defaults`
+faller i dag stille tilbake til standard-databasen hvis App Group-suiten ikke
+kan åpnes; appen tror da at delingen lyktes, mens widget og Watch leser en annen
+database. Kontroller at alle mål har samme entitlement, og legg til en
+injiserbar lagringsregresjon som verifiserer feilbanen uten å skrive feilaktig
+til lokal standardlagring.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

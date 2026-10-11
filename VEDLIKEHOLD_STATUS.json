@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T18:52:42Z",
+  "lastScheduledStart": "2026-10-11T19:07:42Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-488 fullført 2026-10-11: Nowcast avviser svar over 512 KB før JSON-dekoding og over 500 tidsserier før sortering. Regresjoner dekker normal MET-fixture, eksakt byte- og tidsseriegrense og overskridelser. Bred gjennomgang fant AUTO-491: utdaterte MapKit-søk filtreres bort fra UI, men aktive MKLocalSearch-operasjoner blir ikke eksplisitt avbrutt. Neste kø: AUTO-489, AUTO-490 og AUTO-491."
+  "lastProgress": "AUTO-489 fullført 2026-10-11: Varselopprydding etter kansellering bevarer nå ubehandlede ID-er bare hvis eksisterende plan-kontekst fortsatt stemmer med gjeldende sted, regel og språk. Injisert center kansellerer etter første erstatning; regresjonen bekrefter at aktuell ubehandlet varsling beholdes og foreldet varsel fjernes. Swift-parsing og diffkontroll består; XCTest ble ikke kjørt på grunn av ulagrede brukerendringer som blokkerer typekontroll. Bred appgjennomgang fant AUTO-492: App Group-feil faller stille tilbake til standard UserDefaults og kan skjule at Widget/Watch-deling feiler. Neste kø: AUTO-490, AUTO-491 og AUTO-492."
 }

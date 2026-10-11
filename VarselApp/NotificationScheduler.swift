@@ -384,10 +384,22 @@ enum NotificationScheduler {
         var failedCount = 0
         var successfulIDs: Set<String> = []
         var failedIDs: Set<String> = []
+        var unattemptedIDs: Set<String> = []
         var replacementContexts: [String: Data] = [:]
+        for alert in requested {
+            guard let placeID = alert.placeID,
+                  let place = places.first(where: { $0.id == placeID }),
+                  let context = try? JSONEncoder().encode(
+                      NotificationPlanContext(place: place, rule: alert.rule, languageStyle: languageStyle)
+                  ) else { continue }
+            replacementContexts[alert.id] = context
+        }
         var firstScheduledAt = preserved.compactMap { nextFireDate(for: $0) }.min()
-        for a in requested {
-            guard !Task.isCancelled else { break }
+        for (index, a) in requested.enumerated() {
+            guard !Task.isCancelled else {
+                unattemptedIDs.formUnion(requested[index...].map(\.id))
+                break
+            }
             let c = UNMutableNotificationContent()
             c.title = NotificationCopy.title(for: a.rule, placeName: a.placeName, eventAt: a.eventAt, referenceAt: a.fireAt, possible: a.possible, languageStyle: languageStyle)
             c.body = NotificationCopy.message(for: a.rule, eventAt: a.eventAt, referenceAt: a.fireAt, possible: a.possible, eventDetail: a.eventDetail, languageStyle: languageStyle)
@@ -398,10 +410,8 @@ enum NotificationScheduler {
                 c.userInfo = [NotificationRoute.placeIDKey: placeID.uuidString]
                 // Encode the current Place (including a custom name) so a
                 // notification opened after renaming routes to fresh data.
-                if let place = places.first(where: { $0.id == placeID }),
-                   let data = try? JSONEncoder().encode(NotificationPlanContext(place: place, rule: a.rule, languageStyle: languageStyle)) {
+                if let data = replacementContexts[a.id] {
                     c.userInfo[planContextKey] = data
-                    replacementContexts[a.id] = data
                 }
             }
             let trigger = UNTimeIntervalNotificationTrigger(timeInterval: max(1, a.fireAt.timeIntervalSince(now)), repeats: false)
@@ -418,8 +428,11 @@ enum NotificationScheduler {
         let staleIDs = stalePendingRequestIDs(
             pendingIDs: pending.map(\.identifier), preservedIDs: preservedIDs,
             successfulIDs: successfulIDs,
+            // A cancelled task may not reach these replacements. Keep an old
+            // request only if its encoded plan still matches today's settings.
             failedIDs: failedReplacementFallbackIDs(
-                pending: pending, failedIDs: failedIDs, replacementContexts: replacementContexts
+                pending: pending, failedIDs: failedIDs.union(unattemptedIDs),
+                replacementContexts: replacementContexts
             )
         )
         center.removePendingNotificationRequests(withIdentifiers: staleIDs)
