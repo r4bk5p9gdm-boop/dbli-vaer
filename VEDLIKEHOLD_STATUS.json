@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T18:13:53Z",
+  "lastScheduledStart": "2026-10-11T18:20:12Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-468 fullført 2026-10-11 etter brukerens godkjenning: import fra JSON-sikkerhetskopi viser forhåndsvisning og lar brukeren slå sammen eller erstatte steder; tomme kopier kan ikke fjerne steder, språk/valg følger kopien, andre innstillinger bevares, og feilmeldinger lekker ikke systemdetaljer. Swift-parsing og diffkontroll består. Full XCTest/build blokkert av eksisterende ulagret LocalCalibrationCopy.surface-typefeil i ContentView.swift. Fra fullskanning står AUTO-481, AUTO-483, AUTO-466 og AUTO-464 på vent; eldre blokkerte AUTO-452, AUTO-446 og AUTO-442 er også med i køen."
+  "lastProgress": "AUTO-004 køgjennomgang fullført 2026-10-11: fullskanning fant ingen ÅPEN/UNDER ARBEID-punkter og flere blokkerte oppgaver. Bred kodegjennomgang avdekket tre konkrete åpne oppgaver: AUTO-487 komplett kopi av varige appinnstillinger, AUTO-488 Nowcast-payloadgrenser før dekoding/sortering, AUTO-489 trygg varselsbevaring ved kansellert delvis replanlegging. Endret kun vedlikeholdskø og status; eksisterende brukerendringer er urørt. Diffkontroll og JSON-/køskanning kjøres før commit."
 }

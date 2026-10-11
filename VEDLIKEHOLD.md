@@ -337,6 +337,30 @@ ukjent autorisasjonsstatus. Swift-parsing og diffkontroll består; XCTest/build
 er ikke kjørt fordi Xcode typekontroll fortsatt stoppes av den ulagrede
 `ContentView.swift`-feilen dokumentert under AUTO-483.
 
+**AUTO-487 · ÅPEN** — Utvid oppsettets eksport/import til en faktisk kopi av
+appinnstillingene, ikke bare steder, valgt sted og varslingsspråk. Ta med de
+varige brukerinnstillingene som favoritter og hjem/hytte-snarveier,
+sorteringsvalg, tekstskilletegn, Watch-sted og Live Activity-valg. Avklar
+eksplisitt hvilke enhetsbundne eller sikkerhetsfølsomme verdier som ikke skal
+kopieres, og valider ukjente/ugyldige verdier trygt. Forhåndsvisningen må gjøre
+det tydelig hvilke valg som blir overskrevet; tester skal dekke round-trip,
+bakoverkompatibilitet og at import ikke endrer utelatte innstillinger.
+
+**AUTO-488 · ÅPEN** — Begrens Nowcast-svar før dekoding og sortering, på samme
+måte som Locationforecast. `decodeNowcast` dekoder nå hele payloaden og
+sorterer alle tidspunktene uten størrelses- eller antallsgrense, selv om bare
+de første 90 minuttene senere brukes. Sett dokumenterte grenser for byte og
+tidsserier, avvis overgrenser før sortering, og test nøyaktig grense,
+overskridelse og normal MET-fixture.
+
+**AUTO-489 · ÅPEN** — Bevar trygt eksisterende varsler når en
+`replacePendingAlerts`-runde avbrytes midt i planleggingen. Løkken stopper ved
+`Task.isCancelled`, men den etterfølgende oppryddingen kan fortsatt fjerne
+ventende forespørsler som ennå ikke ble forsøkt erstattet. Spor ubehandlede
+ID-er som bevaringskandidater ved kansellering, uten å beholde varsler som er
+bekreftet foreldet; legg til en injisert-center-regresjon for kansellering
+etter første erstatning.
+
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig
 bredde-/lengdegrad ved dekoding; tapsfri arraydekoding bevarer andre steder i
