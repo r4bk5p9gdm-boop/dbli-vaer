@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct RuleEditorView: View {
     @EnvironmentObject var store: Store
@@ -115,6 +116,22 @@ struct RuleEditorView: View {
                          : "Varsler uansett hvor du befinner deg.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
+                    if rule.onlyWhenNearby && store.nearbyAuthorizationUnavailable {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Label(
+                                store.alertLanguageStyle == .english
+                                    ? "Set location access to Always; nearby alerts are paused."
+                                    : "Sett posisjonstilgang til «Alltid»; nærhetsvarsler er satt på pause.",
+                                systemImage: "location.slash"
+                            )
+                            .font(.footnote)
+                            .foregroundStyle(.orange)
+                            Button(store.alertLanguageStyle == .english ? "Open Settings" : "Åpne Innstillinger") {
+                                guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                                UIApplication.shared.open(url)
+                            }
+                        }
+                    }
                     if rule.onlyWhenNearby && !store.nearbyMonitoringFailedPlaceIDs.isEmpty {
                         Label(
                             store.alertLanguageStyle == .english

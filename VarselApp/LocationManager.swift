@@ -144,17 +144,24 @@ final class ProximityMonitor: NSObject, CLLocationManagerDelegate {
     private let savedNearbyKey = "nearby.weather.place.ids"
     private var wantsAlwaysAuthorization = false
     private(set) var nearbyPlaceIDs: Set<UUID>
+    private(set) var authorizationUnavailable: Bool
     private(set) var failedPlaceIDs: Set<UUID> = []
     private(set) var overflowPlaceIDs: Set<UUID> = []
     var onChange: ((Set<UUID>) -> Void)?
     var onMonitoringFailureChange: ((Set<UUID>) -> Void)?
     var onMonitoringOverflowChange: ((Set<UUID>) -> Void)?
+    var onAuthorizationAvailabilityChange: ((Bool) -> Void)?
 
     override init() {
         let saved = UserDefaults.standard.stringArray(forKey: savedNearbyKey) ?? []
         nearbyPlaceIDs = Set(saved.compactMap(UUID.init(uuidString:)))
+        authorizationUnavailable = false
         super.init()
         manager.delegate = self
+        authorizationUnavailable = NearbyAuthorizationPolicy.isUnavailable(manager.authorizationStatus.rawValue)
+        if authorizationUnavailable {
+            updateNearbyIDs([])
+        }
     }
 
     func configure(for places: [Place]) {
@@ -216,6 +223,9 @@ final class ProximityMonitor: NSObject, CLLocationManagerDelegate {
 
     nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         Task { @MainActor in
+            guard self.manager === manager else { return }
+            let unavailable = NearbyAuthorizationPolicy.isUnavailable(manager.authorizationStatus.rawValue)
+            self.updateAuthorizationUnavailable(unavailable)
             if wantsAlwaysAuthorization, manager.authorizationStatus == .authorizedWhenInUse {
                 wantsAlwaysAuthorization = false
                 manager.requestAlwaysAuthorization()
@@ -258,6 +268,7 @@ final class ProximityMonitor: NSObject, CLLocationManagerDelegate {
     }
 
     private func set(region: CLRegion, isNearby: Bool) {
+        guard !authorizationUnavailable else { return }
         guard let id = placeID(for: region) else { return }
         var updated = nearbyPlaceIDs
         if isNearby { updated.insert(id) } else { updated.remove(id) }
@@ -286,6 +297,26 @@ final class ProximityMonitor: NSObject, CLLocationManagerDelegate {
         guard updated != overflowPlaceIDs else { return }
         overflowPlaceIDs = updated
         onMonitoringOverflowChange?(updated)
+    }
+
+    private func updateAuthorizationUnavailable(_ unavailable: Bool) {
+        guard unavailable != authorizationUnavailable else { return }
+        authorizationUnavailable = unavailable
+        onAuthorizationAvailabilityChange?(unavailable)
+        if unavailable {
+            updateNearbyIDs([])
+        }
+    }
+}
+
+enum NearbyAuthorizationPolicy {
+    static func isUnavailable(_ rawStatus: Int32) -> Bool {
+        switch rawStatus {
+        case CLAuthorizationStatus.authorizedAlways.rawValue:
+            false
+        default:
+            true
+        }
     }
 }
 

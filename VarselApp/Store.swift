@@ -392,6 +392,7 @@ final class Store: ObservableObject {
     @Published private(set) var nearbyPlaceIDs: Set<UUID> = []
     @Published private(set) var nearbyMonitoringFailedPlaceIDs: Set<UUID> = []
     @Published private(set) var nearbyMonitoringOverflowPlaceIDs: Set<UUID> = []
+    @Published private(set) var nearbyAuthorizationUnavailable = false
     private var lastReplanSignature: Int?
     private var lastReplanAt: Date?
 
@@ -588,6 +589,7 @@ final class Store: ObservableObject {
         let monitor = ProximityMonitor()
         proximityMonitor = monitor
         nearbyPlaceIDs = monitor.nearbyPlaceIDs
+        nearbyAuthorizationUnavailable = monitor.authorizationUnavailable
         monitor.onChange = { [weak self] nearbyIDs in
             guard let self else { return }
             self.nearbyPlaceIDs = nearbyIDs
@@ -598,6 +600,13 @@ final class Store: ObservableObject {
         }
         monitor.onMonitoringOverflowChange = { [weak self] overflowIDs in
             self?.nearbyMonitoringOverflowPlaceIDs = overflowIDs
+        }
+        monitor.onAuthorizationAvailabilityChange = { [weak self] unavailable in
+            guard let self else { return }
+            self.nearbyAuthorizationUnavailable = unavailable
+            if !unavailable {
+                self.proximityMonitor.configure(for: self.places)
+            }
         }
         monitor.configure(for: places)
         if !restoredSavedPlaces || needsPersistedStateRepair { save() }

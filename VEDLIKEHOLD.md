@@ -321,12 +321,15 @@ en plass på. Regresjon dekker 20/22 steder og at en frigjort plass reduserer
 overløpet. Swift-parsing består; XCTest venter fordi Xcode-bygg stopper på
 den urelaterte, ulagrede `ContentView.swift`-feilen omtalt under AUTO-483.
 
-**AUTO-486 · ÅPEN** — Fjern utdatert nærhetsstatus når posisjonstillatelse
-trekkes tilbake eller blir begrenset. `nearbyPlaceIDs` gjenopprettes fra
-UserDefaults, mens `locationManagerDidChangeAuthorization` nå bare håndterer
-eskalering av tillatelse. Kontroller at gamle «i nærheten»-ID-er ikke fortsetter
-å kvalifisere pushvarsler etter avslag, og vis en tydelig vei til å aktivere
-tillatelsen igjen uten å logge posisjonsdata.
+**AUTO-486 · FULLFØRT 2026-10-11** — Nærhetsvarsler krever nå posisjonstilgang
+«Alltid». Når tilgangen mangler, trekkes tilbake eller er begrenset, tømmes de
+lagrede «i nærheten»-ID-ene og senere regionhendelser kan ikke legge dem inn
+igjen før tilgang er gjenopprettet. Regelredigeringen forklarer at varslingen
+er satt på pause og har en knapp som åpner appens iOS-innstillinger.
+Regresjonstest dekker «Alltid», «Ved bruk», avslag, begrensning, uavklart og
+ukjent autorisasjonsstatus. Swift-parsing og diffkontroll består; XCTest/build
+er ikke kjørt fordi Xcode typekontroll fortsatt stoppes av den ulagrede
+`ContentView.swift`-feilen dokumentert under AUTO-483.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

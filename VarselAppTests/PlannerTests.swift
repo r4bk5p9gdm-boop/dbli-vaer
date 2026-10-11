@@ -1402,6 +1402,14 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(NearbyMonitoringRegionPolicy.overflowIDs(for: afterRemovingFirstPlace), [ids[21]])
     }
 
+    func testNearbyAuthorizationPolicyRequiresAlwaysAccessAndRejectsDeniedRestrictedOrUnknown() {
+        XCTAssertFalse(NearbyAuthorizationPolicy.isUnavailable(CLAuthorizationStatus.authorizedAlways.rawValue))
+        for status in [CLAuthorizationStatus.notDetermined, .authorizedWhenInUse, .denied, .restricted] {
+            XCTAssertTrue(NearbyAuthorizationPolicy.isUnavailable(status.rawValue))
+        }
+        XCTAssertTrue(NearbyAuthorizationPolicy.isUnavailable(Int32.max))
+    }
+
     func testDisabledRuleNeverCreatesPushAlert() {
         var rule = Rule(type: .regn)
         rule.enabled = false
