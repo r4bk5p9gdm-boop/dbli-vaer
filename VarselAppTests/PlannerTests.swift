@@ -8744,6 +8744,20 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(english.accessibility.contains("does not mean an alert is missing"))
     }
 
+    func testWeatherBandHatchLegendHidesPartialSunKeyWithoutSolarRow() {
+        let norwegian = WeatherBandHatchLegend.texts(for: .bokmal, includesPartialSun: false)
+        XCTAssertNil(norwegian.partialSun)
+        XCTAssertEqual(norwegian.missingForecast, "Grå skravur: Yr mangler timer")
+        XCTAssertFalse(norwegian.accessibility.contains("Gul skravur"))
+        XCTAssertTrue(norwegian.accessibility.contains("Grå skravur"))
+
+        let english = WeatherBandHatchLegend.texts(for: .english, includesPartialSun: false)
+        XCTAssertNil(english.partialSun)
+        XCTAssertEqual(english.missingForecast, "Gray hatch: missing Yr hours")
+        XCTAssertFalse(english.accessibility.contains("Yellow hatch"))
+        XCTAssertTrue(english.accessibility.contains("Gray hatch"))
+    }
+
     func testRepeatedAutumnHourProducesOneMissingVisualCell() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))

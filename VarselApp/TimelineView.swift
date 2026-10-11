@@ -367,7 +367,10 @@ private struct WeatherBandsForecast: View {
     }
 
     private var hatchLegend: WeatherBandHatchLegend.Texts {
-        WeatherBandHatchLegend.texts(for: languageStyle)
+        WeatherBandHatchLegend.texts(
+            for: languageStyle,
+            includesPartialSun: displayedTypes.contains(.sol)
+        )
     }
 
     private func rulesForType(_ type: AlertType) -> [Rule] {
@@ -466,11 +469,13 @@ private struct WeatherBandsForecast: View {
                         }
                     }
                     HStack(spacing: 12) {
-                        HStack(spacing: 4) {
-                            SolarHatchMark()
-                                .frame(width: 12, height: 12)
-                                .background(SolarCellMarkerStyle.hatchColor.opacity(0.18))
-                            Text(hatchLegend.partialSun)
+                        if let partialSun = hatchLegend.partialSun {
+                            HStack(spacing: 4) {
+                                SolarHatchMark()
+                                    .frame(width: 12, height: 12)
+                                    .background(SolarCellMarkerStyle.hatchColor.opacity(0.18))
+                                Text(partialSun)
+                            }
                         }
                         HStack(spacing: 4) {
                             ForecastGapMark()
@@ -521,23 +526,32 @@ private struct WeatherBandsForecast: View {
 
 enum WeatherBandHatchLegend {
     struct Texts {
-        let partialSun: String
+        let partialSun: String?
         let missingForecast: String
         let accessibility: String
     }
 
-    static func texts(for languageStyle: AlertLanguageStyle) -> Texts {
+    static func texts(for languageStyle: AlertLanguageStyle, includesPartialSun: Bool = true) -> Texts {
         if languageStyle == .english {
             return Texts(
-                partialSun: "Yellow hatch: partial sun",
+                partialSun: includesPartialSun ? "Yellow hatch: partial sun" : nil,
                 missingForecast: "Gray hatch: missing Yr hours",
-                accessibility: "Yellow hatch means partial sun. Gray hatch means Yr forecast hours are missing. Hatching does not mean an alert is missing."
+                accessibility: includesPartialSun
+                    ? "Yellow hatch means partial sun. Gray hatch means Yr forecast hours are missing. Hatching does not mean an alert is missing."
+                    : "Gray hatch means Yr forecast hours are missing. Hatching does not mean an alert is missing."
             )
         }
         return Texts(
-            partialSun: WeatherLanguage.text("Gul skravur: delvis sol", style: languageStyle),
+            partialSun: includesPartialSun
+                ? WeatherLanguage.text("Gul skravur: delvis sol", style: languageStyle)
+                : nil,
             missingForecast: WeatherLanguage.text("Grå skravur: Yr mangler timer", style: languageStyle),
-            accessibility: WeatherLanguage.text("Gul skravur betyr delvis sol. Grå skravur betyr at Yr mangler prognosetimer. Skravur betyr ikke manglende varsling.", style: languageStyle)
+            accessibility: WeatherLanguage.text(
+                includesPartialSun
+                    ? "Gul skravur betyr delvis sol. Grå skravur betyr at Yr mangler prognosetimer. Skravur betyr ikke manglende varsling."
+                    : "Grå skravur betyr at Yr mangler prognosetimer. Skravur betyr ikke manglende varsling.",
+                style: languageStyle
+            )
         )
     }
 }

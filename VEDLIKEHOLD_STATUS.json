@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T01:50:54Z",
+  "lastScheduledStart": "2026-10-11T02:20:54Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-470 fullført 2026-10-11: importerte værkonfigurasjoner beholder nå første forekomst av hver steds-ID og øvrige unike steder. Regresjonstest dekker stabil valgt ID og bevarte steder. Swift-parsing og diffkontroll består; XCTest ikke kjørt på grunn av typekontrollfeil i andre ulagrede tester. Bred gjennomgang av konfigurasjonsdekoderen fant også at manglende/feiltypet places-felt blir tolket som tomt oppsett; AUTO-472 lagt til. Neste kø: AUTO-468 (krever godkjenning), AUTO-471 og AUTO-472."
+  "lastProgress": "AUTO-471 fullført 2026-10-11: gul skravurtegnforklaring og tilhørende VoiceOver-tekst vises nå bare med aktiv solrad, både på bokmål og engelsk. Swift-parsing og diffkontroll består; XCTest ikke kjørt på grunn av typekontrollfeil i andre ulagrede tester. Bred gjennomgang av samme visning fant fast 9-punkts tegnforklaring som kan bli utilgjengelig med stor tekst eller smal bredde; AUTO-473 lagt til. Neste kø: AUTO-468 (krever godkjenning), AUTO-472 og AUTO-473."
 }

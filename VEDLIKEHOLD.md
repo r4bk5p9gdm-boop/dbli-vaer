@@ -203,17 +203,24 @@ duplikat, beholdt første forekomst og et etterfølgende unikt sted. Swift-parsi
 og diffkontroll består; XCTest er ikke kjørt på grunn av kjente typekontrollfeil
 i andre ulagrede tester.
 
-**AUTO-471 · ÅPEN** — Vis bare relevante tegnforklaringsnøkler for skravur i
-værbåndene. Den gule nøkkelen for delvis sol vises også når ingen solrad er
-aktiv, selv om den gule skravuren bare tegnes i solraden. Knytt nøkkelens
-synlighet til viste værtyper og legg til en regresjonstest for oppsett uten
-solrad.
+**AUTO-471 · FULLFØRT 2026-10-11** — Den gule tegnforklaringen for delvis sol
+vises nå bare når solraden er aktiv. Når den mangler, sier også VoiceOver-teksten
+bare det som faktisk vises; den grå forklaringen for manglende Yr-timer beholdes.
+Regresjonstest dekker bokmål og engelsk med og uten solrad. Swift-parsing og
+diffkontroll består; XCTest er ikke kjørt på grunn av kjente typekontrollfeil i
+andre ulagrede tester.
 
 **AUTO-472 · ÅPEN** — Avvis manglende eller feiltypet `places`-felt i en
 værkonfigurasjonsfil i stedet for å tolke filen som et gyldig, tomt oppsett.
 Behold tapsfri dekoding av enkelte ugyldige stedsoppføringer slik at andre
 gyldige steder kan overleve; test manglende felt, feil JSON-type og delvis
 skadet array.
+
+**AUTO-473 · ÅPEN** — Gjør tegnforklaringen for skravur lesbar med stor
+Dynamic Type og på smale iPhone-skjermer. Den bruker nå fast 9-punkts skrift i
+en horisontal rad, så lange oversettelser kan bli for små eller klemt. Behold
+den kompakte standardvisningen, men la teksten skalere og brytes på en
+tilgjengelig måte; test eller dokumenter størrelsesklassene.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig
