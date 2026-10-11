@@ -287,7 +287,7 @@ på vent fordi repoet ikke inneholder produksjonsarkiver eller en realistisk
 enhetsprofil; 1 200-raders testen er kun syntetisk. Gjenoppta med anonymiserte
 størrelses-/tidsmålinger fra en stor historikk før en eventuell lagringsmigrering.
 
-**AUTO-482 · UNDER ARBEID** — Bevar et uleselig observasjonsarkiv for
+**AUTO-482 · FULLFØRT 2026-10-11** — Bevar et uleselig observasjonsarkiv for
 gjenoppretting. `CalibrationHistory.load` flytter nå et arkiv som ikke kan leses
 eller dekodes til en unik `.unreadable-…json`-fil før fallback; hvis flyttingen
 mislykkes, blokkeres skriving til originalbanen for å beskytte eneste kopi.

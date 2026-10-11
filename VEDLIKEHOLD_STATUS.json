@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T08:56:26Z",
+  "lastScheduledStart": "2026-10-11T09:14:21Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-482 framdrift 2026-10-11: Uleselig observasjonsarkiv flyttes nå før fallback til en unik .unreadable-…json-fil; hvis karantene ikke lar seg gjøre, hindres senere overskriving av originalen. Regresjoner dekker bevaring, senere ny lagring og trygg fallback/migrering fra legacy. Swift-parsing og diffkontroll består; XCTest ikke kjørt på grunn av urelaterte ulagrede testendringer og begrenset diskreserve. AUTO-481 er satt PÅ VENT fordi repoet mangler produksjonsarkiv/enhetsprofil for realistisk kostnadsmåling; be kun om anonymiserte størrelse-/tidsmål, ikke rå persondata. Bred gjennomgang fant manglende feiltilstand for CoreLocation-regioner (AUTO-483). Neste kø: AUTO-468 (krever godkjenning), AUTO-482 (pågår) og AUTO-483."
+  "lastProgress": "AUTO-482 fullført 2026-10-11: Karantene for uleselig observasjonsarkiv, sperre mot overskriving dersom flytting feiler og to regresjonstester ble committed i 4993edc. Swift-parsing består; XCTest ikke kjørt på grunn av urelaterte ulagrede testendringer og begrenset diskreserve. AUTO-481 står PÅ VENT i påvente av anonymiserte størrelses-/tidsmålinger fra realistisk arkiv/enhet. Neste kø fra fullskanningen: AUTO-468 (krever uttrykkelig godkjenning), AUTO-483 (åpen), AUTO-481 (venter på måledata)."
 }
