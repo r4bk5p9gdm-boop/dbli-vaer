@@ -16,7 +16,7 @@ struct ApplicationSettingsBackup: Codable, Equatable {
     init(
         homeFavorites: HomeFavorites,
         defaults: UserDefaults = .standard,
-        sharedDefaults: UserDefaults = WeatherTextSeparator.defaults
+        sharedDefaults: UserDefaults? = WeatherTextSeparator.defaults
     ) {
         self.homeFavorites = homeFavorites
         homePlaceID = defaults.string(forKey: PlaceOrderingSettings.homePlaceIDKey) ?? ""
@@ -24,7 +24,7 @@ struct ApplicationSettingsBackup: Codable, Equatable {
         placeSortMode = defaults.string(forKey: PlaceOrderingSettings.sortModeKey) ?? "automatic"
         homeShortcutTitle = defaults.string(forKey: PlaceOrderingSettings.homeShortcutTitleKey) ?? ""
         cabinShortcutTitle = defaults.string(forKey: PlaceOrderingSettings.cabinShortcutTitleKey) ?? ""
-        textSeparator = sharedDefaults.string(forKey: WeatherTextSeparator.key) ?? WeatherTextSeparator.space.rawValue
+        textSeparator = sharedDefaults?.string(forKey: WeatherTextSeparator.key) ?? WeatherTextSeparator.space.rawValue
         watchPlaceSource = defaults.string(forKey: WatchPlaceSettings.sourceKey) ?? WatchPlaceSource.position.rawValue
         watchFixedPlaceID = defaults.string(forKey: WatchPlaceSettings.fixedPlaceIDKey) ?? ""
         liveWeatherActivitiesEnabled = defaults.object(forKey: LiveWeatherActivitySettings.enabledKey) == nil
@@ -56,14 +56,14 @@ struct ApplicationSettingsBackup: Codable, Equatable {
 
     func persist(
         to defaults: UserDefaults = .standard,
-        sharedDefaults: UserDefaults = WeatherTextSeparator.defaults
+        sharedDefaults: UserDefaults? = WeatherTextSeparator.defaults
     ) {
         defaults.set(homePlaceID, forKey: PlaceOrderingSettings.homePlaceIDKey)
         defaults.set(cabinPlaceID, forKey: PlaceOrderingSettings.cabinPlaceIDKey)
         defaults.set(placeSortMode, forKey: PlaceOrderingSettings.sortModeKey)
         defaults.set(homeShortcutTitle, forKey: PlaceOrderingSettings.homeShortcutTitleKey)
         defaults.set(cabinShortcutTitle, forKey: PlaceOrderingSettings.cabinShortcutTitleKey)
-        sharedDefaults.set(textSeparator, forKey: WeatherTextSeparator.key)
+        sharedDefaults?.set(textSeparator, forKey: WeatherTextSeparator.key)
         defaults.set(watchPlaceSource, forKey: WatchPlaceSettings.sourceKey)
         defaults.set(watchFixedPlaceID, forKey: WatchPlaceSettings.fixedPlaceIDKey)
         defaults.set(liveWeatherActivitiesEnabled, forKey: LiveWeatherActivitySettings.enabledKey)

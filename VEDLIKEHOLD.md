@@ -400,12 +400,14 @@ umiddelbart når query eller scope faktisk endres. Gamle treff blir dermed ikke
 stående synlige eller valgbare mens erstatningssøket venter på debounce. En
 regresjon dekker både query- og scope-endring.
 
-**AUTO-495 · ÅPEN** — Fjern stille standardlager-fallback for
-`WeatherTextSeparator`. `WeatherTextSeparator.defaults` i `Models.swift` bruker
-fortsatt `UserDefaults.standard` dersom App Group-suiten ikke kan åpnes; da kan
-språk-/tekstinnstillingen på telefonen avvike fra teksten som deles med widget
-og Watch. Bruk samme eksplisitte App Group-feilhåndtering som delt værdata og
-test at mislykket gruppelagring ikke skriver innstillingen til standardlageret.
+**AUTO-495 · FULLFØRT 2026-10-11** — `WeatherTextSeparator` bruker nå den delte
+App Group-suiten uten å falle tilbake til `UserDefaults.standard`. Lesing og
+skriving går gjennom samme eksplisitte utilgjengelig-håndtering som
+widgetdataene; innstillingsvelgeren bruker gruppelagringen direkte og går tilbake
+til sist lagrede verdi hvis skriving ikke er mulig. Oppsettimport/-eksport tåler
+også at delt lagring mangler. Regresjonen injiserer utilgjengelig suite og
+bekrefter at operasjonen hoppes over, feilen rapporteres og standardlageret
+forblir urørt.
 
 **AUTO-496 · ÅPEN** — Ikke rapporter fullført replanlegging etter at tasken er
 kansellert mens varslingsplanleggeren venter. `Store.replan()` sjekker
@@ -420,6 +422,13 @@ varslingsgodkjenning. `NotificationScheduler.requestPermission()` gjør i dag
 midlertidig/systemfeil om til `false`, som `Store` og innstillingsvisningen viser
 som om brukeren uttrykkelig avslo varsler. Bevar en egen ukjent/feiltilstand og
 test at forespørselsfeil ikke presenteres som et avslag.
+
+**AUTO-498 · ÅPEN** — Oppdater delte værflater etter import av appinnstillinger.
+`Store.applyConfigurationImport()` setter språkstil før det lagrer importert
+skilletegn; språkstilens `didSet` oppdaterer derfor widget/Watch med den gamle
+innstillingen, mens `settings.persist()` ikke utløser ny deling. Sørg for at
+importert tekstformat straks oppdaterer widget-/Watch-snapshot, med regresjon
+for import av et annet skilletegn.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

@@ -6757,6 +6757,31 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(reportedFailure)
     }
 
+    func testWeatherTextSeparatorDoesNotPersistWhenAppGroupIsUnavailable() {
+        let key = "varsel.test.separator.standard-sentinel"
+        let standard = UserDefaults.standard
+        standard.set("sentinel", forKey: key)
+        defer { standard.removeObject(forKey: key) }
+
+        var attemptedWrite = false
+        var reportedFailure = false
+        let result = WeatherTextSeparator.withAppGroupDefaults(
+            defaultsProvider: { _ in nil },
+            onUnavailable: { reportedFailure = true },
+            operation: { defaults in
+                attemptedWrite = true
+                defaults.set(WeatherTextSeparator.bullet.rawValue, forKey: WeatherTextSeparator.key)
+                standard.set(WeatherTextSeparator.bullet.rawValue, forKey: key)
+                return true
+            }
+        )
+
+        XCTAssertNil(result)
+        XCTAssertFalse(attemptedWrite)
+        XCTAssertTrue(reportedFailure)
+        XCTAssertEqual(standard.string(forKey: key), "sentinel")
+    }
+
     func testSharedWidgetPlacesOnlyWriteWhenOrderOrContentChanges() {
         let first = Place(name: "Klinga", lat: 64, lon: 11)
         let second = Place(name: "Hornburu", lat: 64.1, lon: 11.1)

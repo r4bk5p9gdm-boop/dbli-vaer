@@ -1,5 +1,6 @@
 import SwiftUI
 import CoreLocation
+import OSLog
 
 enum SolarCellMarkerStyle {
     static let solidFillOpacity = 0.78
@@ -391,8 +392,45 @@ enum WeatherTextSeparator: String, CaseIterable, Codable, Identifiable {
     case space, comma, bullet, dash
     var id: String { rawValue }
     static let key = "weather.text.separator"
-    static var defaults: UserDefaults { UserDefaults(suiteName: "group.no.mathias.dblivaer") ?? .standard }
-    static var current: Self { Self(rawValue: defaults.string(forKey: key) ?? "space") ?? .space }
+    static let appGroup = SharedWidgetData.appGroup
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier ?? "no.mathias.dblivaer",
+        category: "WeatherTextSeparator"
+    )
+
+    static func withAppGroupDefaults<Value>(
+        defaultsProvider: (String) -> UserDefaults?,
+        onUnavailable: () -> Void = {},
+        operation: (UserDefaults) -> Value
+    ) -> Value? {
+        SharedWidgetData.withAppGroupDefaults(
+            suiteName: appGroup,
+            defaultsProvider: defaultsProvider,
+            onUnavailable: {
+                logger.error("App Group UserDefaults unavailable for \(appGroup, privacy: .public); text separator access was skipped.")
+                onUnavailable()
+            },
+            operation: operation
+        )
+    }
+
+    static var defaults: UserDefaults? {
+        withAppGroupDefaults(defaultsProvider: { UserDefaults(suiteName: $0) }) { $0 }
+    }
+
+    static var current: Self {
+        withAppGroupDefaults(defaultsProvider: { UserDefaults(suiteName: $0) }) {
+            Self(rawValue: $0.string(forKey: key) ?? "space") ?? .space
+        } ?? .space
+    }
+
+    @discardableResult
+    static func save(_ separator: Self) -> Bool {
+        withAppGroupDefaults(defaultsProvider: { UserDefaults(suiteName: $0) }) {
+            $0.set(separator.rawValue, forKey: key)
+            return true
+        } ?? false
+    }
     var label: String {
         switch self { case .space: "Mellomrom"; case .comma: "Komma ,"; case .bullet: "Punkt •"; case .dash: "Tankestrek —" }
     }

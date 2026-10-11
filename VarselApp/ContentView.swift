@@ -2617,7 +2617,7 @@ struct PlacesView: View {
 }
 
 private struct GlobalSettingsView: View {
-    @AppStorage(WeatherTextSeparator.key, store: WeatherTextSeparator.defaults) private var textSeparator = WeatherTextSeparator.space.rawValue
+    @State private var textSeparator = WeatherTextSeparator.current.rawValue
     @AppStorage(WatchPlaceSettings.sourceKey) private var watchPlaceSource = WatchPlaceSource.position.rawValue
     @AppStorage(WatchPlaceSettings.fixedPlaceIDKey) private var watchFixedPlaceID = ""
     @EnvironmentObject private var store: Store
@@ -2635,7 +2635,13 @@ private struct GlobalSettingsView: View {
                     }
                     Text((WeatherTextSeparator(rawValue: textSeparator) ?? .space).format("Duggfall natt te onsda'n kl. 05"))
                         .font(.caption).foregroundStyle(.secondary)
-                        .onChange(of: textSeparator) { _, _ in store.refreshDisplaySettings() }
+                        .onChange(of: textSeparator) { _, value in
+                            guard let separator = WeatherTextSeparator(rawValue: value), WeatherTextSeparator.save(separator) else {
+                                textSeparator = WeatherTextSeparator.current.rawValue
+                                return
+                            }
+                            store.refreshDisplaySettings()
+                        }
                     Picker("Språkstil", selection: $store.alertLanguageStyle) {
                         ForEach(AlertLanguageStyle.allCases) { style in
                             Text(style.label).tag(style)
