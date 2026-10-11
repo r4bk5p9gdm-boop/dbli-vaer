@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T02:20:54Z",
+  "lastScheduledStart": "2026-10-11T02:50:55Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-471 fullført 2026-10-11: gul skravurtegnforklaring og tilhørende VoiceOver-tekst vises nå bare med aktiv solrad, både på bokmål og engelsk. Swift-parsing og diffkontroll består; XCTest ikke kjørt på grunn av typekontrollfeil i andre ulagrede tester. Bred gjennomgang av samme visning fant fast 9-punkts tegnforklaring som kan bli utilgjengelig med stor tekst eller smal bredde; AUTO-473 lagt til. Neste kø: AUTO-468 (krever godkjenning), AUTO-472 og AUTO-473."
+  "lastProgress": "AUTO-472 fullført 2026-10-11: værkonfigurasjoner avvises hvis places-feltet mangler eller ikke er en array, mens tapsfri håndtering av enkelte skadde arrayelementer er uendret. Regresjonstest lagt til, og eksisterende tester dekker delvis skadet liste. Swift-parsing og diffkontroll består; XCTest ikke kjørt på grunn av typekontrollfeil i andre ulagrede tester. Bred gjennomgang av lokal gjenoppretting fant at PersistedStoreState fortsatt godtar dupliserte steds-ID-er; AUTO-474 lagt til. Neste kø: AUTO-468 (krever godkjenning), AUTO-473 og AUTO-474."
 }

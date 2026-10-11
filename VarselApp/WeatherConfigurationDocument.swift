@@ -47,7 +47,7 @@ struct WeatherConfigurationExport: Codable {
         formatVersion = decodedFormatVersion
         exportedAt = (try? values.decode(Date.self, forKey: .exportedAt)) ?? .distantPast
         alertLanguageStyle = try? values.decode(AlertLanguageStyle.self, forKey: .alertLanguageStyle)
-        let decodedPlaces = (try? values.decode([LossyDecodable<Place>].self, forKey: .places))?.compactMap(\.value) ?? []
+        let decodedPlaces = try values.decode([LossyDecodable<Place>].self, forKey: .places).compactMap(\.value)
         places = Self.uniquePlaces(decodedPlaces)
         let decodedSelection = try? values.decode(UUID.self, forKey: .selectedPlaceID)
         selectedPlaceID = Self.resolvedSelection(decodedSelection, in: places)

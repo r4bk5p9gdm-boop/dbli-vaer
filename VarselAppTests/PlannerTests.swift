@@ -7201,6 +7201,25 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(imported.selectedPlaceID, duplicateID)
     }
 
+    func testConfigurationImportRejectsMissingOrWrongTypePlacesField() throws {
+        let place = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let source = WeatherConfigurationExport(
+            places: [place], selectedPlaceID: place.id, alertLanguageStyle: .bokmal
+        )
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let encoded = try encoder.encode(source)
+        var missingPlaces = try XCTUnwrap(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        missingPlaces.removeValue(forKey: "places")
+        var wrongTypePlaces = try XCTUnwrap(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        wrongTypePlaces["places"] = "not an array"
+
+        for object in [missingPlaces, wrongTypePlaces] {
+            let data = try JSONSerialization.data(withJSONObject: object)
+            XCTAssertThrowsError(try WeatherConfigurationDocument(data: data))
+        }
+    }
+
     func testConfigurationDocumentRejectsDirectoryInsteadOfJSONFile() {
         let directory = FileWrapper(directoryWithFileWrappers: [:])
 
