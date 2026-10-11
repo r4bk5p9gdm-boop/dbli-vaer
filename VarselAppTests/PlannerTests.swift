@@ -10543,6 +10543,31 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(model.results.map(\.id), ["new"])
     }
 
+    @MainActor
+    func testPlaceSearchCancellationCancelsTheUnderlyingOperation() async {
+        let cancelled = expectation(description: "The active MapKit operation is cancelled")
+        let search = Task {
+            try await PlaceSearchCancellation.run(
+                operation: {
+                    try await Task.sleep(for: .seconds(60))
+                    return [PlaceSearchResult(id: "stale", name: "Old", subtitle: "", latitude: 0, longitude: 0)]
+                },
+                cancel: { cancelled.fulfill() }
+            )
+        }
+
+        search.cancel()
+        await fulfillment(of: [cancelled], timeout: 5)
+        do {
+            _ = try await search.value
+            XCTFail("A cancelled place search must not return a result")
+        } catch is CancellationError {
+            // Expected: cancelling the Swift task also cancels its operation.
+        } catch {
+            XCTFail("Unexpected cancellation error: \(error)")
+        }
+    }
+
     func testPlaceSearchCopyUsesSelectedLanguageForControlsAndMessages() {
         XCTAssertEqual(PlaceSearchCopy.searchPlaceholder(.english), "Search for a city or place")
         XCTAssertEqual(PlaceSearchCopy.addPlaceTitle(.english), "Add place")

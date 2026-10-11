@@ -15,6 +15,15 @@ enum PlaceSearchScope: String, CaseIterable, Identifiable {
     var id: String { rawValue }
 }
 
+enum PlaceSearchCancellation {
+    static func run<Value>(
+        operation: @escaping () async throws -> Value,
+        cancel: @escaping @Sendable () -> Void
+    ) async throws -> Value {
+        try await withTaskCancellationHandler(operation: operation, onCancel: cancel)
+    }
+}
+
 enum PlaceSearchCopy {
     static func searchPlaceholder(_ style: AlertLanguageStyle) -> String {
         text("Søk etter by eller sted", english: "Search for a city or place", style: style)
@@ -146,7 +155,12 @@ final class PlaceSearchModel: ObservableObject {
                     span: MKCoordinateSpan(latitudeDelta: 15, longitudeDelta: 22)
                 )
             }
-            items.append(contentsOf: try await MKLocalSearch(request: request).start().mapItems)
+            let search = MKLocalSearch(request: request)
+            let response = try await PlaceSearchCancellation.run(
+                operation: { try await search.start() },
+                cancel: { search.cancel() }
+            )
+            items.append(contentsOf: response.mapItems)
         }
 
         var seen = Set<String>()
@@ -177,6 +191,8 @@ struct PlaceSearchView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var model = PlaceSearchModel()
     @State private var preposition: PlacePreposition
+    @State private var searchSubmitRevision = 0
+    @State private var handledSearchSubmitRevision = 0
     var onSelect: ((Place) -> Void)?
 
     init(initialPreposition: PlacePreposition = .i, onSelect: ((Place) -> Void)? = nil) {
@@ -194,7 +210,7 @@ struct PlaceSearchView: View {
                         .textInputAutocapitalization(.words)
                         .autocorrectionDisabled()
                         .submitLabel(.search)
-                        .onSubmit { Task { await model.search(languageStyle: store.alertLanguageStyle) } }
+                        .onSubmit { searchSubmitRevision &+= 1 }
                     if !model.query.isEmpty {
                         Button {
                             model.query = ""
@@ -286,8 +302,12 @@ struct PlaceSearchView: View {
             }
             .navigationTitle(PlaceSearchCopy.addPlaceTitle(store.alertLanguageStyle))
             .navigationBarTitleDisplayMode(.inline)
-            .task(id: "\(model.scope.rawValue)|\(model.query)|\(store.alertLanguageStyle.rawValue)") {
-                try? await Task.sleep(for: .milliseconds(350))
+            .task(id: "\(model.scope.rawValue)|\(model.query)|\(store.alertLanguageStyle.rawValue)|\(searchSubmitRevision)") {
+                let submittedImmediately = handledSearchSubmitRevision != searchSubmitRevision
+                handledSearchSubmitRevision = searchSubmitRevision
+                if !submittedImmediately {
+                    try? await Task.sleep(for: .milliseconds(350))
+                }
                 guard !Task.isCancelled else { return }
                 await model.search(languageStyle: store.alertLanguageStyle)
             }

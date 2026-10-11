@@ -369,13 +369,13 @@ deklarert lengde. Swift-kompileringen av `YrService.swift` lykkes; full appbygg
 og XCTest blokkeres av eksisterende feil i ulagrede `ContentView.swift`-endringer
 og utilgjengelig CoreSimulator.
 
-**AUTO-491 · ÅPEN** — Avbryt utdaterte MapKit-stedsøk, ikke bare ignorer
-resultatet etter at det er ferdig. `PlaceSearchModel` avviser allerede svar
-fra eldre søk med generasjonsnummer, men `searchMapKit` beholder ikke
-`MKLocalSearch`-objektene og kan derfor la nettverksarbeid fortsette etter at
-brukeren endrer søket eller lukker visningen. Koble avbrytelse av Swift-task
-til aktivt MapKit-søk og test at et erstattet søk kansellerer forrige operasjon
-uten å la et gammelt svar endre resultatlisten.
+**AUTO-491 · FULLFØRT 2026-10-11** — Avbrytelse av søkevisningens Swift-task
+kaller nå `MKLocalSearch.cancel()` for det aktive MapKit-søket. Debounce, scope,
+språk, eksplisitt innsending og lukking av visningen styres gjennom samme
+SwiftUI-task-livssyklus, slik at erstattede eller avsluttede søk ikke fortsetter
+nettverksarbeidet i bakgrunnen. Regresjonen bekrefter at task-kansellering
+kaller operasjonens avbryter og gir `CancellationError`; eksisterende test
+bekrefter fortsatt at et gammelt søkeresultat ikke erstatter det nyeste.
 
 **AUTO-492 · ÅPEN** — Gjør feil i App Group-oppsettet synlige i stedet for å
 skrive widget-/Watch-data til `UserDefaults.standard`. `SharedWidgetData.defaults`
@@ -392,6 +392,13 @@ umiddelbart nytt forsøk med uendret plan bli ignorert selv om forrige forsøk
 rapporterte delvise eller totale feil. Flytt eller juster debounce-registreringen
 slik at feil ikke undertrykker retry, og legg til injisert regresjon for delvis
 feil etterfulgt av vellykket gjentakelse uten konfigurasjonsendring.
+
+**AUTO-494 · ÅPEN** — Skjul utdaterte stedsøkeresultater mens et nytt søk
+venter eller kjører. `PlaceSearchModel` beholder dagens `results` når query eller
+scope endres, og tømmer dem først når det nye søket starter etter debounce.
+Dermed kan et gammelt sted fortsatt vises og velges for den nye søketeksten.
+Ugyldiggjør eller skjul resultatene umiddelbart ved endring, og legg til en
+regresjon som hindrer valg av gammelt resultat mens erstatningssøket pågår.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig
