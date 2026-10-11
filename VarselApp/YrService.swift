@@ -8,6 +8,8 @@ enum YrForecastPayloadError: Error, Equatable {
 enum YrService {
     static let maximumLocationForecastPayloadBytes = 2_000_000
     static let maximumLocationForecastTimeSteps = 500
+    static let maximumNowcastPayloadBytes = 512_000
+    static let maximumNowcastTimeSteps = 500
 
     // Deliberately broad physical limits: these reject corrupted payloads, not
     // rare but credible weather. MET publishes temperatures in °C, wind in
@@ -275,9 +277,15 @@ enum YrService {
     }
 
     static func decodeNowcast(_ data: Data) throws -> NowcastPayload {
+        guard data.count <= maximumNowcastPayloadBytes else {
+            throw YrForecastPayloadError.tooLarge
+        }
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         let response = try decoder.decode(NowcastResponse.self, from: data)
+        guard response.properties.timeseries.count <= maximumNowcastTimeSteps else {
+            throw YrForecastPayloadError.tooManyTimeSteps
+        }
         let ordered = response.properties.timeseries.sorted { $0.time < $1.time }
         let samples: [PrecipitationSample] = ordered.compactMap { series -> PrecipitationSample? in
             guard let rate = series.data.instant.details.precipitation_rate,

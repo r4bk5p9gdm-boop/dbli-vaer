@@ -348,12 +348,9 @@ bakoverkompatibilitet og ugyldige verdier. Swift-parsing og diffkontroll består
 XCTest er ikke kjørt fordi brukerens ulagrede `LocalCalibrationCopy.surface`
 switch i `ContentView.swift` fortsatt stopper typekontroll.
 
-**AUTO-488 · ÅPEN** — Begrens Nowcast-svar før dekoding og sortering, på samme
-måte som Locationforecast. `decodeNowcast` dekoder nå hele payloaden og
-sorterer alle tidspunktene uten størrelses- eller antallsgrense, selv om bare
-de første 90 minuttene senere brukes. Sett dokumenterte grenser for byte og
-tidsserier, avvis overgrenser før sortering, og test nøyaktig grense,
-overskridelse og normal MET-fixture.
+**AUTO-488 · FULLFØRT 2026-10-11** — Nowcast avviser nå payload over 512 KB
+før JSON-dekoding og mer enn 500 tidsserier før sortering. Regresjoner dekker
+normal MET-fixture, nøyaktig byte- og seriegrense samt overskridelse.
 
 **AUTO-489 · ÅPEN** — Bevar trygt eksisterende varsler når en
 `replacePendingAlerts`-runde avbrytes midt i planleggingen. Løkken stopper ved
@@ -370,6 +367,14 @@ men nettverkslaget kan fortsatt bruke minne på en uventet stor respons. Bruk en
 strømmet eller tilsvarende begrenset leser som håndterer manglende eller feil
 `Content-Length`, og test avbrudd når en kropp passerer grensen samt normal
 respons for begge endepunktene.
+
+**AUTO-491 · ÅPEN** — Avbryt utdaterte MapKit-stedsøk, ikke bare ignorer
+resultatet etter at det er ferdig. `PlaceSearchModel` avviser allerede svar
+fra eldre søk med generasjonsnummer, men `searchMapKit` beholder ikke
+`MKLocalSearch`-objektene og kan derfor la nettverksarbeid fortsette etter at
+brukeren endrer søket eller lukker visningen. Koble avbrytelse av Swift-task
+til aktivt MapKit-søk og test at et erstattet søk kansellerer forrige operasjon
+uten å la et gammelt svar endre resultatlisten.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

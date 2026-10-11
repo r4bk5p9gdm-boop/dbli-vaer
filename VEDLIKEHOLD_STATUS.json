@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T18:37:42Z",
+  "lastScheduledStart": "2026-10-11T18:52:42Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-487 fullført 2026-10-11: JSON-oppsettkopien tar nå med varige appvalg for favoritter, hjem/hytte, sortering, snarveinavn, tekstskilletegn, Watch og Live Activity. Forhåndsvisning forklarer hva som følger kopien; eldre kopier bevarer lokale valg, ugyldige ID-er/verdier ryddes, iOS-tillatelser og onboarding kopieres ikke. Regresjoner dekker fangst, round-trip og normalisering. Swift-parsing og diffkontroll består. XCTest er blokkert av urelatert ulagret switch-typefeil i ContentView.swift. AUTO-488, AUTO-489 og AUTO-490 står åpne etter ny bred gjennomgang; brukerens øvrige ulagrede endringer er bevart."
+  "lastProgress": "AUTO-488 fullført 2026-10-11: Nowcast avviser svar over 512 KB før JSON-dekoding og over 500 tidsserier før sortering. Regresjoner dekker normal MET-fixture, eksakt byte- og tidsseriegrense og overskridelser. Bred gjennomgang fant AUTO-491: utdaterte MapKit-søk filtreres bort fra UI, men aktive MKLocalSearch-operasjoner blir ikke eksplisitt avbrutt. Neste kø: AUTO-489, AUTO-490 og AUTO-491."
 }

@@ -7131,6 +7131,39 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testYrNowcastAcceptsPayloadAtByteLimitAndRejectsOversizedPayloadBeforeDecoding() throws {
+        let fixture = Self.nowcastFixture(rateAtFiveMinutes: 0.8)
+        XCTAssertNoThrow(try YrService.decodeNowcast(fixture))
+
+        var atLimit = fixture
+        atLimit.append(contentsOf: Data(repeating: 0x20, count: YrService.maximumNowcastPayloadBytes - fixture.count))
+        XCTAssertEqual(atLimit.count, YrService.maximumNowcastPayloadBytes)
+        XCTAssertNoThrow(try YrService.decodeNowcast(atLimit))
+
+        let oversized = Data(repeating: 0, count: YrService.maximumNowcastPayloadBytes + 1)
+        XCTAssertThrowsError(try YrService.decodeNowcast(oversized)) { error in
+            XCTAssertEqual(error as? YrForecastPayloadError, .tooLarge)
+        }
+    }
+
+    func testYrNowcastAcceptsMaximumTimeseriesCountAndRejectsOneMoreBeforeSorting() throws {
+        var root = try XCTUnwrap(JSONSerialization.jsonObject(with: Self.nowcastFixture(rateAtFiveMinutes: 0.8)) as? [String: Any])
+        var properties = try XCTUnwrap(root["properties"] as? [String: Any])
+        let series = try XCTUnwrap(properties["timeseries"] as? [[String: Any]])
+        let first = try XCTUnwrap(series.first)
+        properties["timeseries"] = Array(repeating: first, count: YrService.maximumNowcastTimeSteps)
+        root["properties"] = properties
+        let atLimit = try JSONSerialization.data(withJSONObject: root)
+        XCTAssertNoThrow(try YrService.decodeNowcast(atLimit))
+
+        properties["timeseries"] = Array(repeating: first, count: YrService.maximumNowcastTimeSteps + 1)
+        root["properties"] = properties
+        let excessive = try JSONSerialization.data(withJSONObject: root)
+        XCTAssertThrowsError(try YrService.decodeNowcast(excessive)) { error in
+            XCTAssertEqual(error as? YrForecastPayloadError, .tooManyTimeSteps)
+        }
+    }
+
     func testYrDecodersIgnoreCorruptNumbersWithoutLosingValidWeather() throws {
         let location = Data("""
         {"properties":{"timeseries":[
