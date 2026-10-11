@@ -30,6 +30,7 @@ struct LocalWeatherObservation: Codable, Identifiable {
 struct CalibrationHistory: Codable {
     var forecasts: [CalibrationForecast] = []
     var observations: [LocalWeatherObservation] = []
+    private var observationsArchiveCanBeReplaced = true
     static let retention: TimeInterval = 48 * 3600
     private static let legacyKey = "varsel.calibrationHistory.v1"
     private static let forecastsKey = "varsel.calibrationForecasts.v1"
@@ -37,6 +38,28 @@ struct CalibrationHistory: Codable {
         FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?
             .appendingPathComponent("D bli Vær", isDirectory: true)
             .appendingPathComponent("calibration-observations-v1.json")
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case forecasts, observations
+    }
+
+    init(forecasts: [CalibrationForecast] = [], observations: [LocalWeatherObservation] = []) {
+        self.forecasts = forecasts
+        self.observations = observations
+    }
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        forecasts = try values.decode([CalibrationForecast].self, forKey: .forecasts)
+        observations = try values.decode([LocalWeatherObservation].self, forKey: .observations)
+        observationsArchiveCanBeReplaced = true
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var values = encoder.container(keyedBy: CodingKeys.self)
+        try values.encode(forecasts, forKey: .forecasts)
+        try values.encode(observations, forKey: .observations)
     }
 
     func observations(for placeID: UUID, limit: Int) -> [LocalWeatherObservation] {
@@ -98,7 +121,8 @@ struct CalibrationHistory: Codable {
 
     @discardableResult
     func saveObservations(to url: URL? = nil) -> Bool {
-        guard let url = url ?? Self.observationsFileURL,
+        guard observationsArchiveCanBeReplaced,
+              let url = url ?? Self.observationsFileURL,
               let data = try? JSONEncoder().encode(observations) else { return false }
         do {
             try FileManager.default.createDirectory(
@@ -120,10 +144,19 @@ struct CalibrationHistory: Codable {
             .flatMap { try? JSONDecoder().decode([CalibrationForecast].self, from: $0) }
             ?? legacy?.forecasts ?? []
         let archiveURL = observationsURL ?? Self.observationsFileURL
-        let observations = archiveURL.flatMap { try? Data(contentsOf: $0) }
-            .flatMap { try? JSONDecoder().decode([LocalWeatherObservation].self, from: $0) }
-            ?? legacy?.observations ?? []
+        var observationsArchiveCanBeReplaced = true
+        var archivedObservations: [LocalWeatherObservation]?
+        if let archiveURL, FileManager.default.fileExists(atPath: archiveURL.path) {
+            if let data = try? Data(contentsOf: archiveURL),
+               let decoded = try? JSONDecoder().decode([LocalWeatherObservation].self, from: data) {
+                archivedObservations = decoded
+            } else {
+                observationsArchiveCanBeReplaced = quarantineUnreadableObservationsArchive(at: archiveURL)
+            }
+        }
+        let observations = archivedObservations ?? legacy?.observations ?? []
         var history = Self(forecasts: forecasts, observations: observations)
+        history.observationsArchiveCanBeReplaced = observationsArchiveCanBeReplaced
         let forecastCountBeforePruning = history.forecasts.count
         history.prune(now: now)
 
@@ -137,6 +170,22 @@ struct CalibrationHistory: Codable {
             history.saveForecasts(defaults: defaults)
         }
         return history
+    }
+
+    private static func quarantineUnreadableObservationsArchive(at url: URL) -> Bool {
+        let manager = FileManager.default
+        let fileName = url.deletingPathExtension().lastPathComponent
+        let recoveryURL = url.deletingLastPathComponent()
+            .appendingPathComponent("\(fileName).unreadable-\(UUID().uuidString).json")
+        do {
+            try manager.moveItem(at: url, to: recoveryURL)
+            return true
+        } catch {
+            // If another recovery attempt already moved it, the original path
+            // is safe to recreate. Otherwise keep future writes away from the
+            // only remaining copy of the unreadable archive.
+            return !manager.fileExists(atPath: url.path)
+        }
     }
 }
 

@@ -2820,6 +2820,78 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(FileManager.default.fileExists(atPath: archiveURL.path))
     }
 
+    func testUnreadableCalibrationArchiveIsQuarantinedBeforeLaterSave() throws {
+        let suiteName = "varsel.test.calibration-corrupt-archive.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("calibration-corrupt-\(UUID().uuidString)", isDirectory: true)
+        let archiveURL = directory.appendingPathComponent("observations.json")
+        let corruptData = Data("{not valid JSON".utf8)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        try corruptData.write(to: archiveURL)
+        defer {
+            defaults.removePersistentDomain(forName: suiteName)
+            try? FileManager.default.removeItem(at: directory)
+        }
+
+        var history = CalibrationHistory.load(now: base, defaults: defaults, observationsURL: archiveURL)
+
+        XCTAssertTrue(history.observations.isEmpty)
+        let recoveryFiles = try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
+            .filter { $0.lastPathComponent.contains(".unreadable-") }
+        XCTAssertEqual(recoveryFiles.count, 1)
+        XCTAssertEqual(try Data(contentsOf: recoveryFiles[0]), corruptData)
+
+        let place = Place(name: "Home", lat: 64, lon: 11)
+        history.observations = [LocalWeatherObservation(
+            place: place, observedAt: base, registeredAt: base,
+            measuredTemperature: nil, frost: nil, surface: "",
+            forecastFetchedAt: nil, evidence: [], nightForecast: nil
+        )]
+        XCTAssertTrue(history.saveObservations(to: archiveURL))
+        XCTAssertEqual(
+            try JSONDecoder().decode([LocalWeatherObservation].self, from: Data(contentsOf: archiveURL)).map(\.id),
+            history.observations.map(\.id)
+        )
+        XCTAssertTrue(FileManager.default.fileExists(atPath: recoveryFiles[0].path))
+    }
+
+    func testUnreadableCalibrationArchiveFallsBackToLegacyAndMigratesSafely() throws {
+        let suiteName = "varsel.test.calibration-corrupt-legacy.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("calibration-legacy-\(UUID().uuidString)", isDirectory: true)
+        let archiveURL = directory.appendingPathComponent("observations.json")
+        let corruptData = Data("truncated archive".utf8)
+        let place = Place(name: "Home", lat: 64, lon: 11)
+        let legacy = CalibrationHistory(observations: [LocalWeatherObservation(
+            place: place, observedAt: base, registeredAt: base,
+            measuredTemperature: 3, frost: nil, surface: "",
+            forecastFetchedAt: nil, evidence: [], nightForecast: nil
+        )])
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        try corruptData.write(to: archiveURL)
+        defaults.set(try JSONEncoder().encode(legacy), forKey: "varsel.calibrationHistory.v1")
+        defer {
+            defaults.removePersistentDomain(forName: suiteName)
+            try? FileManager.default.removeItem(at: directory)
+        }
+
+        let restored = CalibrationHistory.load(now: base, defaults: defaults, observationsURL: archiveURL)
+
+        XCTAssertEqual(restored.observations.map(\.id), legacy.observations.map(\.id))
+        XCTAssertNil(defaults.object(forKey: "varsel.calibrationHistory.v1"))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: archiveURL.path))
+        let recoveryFiles = try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)
+            .filter { $0.lastPathComponent.contains(".unreadable-") }
+        XCTAssertEqual(recoveryFiles.count, 1)
+        XCTAssertEqual(try Data(contentsOf: recoveryFiles[0]), corruptData)
+        XCTAssertEqual(
+            try JSONDecoder().decode([LocalWeatherObservation].self, from: Data(contentsOf: archiveURL)).map(\.id),
+            legacy.observations.map(\.id)
+        )
+    }
+
     func testFrostObservationUsesForecastFromBeforeNight() {
         let morning = Calendar.current.startOfDay(for: base).addingTimeInterval(7 * 3600)
         let place = Place(name: "Test", lat: 64, lon: 11)

@@ -274,7 +274,7 @@ over 2 MB før JSON-dekoding og prognoser med mer enn 500 tidspunkter før
 værverdiene transformeres og sorteres. Regresjoner dekker begge grenser, og
 eksisterende Yr-fixtures bekrefter normal respons.
 
-**AUTO-481 · UNDER ARBEID** — Reduser kostnaden ved voksende observasjonsarkiv
+**AUTO-481 · PÅ VENT 2026-10-11** — Reduser kostnaden ved voksende observasjonsarkiv
 uten å forkorte brukerens historikk. Listen henter nå bare 51 treff for den
 valgte siden, stopper søket når siden pluss eventuell «Vis flere» rad er funnet,
 og viser fortsatt 50 oppføringer om gangen. Regresjon dekker filtrering mellom
@@ -282,15 +282,26 @@ steder og tom side. Kildegjennomgang bekrefter at observasjoner bare legges til
 ved det manuelle «Lagre observasjon»-valget, ikke ved bakgrunnsoppdatering; den
 eksisterende 1 200-raders migrasjonstesten er en robusthetsfixture, ikke et mål
 på faktisk bruk. Hele arkivet dekodes fortsatt ved oppstart og skrives atomisk
-ved hver lagring/sletting. Før en større lagringsmigrering bør faktisk arkivstørrelse
-og lagringstid måles på en stor, realistisk historikk; nåværende kildekode viser
-ingen automatisk vekst som begrunner den kompleksiteten.
+ved hver lagring/sletting. Videre måling av faktisk vekst og lagringstid er satt
+på vent fordi repoet ikke inneholder produksjonsarkiver eller en realistisk
+enhetsprofil; 1 200-raders testen er kun syntetisk. Gjenoppta med anonymiserte
+størrelses-/tidsmålinger fra en stor historikk før en eventuell lagringsmigrering.
 
-**AUTO-482 · ÅPEN** — Bevar et uleselig observasjonsarkiv for gjenoppretting.
-`CalibrationHistory.load` faller tilbake til legacy-data eller tom liste når
-JSON-arkivet ikke kan dekodes; neste lagring kan dermed overskrive den eneste
-kopien av skadde data. Legg til en trygg karantene-/gjenopprettingssti og tester
-for skadet arkiv, fallback og senere lagring.
+**AUTO-482 · UNDER ARBEID** — Bevar et uleselig observasjonsarkiv for
+gjenoppretting. `CalibrationHistory.load` flytter nå et arkiv som ikke kan leses
+eller dekodes til en unik `.unreadable-…json`-fil før fallback; hvis flyttingen
+mislykkes, blokkeres skriving til originalbanen for å beskytte eneste kopi.
+Regresjoner dekker karantene, senere lagring og trygg migrering fra legacy-data.
+Swift-parsing består; XCTest er ikke kjørt på grunn av urelaterte ulagrede
+testendringer og begrenset diskreserve.
+
+**AUTO-483 · ÅPEN** — Gjør feil ved oppstart av stedsregioner synlige og
+gjenopprettbare. `ProximityMonitor.configure` stopper eksisterende regioner før
+den starter ønskede på nytt, men håndterer ikke rapportert monitoreringsfeil.
+Hvis en region ikke kan startes, kan «bare når jeg er i nærheten»-varsler derfor
+bli stille uteblitt. Reconcile monitorstatus etter feil, gi brukeren en tydelig
+status/handling for ny prøve, og test feil etterfulgt av vellykket
+rekonfigurering uten å logge koordinater.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig
