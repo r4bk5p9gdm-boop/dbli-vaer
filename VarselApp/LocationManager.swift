@@ -143,7 +143,9 @@ final class ProximityMonitor: NSObject, CLLocationManagerDelegate {
     private let savedNearbyKey = "nearby.weather.place.ids"
     private var wantsAlwaysAuthorization = false
     private(set) var nearbyPlaceIDs: Set<UUID>
+    private(set) var failedPlaceIDs: Set<UUID> = []
     var onChange: ((Set<UUID>) -> Void)?
+    var onMonitoringFailureChange: ((Set<UUID>) -> Void)?
 
     override init() {
         let saved = UserDefaults.standard.stringArray(forKey: savedNearbyKey) ?? []
@@ -153,11 +155,16 @@ final class ProximityMonitor: NSObject, CLLocationManagerDelegate {
     }
 
     func configure(for places: [Place]) {
-        guard CLLocationManager.isMonitoringAvailable(for: CLCircularRegion.self) else { return }
         let monitoredPlaces = Array(places.filter {
             $0.rules.contains { $0.enabled && $0.onlyWhenNearby }
         }.prefix(20))
         let wantedIDs = Set(monitoredPlaces.map(\.id))
+        updateFailedPlaceIDs(NearbyMonitoringFailureState.reconciled(failedPlaceIDs, wantedPlaceIDs: wantedIDs))
+
+        guard CLLocationManager.isMonitoringAvailable(for: CLCircularRegion.self) else {
+            updateFailedPlaceIDs(wantedIDs)
+            return
+        }
 
         for region in manager.monitoredRegions where region.identifier.hasPrefix(identifierPrefix) {
             manager.stopMonitoring(for: region)
@@ -167,7 +174,10 @@ final class ProximityMonitor: NSObject, CLLocationManagerDelegate {
         for place in monitoredPlaces {
             let center = CLLocationCoordinate2D(latitude: place.lat, longitude: place.lon)
             let maximumRadius = manager.maximumRegionMonitoringDistance
-            guard maximumRadius > 0 else { continue }
+            guard maximumRadius > 0 else {
+                updateFailedPlaceIDs(NearbyMonitoringFailureState.markedFailed(place.id, in: failedPlaceIDs))
+                continue
+            }
             let radius = min(Self.radiusMeters, maximumRadius)
             let region = CLCircularRegion(
                 center: center,
@@ -211,6 +221,22 @@ final class ProximityMonitor: NSObject, CLLocationManagerDelegate {
         Task { @MainActor in set(region: region, isNearby: true) }
     }
 
+    nonisolated func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion) {
+        Task { @MainActor in
+            guard self.manager === manager, let id = self.placeID(for: region) else { return }
+            self.updateFailedPlaceIDs(NearbyMonitoringFailureState.markedStarted(id, in: self.failedPlaceIDs))
+        }
+    }
+
+    nonisolated func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
+        guard let region else { return }
+        Task { @MainActor in
+            guard self.manager === manager, let id = self.placeID(for: region) else { return }
+            self.set(region: region, isNearby: false)
+            self.updateFailedPlaceIDs(NearbyMonitoringFailureState.markedFailed(id, in: self.failedPlaceIDs))
+        }
+    }
+
     nonisolated func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
         Task { @MainActor in set(region: region, isNearby: false) }
     }
@@ -226,11 +252,15 @@ final class ProximityMonitor: NSObject, CLLocationManagerDelegate {
     }
 
     private func set(region: CLRegion, isNearby: Bool) {
-        guard region.identifier.hasPrefix(identifierPrefix),
-              let id = UUID(uuidString: String(region.identifier.dropFirst(identifierPrefix.count))) else { return }
+        guard let id = placeID(for: region) else { return }
         var updated = nearbyPlaceIDs
         if isNearby { updated.insert(id) } else { updated.remove(id) }
         updateNearbyIDs(updated)
+    }
+
+    private func placeID(for region: CLRegion) -> UUID? {
+        guard region.identifier.hasPrefix(identifierPrefix) else { return nil }
+        return UUID(uuidString: String(region.identifier.dropFirst(identifierPrefix.count)))
     }
 
     private func updateNearbyIDs(_ updated: Set<UUID>) {
@@ -238,5 +268,25 @@ final class ProximityMonitor: NSObject, CLLocationManagerDelegate {
         nearbyPlaceIDs = updated
         UserDefaults.standard.set(updated.map(\.uuidString), forKey: savedNearbyKey)
         onChange?(updated)
+    }
+
+    private func updateFailedPlaceIDs(_ updated: Set<UUID>) {
+        guard updated != failedPlaceIDs else { return }
+        failedPlaceIDs = updated
+        onMonitoringFailureChange?(updated)
+    }
+}
+
+enum NearbyMonitoringFailureState {
+    static func reconciled(_ failedIDs: Set<UUID>, wantedPlaceIDs: Set<UUID>) -> Set<UUID> {
+        failedIDs.intersection(wantedPlaceIDs)
+    }
+
+    static func markedFailed(_ placeID: UUID, in failedIDs: Set<UUID>) -> Set<UUID> {
+        failedIDs.union([placeID])
+    }
+
+    static func markedStarted(_ placeID: UUID, in failedIDs: Set<UUID>) -> Set<UUID> {
+        failedIDs.subtracting([placeID])
     }
 }

@@ -1374,6 +1374,24 @@ final class PlannerTests: XCTestCase {
         ))
     }
 
+    func testNearbyMonitoringFailureClearsAfterRetryStartsAndReconcileDropsRemovedPlaces() {
+        let placeID = UUID()
+        var failedIDs = NearbyMonitoringFailureState.markedFailed(placeID, in: [])
+        XCTAssertEqual(failedIDs, [placeID])
+
+        failedIDs = NearbyMonitoringFailureState.reconciled(
+            failedIDs, wantedPlaceIDs: [placeID]
+        )
+        XCTAssertEqual(failedIDs, [placeID], "Reconfiguration must keep the issue visible until monitoring succeeds")
+
+        failedIDs = NearbyMonitoringFailureState.markedStarted(placeID, in: failedIDs)
+        XCTAssertTrue(failedIDs.isEmpty, "A successful retry should clear the monitoring issue")
+
+        failedIDs = NearbyMonitoringFailureState.markedFailed(placeID, in: failedIDs)
+        failedIDs = NearbyMonitoringFailureState.reconciled(failedIDs, wantedPlaceIDs: [])
+        XCTAssertTrue(failedIDs.isEmpty, "Removing the nearby-only rule should clear its stale issue")
+    }
+
     func testDisabledRuleNeverCreatesPushAlert() {
         var rule = Rule(type: .regn)
         rule.enabled = false

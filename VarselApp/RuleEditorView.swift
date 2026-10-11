@@ -103,6 +103,19 @@ struct RuleEditorView: View {
                          : "Varsler uansett hvor du befinner deg.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)
+                    if rule.onlyWhenNearby && !store.nearbyMonitoringFailedPlaceIDs.isEmpty {
+                        Label(
+                            store.alertLanguageStyle == .english
+                                ? "Nearby alerts could not be activated."
+                                : "Nærhetsvarsler kunne ikke aktiveres.",
+                            systemImage: "exclamationmark.triangle"
+                        )
+                        .font(.footnote)
+                        .foregroundStyle(.orange)
+                        Button(store.alertLanguageStyle == .english ? "Try Again" : "Prøv igjen") {
+                            store.retryNearbyMonitoring()
+                        }
+                    }
                 }
 
                 if rule.previousDayNotificationHour != nil {

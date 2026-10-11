@@ -295,13 +295,13 @@ Regresjoner dekker karantene, senere lagring og trygg migrering fra legacy-data.
 Swift-parsing består; XCTest er ikke kjørt på grunn av urelaterte ulagrede
 testendringer og begrenset diskreserve.
 
-**AUTO-483 · ÅPEN** — Gjør feil ved oppstart av stedsregioner synlige og
-gjenopprettbare. `ProximityMonitor.configure` stopper eksisterende regioner før
-den starter ønskede på nytt, men håndterer ikke rapportert monitoreringsfeil.
-Hvis en region ikke kan startes, kan «bare når jeg er i nærheten»-varsler derfor
-bli stille uteblitt. Reconcile monitorstatus etter feil, gi brukeren en tydelig
-status/handling for ny prøve, og test feil etterfulgt av vellykket
-rekonfigurering uten å logge koordinater.
+**AUTO-483 · PÅ VENT 2026-10-11** — Kode for å vise monitoreringsfeil, ta
+nærhetssted ut av aktiv status ved feil og tilby «Prøv igjen» er skrevet, med
+regresjon for feil → vellykket retry. Swift-parsing består, men Xcode-bygg og
+XCTest stopper på ulagrede brukerendringer i `ContentView.swift`: Swift-klager
+på manglende `return` i `LocalCalibrationView` sin engelske `switch`-oversettelse.
+Den filen er ikke endret av denne oppgaven; gjenoppta typekontroll og test når
+brukerens pågående endring er kompilérbar. Ingen koordinater logges.
 
 **AUTO-484 · FULLFØRT 2026-10-11** — Rettet to feil som Xcode-bygg avdekket:
 tom Yr-prognose lagret ikke den oppryddede kalibreringshistorikken, og

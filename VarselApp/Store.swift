@@ -390,6 +390,7 @@ final class Store: ObservableObject {
         }
     }
     @Published private(set) var nearbyPlaceIDs: Set<UUID> = []
+    @Published private(set) var nearbyMonitoringFailedPlaceIDs: Set<UUID> = []
     private var lastReplanSignature: Int?
     private var lastReplanAt: Date?
 
@@ -591,6 +592,9 @@ final class Store: ObservableObject {
             self.nearbyPlaceIDs = nearbyIDs
             Task { await self.replan() }
         }
+        monitor.onMonitoringFailureChange = { [weak self] failedIDs in
+            self?.nearbyMonitoringFailedPlaceIDs = failedIDs
+        }
         monitor.configure(for: places)
         if !restoredSavedPlaces || needsPersistedStateRepair { save() }
     }
@@ -653,6 +657,10 @@ final class Store: ObservableObject {
 
     func requestNearbyAuthorization() {
         proximityMonitor.requestBackgroundAuthorization()
+        proximityMonitor.configure(for: places)
+    }
+
+    func retryNearbyMonitoring() {
         proximityMonitor.configure(for: places)
     }
 
