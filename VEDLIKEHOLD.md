@@ -274,11 +274,12 @@ over 2 MB før JSON-dekoding og prognoser med mer enn 500 tidspunkter før
 værverdiene transformeres og sorteres. Regresjoner dekker begge grenser, og
 eksisterende Yr-fixtures bekrefter normal respons.
 
-**AUTO-481 · ÅPEN** — Gjennomgå kostnaden ved voksende observasjonsarkiv.
-`CalibrationHistory.saveObservations` koder og skriver hele arkivet atomisk ved
-hver registrering og sletting, mens visningen laster alle registreringene før
-den viser 50 om gangen. Mål realistisk vekst og finn en paginert eller
-append-vennlig løsning uten å forkorte brukerens historikk.
+**AUTO-481 · UNDER ARBEID** — Reduser kostnaden ved voksende observasjonsarkiv
+uten å forkorte brukerens historikk. Listen henter nå bare 51 treff for den
+valgte siden, stopper søket når siden pluss eventuell «Vis flere» rad er funnet,
+og viser fortsatt 50 oppføringer om gangen. Regresjon dekker filtrering mellom
+steder og tom side. Gjenstår å måle realistisk arkivvekst og vurdere at lasting
+og atomisk omskriving av hele lagringsfilen fortsatt skalerer med historikken.
 
 **AUTO-482 · ÅPEN** — Bevar et uleselig observasjonsarkiv for gjenoppretting.
 `CalibrationHistory.load` faller tilbake til legacy-data eller tom liste når

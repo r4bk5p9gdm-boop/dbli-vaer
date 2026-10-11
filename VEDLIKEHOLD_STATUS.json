@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T06:50:56Z",
+  "lastScheduledStart": "2026-10-11T07:20:56Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-480 fullført 2026-10-11: Yr Locationforecast-avkoding begrenser nå nyttelasten til 2 MB og tidsserielisten til 500 oppføringer før verdier transformeres/sorteres; tester dekker begge overskridelser, mens vanlige fixtures fortsatt dekodes. Bred gjennomgang lar observasjonsarkivets kostnad ved økende historikk (AUTO-481) og gjenoppretting av skadet JSON-arkiv (AUTO-482) stå som neste konkrete funn. Swift-parsing og diffkontroll består; XCTest ikke kjørt grunnet lav diskreserve og kjente typekontrollfeil i andre ulagrede tester. Neste kø: AUTO-468 (krever godkjenning), AUTO-481 og AUTO-482."
+  "lastProgress": "AUTO-481 framdrift 2026-10-11: Lokale målinger henter nå bare sidens 51 første treff per sted, slik at visningen kan tilby 50 om gangen uten å materialisere alle matchende oppføringer ved hver oppdatering. Regresjon dekker stedfiltrering, siderekkefølge og tom grense. Arkivlasting og atomisk helfilskriving er fortsatt O(n), så AUTO-481 står UNDER ARBEID mens realistisk vekst måles og en append-vennlig løsning vurderes uten historikkap. AUTO-482 gjelder skadet arkiv. Swift-parsing og diffkontroll består; XCTest ikke kjørt på grunn av lav diskreserve og kjente typekontrollfeil i andre ulagrede tester. Neste kø: AUTO-468 (krever godkjenning), AUTO-481 (pågår) og AUTO-482."
 }

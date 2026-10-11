@@ -93,7 +93,7 @@ struct LocalCalibrationView: View {
                     }.disabled(!valid)
                 }
                 Section(copy("Registreringer", "Records")) {
-                    let observations = store.calibration.observations.filter { $0.place.id == placeID }
+                    let observations = store.calibration.observations(for: placeID, limit: visibleObservationCount + 1)
                     if observations.isEmpty { Text(copy("Ingen registreringer ennå.", "No records yet.")).foregroundStyle(.secondary) }
                     ForEach(observations.prefix(visibleObservationCount)) { observation in
                         DisclosureGroup {

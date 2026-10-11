@@ -39,6 +39,17 @@ struct CalibrationHistory: Codable {
             .appendingPathComponent("calibration-observations-v1.json")
     }
 
+    func observations(for placeID: UUID, limit: Int) -> [LocalWeatherObservation] {
+        guard limit > 0 else { return [] }
+        var page: [LocalWeatherObservation] = []
+        page.reserveCapacity(min(limit, observations.count))
+        for observation in observations where observation.place.id == placeID {
+            page.append(observation)
+            if page.count == limit { break }
+        }
+        return page
+    }
+
     mutating func prune(now: Date) {
         forecasts.removeAll { $0.fetchedAt < now.addingTimeInterval(-Self.retention) || $0.fetchedAt > now }
     }

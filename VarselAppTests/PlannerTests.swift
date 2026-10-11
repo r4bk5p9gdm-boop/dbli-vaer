@@ -2754,6 +2754,34 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(decoded.observations.first?.evidence.first?.temp, 4)
     }
 
+    func testCalibrationObservationPageStopsAfterRequestedNumberOfPlaceMatches() {
+        let reference = base
+        let home = Place(name: "Home", lat: 64, lon: 11)
+        let cabin = Place(name: "Cabin", lat: 65, lon: 12)
+        func observation(_ place: Place, _ minute: Int) -> LocalWeatherObservation {
+            LocalWeatherObservation(
+                place: place,
+                observedAt: reference.addingTimeInterval(TimeInterval(-minute * 60)),
+                registeredAt: reference,
+                measuredTemperature: nil,
+                frost: minute.isMultiple(of: 2),
+                surface: "Grass",
+                forecastFetchedAt: nil,
+                evidence: [],
+                nightForecast: nil
+            )
+        }
+        let history = CalibrationHistory(observations: [
+            observation(home, 1), observation(cabin, 2), observation(home, 3), observation(home, 4)
+        ])
+
+        XCTAssertEqual(history.observations(for: home.id, limit: 2).map(\.observedAt), [
+            reference.addingTimeInterval(-60), reference.addingTimeInterval(-180)
+        ])
+        XCTAssertTrue(history.observations(for: home.id, limit: 0).isEmpty)
+        XCTAssertTrue(history.observations(for: home.id, limit: -1).isEmpty)
+    }
+
     func testCalibrationLargeObservationHistoryMigratesOutOfUserDefaults() throws {
         let place = Place(name: "Test", lat: 64, lon: 11)
         let observations = (0..<1_200).map { index in
