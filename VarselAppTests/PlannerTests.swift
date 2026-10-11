@@ -7347,6 +7347,7 @@ final class PlannerTests: XCTestCase {
         let restored = try decoder.decode(WeatherConfigurationExport.self, from: encoder.encode(export))
 
         XCTAssertEqual(restored.alertLanguageStyle, .english)
+        XCTAssertNil(restored.appSettings, "Older setup copies remain valid and do not overwrite app preferences.")
         XCTAssertEqual(restored.selectedPlaceID, place.id)
         XCTAssertEqual(restored.places.first?.nameWithPreposition, "nerri Namsos")
         XCTAssertEqual(restored.places.first?.localTemperatureOffset, -1.5)
@@ -7382,6 +7383,110 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(importedPlace.name, "Åfjord")
         XCTAssertEqual(importedPlace.temperatureOffset, -1.5)
         XCTAssertEqual(importedPlace.rules.first?.threshold, 4.5)
+    }
+
+    func testConfigurationDocumentRoundTripIncludesDurableAppSettings() throws {
+        let place = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        var settings = ApplicationSettingsBackup(homeFavorites: HomeFavorites())
+        settings.homeFavorites = HomeFavorites(left: place.id, right: nil)
+        settings.homePlaceID = place.id.uuidString
+        settings.cabinPlaceID = ""
+        settings.placeSortMode = "manual"
+        settings.homeShortcutTitle = "Hjemme"
+        settings.cabinShortcutTitle = ""
+        settings.textSeparator = WeatherTextSeparator.bullet.rawValue
+        settings.watchPlaceSource = WatchPlaceSource.fixed.rawValue
+        settings.watchFixedPlaceID = place.id.uuidString
+        settings.liveWeatherActivitiesEnabled = false
+        let document = WeatherConfigurationDocument(
+            places: [place], selectedPlaceID: place.id, alertLanguageStyle: .bokmal,
+            appSettings: settings
+        )
+
+        let restored = try WeatherConfigurationDocument(data: document.serializedData()).configuration
+
+        XCTAssertEqual(restored.appSettings, settings)
+    }
+
+    func testApplicationSettingsBackupCapturesStandardAndSharedPreferences() {
+        let suiteID = "varsel.test.configuration-settings.\(UUID().uuidString)"
+        let defaults = try! XCTUnwrap(UserDefaults(suiteName: suiteID))
+        let sharedDefaults = try! XCTUnwrap(UserDefaults(suiteName: "\(suiteID).shared"))
+        defer {
+            defaults.removePersistentDomain(forName: suiteID)
+            sharedDefaults.removePersistentDomain(forName: "\(suiteID).shared")
+        }
+        let placeID = UUID()
+        defaults.set(placeID.uuidString, forKey: PlaceOrderingSettings.homePlaceIDKey)
+        defaults.set("Hjemme", forKey: PlaceOrderingSettings.homeShortcutTitleKey)
+        defaults.set("manual", forKey: PlaceOrderingSettings.sortModeKey)
+        defaults.set("fixed", forKey: WatchPlaceSettings.sourceKey)
+        defaults.set(false, forKey: LiveWeatherActivitySettings.enabledKey)
+        sharedDefaults.set(WeatherTextSeparator.comma.rawValue, forKey: WeatherTextSeparator.key)
+
+        let backup = ApplicationSettingsBackup(
+            homeFavorites: HomeFavorites(left: placeID, right: nil),
+            defaults: defaults,
+            sharedDefaults: sharedDefaults
+        )
+        defaults.set("", forKey: PlaceOrderingSettings.homePlaceIDKey)
+        sharedDefaults.set(WeatherTextSeparator.dash.rawValue, forKey: WeatherTextSeparator.key)
+        backup.persist(to: defaults, sharedDefaults: sharedDefaults)
+        let restored = ApplicationSettingsBackup(
+            homeFavorites: HomeFavorites(left: placeID, right: nil),
+            defaults: defaults,
+            sharedDefaults: sharedDefaults
+        )
+
+        XCTAssertEqual(backup.homeFavorites.left, placeID)
+        XCTAssertEqual(backup.homePlaceID, placeID.uuidString)
+        XCTAssertEqual(backup.homeShortcutTitle, "Hjemme")
+        XCTAssertEqual(backup.placeSortMode, "manual")
+        XCTAssertEqual(backup.watchPlaceSource, "fixed")
+        XCTAssertFalse(backup.liveWeatherActivitiesEnabled)
+        XCTAssertEqual(backup.textSeparator, WeatherTextSeparator.comma.rawValue)
+        XCTAssertEqual(restored, backup)
+    }
+
+    func testConfigurationImportNormalizesAppSettingsAgainstImportedPlaces() {
+        let importedPlace = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let omittedPlaceID = UUID()
+        var settings = ApplicationSettingsBackup(homeFavorites: HomeFavorites())
+        settings.homeFavorites = HomeFavorites(left: importedPlace.id, right: omittedPlaceID)
+        settings.homePlaceID = importedPlace.id.uuidString
+        settings.cabinPlaceID = omittedPlaceID.uuidString
+        settings.placeSortMode = "unknown"
+        settings.homeShortcutTitle = String(repeating: "H", count: 140)
+        settings.textSeparator = "unknown"
+        settings.watchPlaceSource = "unknown"
+        settings.watchFixedPlaceID = omittedPlaceID.uuidString
+        let configuration = WeatherConfigurationExport(
+            places: [importedPlace], selectedPlaceID: importedPlace.id,
+            alertLanguageStyle: .bokmal, appSettings: settings
+        )
+
+        let plan = ConfigurationImportPlan(
+            configuration: configuration, currentPlaces: [], currentSelection: nil,
+            currentLanguageStyle: .english, mode: .replace
+        )
+
+        XCTAssertEqual(plan.appSettings?.homeFavorites, HomeFavorites(left: importedPlace.id, right: nil))
+        XCTAssertEqual(plan.appSettings?.homePlaceID, importedPlace.id.uuidString)
+        XCTAssertEqual(plan.appSettings?.cabinPlaceID, "")
+        XCTAssertEqual(plan.appSettings?.placeSortMode, "automatic")
+        XCTAssertEqual(plan.appSettings?.homeShortcutTitle, String(repeating: "H", count: 120))
+        XCTAssertEqual(plan.appSettings?.textSeparator, WeatherTextSeparator.space.rawValue)
+        XCTAssertEqual(plan.appSettings?.watchPlaceSource, WatchPlaceSource.position.rawValue)
+        XCTAssertEqual(plan.appSettings?.watchFixedPlaceID, "")
+
+        let oldBackup = WeatherConfigurationExport(
+            places: [importedPlace], selectedPlaceID: importedPlace.id, alertLanguageStyle: .bokmal
+        )
+        let oldPlan = ConfigurationImportPlan(
+            configuration: oldBackup, currentPlaces: [], currentSelection: nil,
+            currentLanguageStyle: .english, mode: .replace
+        )
+        XCTAssertNil(oldPlan.appSettings)
     }
 
     func testConfigurationDocumentFileRoundTripPreservesEmptyPlacesAndLanguage() throws {

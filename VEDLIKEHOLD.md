@@ -337,14 +337,16 @@ ukjent autorisasjonsstatus. Swift-parsing og diffkontroll består; XCTest/build
 er ikke kjørt fordi Xcode typekontroll fortsatt stoppes av den ulagrede
 `ContentView.swift`-feilen dokumentert under AUTO-483.
 
-**AUTO-487 · ÅPEN** — Utvid oppsettets eksport/import til en faktisk kopi av
-appinnstillingene, ikke bare steder, valgt sted og varslingsspråk. Ta med de
-varige brukerinnstillingene som favoritter og hjem/hytte-snarveier,
-sorteringsvalg, tekstskilletegn, Watch-sted og Live Activity-valg. Avklar
-eksplisitt hvilke enhetsbundne eller sikkerhetsfølsomme verdier som ikke skal
-kopieres, og valider ukjente/ugyldige verdier trygt. Forhåndsvisningen må gjøre
-det tydelig hvilke valg som blir overskrevet; tester skal dekke round-trip,
-bakoverkompatibilitet og at import ikke endrer utelatte innstillinger.
+**AUTO-487 · FULLFØRT 2026-10-11** — Oppsettets JSON-kopi tar nå også med
+varige appvalg: hjemfavoritter, Hjem/Hytta-ID-er og egne snarveinavn,
+sorteringsvalg, tekstskilletegn, Watch-sted og Live Activity-valg. Forhåndsvis-
+ningen viser hvilke valg som følger en ny kopi; eldre kopier uten feltet lar
+appvalgene stå uendret. Import rydder ugyldige sted-ID-er og enumverdier, og
+avgrenser snarveinavn til 120 tegn. iOS-tillatelser og oppstartsstatus kopieres
+ikke. Regresjoner dekker fangst av standard-/delte innstillinger, round-trip,
+bakoverkompatibilitet og ugyldige verdier. Swift-parsing og diffkontroll består;
+XCTest er ikke kjørt fordi brukerens ulagrede `LocalCalibrationCopy.surface`
+switch i `ContentView.swift` fortsatt stopper typekontroll.
 
 **AUTO-488 · ÅPEN** — Begrens Nowcast-svar før dekoding og sortering, på samme
 måte som Locationforecast. `decodeNowcast` dekoder nå hele payloaden og
@@ -360,6 +362,14 @@ ventende forespørsler som ennå ikke ble forsøkt erstattet. Spor ubehandlede
 ID-er som bevaringskandidater ved kansellering, uten å beholde varsler som er
 bekreftet foreldet; legg til en injisert-center-regresjon for kansellering
 etter første erstatning.
+
+**AUTO-490 · ÅPEN** — Begrens vær-API-svar mens de lastes ned, ikke bare etter
+at `URLSession.data(for:)` allerede har buffered hele kroppen. AUTO-480 og
+AUTO-488 avviser store Locationforecast- og Nowcast-data før JSON-dekoding,
+men nettverkslaget kan fortsatt bruke minne på en uventet stor respons. Bruk en
+strømmet eller tilsvarende begrenset leser som håndterer manglende eller feil
+`Content-Length`, og test avbrudd når en kropp passerer grensen samt normal
+respons for begge endepunktene.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

@@ -1045,6 +1045,10 @@ final class Store: ObservableObject {
             currentLocationCourse = nil
         }
         alertLanguageStyle = plan.alertLanguageStyle
+        if let settings = plan.appSettings {
+            homeFavorites = settings.homeFavorites
+            settings.persist()
+        }
         proximityMonitor.configure(for: places)
         save()
         Task { await replan() }

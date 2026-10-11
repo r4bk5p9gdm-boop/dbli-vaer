@@ -2368,7 +2368,12 @@ struct PlacesView: View {
             }
             .fileExporter(
                 isPresented: $showingExporter,
-                document: WeatherConfigurationDocument(places: store.places, selectedPlaceID: store.selectedID, alertLanguageStyle: store.alertLanguageStyle),
+                document: WeatherConfigurationDocument(
+                    places: store.places,
+                    selectedPlaceID: store.selectedID,
+                    alertLanguageStyle: store.alertLanguageStyle,
+                    appSettings: ApplicationSettingsBackup(homeFavorites: store.homeFavorites)
+                ),
                 contentType: .json,
                 defaultFilename: "D-bli-Vaer-oppsett"
             ) { result in
@@ -2471,15 +2476,22 @@ struct PlacesView: View {
                         localized("Varslingsspråk", english: "Alert language"),
                         value: configuration.alertLanguageStyle?.label ?? localized("Uendret", english: "Unchanged")
                     )
-                    Text(localized(
-                        "Andre appvalg utenfor denne kopien forblir uendret.",
-                        english: "Other app preferences not included in this backup remain unchanged."
-                    )).font(.footnote).foregroundStyle(.secondary)
+                    if configuration.appSettings != nil {
+                        Text(localized(
+                            "Kopien inneholder også favoritter, Hjem/Hytta-snarveier, sortering, tekstformat, Watch-sted og Live Activity-valg. iOS-tillatelser og oppstartsstatus kopieres ikke.",
+                            english: "The backup also includes favorites, Home/Cabin shortcuts, sorting, text format, Watch place and Live Activity choice. iOS permissions and onboarding status are not copied."
+                        )).font(.footnote).foregroundStyle(.secondary)
+                    } else {
+                        Text(localized(
+                            "Denne eldre kopien inneholder ikke de ekstra appvalgene. De forblir uendret.",
+                            english: "This older backup does not include the additional app preferences. They remain unchanged."
+                        )).font(.footnote).foregroundStyle(.secondary)
+                    }
                 }
                 Section(localized("Hvis du slår sammen", english: "If you merge")) {
                     Text(localized(
-                        "Steder med samme ID oppdateres fra kopien. Andre steder beholdes, og nye steder legges til. Valgt sted og varslingsspråk følger også kopien.",
-                        english: "Places with a matching ID are updated from the backup. Other places stay, and new places are added. The selected place and alert language also follow the backup."
+                        "Steder med samme ID oppdateres fra kopien. Andre steder beholdes, og nye steder legges til. Valgt sted, varslingsspråk og inkluderte appvalg følger også kopien.",
+                        english: "Places with a matching ID are updated from the backup. Other places stay, and new places are added. The selected place, alert language and included app preferences also follow the backup."
                     ))
                     LabeledContent(localized("Nye", english: "Added"), value: "\(mergePlan.addedPlaceCount)")
                     LabeledContent(localized("Oppdateres", english: "Updated"), value: "\(mergePlan.updatedPlaceCount)")
@@ -2487,8 +2499,8 @@ struct PlacesView: View {
                 }
                 Section(localized("Hvis du erstatter", english: "If you replace")) {
                     Text(localized(
-                        "Alle lagrede steder og varslingsregler erstattes. Valgt sted og varslingsspråk følger kopien.",
-                        english: "All saved places and alert rules are replaced. The selected place and alert language follow the backup."
+                        "Alle lagrede steder og varslingsregler erstattes. Valgt sted, varslingsspråk og inkluderte appvalg følger kopien.",
+                        english: "All saved places and alert rules are replaced. The selected place, alert language and included app preferences follow the backup."
                     ))
                     LabeledContent(localized("Etterpå", english: "Afterward"), value: "\(replacePlan.places.count) \(localized("steder", english: "places"))")
                 }
