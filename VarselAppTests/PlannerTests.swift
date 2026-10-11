@@ -7097,6 +7097,32 @@ final class PlannerTests: XCTestCase {
         XCTAssertThrowsError(try WeatherConfigurationDocument(file: file))
     }
 
+    func testConfigurationExportFailureIsActionableLocalizedAndHidesSystemDetails() throws {
+        let error = NSError(
+            domain: "Exporter",
+            code: 1,
+            userInfo: [NSLocalizedDescriptionKey: "/private/user/Documents/secret.json"]
+        )
+        let norwegian = try XCTUnwrap(
+            ConfigurationExportFailure.message(for: error, languageStyle: .bokmal)
+        )
+        XCTAssertTrue(norwegian.contains("Prøv eksporten på nytt"))
+        XCTAssertFalse(norwegian.contains("secret.json"))
+
+        let english = try XCTUnwrap(
+            ConfigurationExportFailure.message(for: error, languageStyle: .english)
+        )
+        XCTAssertTrue(english.contains("Try exporting again"))
+        XCTAssertFalse(english.contains("secret.json"))
+        XCTAssertNil(ConfigurationExportFailure.message(
+            for: CancellationError(), languageStyle: .bokmal
+        ))
+        XCTAssertNil(ConfigurationExportFailure.message(
+            for: NSError(domain: NSCocoaErrorDomain, code: NSUserCancelledError),
+            languageStyle: .bokmal
+        ))
+    }
+
     func testConfigurationDocumentRejectsJSONWithNonObjectTopLevelValue() {
         for json in ["null", "[]", "42", "\"configuration\""] {
             let file = FileWrapper(regularFileWithContents: Data(json.utf8))

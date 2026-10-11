@@ -2098,6 +2098,7 @@ struct PlacesView: View {
     @State private var showingSearch = false
     @State private var locationError: String?
     @State private var showingExporter = false
+    @State private var exportFailureMessage: String?
     @State private var editingPlaces = false
     @State private var placeExpansion = PlaceExpansionState()
     @AppStorage(PlaceOrderingSettings.homePlaceIDKey) private var homePlaceID = ""
@@ -2299,7 +2300,29 @@ struct PlacesView: View {
                 document: WeatherConfigurationDocument(places: store.places, selectedPlaceID: store.selectedID, alertLanguageStyle: store.alertLanguageStyle),
                 contentType: .json,
                 defaultFilename: "D-bli-Vaer-oppsett"
-            ) { _ in }
+            ) { result in
+                if case let .failure(error) = result {
+                    exportFailureMessage = ConfigurationExportFailure.message(
+                        for: error,
+                        languageStyle: store.alertLanguageStyle
+                    )
+                } else {
+                    exportFailureMessage = nil
+                }
+            }
+            .alert(
+                store.alertLanguageStyle == .english
+                    ? "Could not export setup"
+                    : WeatherLanguage.text("Kunne ikke eksportere oppsettet", style: store.alertLanguageStyle),
+                isPresented: Binding(
+                    get: { exportFailureMessage != nil },
+                    set: { if !$0 { exportFailureMessage = nil } }
+                )
+            ) {
+                Button("OK", role: .cancel) { exportFailureMessage = nil }
+            } message: {
+                Text(exportFailureMessage ?? "")
+            }
             .onChange(of: store.places.map(\.id)) { _, placeIDs in
                 placeExpansion.reconcile(availablePlaceIDs: Set(placeIDs))
             }

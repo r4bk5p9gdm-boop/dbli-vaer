@@ -86,3 +86,19 @@ struct WeatherConfigurationDocument: FileDocument {
         return try encoder.encode(self.configuration)
     }
 }
+
+enum ConfigurationExportFailure {
+    static func message(for error: Error, languageStyle: AlertLanguageStyle) -> String? {
+        let systemError = error as NSError
+        let wasCancelled = error is CancellationError
+            || (systemError.domain == NSCocoaErrorDomain && systemError.code == NSUserCancelledError)
+        guard !wasCancelled else { return nil }
+        if languageStyle == .english {
+            return "Try exporting again, and choose a different location if the problem continues."
+        }
+        return WeatherLanguage.text(
+            "Prøv eksporten på nytt, og velg en annen plassering hvis problemet fortsetter.",
+            style: languageStyle
+        )
+    }
+}

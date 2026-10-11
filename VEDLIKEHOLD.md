@@ -149,12 +149,11 @@ referert plist inneholder appgruppe-ID-en som `SharedWidgetData` faktisk bruker.
 Skriptet feiler ved manglende fil, feil mål-/konfigurasjonskobling eller
 manglende appgruppe; det bygger eller endrer ikke signering.
 
-**AUTO-466 · ÅPEN** — Ikke presenter en kort prognose som full oversikt over
-kommende pushvarsler. Yr-data med bare tre sammenhengende timer godtas nå som
-brukbar prognose, men Hjem-seksjonen kan vise «Ingen pushvarsler er ventet» selv
-om den ikke har data for resten av varslingshorisonten. Skill mellom ingen
-treff i de tilgjengelige timene og manglende dekning for hele perioden; test
-kort og full prognosedekning uten å endre selve pushplanleggingen.
+**AUTO-466 · PÅ VENT 2026-10-11** — Arbeidet er utsatt fordi
+`ContentView.swift` har ulagrede brukerendringer i den kommende-pushvisningen,
+som er akkurat der prognosedekning og tomresultat må skilles.
+Vent til brukerens visningsendringer er avklart, så varslingsteksten kan endres
+uten å overskrive eller blande seg inn i det pågående arbeidet.
 
 **AUTO-463 · FULLFØRT 2026-10-10** — GPS-fiks må nå være høyst to minutter
 gammel, ikke mer enn ett minutt fram i tid, ha endelig nøyaktighet på maks 100 m
@@ -178,17 +177,29 @@ Send ferskhetsstatus inn i seksjonen, skill tydelig mellom tom prognose og
 foreldet offline-visning, og test at en foreldet, vist cache ikke blir omtalt
 som kommende pushvarsler.
 
-**AUTO-467 · ÅPEN** — Vis en handlingsbar, lokalisert melding hvis
-oppsetteksporten feiler. `fileExporter`-resultatet på Steder ignoreres nå;
-undersøk hvordan SwiftUI rapporterer avbrudd kontra reell skrivefeil, og vis
-bare feil som krever brukerhandling. Regresjonstest feilmappingen uten å
-eksponere filsti eller innhold.
+**AUTO-467 · FULLFØRT 2026-10-11** — Steder viser nå en lokalisert og
+handlingsbar melding hvis oppsetteksporten feiler. Brukeravbrudd forblir stille,
+og systemets feiltekst, filsti og innhold vises aldri. Regresjonstest dekker
+bokmål/engelsk, kansellering og at detaljer ikke lekker. Swift-parsing og
+diffkontroll består; XCTest ikke kjørt på grunn av eksisterende testmålfeil.
 
 **AUTO-468 · ÅPEN · KREVER GODKJENNING** — `WeatherConfigurationDocument`
 kan dekode sikkerhetskopier, men appen tilbyr ikke en tilsvarende
 gjenopprettingshandling. Vurder en trygg importflyt med forhåndsvisning og
 bekreftelse før steder erstattes eller flettes; be om godkjenning før den
 større brukerflytendringen implementeres.
+
+**AUTO-469 · ÅPEN** — Avvis ugyldig negativt eller null `formatVersion` i
+oppsettfiler. Dekoderen avviser versjoner over støttet maksimum, men godtar i
+dag 0 og negative heltall som om de var brukbare formater. Behold bakoverstøtten
+for manglende eller feiltypet valgfri metadata; regresjonstest begge ugyldige
+grenseverdier.
+
+**AUTO-470 · ÅPEN** — Håndter dupliserte steds-ID-er i importerte oppsett før
+de eventuelt brukes i visning eller gjenoppretting. `WeatherConfigurationExport`
+bevarer nå hvert dekodede sted uten å kontrollere ID-kollisjoner, som kan gi
+ustabile SwiftUI-identifikatorer og tvetydig valgt sted. Definer en forutsigbar
+kollisjonspolicy og test at andre gyldige steder bevares.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T00:20:54Z",
+  "lastScheduledStart": "2026-10-11T00:50:54Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-465 fullført: Værbåndene har nå en kort tegnforklaring som skiller gul skravur for delvis sol fra grå skravur for manglende Yr-timer, og VoiceOver sier uttrykkelig at skravuren ikke betyr manglende pushvarsel. Bokmål/engelsk-regresjonstest, Swift-parsing og diffkontroll består; XCTest ikke kjørt grunnet kjente feil i andre ulagrede testendringer. AUTO-464 satt på vent 2026-10-11 fordi samme ContentView-seksjon har ulagrede brukerendringer. Bred appgjennomgang ga AUTO-467 (eksportfeil) og AUTO-468 (gjenopprettingsflyt krever godkjenning). Neste åpne kø: AUTO-466, AUTO-467 og AUTO-468."
+  "lastProgress": "AUTO-467 fullført: PlacesView viser nå en lokalisert, handlingsbar feilmelding ved mislykket oppsetteksport; kansellering forblir stille, og filsti/systemdetaljer vises ikke. Regresjonstest dekker bokmål, engelsk, kansellering og personvern. AUTO-466 satt på vent 2026-10-11 fordi den overlapper brukerens ulagrede endringer i samme pushvisning. Swift-parsing, JSON-validering og diffkontroll består; XCTest ikke kjørt på grunn av kjente kompileringstypefeil i ulagrede tester. Bred gjennomgang la til AUTO-469 for ugyldig formatversjon og AUTO-470 for dupliserte steds-ID-er i import. Neste åpne kø: AUTO-468, AUTO-469 og AUTO-470."
 }
