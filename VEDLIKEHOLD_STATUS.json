@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T00:50:54Z",
+  "lastScheduledStart": "2026-10-11T01:20:54Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-467 fullført: PlacesView viser nå en lokalisert, handlingsbar feilmelding ved mislykket oppsetteksport; kansellering forblir stille, og filsti/systemdetaljer vises ikke. Regresjonstest dekker bokmål, engelsk, kansellering og personvern. AUTO-466 satt på vent 2026-10-11 fordi den overlapper brukerens ulagrede endringer i samme pushvisning. Swift-parsing, JSON-validering og diffkontroll består; XCTest ikke kjørt på grunn av kjente kompileringstypefeil i ulagrede tester. Bred gjennomgang la til AUTO-469 for ugyldig formatversjon og AUTO-470 for dupliserte steds-ID-er i import. Neste åpne kø: AUTO-468, AUTO-469 og AUTO-470."
+  "lastProgress": "AUTO-469 fullført 2026-10-11: oppsettdekoderen avviser null og negative formatversjoner, samtidig som manglende/feiltypet versjon fortsatt støttes som versjon 1. Regresjonstest lagt til. Swift-parsing og diffkontroll består; XCTest ikke kjørt på grunn av eksisterende typekontrollfeil i ulagrede tester. Bred gjennomgang av den nylig endrede skravurvisningen fant en gul tegnforklaring uten aktiv solrad; lagt til AUTO-471. Neste kø: AUTO-468 (krever godkjenning), AUTO-470 og AUTO-471."
 }

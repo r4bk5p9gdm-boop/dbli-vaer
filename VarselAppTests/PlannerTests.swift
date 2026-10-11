@@ -7152,6 +7152,33 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testConfigurationDocumentRejectsNonPositiveFormatVersions() throws {
+        let place = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let source = WeatherConfigurationExport(
+            places: [place], selectedPlaceID: place.id, alertLanguageStyle: .english
+        )
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let encoded = try encoder.encode(source)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+
+        for invalidVersion in [0, -1] {
+            var object = try XCTUnwrap(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+            object["formatVersion"] = invalidVersion
+            let data = try JSONSerialization.data(withJSONObject: object)
+
+            XCTAssertThrowsError(try decoder.decode(WeatherConfigurationExport.self, from: data)) { error in
+                guard case let DecodingError.dataCorrupted(context) = error else {
+                    XCTFail("Expected format version \(invalidVersion) to be rejected, got: \(error)")
+                    return
+                }
+                XCTAssertEqual(context.codingPath.last?.stringValue, "formatVersion")
+                XCTAssertTrue(context.debugDescription.contains("versions 1 through"))
+            }
+        }
+    }
+
     func testConfigurationDocumentRejectsDirectoryInsteadOfJSONFile() {
         let directory = FileWrapper(directoryWithFileWrappers: [:])
 

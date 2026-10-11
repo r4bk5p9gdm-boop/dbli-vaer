@@ -189,17 +189,24 @@ gjenopprettingshandling. Vurder en trygg importflyt med forhåndsvisning og
 bekreftelse før steder erstattes eller flettes; be om godkjenning før den
 større brukerflytendringen implementeres.
 
-**AUTO-469 · ÅPEN** — Avvis ugyldig negativt eller null `formatVersion` i
-oppsettfiler. Dekoderen avviser versjoner over støttet maksimum, men godtar i
-dag 0 og negative heltall som om de var brukbare formater. Behold bakoverstøtten
-for manglende eller feiltypet valgfri metadata; regresjonstest begge ugyldige
-grenseverdier.
+**AUTO-469 · FULLFØRT 2026-10-11** — Oppsettdekoderen avviser nå både
+`formatVersion` 0 og negative versjoner, i tillegg til versjoner over støttet
+maksimum. Manglende eller feiltypet versjonsmetadata faller fortsatt tilbake
+til versjon 1 for bakoverkompatibilitet. Regresjonstest dekker begge ugyldige
+grenseverdiene; Swift-parsing og diffkontroll består. XCTest er ikke kjørt
+fordi testmålet fortsatt har kjente typekontrollfeil i andre ulagrede tester.
 
 **AUTO-470 · ÅPEN** — Håndter dupliserte steds-ID-er i importerte oppsett før
 de eventuelt brukes i visning eller gjenoppretting. `WeatherConfigurationExport`
 bevarer nå hvert dekodede sted uten å kontrollere ID-kollisjoner, som kan gi
 ustabile SwiftUI-identifikatorer og tvetydig valgt sted. Definer en forutsigbar
 kollisjonspolicy og test at andre gyldige steder bevares.
+
+**AUTO-471 · ÅPEN** — Vis bare relevante tegnforklaringsnøkler for skravur i
+værbåndene. Den gule nøkkelen for delvis sol vises også når ingen solrad er
+aktiv, selv om den gule skravuren bare tegnes i solraden. Knytt nøkkelens
+synlighet til viste værtyper og legg til en regresjonstest for oppsett uten
+solrad.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

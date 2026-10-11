@@ -32,11 +32,11 @@ struct WeatherConfigurationExport: Codable {
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         let decodedFormatVersion = (try? values.decode(Int.self, forKey: .formatVersion)) ?? 1
-        guard decodedFormatVersion <= Self.currentFormatVersion else {
+        guard (1...Self.currentFormatVersion).contains(decodedFormatVersion) else {
             throw DecodingError.dataCorruptedError(
                 forKey: .formatVersion,
                 in: values,
-                debugDescription: "Unsupported configuration format version \(decodedFormatVersion); this app supports up to \(Self.currentFormatVersion)."
+                debugDescription: "Unsupported configuration format version \(decodedFormatVersion); this app supports versions 1 through \(Self.currentFormatVersion)."
             )
         }
         formatVersion = decodedFormatVersion
