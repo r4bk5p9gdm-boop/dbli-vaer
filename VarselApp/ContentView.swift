@@ -124,7 +124,14 @@ struct LocalCalibrationView: View {
                         } label: {
                             VStack(alignment: .leading) {
                                 Text(observation.observedAt.formatted(date: .abbreviated, time: .shortened))
-                                if let temp = observation.measuredTemperature { Text(copy("Målt \(temp.formatted()) °C", "Measured \(temp.formatted()) °C")).font(.caption) }
+                                ForEach(LocalCalibrationCopy.summary(
+                                    measuredTemperature: observation.measuredTemperature,
+                                    frost: observation.frost,
+                                    surface: observation.surface,
+                                    style: languageStyle
+                                ), id: \.self) { line in
+                                    Text(line).font(.caption)
+                                }
                             }
                         }
                         .swipeActions {
@@ -2812,5 +2819,27 @@ enum LocalCalibrationCopy {
         case "Annet": "other"
         default: bokmal
         }
+    }
+
+    static func summary(
+        measuredTemperature: Double?, frost: Bool?, surface: String, style: AlertLanguageStyle
+    ) -> [String] {
+        var lines: [String] = []
+        if let measuredTemperature {
+            lines.append(text(
+                "Målt \(measuredTemperature.formatted()) °C",
+                english: "Measured \(measuredTemperature.formatted()) °C",
+                style: style
+            ))
+        }
+        if let frost {
+            if frost {
+                let translatedSurface = Self.surface(surface, style: style)
+                lines.append(text("Frost: \(translatedSurface)", english: "Frost: \(translatedSurface)", style: style))
+            } else {
+                lines.append(text("Ingen frost observert", english: "No frost observed", style: style))
+            }
+        }
+        return lines
     }
 }

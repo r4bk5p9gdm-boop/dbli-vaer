@@ -6899,6 +6899,23 @@ final class PlannerTests: XCTestCase {
         }
         XCTAssertEqual(LocalCalibrationCopy.surface("Gress og bil/tak", style: .bokmal), "Gress og bil/tak")
         XCTAssertEqual(LocalCalibrationCopy.surface("Gress og bil/tak", style: .english), "grass and car/roof")
+        XCTAssertEqual(
+            LocalCalibrationCopy.summary(measuredTemperature: nil, frost: true, surface: "Gress", style: .bokmal),
+            ["Frost: Gress"]
+        )
+        XCTAssertEqual(
+            LocalCalibrationCopy.summary(measuredTemperature: nil, frost: false, surface: "", style: .bokmal),
+            ["Ingen frost observert"]
+        )
+        XCTAssertTrue(LocalCalibrationCopy.summary(measuredTemperature: nil, frost: nil, surface: "", style: .bokmal).isEmpty)
+        XCTAssertEqual(
+            LocalCalibrationCopy.summary(measuredTemperature: nil, frost: true, surface: "Bil/tak", style: .english),
+            ["Frost: car/roof"]
+        )
+        XCTAssertEqual(
+            LocalCalibrationCopy.summary(measuredTemperature: 2, frost: false, surface: "", style: .bokmal),
+            ["Målt 2 °C", "Ingen frost observert"]
+        )
     }
 
     func testYrFixturePrefersDetailedHourOverOverlappingSixHourEstimate() throws {

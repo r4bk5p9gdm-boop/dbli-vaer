@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T05:50:55Z",
+  "lastScheduledStart": "2026-10-11T06:20:55Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-478 fullført 2026-10-11: utløpsbehandleren fullfører nå BGAppRefreshTask umiddelbart med feil ved utløp, mens en låsebeskyttet port hindrer dobbel fullføring når arbeidet senere returnerer. Isolert regresjon dekker begge rekkefølger. Bred gjennomgang fant også at Yr-prognosedekoderen behandler hele timeseries-listen før ni-døgnsavkorting; AUTO-480 lagt til. Swift-parsing og diffkontroll består; XCTest ikke kjørt grunnet lav diskreserve og kjente typekontrollfeil i andre ulagrede tester. Neste kø: AUTO-468 (krever godkjenning), AUTO-479 og AUTO-480."
+  "lastProgress": "AUTO-479 fullført 2026-10-11: sammenfoldede lokale målinger viser nå målt temperatur og/eller kort froststatus med overflate, lokalisert for alle støttede språk. Regresjoner dekker frost ja/nei uten temperatur, ukjent status, engelsk overflate og kombinasjonen temperatur/frost. Bred gjennomgang fant også kostnaden ved å omskrive og laste hele observasjonsarkivet (AUTO-481) og risikoen for å overskrive et arkiv som ikke kan dekodes (AUTO-482). Swift-parsing og diffkontroll består; XCTest ikke kjørt grunnet lav diskreserve og kjente typekontrollfeil i andre ulagrede tester. Neste kø: AUTO-468 (krever godkjenning), AUTO-480, AUTO-481 og AUTO-482."
 }

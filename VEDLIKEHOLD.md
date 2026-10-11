@@ -263,17 +263,29 @@ fortsatt oppdateringen, men fullfører nå også `BGAppRefreshTask` umiddelbart 
 retur-/kanselleringsløp ikke fullfører samme systemoppgave to ganger. En isolert
 regresjon dekker både utløp først og arbeid først.
 
-**AUTO-479 · ÅPEN** — Vis et kort sammendrag av frostregistreringen i den
-sammenfoldede raden i Lokale målinger. Kildegjennomgangen fant at raden nå bare
-viser dato og eventuell lufttemperatur; observasjoner med bare frostdata blir
-derfor umulige å skille fra hverandre uten å åpne hver rad. Behold detaljene i
-utvidet visning og test frost ja/nei sammen med manglende temperatur.
+**AUTO-479 · FULLFØRT 2026-10-11** — Sammenfoldede registreringer viser nå
+lufttemperatur når den finnes og en egen kort froststatus med overflate.
+Oppsummeringen følger bokmål, inntrøndersk og engelsk. Regresjoner dekker frost
+ja/nei uten temperatur, ukjent frost, engelsk overflate og kombinert temperatur
+og frost.
 
 **AUTO-480 · ÅPEN** — Begrens ressursbruken når Yr-svar dekodes. Gjennomgangen
 fant at `decodeLocationForecast` dekoder og sorterer hele `timeseries`-listen
 før resultatet avkortes til ni døgn. Avvis urimelig store svar eller
 timeseries-lister før kostbar transformasjon, og legg til grense-/regresjonstester
 som bevarer normale Yr-svar.
+
+**AUTO-481 · ÅPEN** — Gjennomgå kostnaden ved voksende observasjonsarkiv.
+`CalibrationHistory.saveObservations` koder og skriver hele arkivet atomisk ved
+hver registrering og sletting, mens visningen laster alle registreringene før
+den viser 50 om gangen. Mål realistisk vekst og finn en paginert eller
+append-vennlig løsning uten å forkorte brukerens historikk.
+
+**AUTO-482 · ÅPEN** — Bevar et uleselig observasjonsarkiv for gjenoppretting.
+`CalibrationHistory.load` faller tilbake til legacy-data eller tom liste når
+JSON-arkivet ikke kan dekodes; neste lagring kan dermed overskrive den eneste
+kopien av skadde data. Legg til en trygg karantene-/gjenopprettingssti og tester
+for skadet arkiv, fallback og senere lagring.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig
