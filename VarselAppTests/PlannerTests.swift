@@ -9876,6 +9876,20 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testBackgroundRefreshCompletionGateCompletesOnlyOnce() {
+        let expirationFirst = BackgroundRefreshCompletionGate()
+        var expirationFirstResults: [Bool] = []
+        expirationFirst.finish(success: false) { expirationFirstResults.append($0) }
+        expirationFirst.finish(success: true) { expirationFirstResults.append($0) }
+        XCTAssertEqual(expirationFirstResults, [false])
+
+        let workFirst = BackgroundRefreshCompletionGate()
+        var workFirstResults: [Bool] = []
+        workFirst.finish(success: true) { workFirstResults.append($0) }
+        workFirst.finish(success: false) { workFirstResults.append($0) }
+        XCTAssertEqual(workFirstResults, [true])
+    }
+
     func testBackgroundRefreshReportsSuccessfulSubmission() {
         var submittedIdentifier: String?
         var submittedDate: Date?

@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T05:20:55Z",
+  "lastScheduledStart": "2026-10-11T05:50:55Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-477 fullført 2026-10-11: hele skjermbildet for lokale målinger følger nå valgt bokmål, inntrøndersk eller engelsk, samtidig som frost-/overflateverdier i lagring beholdes uendret. Regresjonstest dekker bokmål og engelsk. Bred gjennomgang av oppstart, varsler, værvisning, lagring og bakgrunnsoppdatering fant også at frostobservasjoner uten lufttemperatur mangler sammendrag i sammenfoldet liste; AUTO-479 lagt til. Swift-parsing og diffkontroll består; XCTest ikke kjørt på grunn av lav diskreserve og kjente typekontrollfeil i andre ulagrede tester. Neste kø: AUTO-468 (krever godkjenning), AUTO-478 og AUTO-479."
+  "lastProgress": "AUTO-478 fullført 2026-10-11: utløpsbehandleren fullfører nå BGAppRefreshTask umiddelbart med feil ved utløp, mens en låsebeskyttet port hindrer dobbel fullføring når arbeidet senere returnerer. Isolert regresjon dekker begge rekkefølger. Bred gjennomgang fant også at Yr-prognosedekoderen behandler hele timeseries-listen før ni-døgnsavkorting; AUTO-480 lagt til. Swift-parsing og diffkontroll består; XCTest ikke kjørt grunnet lav diskreserve og kjente typekontrollfeil i andre ulagrede tester. Neste kø: AUTO-468 (krever godkjenning), AUTO-479 og AUTO-480."
 }

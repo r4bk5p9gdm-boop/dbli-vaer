@@ -1,5 +1,22 @@
+import Foundation
 import BackgroundTasks
 import OSLog
+
+final class BackgroundRefreshCompletionGate: @unchecked Sendable {
+    private let lock = NSLock()
+    private var hasCompleted = false
+
+    func finish(success: Bool, complete: (Bool) -> Void) {
+        lock.lock()
+        guard !hasCompleted else {
+            lock.unlock()
+            return
+        }
+        hasCompleted = true
+        lock.unlock()
+        complete(success)
+    }
+}
 
 enum BackgroundRefresh {
     private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "no.mathias.VarselApp", category: "BackgroundRefresh")
@@ -45,11 +62,19 @@ enum BackgroundRefresh {
 
     private static func handle(_ task: BGAppRefreshTask) {
         schedule()
+        let completionGate = BackgroundRefreshCompletionGate()
         let work = Task {
             let store = await Store.shared
             let success = await store.refreshAll(backgroundOnly: true)
-            task.setTaskCompleted(success: success && !Task.isCancelled)
+            completionGate.finish(success: success && !Task.isCancelled) {
+                task.setTaskCompleted(success: $0)
+            }
         }
-        task.expirationHandler = { work.cancel() }
+        task.expirationHandler = {
+            work.cancel()
+            completionGate.finish(success: false) {
+                task.setTaskCompleted(success: $0)
+            }
+        }
     }
 }

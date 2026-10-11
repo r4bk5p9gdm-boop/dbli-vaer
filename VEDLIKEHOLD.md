@@ -257,18 +257,23 @@ Regresjonstest dekker bokmål/engelsk og overflateetiketter. Swift-parsing og
 diffkontroll består; XCTest er ikke kjørt på grunn av lav diskreserve og kjente
 typekontrollfeil i andre ulagrede tester.
 
-**AUTO-478 · ÅPEN** — Sikre at en utløpt bakgrunnsoppdatering alltid avslutter
-`BGAppRefreshTask` med `success: false`, også når kansellering treffer mens
-`Store.refreshAll` fortsatt arbeider. Kildegjennomgangen fant at utløperen nå
-bare kansellerer den ustrukturerte arbeidsoppgaven, mens fullføring kalles først
-når arbeidet returnerer. Legg til en isolert regresjon for utløps-/fullføringsløpet
-slik at systemet ikke står igjen med en uavsluttet oppgave.
+**AUTO-478 · FULLFØRT 2026-10-11** — En utløpt bakgrunnsoppgave kansellerer
+fortsatt oppdateringen, men fullfører nå også `BGAppRefreshTask` umiddelbart med
+`success: false`. En låsbeskyttet fullføringsport sørger for at et senere
+retur-/kanselleringsløp ikke fullfører samme systemoppgave to ganger. En isolert
+regresjon dekker både utløp først og arbeid først.
 
 **AUTO-479 · ÅPEN** — Vis et kort sammendrag av frostregistreringen i den
 sammenfoldede raden i Lokale målinger. Kildegjennomgangen fant at raden nå bare
 viser dato og eventuell lufttemperatur; observasjoner med bare frostdata blir
 derfor umulige å skille fra hverandre uten å åpne hver rad. Behold detaljene i
 utvidet visning og test frost ja/nei sammen med manglende temperatur.
+
+**AUTO-480 · ÅPEN** — Begrens ressursbruken når Yr-svar dekodes. Gjennomgangen
+fant at `decodeLocationForecast` dekoder og sorterer hele `timeseries`-listen
+før resultatet avkortes til ni døgn. Avvis urimelig store svar eller
+timeseries-lister før kostbar transformasjon, og legg til grense-/regresjonstester
+som bevarer normale Yr-svar.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig
