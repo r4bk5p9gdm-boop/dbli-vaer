@@ -5,6 +5,33 @@ import OSLog
 enum WeatherGlance {
     private static let nowStatusRetention: TimeInterval = 90 * 60
     private static let nowStatusLookahead: TimeInterval = 15 * 60
+    static let staleAfter: TimeInterval = 2 * 3_600
+
+    struct Freshness: Equatable {
+        let label: String
+        let isStale: Bool
+    }
+
+    static func freshness(
+        updatedAt: Date?,
+        now: Date,
+        languageStyle: AlertLanguageStyle = .bokmal
+    ) -> Freshness? {
+        guard let updatedAt else { return nil }
+        let age = max(0, now.timeIntervalSince(updatedAt))
+        let isStale = age > staleAfter
+        if isStale {
+            let hours = max(2, Int(age / 3_600))
+            let label = languageStyle == .english
+                ? "May be outdated · last updated \(hours)h ago"
+                : "Kan være utdatert · sist oppdatert for \(hours) t siden"
+            return Freshness(label: label, isStale: true)
+        }
+
+        let time = updatedAt.formatted(.dateTime.hour().minute())
+        let label = languageStyle == .english ? "Updated \(time)" : "Oppdatert \(time)"
+        return Freshness(label: label, isStale: false)
+    }
 
     static func upcoming(_ statuses: [WeatherStatus], now: Date) -> [WeatherStatus] {
         let end = now.addingTimeInterval(12 * 3_600)
@@ -34,6 +61,26 @@ enum WeatherGlance {
     /// should always reserve its space for the next event.
     static func nextEvents(_ statuses: [WeatherStatus], now: Date) -> [WeatherStatus] {
         upcoming(statuses, now: now).filter { !$0.isNow }
+    }
+
+    /// Keep glance-sized surfaces focused on the two nearest future events.
+    static func widgetEvents(_ statuses: [WeatherStatus], now: Date) -> [WeatherStatus] {
+        Array(nextEvents(statuses, now: now).prefix(2))
+    }
+
+    static func eventName(for status: WeatherStatus, languageStyle: AlertLanguageStyle = .bokmal) -> String {
+        switch status.type {
+        case .regn: return languageStyle == .english ? "Rain" : "Regn"
+        case .sno: return languageStyle == .english ? "Snow" : "Snø"
+        case .vind: return languageStyle == .english ? "Wind" : "Vind"
+        case .dugg:
+            if languageStyle == .english { return "Dew" }
+            return languageStyle == .inntrondersk ? "Dogg" : "Dugg"
+        case .sol: return languageStyle == .english ? "Sun" : "Sol"
+        case .frost: return "Frost"
+        case .temperatur:
+            return compactEventLabel(for: status, languageStyle: languageStyle).replacingOccurrences(of: "!", with: "")
+        }
     }
 
     static func compactEventLabel(for status: WeatherStatus, languageStyle: AlertLanguageStyle = .bokmal) -> String {

@@ -97,7 +97,6 @@ final class LocationManager: NSObject, ObservableObject {
     private var continuation: CheckedContinuation<CLLocation, Error>?
     private var requestID: UUID?
     private var timeout: Task<Void, Never>?
-    private let clientFactory: () -> any OneShotLocationClient
 
     enum RequestError: LocalizedError {
         case busy, timedOut

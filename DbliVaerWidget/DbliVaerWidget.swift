@@ -59,9 +59,30 @@ struct WeatherWidgetView: View {
 
     /// CarPlay has room for a small, stable queue. Keep it forward-looking so
     /// it agrees with the rectangular Watch complication rather than spending
-    /// a row on an already active NÅ-status.
+    /// a row on an already active NÅ-status. Two events leave room for data
+    /// freshness without making the glance dense.
     private var nextStatuses: [WeatherStatus] {
-        Array(WeatherGlance.nextEvents(entry.statuses, now: entry.date).prefix(3))
+        WeatherGlance.widgetEvents(entry.statuses, now: entry.date)
+    }
+
+    private var freshness: WeatherGlance.Freshness? {
+        WeatherGlance.freshness(
+            updatedAt: entry.updatedAt,
+            now: entry.date,
+            languageStyle: entry.languageStyle
+        )
+    }
+
+    private var freshnessView: some View {
+        Group {
+            if let freshness {
+                Label(freshness.label, systemImage: freshness.isStale ? "exclamationmark.triangle.fill" : "clock")
+                    .font(.system(size: 9, weight: freshness.isStale ? .semibold : .regular))
+                    .foregroundStyle(freshness.isStale ? Color.orange : Color.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
+            }
+        }
     }
 
     var body: some View {
@@ -137,7 +158,7 @@ struct WeatherWidgetView: View {
                     Spacer()
                 }
             } else {
-                VStack(alignment: .leading, spacing: 5) {
+                VStack(alignment: .leading, spacing: 4) {
                     ForEach(nextStatuses) { status in
                         HStack(spacing: 6) {
                             Image(systemName: status.type.systemImage)
@@ -145,7 +166,7 @@ struct WeatherWidgetView: View {
                                 .foregroundStyle(status.type.color)
                                 .widgetAccentable()
                                 .frame(width: 14)
-                            Text(WeatherGlance.compactEventLabel(
+                            Text(WeatherGlance.eventName(
                                 for: status,
                                 languageStyle: entry.languageStyle
                             ))
@@ -158,15 +179,22 @@ struct WeatherWidgetView: View {
                         .font(.caption.weight(.semibold))
                     }
                 }
-                Spacer(minLength: 0)
+                Spacer(minLength: 1)
             }
+            freshnessView
         }
     }
 
     private func compactEventTime(_ date: Date) -> String {
         let minutes = max(0, Int(date.timeIntervalSince(entry.date) / 60))
-        if minutes < 60 { return "\(max(1, minutes))m" }
-        return "\(minutes / 60)t"
+        if minutes < 60 {
+            return entry.languageStyle == .english
+                ? "in \(max(1, minutes)) min"
+                : "om \(max(1, minutes)) min"
+        }
+        return entry.languageStyle == .english
+            ? "in \(minutes / 60)h"
+            : "om \(minutes / 60) t"
     }
 
     private var detailedView: some View {
@@ -193,6 +221,7 @@ struct WeatherWidgetView: View {
                 }
                 Spacer(minLength: 0)
             }
+            freshnessView
         }
     }
 }

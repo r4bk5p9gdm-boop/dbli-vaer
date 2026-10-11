@@ -71,10 +71,10 @@ struct WatchWeatherWidgetView: View {
     private var current: ForecastHour? { entry.snapshot?.forecast.first }
     private var nextStatuses: [WeatherStatus] {
         guard let snapshot = entry.snapshot else { return [] }
-        return Array(WeatherGlance.nextEvents(
+        return WeatherGlance.widgetEvents(
             Planner.statuses(for: snapshot.place, forecast: snapshot.forecast, now: entry.date),
             now: entry.date
-        ).prefix(3))
+        )
     }
     private var status: WeatherStatus? {
         nextStatuses.first
@@ -88,6 +88,14 @@ struct WatchWeatherWidgetView: View {
         if let status { return status.type.color }
         guard let current else { return .cyan }
         return CurrentWeatherCondition.resolve(current).color
+    }
+
+    private var freshness: WeatherGlance.Freshness? {
+        WeatherGlance.freshness(
+            updatedAt: entry.snapshot?.updatedAt,
+            now: entry.date,
+            languageStyle: entry.snapshot?.languageStyle ?? .bokmal
+        )
     }
 
     var body: some View {
@@ -133,7 +141,7 @@ struct WatchWeatherWidgetView: View {
                                     .font(.caption2)
                                     .foregroundStyle(next.type.color)
                                     .frame(width: 12)
-                                Text(localized(WeatherGlance.compactEventLabel(
+                                Text(localized(WeatherGlance.eventName(
                                     for: next,
                                     languageStyle: entry.snapshot?.languageStyle ?? .bokmal
                                 )))
@@ -151,6 +159,13 @@ struct WatchWeatherWidgetView: View {
                 Text("Åpne appen på iPhone")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+            }
+            if let freshness {
+                Label(freshness.label, systemImage: freshness.isStale ? "exclamationmark.triangle.fill" : "clock")
+                    .font(.system(size: 9, weight: freshness.isStale ? .semibold : .regular))
+                    .foregroundStyle(freshness.isStale ? Color.orange : Color.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
             }
         }
         .accessibilityElement(children: .combine)

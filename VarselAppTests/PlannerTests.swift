@@ -2766,7 +2766,7 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(WeatherGlance.nextEvents([expiredNow, next], now: base).map(\.type), [.vind])
     }
 
-    func testWatchAndCarPlaySharePlaceAndThreeUpcomingEventTypes() throws {
+    func testWatchAndCarPlaySharePlaceAndTwoUpcomingEventTypes() throws {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let forecast = [ForecastHour(time: base, temp: 8, precip: 0, wind: 2, cloud: 40, dew: 4)]
         let statuses = [
@@ -2775,7 +2775,7 @@ final class PlannerTests: XCTestCase {
             WeatherStatus(ruleID: UUID(), type: .dugg, text: "Duggfall", eventAt: base.addingTimeInterval(2 * 60 * 60), isNow: false),
             WeatherStatus(ruleID: UUID(), type: .sol, text: "Sol", eventAt: base.addingTimeInterval(3 * 60 * 60), isNow: false),
         ]
-        XCTAssertEqual(WeatherGlance.nextEvents(statuses, now: base).prefix(3).map(\.type), [.regn, .vind, .dugg])
+        XCTAssertEqual(WeatherGlance.widgetEvents(statuses, now: base).map(\.type), [.regn, .vind])
 
         SharedWidgetData.clear()
         defer { SharedWidgetData.clear() }
@@ -2797,6 +2797,53 @@ final class PlannerTests: XCTestCase {
         let dew = WeatherStatus(ruleID: UUID(), type: .dugg, text: "Duggfall", eventAt: base, isNow: false)
         XCTAssertEqual(WeatherGlance.compactEventLabel(for: dew, languageStyle: .bokmal), "Dugg!")
         XCTAssertEqual(WeatherGlance.compactEventLabel(for: dew, languageStyle: .inntrondersk), "Dogg!")
+    }
+
+    func testGlanceFreshnessDistinguishesFreshAndStaleSnapshots() throws {
+        let fresh = try XCTUnwrap(WeatherGlance.freshness(
+            updatedAt: base,
+            now: base.addingTimeInterval(30 * 60),
+            languageStyle: .bokmal
+        ))
+        XCTAssertFalse(fresh.isStale)
+        XCTAssertTrue(fresh.label.hasPrefix("Oppdatert "))
+
+        let atBoundary = try XCTUnwrap(WeatherGlance.freshness(
+            updatedAt: base,
+            now: base.addingTimeInterval(2 * 3_600),
+            languageStyle: .bokmal
+        ))
+        XCTAssertFalse(atBoundary.isStale)
+
+        let stale = try XCTUnwrap(WeatherGlance.freshness(
+            updatedAt: base,
+            now: base.addingTimeInterval(2 * 3_600 + 1),
+            languageStyle: .bokmal
+        ))
+        XCTAssertTrue(stale.isStale)
+        XCTAssertTrue(stale.label.contains("utdatert"))
+        XCTAssertTrue(stale.label.contains("2 t siden"))
+
+        let english = try XCTUnwrap(WeatherGlance.freshness(
+            updatedAt: base,
+            now: base.addingTimeInterval(2 * 3_600 + 1),
+            languageStyle: .english
+        ))
+        XCTAssertTrue(english.isStale)
+        XCTAssertTrue(english.label.contains("May be outdated"))
+        XCTAssertTrue(english.label.contains("2h ago"))
+    }
+
+    func testGlanceEventNamesAreReadableAndLocalized() {
+        let rain = WeatherStatus(
+            ruleID: UUID(), type: .regn, text: "Regn", eventAt: base, isNow: false
+        )
+        XCTAssertEqual(WeatherGlance.eventName(for: rain, languageStyle: .bokmal), "Regn")
+        XCTAssertEqual(WeatherGlance.eventName(for: rain, languageStyle: .english), "Rain")
+        let dew = WeatherStatus(
+            ruleID: UUID(), type: .dugg, text: "Dugg", eventAt: base, isNow: false
+        )
+        XCTAssertEqual(WeatherGlance.eventName(for: dew, languageStyle: .inntrondersk), "Dogg")
     }
 
     func testInntronderskCompactLabelsArePresentForEveryAlertType() {

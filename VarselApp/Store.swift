@@ -759,7 +759,7 @@ final class Store: ObservableObject {
 
     static let forecastFutureTimestampTolerance: TimeInterval = 5 * 60
 
-    static func isForecastStale(_ updatedAt: Date?, now: Date = Date(), threshold: TimeInterval = 2 * 3_600) -> Bool {
+    static func isForecastStale(_ updatedAt: Date?, now: Date = Date(), threshold: TimeInterval = WeatherGlance.staleAfter) -> Bool {
         guard let updatedAt else { return true }
         let age = now.timeIntervalSince(updatedAt)
         return age > threshold || age < -forecastFutureTimestampTolerance

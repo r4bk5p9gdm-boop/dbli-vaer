@@ -54,6 +54,21 @@ rapporten og i ferdigloggen. Egenstyrte forbedringer får separat nummer
 
 ## Nummerert kø
 
+**BRUKER-147 · FULLFØRT 2026-10-12** — Apple Watch viser nå navn på
+kommende værhendelser sammen med tidspunkt i stedet for bare symbol og tid.
+CarPlay-widgeten prioriterer de to neste hendelsene, med lesbar tekst som
+«Regn · om 18 min». Watch, Watch-widget og CarPlay viser også når prognosen
+sist ble hentet; etter to timer markeres dataene oransje som muligens utdaterte
+med alder i timer. Duggpunktet er fortsatt i den lavere «Nå»-delen av Watch-
+appen og tar ikke plass fra første blikk. Eksisterende delte stedsvalg er
+beholdt. Regresjoner dekker fersk/utdatert status, to-hendelsesgrensen og
+lokaliserte hendelsesnavn. Kildekontroll for iOS-widget og watchOS-appen består;
+full Xcode-bygging er fortsatt blokkert av en eksisterende, ikke-innsjekket
+endring i `ContentView.swift` (switch-uttrykket i `text` mangler returverdier).
+Ved kontrollen ble også en duplisert `clientFactory`-deklarasjon i
+`LocationManager` fjernet, slik at den foregående GPS-endringen igjen kan
+kompileres.
+
 **BRUKER-146 · FULLFØRT 2026-10-10** — Værbåndenes vind- og duggmarkeringer
 bruker nå de egne verdiene fra «Tilpass», også når pushvarsler har andre
 terskler. Tabellen bruker kopier av reglene, så pushvarslene er uendret.

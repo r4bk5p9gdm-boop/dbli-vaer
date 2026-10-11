@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T21:37:42Z",
+  "lastScheduledStart": "2026-10-11T22:42:01Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-499 fullført 2026-10-11: LocationManager bruker nå injiserbar OneShotLocationClient; kansellering frigir aktiv forespørsel, og regresjonen starter neste forespørsel mens den avviser et sent callback fra den gamle klienten. Bred gjennomgang av værdekoding, varsling, Watch/Widget, bakgrunnsoppdatering, sted og lagring fant et konkret retry-gap i WatchSyncManager: en feilet context-overføring venter på ny aktivering eller ny endring. AUTO-502 dekker avgrenset retry av nyeste snapshot. Verifisering: Swift-parsing, JSON-validering og diffkontroll består. XCTest ikke kjørt fordi CoreSimulator-tjenesten ikke starter / ingen runtimes tilgjengelig. Neste kø fra full køskanning: AUTO-500, AUTO-501 og AUTO-502."
+  "lastProgress": "BRUKER-147 fullført 2026-10-12: Watch viser navngitte hendelser og tidspunkt, mens CarPlay og Watch-widget viser høyst to varsler med lesbar relativ tid og status for dataenes ferskhet. Data eldre enn to timer får oransje varsel om mulig foreldelse. Kildekontroll for iOS-widget og watchOS består; full bygg/test blokkert av eksisterende ucommittet ContentView.swift-feil og utilgjengelig simulator. Neste åpne kø fra fullskanning: AUTO-500, AUTO-501 og AUTO-502."
 }

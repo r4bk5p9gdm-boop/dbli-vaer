@@ -27,6 +27,21 @@ struct WatchContentView: View {
                                 .fixedSize()
                             }
                             .padding(.vertical, 3)
+                            TimelineView(.periodic(from: .now, by: 15 * 60)) { timeline in
+                                if let freshness = WeatherGlance.freshness(
+                                    updatedAt: snapshot.updatedAt,
+                                    now: timeline.date,
+                                    languageStyle: snapshot.languageStyle ?? .bokmal
+                                ) {
+                                    Label(
+                                        snapshot.localized(freshness.label),
+                                        systemImage: freshness.isStale ? "exclamationmark.triangle.fill" : "clock"
+                                    )
+                                    .font(.caption2.weight(freshness.isStale ? .semibold : .regular))
+                                    .foregroundStyle(freshness.isStale ? Color.orange : Color.secondary)
+                                    .lineLimit(1)
+                                }
+                            }
                         }
 
                         Section("Neste 12 timer") {
@@ -38,18 +53,24 @@ struct WatchContentView: View {
                                 if statuses.isEmpty {
                                     Text("Ingen aktuelle hendelser").font(.caption).foregroundStyle(.secondary)
                                 } else {
-                                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 44))], spacing: 10) {
+                                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 64))], spacing: 8) {
                                         ForEach(statuses) { status in
-                                            VStack(spacing: 4) {
+                                            VStack(spacing: 3) {
                                                 Image(systemName: status.type.systemImage)
                                                     .font(.title3)
                                                     .foregroundStyle(status.type.color)
-                                                Text(status.isNow ? "Nå" : shortClockLabel(status.eventAt))
+                                                Text(snapshot.localized(WeatherGlance.eventName(
+                                                    for: status,
+                                                    languageStyle: snapshot.languageStyle ?? .bokmal
+                                                )))
+                                                    .font(.caption2.weight(.semibold))
+                                                    .lineLimit(1)
+                                                Text(status.isNow ? (snapshot.languageStyle == .english ? "Now" : "Nå") : shortClockLabel(status.eventAt))
                                                     .font(.caption2.monospacedDigit())
                                             }
                                             .frame(maxWidth: .infinity)
                                             .accessibilityElement(children: .ignore)
-                                            .accessibilityLabel(snapshot.localized(status.text))
+                                            .accessibilityLabel(eventAccessibilityLabel(status, snapshot: snapshot))
                                         }
                                     }
                                 }
@@ -118,5 +139,14 @@ struct WatchContentView: View {
 
     private func currentCondition(_ hour: ForecastHour) -> CurrentWeatherCondition {
         CurrentWeatherCondition.resolve(hour)
+    }
+
+    private func eventAccessibilityLabel(_ status: WeatherStatus, snapshot: WidgetWeatherSnapshot) -> String {
+        let languageStyle = snapshot.languageStyle ?? .bokmal
+        let name = snapshot.localized(WeatherGlance.eventName(for: status, languageStyle: languageStyle))
+        let time = status.isNow
+            ? (languageStyle == .english ? "Now" : "Nå")
+            : shortClockLabel(status.eventAt)
+        return "\(name), \(time)"
     }
 }
