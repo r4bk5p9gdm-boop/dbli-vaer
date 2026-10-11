@@ -7622,6 +7622,48 @@ final class PlannerTests: XCTestCase {
         XCTAssertNil(oldPlan.appSettings)
     }
 
+    @MainActor
+    func testConfigurationImportRefreshesWidgetWithImportedTextSeparator() throws {
+        let sharedDefaults = try XCTUnwrap(WeatherTextSeparator.defaults)
+        let previousSharedDomain = UserDefaults.standard.persistentDomain(forName: WeatherTextSeparator.appGroup)
+        let persistenceKey = "varsel.test.configuration-widget-import.\(UUID().uuidString)"
+        let place = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let hours = [ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 40, dew: 6)]
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousSharedDomain {
+                sharedDefaults.setPersistentDomain(previousSharedDomain, forName: WeatherTextSeparator.appGroup)
+            } else {
+                sharedDefaults.removePersistentDomain(forName: WeatherTextSeparator.appGroup)
+            }
+        }
+
+        sharedDefaults.set(WeatherTextSeparator.comma.rawValue, forKey: WeatherTextSeparator.key)
+        UserDefaults.standard.set(try JSONEncoder().encode(PersistedStoreState(
+            places: [place], selectedID: place.id, log: [],
+            forecasts: [place.id: hours], forecastUpdatedAt: [place.id: Date()]
+        )), forKey: persistenceKey)
+        var settings = ApplicationSettingsBackup(homeFavorites: HomeFavorites())
+        settings.textSeparator = WeatherTextSeparator.bullet.rawValue
+        let configuration = WeatherConfigurationExport(
+            places: [place], selectedPlaceID: place.id, alertLanguageStyle: .bokmal,
+            appSettings: settings
+        )
+        let plan = ConfigurationImportPlan(
+            configuration: configuration, currentPlaces: [place], currentSelection: place.id,
+            currentLanguageStyle: .bokmal, mode: .replace
+        )
+        let store = Store(
+            forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey,
+            notificationRescheduler: { _, _, _, _, _ in
+                NotificationScheduleResult(requestedCount: 0, scheduledCount: 0, failedCount: 0, firstScheduledAt: nil)
+            }
+        )
+
+        XCTAssertTrue(store.applyConfigurationImport(plan))
+        XCTAssertEqual(SharedWidgetData.load()?.textSeparator, .bullet)
+    }
+
     func testConfigurationDocumentFileRoundTripPreservesEmptyPlacesAndLanguage() throws {
         let document = WeatherConfigurationDocument(
             places: [], selectedPlaceID: nil, alertLanguageStyle: .english

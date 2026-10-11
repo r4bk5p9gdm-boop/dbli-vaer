@@ -1070,11 +1070,14 @@ final class Store: ObservableObject {
             self.currentLocationPlaceID = nil
             currentLocationCourse = nil
         }
-        alertLanguageStyle = plan.alertLanguageStyle
         if let settings = plan.appSettings {
             homeFavorites = settings.homeFavorites
             settings.persist()
         }
+        // The language-style observer publishes Widget/Watch data. Persist the
+        // imported shared separator first so that publication sees one coherent
+        // set of display preferences rather than the previous separator.
+        alertLanguageStyle = plan.alertLanguageStyle
         proximityMonitor.configure(for: places)
         save()
         Task { await replan() }

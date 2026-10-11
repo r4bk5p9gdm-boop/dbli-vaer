@@ -421,12 +421,11 @@ Innsettingsvisningen bruker den allerede tilgjengelige ukjent-tilstanden, mens
 manuell testsending krever eksplisitt tillatelse. En injisert regresjon skiller
 mellom avslag og timeout-feil.
 
-**AUTO-498 · ÅPEN** — Oppdater delte værflater etter import av appinnstillinger.
-`Store.applyConfigurationImport()` setter språkstil før det lagrer importert
-skilletegn; språkstilens `didSet` oppdaterer derfor widget/Watch med den gamle
-innstillingen, mens `settings.persist()` ikke utløser ny deling. Sørg for at
-importert tekstformat straks oppdaterer widget-/Watch-snapshot, med regresjon
-for import av et annet skilletegn.
+**AUTO-498 · FULLFØRT 2026-10-11** — Oppsettimport lagrer nå de delte
+appinnstillingene før språkstilens `didSet` publiserer Widget/Watch-snapshotet.
+Det hindrer at import av et nytt klokkeslettskilletegn først sender den gamle
+verdien til klokken. Regresjonen importerer et nytt skilletegn med et lagret
+værvarsel og bekrefter at snapshotet bruker den importerte innstillingen.
 
 **AUTO-499 · ÅPEN** — Dekk kansellering og opprydding i engangsforespørselen for
 GPS med en injiserbar posisjonsklient. `LocationManager.current()` holder en
@@ -441,6 +440,13 @@ den ber om varselstillatelse og starter første prognoselasting; posisjonsløpet
 har opptil 30 sekunders ventetid, og geokoding har ingen lokal frist. Undersøk
 en trygg parallell/sekvensiell oppstartsmodell som ikke mister GPS-stedet som
 prognosemål, og dekk forsinket eller mislykket geokoding med regresjon.
+
+**AUTO-501 · ÅPEN** — Avgrens ventetiden på omvendt geokoding for GPS-steder.
+`LocationManager.name(for:)` awaiter `CLGeocoder` direkte uten frist eller
+kanselleringshåndtering, og brukes både ved oppstart og når brukeren legger til
+eller velger GPS-sted. Innfør en trygg avbrytbar/fristsatt løsning som beholder
+koordinatene selv om navneoppslaget feiler, med regresjon for sen respons og
+fallback-navn.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig
