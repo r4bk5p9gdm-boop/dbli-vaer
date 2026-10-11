@@ -415,11 +415,11 @@ replan logger ikke suksess og frigjør bare debounce-vakten den selv eier; en
 nyere replans vakt bevares. Regresjonen kansellerer mens planleggeren venter,
 bekrefter at ingen fullføringslogg skrives, og at samme plan kan prøves på nytt.
 
-**AUTO-497 · ÅPEN** — Skill mellom avslag og feil ved forespørsel om
-varslingsgodkjenning. `NotificationScheduler.requestPermission()` gjør i dag
-midlertidig/systemfeil om til `false`, som `Store` og innstillingsvisningen viser
-som om brukeren uttrykkelig avslo varsler. Bevar en egen ukjent/feiltilstand og
-test at forespørselsfeil ikke presenteres som et avslag.
+**AUTO-497 · FULLFØRT 2026-10-11** — `NotificationScheduler.requestPermission()`
+bevarer nå systemfeil som `nil` i stedet for å vise dem som eksplisitt avslag.
+Innsettingsvisningen bruker den allerede tilgjengelige ukjent-tilstanden, mens
+manuell testsending krever eksplisitt tillatelse. En injisert regresjon skiller
+mellom avslag og timeout-feil.
 
 **AUTO-498 · ÅPEN** — Oppdater delte værflater etter import av appinnstillinger.
 `Store.applyConfigurationImport()` setter språkstil før det lagrer importert
@@ -434,6 +434,13 @@ continuation, timeout-task og delegate-manager synkronisert på tvers av
 CoreLocation-callbacks og task-kansellering; en regresjon bør bekrefte at
 kansellering lar neste posisjonsforespørsel starte, og at et sent callback fra
 den gamle manageren ikke kan fullføre den nye forespørselen.
+
+**AUTO-500 · ÅPEN** — Hold førstegangs oppstart responsiv mens nåværende GPS-sted
+slås opp. Appens oppstartsoppgave venter nå på posisjon og omvendt geokoding før
+den ber om varselstillatelse og starter første prognoselasting; posisjonsløpet
+har opptil 30 sekunders ventetid, og geokoding har ingen lokal frist. Undersøk
+en trygg parallell/sekvensiell oppstartsmodell som ikke mister GPS-stedet som
+prognosemål, og dekk forsinket eller mislykket geokoding med regresjon.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

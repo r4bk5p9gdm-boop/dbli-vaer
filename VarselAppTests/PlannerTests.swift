@@ -9194,6 +9194,16 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(schedulingAttempts, 2, "Cancellation must release this replan's debounce guard")
     }
 
+    func testNotificationPermissionRequestDistinguishesDenialFromFailure() async {
+        let denied = await NotificationScheduler.requestPermission { false }
+        let failed = await NotificationScheduler.requestPermission {
+            throw URLError(.timedOut)
+        }
+
+        XCTAssertEqual(denied, Optional(false))
+        XCTAssertNil(failed, "A system error is unknown, not an explicit denial")
+    }
+
     func testRotatingHomeHorizonStopsAtEighteenHours() {
         XCTAssertTrue(Planner.isWithinRotatingHomeHorizon(base.addingTimeInterval(18 * 60 * 60), now: base))
         XCTAssertFalse(Planner.isWithinRotatingHomeHorizon(base.addingTimeInterval(18 * 60 * 60 + 1), now: base))

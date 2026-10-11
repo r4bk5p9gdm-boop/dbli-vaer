@@ -322,8 +322,16 @@ enum NotificationScheduler {
         }.prefix(pendingNotificationLimit).map { $0 }
     }
 
-    static func requestPermission() async -> Bool {
-        (try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])) ?? false
+    static func requestPermission(
+        request: () async throws -> Bool = {
+            try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge])
+        }
+    ) async -> Bool? {
+        do {
+            return try await request()
+        } catch {
+            return nil
+        }
     }
 
     static func authorizationStatus(
@@ -470,7 +478,7 @@ enum NotificationScheduler {
     }
 
     static func sendTest(for place: Place, languageStyle: AlertLanguageStyle = .bokmal) async -> Bool {
-        guard await requestPermission() else { return false }
+        guard await requestPermission() == true else { return false }
         let configuredRule = place.rules.first(where: { $0.enabled })
         let rule = configuredRule ?? Rule(type: .regn)
         let possible = configuredRule == nil
