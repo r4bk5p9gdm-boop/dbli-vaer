@@ -9164,6 +9164,36 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(schedulingAttempts, 2, "A successful retry should restore normal debounce")
     }
 
+    @MainActor
+    func testCancelledReplanDuringSchedulingDoesNotLogAndCanRetry() async {
+        let schedulingStarted = expectation(description: "Notification scheduling started")
+        var schedulingAttempts = 0
+        let store = Store(
+            forecastFetcher: { _, _ in [] },
+            persistenceKey: "varsel.test.replan-cancel.\(UUID().uuidString)",
+            notificationRescheduler: { _, _, _, _, _ in
+                schedulingAttempts += 1
+                if schedulingAttempts == 1 {
+                    schedulingStarted.fulfill()
+                    try? await Task.sleep(for: .seconds(60))
+                }
+                return NotificationScheduleResult(
+                    requestedCount: 1, scheduledCount: 1, failedCount: 0,
+                    firstScheduledAt: self.base
+                )
+            }
+        )
+
+        let replanTask = Task { await store.replan() }
+        await fulfillment(of: [schedulingStarted], timeout: 5)
+        replanTask.cancel()
+        await replanTask.value
+
+        XCTAssertTrue(store.log.isEmpty, "A cancelled replan must not report completion")
+        await store.replan()
+        XCTAssertEqual(schedulingAttempts, 2, "Cancellation must release this replan's debounce guard")
+    }
+
     func testRotatingHomeHorizonStopsAtEighteenHours() {
         XCTAssertTrue(Planner.isWithinRotatingHomeHorizon(base.addingTimeInterval(18 * 60 * 60), now: base))
         XCTAssertFalse(Planner.isWithinRotatingHomeHorizon(base.addingTimeInterval(18 * 60 * 60 + 1), now: base))

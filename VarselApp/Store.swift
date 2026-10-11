@@ -921,6 +921,13 @@ final class Store: ObservableObject {
             Set(places.filter { (planningForecasts[$0.id] ?? []).isEmpty }.map(\.id)),
             nearbyPlaceIDs
         )
+        guard !Task.isCancelled else {
+            if lastReplanSignature == signature, lastReplanAt == now {
+                lastReplanSignature = nil
+                lastReplanAt = nil
+            }
+            return
+        }
         if scheduleResult.failedCount > 0,
            lastReplanSignature == signature, lastReplanAt == now {
             // Keep the in-flight guard during the await, but let an unchanged

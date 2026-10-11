@@ -409,13 +409,11 @@ også at delt lagring mangler. Regresjonen injiserer utilgjengelig suite og
 bekrefter at operasjonen hoppes over, feilen rapporteres og standardlageret
 forblir urørt.
 
-**AUTO-496 · ÅPEN** — Ikke rapporter fullført replanlegging etter at tasken er
-kansellert mens varslingsplanleggeren venter. `Store.replan()` sjekker
-kansellering bare før `await NotificationScheduler.reschedule()`; en kansellert
-bakgrunnsoppgave kan derfor logge suksess og beholde debounce-vakten selv om
-forespørsler ble stående ubehandlet. Legg til kontroll etter `await`, rydd bare
-denne taskens vakt og test kansellering under injisert planlegging uten å endre
-en nyere replans vakt.
+**AUTO-496 · FULLFØRT 2026-10-11** — `Store.replan()` kontrollerer nå
+kansellering straks den injiserte varslingsplanleggeren returnerer. En avbrutt
+replan logger ikke suksess og frigjør bare debounce-vakten den selv eier; en
+nyere replans vakt bevares. Regresjonen kansellerer mens planleggeren venter,
+bekrefter at ingen fullføringslogg skrives, og at samme plan kan prøves på nytt.
 
 **AUTO-497 · ÅPEN** — Skill mellom avslag og feil ved forespørsel om
 varslingsgodkjenning. `NotificationScheduler.requestPermission()` gjør i dag
@@ -429,6 +427,13 @@ skilletegn; språkstilens `didSet` oppdaterer derfor widget/Watch med den gamle
 innstillingen, mens `settings.persist()` ikke utløser ny deling. Sørg for at
 importert tekstformat straks oppdaterer widget-/Watch-snapshot, med regresjon
 for import av et annet skilletegn.
+
+**AUTO-499 · ÅPEN** — Dekk kansellering og opprydding i engangsforespørselen for
+GPS med en injiserbar posisjonsklient. `LocationManager.current()` holder en
+continuation, timeout-task og delegate-manager synkronisert på tvers av
+CoreLocation-callbacks og task-kansellering; en regresjon bør bekrefte at
+kansellering lar neste posisjonsforespørsel starte, og at et sent callback fra
+den gamle manageren ikke kan fullføre den nye forespørselen.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

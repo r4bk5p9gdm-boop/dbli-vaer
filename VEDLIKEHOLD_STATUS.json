@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T20:37:42Z",
+  "lastScheduledStart": "2026-10-11T20:52:42Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-495 fullført 2026-10-11: WeatherTextSeparator leser og skriver bare gjennom den delte App Group-suiten; ved manglende suite logges og hoppes operasjonen over i stedet for å falle tilbake til standardlageret. Innstillingsvelger og oppsettbackup håndterer manglende delt lagring trygt. Regresjon bekrefter at standardlageret forblir urørt. Swift-parsing, JSON-validering og diffkontroll består; XCTest ikke kjørt fordi CoreSimulator mangler tilgjengelige runtimes. Bred gjennomgang fant AUTO-498: importert skilletegn deles ikke nødvendigvis til widget/Watch fordi oppdateringen skjer før preferansen persisteres. Neste kø: AUTO-496, AUTO-497 og AUTO-498."
+  "lastProgress": "AUTO-496 fullført 2026-10-11: Store.replan() sjekker kansellering etter await av varslingstjenesten, logger ikke fullføring etter avbrudd, og frigjør kun sin egen debounce-vakt. Regresjon dekker kansellering under injisert planlegging og umiddelbar retry. Bred gjennomgang av async flyter fant også at LocationManager.current() koordinerer continuation, timeout og CoreLocation-delegate på tvers av kansellering uten dedikert regresjon; AUTO-499 dekker kansellering, retry og sen callback. Verifisering: Swift-parsing og JSON-validering består. XCTest kan ikke kjøres nå fordi CoreSimulator-tjenesten ikke starter / ingen runtimes tilgjengelig. Neste kø: AUTO-497, AUTO-498 og AUTO-499."
 }
