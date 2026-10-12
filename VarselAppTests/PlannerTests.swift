@@ -8191,6 +8191,19 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(AlertType.frost.matches(frost, threshold: 0))
     }
 
+    func testRainAndSnowAlertsSwitchExactlyAtOneDegree() {
+        func hour(_ temperature: Double) -> ForecastHour {
+            ForecastHour(time: base, temp: temperature, precip: 0.6, wind: 1, cloud: 50, dew: 0)
+        }
+
+        for temperature in [(1.0).nextDown, 1.0] {
+            XCTAssertTrue(AlertType.sno.matches(hour(temperature), threshold: 0.5))
+            XCTAssertFalse(AlertType.regn.matches(hour(temperature), threshold: 0.5))
+        }
+        XCTAssertFalse(AlertType.sno.matches(hour((1.0).nextUp), threshold: 0.5))
+        XCTAssertTrue(AlertType.regn.matches(hour((1.0).nextUp), threshold: 0.5))
+    }
+
     func testLegacyStoredStateKeepsValidPlacesAndSkipsOnlyUnknownRules() throws {
         let data = Data("""
         {"places":[
@@ -9853,6 +9866,30 @@ final class PlannerTests: XCTestCase {
             [request], places: [place], missingForecastPlaceIDs: [place.id], nearbyPlaceIDs: [],
             languageStyle: .bokmal, now: base.addingTimeInterval(3600)
         ).isEmpty)
+    }
+
+    @MainActor
+    func testOfflineNotificationPreservationUsesDeterministicFireDates() throws {
+        let rule = Rule(type: .regn)
+        let place = Place(name: "Klinga", lat: 64, lon: 11, rules: [rule])
+        func request(_ identifier: String) throws -> UNNotificationRequest {
+            let content = UNMutableNotificationContent()
+            content.userInfo[NotificationScheduler.planContextKey] = try JSONEncoder().encode(
+                NotificationPlanContext(place: place, rule: rule, languageStyle: .bokmal)
+            )
+            return UNNotificationRequest(identifier: identifier, content: content, trigger: nil)
+        }
+        let future = try request("future")
+        let expired = try request("expired")
+        let expected = base.addingTimeInterval(900)
+
+        let preserved = NotificationScheduler.requestsToPreserve(
+            [expired, future], places: [place], missingForecastPlaceIDs: [place.id],
+            nearbyPlaceIDs: [], languageStyle: .bokmal, now: base,
+            resolveFireDate: { $0.identifier == "future" ? expected : base }
+        )
+
+        XCTAssertEqual(preserved.map(\.identifier), ["future"])
     }
 
     @MainActor

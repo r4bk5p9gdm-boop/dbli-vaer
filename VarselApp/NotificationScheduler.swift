@@ -301,10 +301,13 @@ enum NotificationScheduler {
         missingForecastPlaceIDs: Set<UUID>,
         nearbyPlaceIDs: Set<UUID>,
         languageStyle: AlertLanguageStyle,
-        now: Date
+        now: Date,
+        resolveFireDate: (UNNotificationRequest) -> Date? = {
+            NotificationScheduler.nextFireDate(for: $0)
+        }
     ) -> [UNNotificationRequest] {
-        requests.filter { request in
-            guard let date = nextFireDate(for: request), date > now,
+        let eligible = requests.compactMap { request -> (request: UNNotificationRequest, fireDate: Date)? in
+            guard let date = resolveFireDate(request), date > now,
                   let data = request.content.userInfo[planContextKey] as? Data,
                   let context = try? JSONDecoder().decode(NotificationPlanContext.self, from: data),
                   missingForecastPlaceIDs.contains(context.placeID),
@@ -314,12 +317,16 @@ enum NotificationScheduler {
                   rule.enabled, !rule.isDisplayOnly,
                   !rule.onlyWhenNearby || nearbyPlaceIDs.contains(place.id)
             else { return false }
-            return context == NotificationPlanContext(place: place, rule: rule, languageStyle: languageStyle)
-        }.sorted {
-            let first = nextFireDate(for: $0) ?? .distantFuture
-            let second = nextFireDate(for: $1) ?? .distantFuture
-            return first == second ? $0.identifier < $1.identifier : first < second
-        }.prefix(pendingNotificationLimit).map { $0 }
+            guard context == NotificationPlanContext(place: place, rule: rule, languageStyle: languageStyle) else {
+                return nil
+            }
+            return (request: request, fireDate: date)
+        }
+        return eligible.sorted {
+            $0.fireDate == $1.fireDate
+                ? $0.request.identifier < $1.request.identifier
+                : $0.fireDate < $1.fireDate
+        }.prefix(pendingNotificationLimit).map(\.request)
     }
 
     static func requestPermission(

@@ -695,12 +695,11 @@ har nå en regresjonstest for den versjonerte clear-envelope-overføringen.
 Dekodingen beholder `sentAt` og det eksplisitte `snapshot: nil`, slik at sletting
 av siste sted ikke kan forveksles med en ugyldig eller eldre Watch-melding.
 
-**AUTO-531 · ÅPEN** — Gjør varslingskøens bevaringstest uavhengig av
-systemklokken. `requestsToPreserve` tar en injisert `now`, men leser neste
-tidspunkt direkte fra `UNNotificationTrigger`; dermed kan en fast testdato og
-en ekte `UNTimeIntervalNotificationTrigger` havne på hver sin tidslinje. La
-beregningen motta en kontrollert triggerdato og dekk både bevart og utløpt
-tidsintervallforespørsel deterministisk.
+**AUTO-531 · FULLFØRT 2026-10-12** — `requestsToPreserve` tar nå en
+injiserbar fire-date-oppløser, slik at testen bruker fast referansetid og ikke
+blander den med `UNNotificationTrigger.nextTriggerDate()` sin systemklokke.
+Regresjonen dekker deterministisk at en fremtidig forespørsel bevares mens en
+utløpt forespørsel forkastes.
 
 **AUTO-532 · ÅPEN** — Dekk avbrytelse av en varselplanlegging som står i kø bak
 en pågående erstatning. `NotificationSchedulingQueue` venter på forrige jobb,
@@ -715,6 +714,11 @@ dekoding. Telefonens `applicationContext`-payload går nå rett fra `Data` til
 `JSONDecoder`; mål gyldige snapshots over hele prognosehorisonten, velg grense
 med trygg reserve, og test at en overstor payload avvises før dekoding mens
 klare og normale overføringer fortsatt fungerer.
+
+**AUTO-534 · ÅPEN** — Lås ned regn-/snøskiftet ved 1 °C med verdier rett under,
+nøyaktig på og rett over grensen. `AlertType.matches` bruker `temp > 1` for
+regn og `temp <= 1` for snø; presise tilstøtende verdier sikrer at ingen liten
+flyttalls- eller terskelendring gir dobbeltvarsel eller et hull i dekningen.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

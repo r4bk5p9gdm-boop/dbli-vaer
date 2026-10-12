@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T18:51:35Z",
+  "lastScheduledStart": "2026-10-12T19:06:35Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-530 fullført 2026-10-12: WatchTransferPolicy.decodeTransferPayload har nå en regresjonstest som går gjennom clear-envelope-dekoderen og sikrer at snapshot fortsatt er nil og sentAt bevares. Swift-parsing og diffkontroll består. XCTest ikke kjørt fordi simulatoren har vært blokkert og disken fortsatt har begrenset kapasitet; ingen tung bygging startet. Bred gjennomgang av Watch-overføringsmottaket fant at applicationContext-data går direkte fra Data til JSONDecoder uten payloadgrense; AUTO-533 skal etablere en grense basert på gyldige prognosesnapshots og avvise overdreven inngang før dekoding. Full køskann: AUTO-531, AUTO-532, AUTO-533."
+  "lastProgress": "AUTO-531 fullført 2026-10-12: requestsToPreserve tar nå en injiserbar fire-date-oppløser; testen dekker at en fremtidig forespørsel bevares og en utløpt forkastes uten å bruke systemklokken. Swift-parsing, JSON- og diffkontroll består. XCTest ikke kjørt på grunn av tidligere simulatorblokkering og 15 GB ledig diskplass. Bred gjennomgang av værreglenes grenseverdier fant at eksisterende regn-/snøtest bruker 1,0 og 1,1 °C, men ikke de umiddelbare flyttallene på hver side; AUTO-534 dekker `nextDown`, eksakt grense og `nextUp`. Full køskann: AUTO-532, AUTO-533, AUTO-534."
 }
