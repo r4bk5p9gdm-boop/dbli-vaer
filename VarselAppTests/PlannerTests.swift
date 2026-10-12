@@ -47,10 +47,12 @@ private final class FakeWatchApplicationContextClient: WatchApplicationContextCl
     var isSupported = true
     var isActivated = true
     var failuresRemaining = 0
+    var onUpdate: (() -> Void)?
     private(set) var attempts: [[String: Data]] = []
 
     func updateApplicationContext(_ context: [String: Data]) throws {
         attempts.append(context)
+        onUpdate?()
         if failuresRemaining > 0 {
             failuresRemaining -= 1
             throw NSError(domain: "WatchSync", code: 1)
@@ -575,6 +577,29 @@ final class PlannerTests: XCTestCase {
         XCTAssertNil(try JSONDecoder().decode(WatchWeatherTransfer.self, from: retriedClearData).snapshot)
         manager.retryPendingTransfer()
         XCTAssertEqual(client.attempts.count, 3, "A successful clear retry must not resend the stale snapshot")
+    }
+
+    @MainActor
+    func testWatchActivationSendsOnlyLatestTransferQueuedWhileInactive() async throws {
+        let client = FakeWatchApplicationContextClient()
+        client.isActivated = false
+        let manager = WatchSyncManager(client: client)
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        manager.send(place: place, forecast: [], updatedAt: base)
+        manager.clear()
+        XCTAssertTrue(client.attempts.isEmpty)
+
+        let delivered = expectation(description: "Activation flushes the queued clear")
+        client.onUpdate = { delivered.fulfill() }
+        client.isActivated = true
+        manager.session(WCSession.default, activationDidCompleteWith: .activated, error: nil)
+        await fulfillment(of: [delivered], timeout: 1)
+
+        XCTAssertEqual(client.attempts.count, 1)
+        let data = try XCTUnwrap(client.attempts[0]["weatherSnapshot"])
+        XCTAssertNil(try JSONDecoder().decode(WatchWeatherTransfer.self, from: data).snapshot)
+        manager.retryPendingTransfer()
+        XCTAssertEqual(client.attempts.count, 1, "Activation must clear the pending transfer after delivery")
     }
 
     private func transferredPlaceName(from context: [String: Data]) throws -> String? {

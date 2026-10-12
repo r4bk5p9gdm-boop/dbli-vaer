@@ -746,11 +746,11 @@ requests og nye varsler kommer i motsatt rekkefølge. Swift-parsing og
 JSON/diffkontroll besto; XCTest kunne ikke starte fordi CoreSimulatorService/
 runtime mangler.
 
-**AUTO-539 · ÅPEN** — Dekk Watch-overføring mens WCSession ikke er aktivert.
-`flushIfActivated` skal beholde nyeste snapshot eller sletting når overføring
-blir køet før aktivering, og `activationDidCompleteWith` skal sende akkurat
-den nyeste verdien. Test også at en eldre køet værmelding ikke overskriver en
-sletting mens forbindelsen venter på aktivering.
+**AUTO-539 · FULLFØRT 2026-10-12** — `testWatchActivationSendsOnlyLatestTransferQueuedWhileInactive`
+bekrefter at snapshot etterfulgt av sletting blir slått sammen mens WCSession
+er inaktiv, og at aktiveringscallbacken sender bare den nyeste slettingen.
+Swift-parsing og JSON/diffkontroll besto; XCTest kunne ikke starte fordi
+CoreSimulatorService/runtime mangler.
 
 **AUTO-540 · ÅPEN** — Normaliser dupliserte ID-er i gjenopprettet
 varslingslogg. `LogEntry` er `Identifiable` og vises direkte med `ForEach`, men
@@ -763,6 +763,12 @@ lagret rekkefølge er uventet. `retainedLog` filtrerer datoer, men bruker derett
 `prefix(maxCount)` uten sortering; et usortert eldre arkiv kan derfor beholde
 eldre rader og forkaste nyere. Legg til en rekkefølgetest og normaliser
 gjenopprettet visning til nyeste-først.
+
+**AUTO-542 · ÅPEN** — Lokaliser «Oppdateringslogg»-skjermen og nye
+varslingsplanresultater for engelsk språkstil. `UpdateLogView` og
+`notificationPlanLogText` bruker fortsatt hardkodet norsk selv om Store har
+valgt språkstil; test tom-, vellykket- og feilet planvisning på engelsk uten å
+endre lagret historikk retroaktivt.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T20:51:35Z",
+  "lastScheduledStart": "2026-10-12T21:06:35Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-538 fullført 2026-10-12: integrert replan-test blander 10 bevarte offline-varsler med 70 nye og bekrefter at nærmeste 64 samlet beholdes uavhengig av rekkefølgen på begge gruppene. Swift-parsing og JSON/diffkontroll besto; XCTest blokkert fordi CoreSimulatorService/runtime ikke er tilgjengelig. Bred gjennomgang av Store-logg-retensjonen fant at prefix(50) forutsetter tidsordnet arkiv; AUTO-541 lagt til for å velge de 50 nyeste selv ved uordnet lagret rekkefølge. Åpne kønumre etter full skann: AUTO-539, AUTO-540, AUTO-541."
+  "lastProgress": "AUTO-539 fullført 2026-10-12: la til test som køer et snapshot og deretter en sletting mens WCSession er inaktiv, og bekrefter at aktiveringscallbacken bare sender siste overføring. Swift-parsing og JSON/diffkontroll besto; XCTest blokkert fordi CoreSimulatorService/runtime ikke er tilgjengelig. Bred gjennomgang av oppdateringsloggen fant at skjermens tittel/tomtilstand og planresultatene fortsatt er hardkodet norsk selv ved engelsk språkstil; AUTO-542 lagt til for målrettet lokalisering. Åpne kønumre etter full skann: AUTO-540, AUTO-541, AUTO-542."
 }
