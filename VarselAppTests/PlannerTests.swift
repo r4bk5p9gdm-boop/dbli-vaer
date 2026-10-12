@@ -652,6 +652,44 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(snapshot.forecast, [healthy], "Shared widget and Watch snapshots use the same physical bounds")
     }
 
+    func testPersistedForecastCacheSortsDeduplicatesAndBoundsHourTimes() throws {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let inHourSample = PrecipitationSample(time: base.addingTimeInterval(15 * 60), rate: 2)
+        let nextHourSample = PrecipitationSample(time: base.addingTimeInterval(3_600), rate: 3)
+        let first = ForecastHour(
+            time: base, temp: 8, precip: 0, wind: 1, cloud: 30, dew: 4,
+            radarSamples: [inHourSample, nextHourSample]
+        )
+        var expectedFirst = first
+        expectedFirst.radarSamples = [inHourSample]
+        let second = ForecastHour(time: base.addingTimeInterval(3_600), temp: 7, precip: 0, wind: 2, cloud: 40, dew: 3)
+        var duplicate = second
+        duplicate.temp = 20
+        let farFuture = ForecastHour(
+            time: base.addingTimeInterval(11 * 24 * 3_600), temp: 6, precip: 0, wind: 2, cloud: 40, dew: 3
+        )
+        let state = PersistedStoreState(
+            places: [place], selectedID: place.id, log: [],
+            forecasts: [place.id: [second, first, duplicate, farFuture]],
+            forecastUpdatedAt: [place.id: base]
+        )
+
+        let decoded = try JSONDecoder().decode(
+            PersistedStoreState.self, from: JSONEncoder().encode(state)
+        )
+
+        XCTAssertEqual(decoded.forecasts[place.id], [expectedFirst, second])
+        XCTAssertTrue(decoded.needsForecastCacheRepair)
+
+        let snapshot = try JSONDecoder().decode(
+            WidgetWeatherSnapshot.self,
+            from: JSONEncoder().encode(WidgetWeatherSnapshot(
+                place: place, forecast: [second, first, duplicate, farFuture], updatedAt: base
+            ))
+        )
+        XCTAssertEqual(snapshot.forecast, [expectedFirst, second])
+    }
+
     @MainActor
     func testStoreRestoresHealthyForecastsAroundCorruptAndUnknownEntries() throws {
         let persistenceKey = "varsel.test.store-corrupt-forecast-entry.\(UUID().uuidString)"

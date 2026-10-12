@@ -226,18 +226,20 @@ struct PersistedStoreState: Codable {
             selectedID = nil
         }
         log = (try? values.decode([LossyDecodable<LogEntry>].self, forKey: .log))?.compactMap(\.value) ?? []
+        let lossyTimestamps = (try? values.decode([UUID: LossyDecodable<Date>].self, forKey: .forecastUpdatedAt)) ?? [:]
+        forecastUpdatedAt = lossyTimestamps.compactMapValues(\.value)
+        lastUpdate = try? values.decode(Date.self, forKey: .lastUpdate)
         let lossyForecasts = (try? values.decode([UUID: LossyDecodable<[ForecastHour]>].self, forKey: .forecasts)) ?? [:]
         var repairedForecasts: [UUID: [ForecastHour]] = [:]
         for (placeID, decoded) in lossyForecasts {
             guard let hours = decoded.value else { continue }
-            let plausibleHours = hours.filter(\.isPhysicallyPlausible)
-            if plausibleHours.count != hours.count { needsForecastCacheRepair = true }
-            repairedForecasts[placeID] = plausibleHours
+            let safeHours = ForecastHour.sanitizedCacheSequence(
+                hours, fetchedAt: forecastUpdatedAt[placeID] ?? lastUpdate
+            )
+            if safeHours != hours { needsForecastCacheRepair = true }
+            repairedForecasts[placeID] = safeHours
         }
         forecasts = repairedForecasts
-        let lossyTimestamps = (try? values.decode([UUID: LossyDecodable<Date>].self, forKey: .forecastUpdatedAt)) ?? [:]
-        forecastUpdatedAt = lossyTimestamps.compactMapValues(\.value)
-        lastUpdate = try? values.decode(Date.self, forKey: .lastUpdate)
     }
 
     func encode(to encoder: Encoder) throws {

@@ -605,14 +605,14 @@ følges etter snapshotets språkstil, og feilen holdes generisk uten å vise
 systemdetaljer. Regresjon dekker begge tekster. Swift-parsing og diffkontroll
 består; XCTest er blokkert fordi CoreSimulatorService ikke er tilgjengelig.
 
-**AUTO-519 · ÅPEN** — Kontroller tidsrekkefølge og duplikater i gjenopprettet
-prognosecache og delte Watch/widget-snapshots. Dekodingen forkaster nå verdier
-utenfor fysiske grenser, men `ForecastHour.isPhysicallyPlausible` godtar fortsatt
-vilkårlige endelige datoer; `Store.isUsableForecast` avviser duplikater og
-usammenhengende timer ved nettverksoppdatering, men denne kontrollen brukes ikke
-ved lokal gjenoppretting. Avgrens tidsvalideringen slik at gamle, men nyttige
-cachedata fortsatt kan vises, marker korrupte cachedata for reparasjon, og dekk
-usorterte, dupliserte og urimelig langt-frem-i-tid-timer med regresjoner.
+**AUTO-519 · FULLFØRT 2026-10-12** — Gjenopprettet prognosecache og delte
+Watch/widget-snapshots normaliserer nå timene i stigende rekkefølge, fjerner
+dupliserte tidspunkt og avviser timer utenfor et bredt vindu rundt hentetiden.
+Gamle, men sammenhengende cachedata beholdes; endringer markerer lokaltilstanden
+for reparasjon. Radarprøver utenfor prognosetimen fjernes også. Regresjon dekker
+usorterte/dupliserte timer, en time elleve dager etter hentetid, reparasjonsflagget
+og samme filtrering i snapshot. Swift-parsing og diffkontroll består; XCTest er
+blokkert fordi CoreSimulatorService ikke er tilgjengelig.
 
 **AUTO-520 · ÅPEN** — Avvis eller merk urimelig fremtidige
 `WidgetWeatherSnapshot.updatedAt`-verdier. Snapshot-dekodingen godtar nå
@@ -629,6 +629,13 @@ med `Int(age / 3_600)`, som runder ned; en snapshot som er nesten tre timer
 gammel vises derfor som «2h ago». Bruk oppoveravrunding bare for stale-teksten
 og dekk grensen rett over to timer samt overgangen ved tre timer, uten å endre
 ferskhetsgrensen.
+
+**AUTO-522 · ÅPEN** — Dedupér radarprøver som gjenopprettes fra prognosecache
+og Watch/widget-snapshots. Yr-normaliseringen velger høyeste rate ved like
+radartidspunkt, men cachevalideringen gjør ikke det; `Planner` bruker prøvene
+direkte til å beregne intervall og tidspunkt for regn-/snøvarsler. Behold prøven
+med høyest rate for hvert tidspunkt etter bucket-filtrering, marker cachedata
+som endret for reparasjon, og dekk gjentatte prøver med ulike rater i regresjon.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

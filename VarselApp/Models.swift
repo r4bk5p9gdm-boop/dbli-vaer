@@ -1073,6 +1073,30 @@ struct ForecastHour: Codable, Identifiable, Hashable {
             } != false
     }
 
+    private static let cachedForecastPastTolerance: TimeInterval = 24 * 3_600
+    // Yr responses are capped at nine days; one day of margin avoids rejecting
+    // a legitimate boundary hour after the response was fetched.
+    private static let cachedForecastMaximumHorizon: TimeInterval = 10 * 24 * 3_600
+
+    static func sanitizedCacheSequence(_ hours: [ForecastHour], fetchedAt: Date?) -> [ForecastHour] {
+        let earliest = fetchedAt?.addingTimeInterval(-cachedForecastPastTolerance)
+        let latest = fetchedAt?.addingTimeInterval(cachedForecastMaximumHorizon)
+        var seen = Set<Date>()
+        let unique = hours.filter { hour in
+            hour.isPhysicallyPlausible
+                && (earliest.map { hour.time >= $0 } ?? true)
+                && (latest.map { hour.time <= $0 } ?? true)
+                && seen.insert(hour.time).inserted
+        }
+        return unique.map { hour in
+            guard let samples = hour.radarSamples else { return hour }
+            var sanitized = hour
+            let end = hour.time.addingTimeInterval(3_600)
+            sanitized.radarSamples = samples.filter { $0.time >= hour.time && $0.time < end }
+            return sanitized
+        }.sorted { $0.time < $1.time }
+    }
+
     private static func validPrecipitationAmount(_ value: Double?) -> Double? {
         guard let value, value.isFinite, value >= 0 else { return nil }
         return value

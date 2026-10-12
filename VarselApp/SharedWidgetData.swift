@@ -246,9 +246,11 @@ struct WidgetWeatherSnapshot: Codable {
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         place = try values.decode(Place.self, forKey: .place)
-        forecast = try values.decode([ForecastHour].self, forKey: .forecast)
-            .filter(\.isPhysicallyPlausible)
         updatedAt = try values.decode(Date.self, forKey: .updatedAt)
+        forecast = ForecastHour.sanitizedCacheSequence(
+            try values.decode([ForecastHour].self, forKey: .forecast),
+            fetchedAt: updatedAt
+        )
 
         // A newer phone may write a language that an older Watch build does
         // not know. Keep the weather snapshot usable instead of discarding

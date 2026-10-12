@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T13:16:09Z",
+  "lastScheduledStart": "2026-10-12T13:31:09Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-518 fullført 2026-10-12: Watch-feil ved mislykket manuell oppdatering følger nå snapshotets språkstil via ren kopifunksjon, og teksten eksponerer ikke systemfeildetaljer. Swift-parsing og diffkontroll består; XCTest blokkert av utilgjengelig CoreSimulatorService. Bred gjennomgang av Watch/widget-friskhetsvisningen fant at stale-alder rundes ned og undervurderes med nesten én time; AUTO-521 lagt til. Full køskann: AUTO-519, AUTO-520, AUTO-521."
+  "lastProgress": "AUTO-519 fullført 2026-10-12: gjenopprettet forecast-cache sorteres og dedupliseres, tidsavgrenses relativt til hentetid, og radarprøver utenfor hver prognosetime fjernes; avvik markerer cache for reparasjon. Regresjon dekker usortert/duplisert/fjern fremtidig time og delt snapshot. Swift-parsing/diffkontroll består; XCTest blokkert av utilgjengelig CoreSimulatorService. Bred gjennomgang av Yr-normalisering mot Planner fant at cachevalidering ennå ikke velger høyeste rate for like radarprøvetidspunkt; AUTO-522 lagt til. Full køskann: AUTO-520, AUTO-521, AUTO-522."
 }
