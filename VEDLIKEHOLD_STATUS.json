@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T09:45:38Z",
+  "lastScheduledStart": "2026-10-12T10:01:01Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-505 fullført 2026-10-12: reserve-navnet for GPS-sted følger nå valgt språkstil via språkkatalogen, både for automatisk valg og manuelt stedstillegg; regresjon dekker Bokmål, Inntrøndersk, engelsk og bevaring av faktisk geokodet navn. Swift-parsing, JSON-validering og diffkontroll består; XCTest er blokkert av manglende CoreSimulator/DerivedData-tilgang. Bred gjennomgang fant at dekodede varselterskler ikke håndhever AlertType.range; lagt til AUTO-508. Neste kø: AUTO-506, AUTO-507, AUTO-508."
+  "lastProgress": "AUTO-506 fullført 2026-10-12: appen replanlegger nå når autorisasjonen endres etter iOS-innstillinger eller oppstartsforespørsel; uendret verdi utløser ikke ny plan, og autorisasjon er del av replan-signaturen. Regresjon med injisert rescheduler dekker avslag, uendret status og ny tillatelse. Swift-parsing og diffkontroll består; XCTest er blokkert av manglende CoreSimulator/DerivedData-tilgang. Bred gjennomgang fant at faste varselukedager og klokkeslett ikke valideres ved Rule-dekoding; lagt til AUTO-509. Neste kø: AUTO-507, AUTO-508, AUTO-509."
 }

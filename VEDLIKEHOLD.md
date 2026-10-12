@@ -501,13 +501,14 @@ bekrefter at et faktisk geokodet navn beholdes. Swift-parsing og JSON-/diff-
 kontroller består; XCTest kunne ikke kjøres fordi CoreSimulator/DerivedData
 fortsatt er utilgjengelig i miljøet.
 
-**AUTO-506 · ÅPEN** — Synkroniser pushvarslene når appen kommer tilbake fra
-iOS-innstillinger etter at varslingstillatelsen er endret. Aktiviseringsflyten
-leser `authorizationStatus()` og oppdaterer `notificationsAuthorized`, men
-denne verdien utløser ikke `Store.replan()`. En bruker som slår varsler av eller
-på mens appen er bakgrunnen, kan derfor møte en plan som ikke er fornyet før en
-annen vær- eller regelendring skjer. Replan bare ved faktisk tillatelsesendring,
-og dekk både avslag og ny tillatelse med en injisert planlegger.
+**AUTO-506 · FULLFØRT 2026-10-12** — Appen replanlegger nå pushvarsler når
+varslingstillatelsen faktisk endres, både ved retur fra iOS-innstillinger og
+etter oppstartsforespørselen. Uendret status utløser ikke ekstra arbeid, og
+autorisasjonen inngår i replan-signaturen slik at debounceren ikke undertrykker
+en nødvendig oppdatering. En injisert planlegger bekrefter at avslag og ny
+tillatelse hver gir én replan, mens gjentatt status ikke gjør det.
+Swift-parsing og diffkontroll består; XCTest kunne ikke kjøres fordi
+CoreSimulator/DerivedData fortsatt er utilgjengelig i miljøet.
 
 **AUTO-507 · ÅPEN** — Begrens gjentatte forespørsler når valgt steds foreldede
 prognose ikke kan oppdateres. `refreshSelectedForecastIfNeeded()` forsøker igjen
@@ -523,6 +524,14 @@ har særskilt endelighetskontroll for temperatur. En ugyldig eller ekstrem
 terskel kan dermed overleve import og gi varsler som aldri utløses eller utløses
 for lett. Normaliser eller avvis slike verdier uten å endre gyldige og
 bakoverkompatible regler; dekk NaN/uendelig og typegrenser med regresjoner.
+
+**AUTO-509 · ÅPEN** — Valider tids- og ukedagsfeltene i dekodede varselregler.
+`Rule.init(from:)` begrenser flere varighetsfelt, men lar blant annet
+`notificationWeekday`, klokkeslett, minutt og `days` passere uendret. En ugyldig
+ukedag går inn i kalenderberegningen av faste kveldsvarsler og kan flytte eller
+utelate planlagte varsler etter import. Normaliser felt til redigererens
+gyldige domener med bakoverkompatible standarder, og dekk ugyldige/importerte
+verdier med tester.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

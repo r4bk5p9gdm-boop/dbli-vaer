@@ -60,7 +60,9 @@ struct VarselApp: App {
                 .onChange(of: scenePhase) { _, phase in
                     guard phase == .active else { return }
                     Task { @MainActor in
-                        store.notificationsAuthorized = await NotificationScheduler.authorizationStatus()
+                        await store.updateNotificationAuthorization(
+                            await NotificationScheduler.authorizationStatus()
+                        )
                         _ = await store.refreshSelectedForecastIfNeeded()
                     }
                 }
@@ -72,7 +74,9 @@ struct VarselApp: App {
                         scheduleBackgroundRefresh: { BackgroundRefresh.schedule() },
                         requestNotificationsPermission: {
                             if shouldAskForPermissions {
-                                store.notificationsAuthorized = await NotificationScheduler.requestPermission()
+                                await store.updateNotificationAuthorization(
+                                    await NotificationScheduler.requestPermission()
+                                )
                             }
                         },
                         refreshSelectedForecastIfNeeded: { _ = await store.refreshSelectedForecastIfNeeded() }

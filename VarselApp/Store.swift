@@ -981,6 +981,12 @@ final class Store: ObservableObject {
         log = Self.retainedLog(log, now: now)
     }
 
+    func updateNotificationAuthorization(_ authorization: Bool?) async {
+        guard notificationsAuthorized != authorization else { return }
+        notificationsAuthorized = authorization
+        await replan()
+    }
+
     private func replanSignature() -> Int {
         var hasher = Hasher()
         let currentForecasts = forecasts
@@ -990,6 +996,7 @@ final class Store: ObservableObject {
             currentForecasts[id, default: []].sorted { $0.time < $1.time }.forEach { hasher.combine($0) }
         }
         nearbyPlaceIDs.sorted { $0.uuidString < $1.uuidString }.forEach { hasher.combine($0) }
+        hasher.combine(notificationsAuthorized)
         hasher.combine(Self.configurationSignature(languageStyle: alertLanguageStyle, separator: WeatherTextSeparator.current))
         return hasher.finalize()
     }

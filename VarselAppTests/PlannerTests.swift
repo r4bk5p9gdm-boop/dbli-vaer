@@ -10643,6 +10643,30 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testChangedNotificationAuthorizationReplansExactlyOncePerChange() async {
+        let persistenceKey = "varsel.test.notification-authorization-change.\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
+        var replanCount = 0
+        let store = Store(
+            forecastFetcher: { _, _ in [] },
+            persistenceKey: persistenceKey,
+            notificationRescheduler: { _, _, _, _, _ in
+                replanCount += 1
+                return NotificationScheduleResult(
+                    requestedCount: 0, scheduledCount: 0, failedCount: 0, firstScheduledAt: nil
+                )
+            }
+        )
+
+        await store.updateNotificationAuthorization(false)
+        XCTAssertEqual(replanCount, 1)
+        await store.updateNotificationAuthorization(false)
+        XCTAssertEqual(replanCount, 1)
+        await store.updateNotificationAuthorization(true)
+        XCTAssertEqual(replanCount, 2)
+    }
+
+    @MainActor
     func testBackgroundRefreshIncludesSelectedAndNotificationPlacesOnly() {
         var enabledRule = Rule(type: .regn)
         enabledRule.enabled = true
