@@ -585,11 +585,12 @@ Skjermoppsettet er uendret. Regresjon dekker Bokmål, Inntrøndersk og engelsk
 for begge seksjoner og alle tomtilstandsfraser. Swift-parsing og diffkontroll
 består; XCTest er blokkert av utilgjengelig CoreSimulatorService.
 
-**AUTO-516 · ÅPEN** — Test at bakgrunnsoppgavens ferdigmelding tåler en reell
-konkurranse mellom vellykket refresh og utløpt oppgave. `BackgroundRefresh` har
-en låst fullføringsport for disse to samtidige callbackene, men eksisterende
-regresjon kaller dem bare sekvensielt. Legg til en trådsikker samtidighetstest
-som bekrefter nøyaktig én ferdigmelding uten å starte en faktisk BGTask.
+**AUTO-516 · FULLFØRT 2026-10-12** — Bakgrunnsoppgavens fullføringsport har nå
+en regresjon som får 64 samtidige fullføringsforsøk med vekslende suksessutfall
+til å konkurrere, og bekrefter at bare én ferdigmelding slipper gjennom. Testen
+bruker verken BGTaskScheduler eller en faktisk bakgrunnsoppgave. Swift-parsing
+og diffkontroll består; XCTest er blokkert fordi CoreSimulatorService ikke er
+tilgjengelig.
 
 **AUTO-517 · ÅPEN** — Formater «Oppdatert»-klokkeslett etter språkstilen i
 snapshotet, ikke bare enhetens locale. `WeatherGlance.freshness` setter allerede
@@ -604,6 +605,15 @@ alltid den norske teksten «Kunne ikke oppdatere. Viser sist hentede vær.»;
 med et engelsk snapshot får brukeren altså engelsk vær, men norsk nettfeil.
 Trekk feilmeldingen ut i en ren funksjon, dekk Bokmål/engelsk, og behold at den
 generiske meldingen ikke lekker systemets feildetaljer.
+
+**AUTO-519 · ÅPEN** — Kontroller tidsrekkefølge og duplikater i gjenopprettet
+prognosecache og delte Watch/widget-snapshots. Dekodingen forkaster nå verdier
+utenfor fysiske grenser, men `ForecastHour.isPhysicallyPlausible` godtar fortsatt
+vilkårlige endelige datoer; `Store.isUsableForecast` avviser duplikater og
+usammenhengende timer ved nettverksoppdatering, men denne kontrollen brukes ikke
+ved lokal gjenoppretting. Avgrens tidsvalideringen slik at gamle, men nyttige
+cachedata fortsatt kan vises, marker korrupte cachedata for reparasjon, og dekk
+usorterte, dupliserte og urimelig langt-frem-i-tid-timer med regresjoner.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

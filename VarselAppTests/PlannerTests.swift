@@ -11332,6 +11332,25 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(workFirstResults, [true])
     }
 
+    func testBackgroundRefreshCompletionGateCompletesOnlyOnceUnderConcurrency() {
+        let gate = BackgroundRefreshCompletionGate()
+        let resultsLock = NSLock()
+        var results: [Bool] = []
+
+        DispatchQueue.concurrentPerform(iterations: 64) { index in
+            gate.finish(success: index.isMultiple(of: 2)) { result in
+                resultsLock.lock()
+                results.append(result)
+                resultsLock.unlock()
+            }
+        }
+
+        resultsLock.lock()
+        let completedResults = results
+        resultsLock.unlock()
+        XCTAssertEqual(completedResults.count, 1)
+    }
+
     func testBackgroundRefreshReportsSuccessfulSubmission() {
         var submittedIdentifier: String?
         var submittedDate: Date?
