@@ -491,7 +491,7 @@ final class Store: ObservableObject {
             // location lookup is only attempted by the explicit startup flow.
             places = p.places; selectedID = p.selectedID
             log = Self.retainedLog(p.log, now: now)
-            if log.count != p.log.count { needsPersistedStateRepair = true }
+            if log.map(\.id) != p.log.map(\.id) { needsPersistedStateRepair = true }
             restoredForecasts = p.forecasts
             restoredForecastUpdatedAt = p.forecastUpdatedAt
             restoredLastUpdate = p.lastUpdate

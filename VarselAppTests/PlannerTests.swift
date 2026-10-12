@@ -7593,7 +7593,7 @@ final class PlannerTests: XCTestCase {
         UserDefaults.standard.set(9, forKey: launchVersionKey)
 
         let place = Place(name: "Klinga", lat: 64.4, lon: 11.4)
-        let recentEntries = (0..<51).map { index in
+        let recentEntries = (0..<51).reversed().map { index in
             LogEntry(time: base.addingTimeInterval(-Double(index * 60)), text: "ny-\(index)")
         }
         let staleEntry = LogEntry(time: base.addingTimeInterval(-73 * 3_600), text: "utløpt")
@@ -7606,11 +7606,14 @@ final class PlannerTests: XCTestCase {
 
         XCTAssertEqual(restored.log.count, 50)
         XCTAssertEqual(restored.log.first?.text, "ny-0")
+        XCTAssertEqual(restored.log.last?.text, "ny-49")
         XCTAssertFalse(restored.log.contains { $0.text == "utløpt" })
         XCTAssertFalse(restored.log.contains { $0.text == "framtidig" })
         let persistedData = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
         let persisted = try JSONDecoder().decode(PersistedStoreState.self, from: persistedData)
         XCTAssertEqual(persisted.log.count, 50)
+        XCTAssertEqual(persisted.log.first?.text, "ny-0")
+        XCTAssertEqual(persisted.log.last?.text, "ny-49")
         XCTAssertFalse(persisted.log.contains { $0.text == "utløpt" })
         XCTAssertFalse(persisted.log.contains { $0.text == "framtidig" })
     }

@@ -775,10 +775,13 @@ allerede lagrede historikktekster endres ikke. XCTest kunne ikke kjøres fordi
 CoreSimulatorService/runtime mangler. Swift-parsing, JSON-validering,
 Foundation-datoformatkontroll og `git diff --check` besto.
 
-**AUTO-543 · ÅPEN** — Legg til en Store-gjenopprettingstest for usortert
-varslingshistorikk som bekrefter at de 50 nyeste radene både vises og persisteres
-i nyeste-først-rekkefølge. AUTO-541 tester sortering og utvalg direkte i
-hjelpefunksjonen; denne testen dekker hele restore-/lagringsbanen.
+**AUTO-543 · FULLFØRT 2026-10-12** — Store markerer nå den gjenopprettede
+varslingsloggen som reparert også når nyeste-først-sorteringen endrer
+ID-rekkefølgen uten å endre antallet rader. Regresjonen starter med 51 rader i
+motsatt tidsrekkefølge og bekrefter at de 50 nyeste vises og persisteres i
+nyeste-først-rekkefølge, uten utløpte eller framtidige rader. Swift-parsing,
+JSON-validering og `git diff --check` besto; XCTest kunne ikke kjøres fordi
+CoreSimulatorService/runtime mangler.
 
 **AUTO-544 · ÅPEN** — Lås tidsgrensene i `retainedLog`: oppføringer nøyaktig ved
 72-timersgrensen og `now` beholdes, mens oppføringer rett utenfor vinduet
@@ -790,6 +793,12 @@ varslingsplanresultater fortsatt følger inntrøndersk språkstil etter
 lokaliseringen. `notificationPlanLogText` går nå gjennom `WeatherLanguage` for
 ikke-engelsk stil; test tom, fullført, delvis og feilet plan med tellere og
 tidsfrase, mens historiske loggoppføringer skal forbli urørt.
+
+**AUTO-546 · ÅPEN** — `PersistedStoreState` fjerner gjentatte steds-ID-er ved
+dekoding, men setter ikke `needsPersistedStateRepair` når steder fjernes. Store
+kan dermed vise den dedupliserte listen uten å skrive den tilbake, og gjenta
+reparasjonen ved hver oppstart. Test at restore både beholder første forekomst
+og persisterer den unike listen.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med
