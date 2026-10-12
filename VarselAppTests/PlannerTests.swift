@@ -553,6 +553,30 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(client.attempts.count, 3, "A successful retry should clear the pending transfer")
     }
 
+    @MainActor
+    func testWatchClearSupersedesFailedPendingSnapshot() throws {
+        let client = FakeWatchApplicationContextClient()
+        client.failuresRemaining = 2
+        let manager = WatchSyncManager(client: client)
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+
+        manager.send(place: place, forecast: [], updatedAt: base)
+        manager.clear()
+
+        XCTAssertEqual(client.attempts.count, 2)
+        XCTAssertEqual(try transferredPlaceName(from: client.attempts[0]), "Klinga")
+        let failedClearData = try XCTUnwrap(client.attempts[1]["weatherSnapshot"])
+        XCTAssertNil(try JSONDecoder().decode(WatchWeatherTransfer.self, from: failedClearData).snapshot)
+
+        manager.retryPendingTransfer()
+
+        XCTAssertEqual(client.attempts.count, 3)
+        let retriedClearData = try XCTUnwrap(client.attempts[2]["weatherSnapshot"])
+        XCTAssertNil(try JSONDecoder().decode(WatchWeatherTransfer.self, from: retriedClearData).snapshot)
+        manager.retryPendingTransfer()
+        XCTAssertEqual(client.attempts.count, 3, "A successful clear retry must not resend the stale snapshot")
+    }
+
     private func transferredPlaceName(from context: [String: Data]) throws -> String? {
         let data = try XCTUnwrap(context["weatherSnapshot"])
         return try JSONDecoder().decode(WatchWeatherTransfer.self, from: data).snapshot?.place.name

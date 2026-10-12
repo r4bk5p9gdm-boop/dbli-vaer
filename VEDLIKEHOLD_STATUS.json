@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T20:06:35Z",
+  "lastScheduledStart": "2026-10-12T20:21:35Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-535 fullført 2026-10-12: requestsToPreserve er testet med 70 framtidige, gyldige requests i omvendt rekkefølge og beholder nøyaktig de 64 nærmeste i dato-/ID-sortert rekkefølge. Swift-parsing, JSON og diffkontroll består; XCTest blokkert fordi CoreSimulatorService/runtime ikke er tilgjengelig. Bred gjennomgang fant at nearestRequestIDs også velger globalt blant nye og bevarte varsler; AUTO-538 lagt til for integrert grense-/rekkefølgetest. Åpne kønumre etter full skann: AUTO-536, AUTO-537, AUTO-538."
+  "lastProgress": "AUTO-536 fullført 2026-10-12: la til testWatchClearSupersedesFailedPendingSnapshot, som verifiserer at clear erstatter mislykket Watch-snapshot med snapshot:nil og at vellykket retry ikke sender gammelt snapshot igjen. Swift-parsing og JSON/diffkontroll besto; XCTest blokkert fordi CoreSimulatorService/runtime ikke er tilgjengelig. Gjennomgang av Watch-syncens ventende levering fant et separat udekket tilfelle før WCSession-aktivering; AUTO-539 lagt til for å teste at aktivering bare sender nyeste køede verdi. Åpne kønumre etter full skann: AUTO-537, AUTO-538, AUTO-539."
 }

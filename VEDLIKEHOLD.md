@@ -723,11 +723,12 @@ snøvarsel dekker temperaturer på/under grensen mens regnvarsel starter over.
 framtidige requests gitt i omvendt rekkefølge. Regresjonen bekrefter at de 64
 nærmeste bevares i kronologisk rekkefølge, mens de seks fjerneste forkastes.
 
-**AUTO-536 · ÅPEN** — Dekk Watch-sletting etter en midlertidig
-`updateApplicationContext`-feil. `WatchSyncManager` er latest-write-wins og
-beholder mislykket data for retry; test at `clear()` erstatter et ventende
-vær-snapshot med eksplisitt `snapshot: nil`, slik at retry aldri gjenoppliver
-det slettede stedet.
+**AUTO-536 · FULLFØRT 2026-10-12** — `testWatchClearSupersedesFailedPendingSnapshot`
+bekrefter at en mislykket levering av stedets snapshot erstattes av `clear()`:
+retry sender eksplisitt `snapshot: nil`, og et nytt retry etter vellykket
+sletting sender ikke det gamle snapshotet på nytt. Swift-parsing og
+JSON/diffkontroll besto; XCTest kunne ikke startes fordi CoreSimulatorService/
+runtime ikke er tilgjengelig.
 
 **AUTO-537 · ÅPEN** — Fjern utløpte varslingsloggoppføringer også ved
 gjenoppretting. `Store` leser `p.log` direkte ved oppstart, mens `retainedLog`
@@ -741,6 +742,12 @@ bevarte offline-varsler og nye varsler. Koden rangerer begge grupper sammen i
 `nearestRequestIDs`, men regresjonene dekker foreløpig bare utvalg fra hver
 gruppe isolert; bekreft at nærmeste hendelser vinner samlet og at resultatet er
 uavhengig av rekkefølgen på ventende requests.
+
+**AUTO-539 · ÅPEN** — Dekk Watch-overføring mens WCSession ikke er aktivert.
+`flushIfActivated` skal beholde nyeste snapshot eller sletting når overføring
+blir køet før aktivering, og `activationDidCompleteWith` skal sende akkurat
+den nyeste verdien. Test også at en eldre køet værmelding ikke overskriver en
+sletting mens forbindelsen venter på aktivering.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med
