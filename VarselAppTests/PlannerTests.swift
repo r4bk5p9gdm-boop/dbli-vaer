@@ -9232,6 +9232,27 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(WatchTransferPolicy.accepts(base.addingTimeInterval(-1), after: base))
     }
 
+    func testWatchTransferPolicyBoundsFutureTimestampWithoutPoisoningNextTransfer() {
+        let last = base.addingTimeInterval(-60)
+        let now = base
+        let atTolerance = now.addingTimeInterval(Store.forecastFutureTimestampTolerance)
+        let beyondTolerance = atTolerance.addingTimeInterval(1)
+
+        XCTAssertTrue(WatchTransferPolicy.accepts(atTolerance, after: last, now: now))
+        XCTAssertFalse(WatchTransferPolicy.accepts(beyondTolerance, after: last, now: now))
+        // Rejection is stateless: the caller retains `lastTransferAt`, allowing
+        // the next valid transfer to pass instead of inheriting the bad date.
+        XCTAssertTrue(WatchTransferPolicy.accepts(now, after: last, now: now))
+    }
+
+    func testWatchTransferPolicyRepairsPreviouslyPersistedFutureTimestamp() {
+        let now = base
+        let corrupted = now.addingTimeInterval(Store.forecastFutureTimestampTolerance + 1)
+
+        XCTAssertEqual(WatchTransferPolicy.restoredTimestamp(corrupted, now: now), .distantPast)
+        XCTAssertEqual(WatchTransferPolicy.restoredTimestamp(now, now: now), now)
+    }
+
     func testWatchRapidTransfersKeepNewestPlaceAndRejectOlderAfterRestart() throws {
         let oldPlace = Place(name: "Klinga", lat: 64, lon: 11)
         let newPlace = Place(name: "Hornburu", lat: 64.1, lon: 11.1)

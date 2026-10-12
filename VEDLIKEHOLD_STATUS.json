@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T14:16:11Z",
+  "lastScheduledStart": "2026-10-12T14:38:01Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-522 fullført 2026-10-12: radarmålinger i hver gjenopprettet prognosetime dedupliseres per dato med høyeste rate; både Store-tilstand og Watch/widget-snapshot bruker normaliseringen og flagger Store-reparasjon. Swift-parsing/diffkontroll består; XCTest blokkert av utilgjengelig CoreSimulatorService. Bred gjennomgang av Store.restore fant at framtidsstemplede prognoser beholdes som ferske av widgetSnapshot, men avvises av delt snapshotdekoder og pushplanlegger; AUTO-525 lagt til. Full køskann: AUTO-523, AUTO-524, AUTO-525."
+  "lastProgress": "AUTO-523 fullført 2026-10-12: Watch-overføringer avvises dersom sentAt er mer enn fem minutter fram i tid, og samme validering reparerer en tidligere lagret framtidsverdi ved oppstart. Grense, overskridelse, neste gyldige mottak og gjenoppretting er testdekket. Swift-parsing/diffkontroll består; XCTest blokkert av utilgjengelig CoreSimulatorService. Gjennomgang av Watch-kompatibiliteten fant at mottakeren fortsatt har en viktig, uprøvd fallback for eldre bare-snapshot-kontekster; AUTO-526 lagt til. Full køskann: AUTO-524, AUTO-525, AUTO-526."
 }

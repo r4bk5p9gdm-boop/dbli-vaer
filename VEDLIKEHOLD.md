@@ -636,12 +636,13 @@ duplikater fjernes. Regresjonen dekker to like tidspunkter med ulike rater.
 Swift-parsing og diffkontroll består; XCTest er blokkert fordi
 CoreSimulatorService ikke er tilgjengelig.
 
-**AUTO-523 · ÅPEN** — Avgrens Watch-overføringens `sentAt` før den lagres som
-`lastTransferAt`. Overføringspolicyen kontrollerer bare at tidspunktet er nyere
-enn forrige mottak; en korrupt eller urimelig framtidig envelope kan derfor
-forhindre alle senere gyldige oppdateringer. Gjenbruk snapshotets femminutters
-framtidstoleranse uten å avvise ordinære eldre snapshots, og test grensen,
-overskridelse og at et avvist tidspunkt ikke forgifter neste mottak.
+**AUTO-523 · FULLFØRT 2026-10-12** — Watch avviser nå `sentAt` mer enn fem
+minutter fram i tid før tidspunktet kan lagres som `lastTransferAt`. Den samme
+grensen brukes når tidligere lagret mottakstid gjenopprettes, slik at en
+forgiftet verdi fra en eldre appversjon ikke blokkerer gyldige overføringer.
+Tester dekker nøyaktig grense, overskridelse, neste gyldige mottak og reparasjon
+av en tidligere lagret framtidsverdi. Swift-parsing og diffkontroll består;
+XCTest er blokkert fordi CoreSimulatorService ikke er tilgjengelig.
 
 **AUTO-524 · ÅPEN** — Hindre at en nyere Watch-transfer-envelope erstatter
 snapshotet med en eldre prognose. Avsenderen setter `sentAt` til nå, selv om
@@ -659,6 +660,13 @@ snapshot som den delte dekoderen nå avviser, mens pushplanleggingen samtidig
 forkaster samme cache. Bruk femminuttersgrensen ved gjenoppretting, marker
 reparasjon og dekk at Watch/widget og planlegging håndterer den ugyldige
 tidsstemplingen konsistent.
+
+**AUTO-526 · ÅPEN** — Bevar bakoverkompatibiliteten for eldre Watch-kontekster
+med en regresjonstest. `WatchSnapshotReceiver` prøver først det nye
+`WatchWeatherTransfer`-formatet og faller deretter tilbake til den tidligere
+bare `WidgetWeatherSnapshot`-payloaden, med `updatedAt` som `sentAt`. Test den
+faktiske dekoderuten så framtidige endringer i envelope eller validering ikke
+stille gjør klokker med eldre appversjon ute av stand til å motta værdata.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

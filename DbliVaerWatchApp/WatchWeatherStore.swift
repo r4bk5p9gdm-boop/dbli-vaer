@@ -15,7 +15,9 @@ final class WatchWeatherStore: ObservableObject {
 
     init() {
         snapshot = SharedWidgetData.load()
-        lastTransferAt = UserDefaults.standard.object(forKey: lastTransferKey) as? Date ?? .distantPast
+        lastTransferAt = WatchTransferPolicy.restoredTimestamp(
+            UserDefaults.standard.object(forKey: lastTransferKey) as? Date
+        )
         receiver.onTransfer = { [weak self] transfer in
             Task { @MainActor in
                 self?.accept(transfer)

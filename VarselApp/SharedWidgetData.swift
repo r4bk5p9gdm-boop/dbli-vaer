@@ -320,7 +320,21 @@ struct WatchWeatherTransfer: Codable {
 }
 
 enum WatchTransferPolicy {
-    static func accepts(_ incoming: Date, after last: Date) -> Bool { incoming > last }
+    static func restoredTimestamp(_ persisted: Date?, now: Date = Date()) -> Date {
+        guard let persisted,
+              persisted.timeIntervalSince1970.isFinite,
+              persisted.timeIntervalSince(now) <= Store.forecastFutureTimestampTolerance else {
+            return .distantPast
+        }
+        return persisted
+    }
+
+    static func accepts(_ incoming: Date, after last: Date, now: Date = Date()) -> Bool {
+        let incomingTime = incoming.timeIntervalSince1970
+        guard incomingTime.isFinite,
+              incoming.timeIntervalSince(now) <= Store.forecastFutureTimestampTolerance else { return false }
+        return incoming > last
+    }
 }
 
 enum SharedWidgetData {
