@@ -52,19 +52,8 @@ enum YrService {
         }
     }
 
-    // Deliberately broad physical limits: these reject corrupted payloads, not
-    // rare but credible weather. MET publishes temperatures in °C, wind in
-    // m/s, fractions/probabilities in %, and precipitation in mm or mm/h.
-    private enum NumericRange {
-        static let temperature = -100.0...70.0
-        static let wind = 0.0...150.0
-        static let percentage = 0.0...100.0
-        static let precipitation = 0.0...1_000.0
-    }
-
     private static func isPlausible(_ value: Double?, in range: ClosedRange<Double>) -> Bool {
-        guard let value else { return true }
-        return value.isFinite && range.contains(value)
+        ForecastValueBounds.contains(value, in: range)
     }
 
     // MET krever en identifiserende User-Agent.
@@ -244,19 +233,19 @@ enum YrService {
             }
             let details = series.data.instant.details
             guard let temperature = details.air_temperature,
-                  isPlausible(temperature, in: NumericRange.temperature),
-                  isPlausible(details.air_temperature_percentile_10, in: NumericRange.temperature),
-                  isPlausible(details.air_temperature_percentile_90, in: NumericRange.temperature),
-                  isPlausible(details.wind_speed, in: NumericRange.wind),
-                  isPlausible(details.wind_speed_of_gust, in: NumericRange.wind),
-                  isPlausible(details.cloud_area_fraction, in: NumericRange.percentage),
-                  isPlausible(details.dew_point_temperature, in: NumericRange.temperature),
-                  isPlausible(details.relative_humidity, in: NumericRange.percentage),
-                  isPlausible(details.fog_area_fraction, in: NumericRange.percentage),
-                  isPlausible(next.details.precipitation_amount, in: NumericRange.precipitation),
-                  isPlausible(next.details.precipitation_amount_min, in: NumericRange.precipitation),
-                  isPlausible(next.details.precipitation_amount_max, in: NumericRange.precipitation),
-                  isPlausible(next.details.probability_of_precipitation, in: NumericRange.percentage) else {
+                  isPlausible(temperature, in: ForecastValueBounds.temperature),
+                  isPlausible(details.air_temperature_percentile_10, in: ForecastValueBounds.temperature),
+                  isPlausible(details.air_temperature_percentile_90, in: ForecastValueBounds.temperature),
+                  isPlausible(details.wind_speed, in: ForecastValueBounds.wind),
+                  isPlausible(details.wind_speed_of_gust, in: ForecastValueBounds.wind),
+                  isPlausible(details.cloud_area_fraction, in: ForecastValueBounds.percentage),
+                  isPlausible(details.dew_point_temperature, in: ForecastValueBounds.temperature),
+                  isPlausible(details.relative_humidity, in: ForecastValueBounds.percentage),
+                  isPlausible(details.fog_area_fraction, in: ForecastValueBounds.percentage),
+                  isPlausible(next.details.precipitation_amount, in: ForecastValueBounds.precipitation),
+                  isPlausible(next.details.precipitation_amount_min, in: ForecastValueBounds.precipitation),
+                  isPlausible(next.details.precipitation_amount_max, in: ForecastValueBounds.precipitation),
+                  isPlausible(next.details.probability_of_precipitation, in: ForecastValueBounds.percentage) else {
                 continue
             }
             if let minimum = next.details.precipitation_amount_min,
@@ -324,17 +313,17 @@ enum YrService {
         let ordered = response.properties.timeseries.sorted { $0.time < $1.time }
         let samples: [PrecipitationSample] = ordered.compactMap { series -> PrecipitationSample? in
             guard let rate = series.data.instant.details.precipitation_rate,
-                  isPlausible(rate, in: NumericRange.precipitation) else { return nil }
+                  isPlausible(rate, in: ForecastValueBounds.precipitation) else { return nil }
             return PrecipitationSample(time: series.time, rate: rate)
         }
         let observation = ordered.first.map { series in
             let details = series.data.instant.details
             return NowcastPayload.Observation(
                 time: series.time,
-                temperature: isPlausible(details.air_temperature, in: NumericRange.temperature) ? details.air_temperature : nil,
-                relativeHumidity: isPlausible(details.relative_humidity, in: NumericRange.percentage) ? details.relative_humidity : nil,
-                wind: isPlausible(details.wind_speed, in: NumericRange.wind) ? details.wind_speed : nil,
-                gust: isPlausible(details.wind_speed_of_gust, in: NumericRange.wind) ? details.wind_speed_of_gust : nil
+                temperature: isPlausible(details.air_temperature, in: ForecastValueBounds.temperature) ? details.air_temperature : nil,
+                relativeHumidity: isPlausible(details.relative_humidity, in: ForecastValueBounds.percentage) ? details.relative_humidity : nil,
+                wind: isPlausible(details.wind_speed, in: ForecastValueBounds.wind) ? details.wind_speed : nil,
+                gust: isPlausible(details.wind_speed_of_gust, in: ForecastValueBounds.wind) ? details.wind_speed_of_gust : nil
             )
         }
         return NowcastPayload(

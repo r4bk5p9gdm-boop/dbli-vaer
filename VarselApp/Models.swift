@@ -1015,6 +1015,19 @@ struct PrecipitationSample: Codable, Identifiable, Hashable {
     }
 }
 
+enum ForecastValueBounds {
+    static let temperature = -100.0...70.0
+    static let locallyAdjustedTemperature = -110.0...80.0
+    static let wind = 0.0...150.0
+    static let percentage = 0.0...100.0
+    static let precipitation = 0.0...1_000.0
+
+    static func contains(_ value: Double?, in range: ClosedRange<Double>) -> Bool {
+        guard let value else { return true }
+        return value.isFinite && range.contains(value)
+    }
+}
+
 struct ForecastHour: Codable, Identifiable, Hashable {
     let time: Date
     var temp: Double, precip: Double, wind: Double, cloud: Double, dew: Double
@@ -1036,6 +1049,29 @@ struct ForecastHour: Codable, Identifiable, Hashable {
         return copy
     }
     var id: Date { time }
+
+    var isPhysicallyPlausible: Bool {
+        time.timeIntervalSince1970.isFinite
+            && ForecastValueBounds.contains(temp, in: ForecastValueBounds.locallyAdjustedTemperature)
+            && ForecastValueBounds.contains(yrTemperature, in: ForecastValueBounds.temperature)
+            && ForecastValueBounds.contains(temperatureLow, in: ForecastValueBounds.temperature)
+            && ForecastValueBounds.contains(temperatureHigh, in: ForecastValueBounds.temperature)
+            && ForecastValueBounds.contains(dew, in: ForecastValueBounds.temperature)
+            && ForecastValueBounds.contains(wind, in: ForecastValueBounds.wind)
+            && ForecastValueBounds.contains(gust, in: ForecastValueBounds.wind)
+            && ForecastValueBounds.contains(cloud, in: ForecastValueBounds.percentage)
+            && ForecastValueBounds.contains(fog, in: ForecastValueBounds.percentage)
+            && ForecastValueBounds.contains(precip, in: ForecastValueBounds.precipitation)
+            && ForecastValueBounds.contains(precipMin, in: ForecastValueBounds.precipitation)
+            && ForecastValueBounds.contains(precipMax, in: ForecastValueBounds.precipitation)
+            && ForecastValueBounds.contains(precipProbability, in: ForecastValueBounds.percentage)
+            && (precipMin == nil || precipMax == nil || precipMin! <= precipMax!)
+            && (temperatureLow == nil || temperatureHigh == nil || temperatureLow! <= temperatureHigh!)
+            && radarSamples?.allSatisfy {
+                $0.time.timeIntervalSince1970.isFinite
+                    && ForecastValueBounds.contains($0.rate, in: ForecastValueBounds.precipitation)
+            } != false
+    }
 
     private static func validPrecipitationAmount(_ value: Double?) -> Double? {
         guard let value, value.isFinite, value >= 0 else { return nil }

@@ -198,6 +198,7 @@ struct PersistedStoreState: Codable {
     var forecasts: [UUID: [ForecastHour]] = [:]
     var forecastUpdatedAt: [UUID: Date] = [:]
     var lastUpdate: Date?
+    var needsForecastCacheRepair = false
 
     private enum CodingKeys: String, CodingKey { case places, selectedID, log, forecasts, forecastUpdatedAt, lastUpdate }
 
@@ -208,6 +209,7 @@ struct PersistedStoreState: Codable {
         self.forecasts = forecasts
         self.forecastUpdatedAt = forecastUpdatedAt
         self.lastUpdate = lastUpdate
+        needsForecastCacheRepair = false
     }
 
     init(from decoder: Decoder) throws {
@@ -225,10 +227,27 @@ struct PersistedStoreState: Codable {
         }
         log = (try? values.decode([LossyDecodable<LogEntry>].self, forKey: .log))?.compactMap(\.value) ?? []
         let lossyForecasts = (try? values.decode([UUID: LossyDecodable<[ForecastHour]>].self, forKey: .forecasts)) ?? [:]
-        forecasts = lossyForecasts.compactMapValues(\.value)
+        var repairedForecasts: [UUID: [ForecastHour]] = [:]
+        for (placeID, decoded) in lossyForecasts {
+            guard let hours = decoded.value else { continue }
+            let plausibleHours = hours.filter(\.isPhysicallyPlausible)
+            if plausibleHours.count != hours.count { needsForecastCacheRepair = true }
+            repairedForecasts[placeID] = plausibleHours
+        }
+        forecasts = repairedForecasts
         let lossyTimestamps = (try? values.decode([UUID: LossyDecodable<Date>].self, forKey: .forecastUpdatedAt)) ?? [:]
         forecastUpdatedAt = lossyTimestamps.compactMapValues(\.value)
         lastUpdate = try? values.decode(Date.self, forKey: .lastUpdate)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var values = encoder.container(keyedBy: CodingKeys.self)
+        try values.encode(places, forKey: .places)
+        try values.encodeIfPresent(selectedID, forKey: .selectedID)
+        try values.encode(log, forKey: .log)
+        try values.encode(forecasts, forKey: .forecasts)
+        try values.encode(forecastUpdatedAt, forKey: .forecastUpdatedAt)
+        try values.encodeIfPresent(lastUpdate, forKey: .lastUpdate)
     }
 }
 
@@ -468,6 +487,7 @@ final class Store: ObservableObject {
             restoredForecasts = p.forecasts
             restoredForecastUpdatedAt = p.forecastUpdatedAt
             restoredLastUpdate = p.lastUpdate
+            needsPersistedStateRepair = p.needsForecastCacheRepair
             restoredSavedPlaces = true
         } else {
             places = Self.launchPlaces; selectedID = places.first?.id; log = []
@@ -479,7 +499,8 @@ final class Store: ObservableObject {
         forecastUpdatedAt = restoredForecastUpdatedAt.filter {
             knownPlaceIDs.contains($0.key) && rawForecasts[$0.key]?.isEmpty == false
         }
-        needsPersistedStateRepair = rawForecasts.count != restoredForecasts.count
+        needsPersistedStateRepair = needsPersistedStateRepair
+            || rawForecasts.count != restoredForecasts.count
             || forecastUpdatedAt.count != restoredForecastUpdatedAt.count
         lastUpdate = restoredLastUpdate
 

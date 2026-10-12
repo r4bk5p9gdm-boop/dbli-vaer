@@ -541,13 +541,15 @@ engelsk valg og norske etiketter ellers. En regresjonstest dekker alle tre
 etikettene på norsk og engelsk. Swift-parsing og diffkontroll består; XCTest
 kunne ikke kjøres fordi CoreSimulator/DerivedData fortsatt er utilgjengelig.
 
-**AUTO-511 · ÅPEN** — Kontroller fysiske verdier i gjenopprettet prognosecache,
-ikke bare i nye Yr-svar. API-dekoderen avviser nå temperatur, vind og
-skydekke utenfor brede fysiske grenser, men `PersistedStoreState` dekoder
-`ForecastHour` direkte fra lokal lagring. En ekstrem, men gyldig JSON-verdi kan
-dermed nå visning eller varselplanlegging etter omstart selv om samme verdi fra
-nettverket ville blitt forkastet. Filtrer korrupte cacheposter tapsfritt slik
-at friske steder beholdes, og dekk grensene med gjenopprettingstester.
+**AUTO-511 · FULLFØRT 2026-10-12** — De brede fysiske grensene for Yr-data
+deles nå mellom nettverksdekoding og gjenoppretting. `PersistedStoreState` og
+delte Widget/Watch-snapshot fjerner ugyldige prognosetimer, mens gyldige timer
+og andre steder beholdes. Store markerer skadet cache for lagring av reparert
+tilstand ved oppstart; denne interne markøren legges ikke i JSON-formatet.
+Regresjon dekker ugyldig temperatur midt i en prognose, bevarte nabotimer og
+steder, reparasjonsflagget og samme filtrering ved snapshot-dekoding.
+Swift-parsing og diffkontroll består; XCTest kunne ikke kjøres fordi
+CoreSimulator/DerivedData ikke er tilgjengelig og disken har bare 8 GB ledig.
 
 **AUTO-512 · ÅPEN** — Replanlegg faste ukedagsvarsler når enhetens tidssone
 endres. `Rule` og pushplanleggeren bruker `Calendar.current` for lokale
@@ -564,6 +566,13 @@ tilgjengelighetsnavnene i `CombinedWeatherBand` og `MoistureWeatherBand` bruker
 fast norsk tekst, også når appen ellers vises på engelsk. La forklaringene om
 samlet regelbånd og manglende/ukjent Yr-prognose følge eksisterende
 værtekstlokalisering, og dekk bokmål, inntrøndersk og engelsk i regresjoner.
+
+**AUTO-514 · ÅPEN** — Lokaliser tomtilstands- og relative tidsfraser i
+CarPlay- og Watch-widgetene etter snapshotets språkstil. CarPlay-widgetens
+«Åpne appen»/«Ingen varsler»-tekster er faste norske strenger, og Watch-
+komplikasjonens relative tid bruker alltid «om … m/t», også med engelsk
+snapshot. Trekk tekstene ut i delte rene funksjoner og dekk engelsk og norsk
+uten å endre tidsberegning eller widgetenes kompakte oppsett.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig
