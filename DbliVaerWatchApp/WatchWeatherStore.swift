@@ -58,6 +58,7 @@ final class WatchWeatherStore: ObservableObject {
 
     private func accept(_ transfer: WatchWeatherTransfer) {
         guard WatchTransferPolicy.accepts(transfer.sentAt, after: lastTransferAt) else { return }
+        guard WatchTransferPolicy.acceptsSnapshot(transfer.snapshot, replacing: snapshot) else { return }
         lastTransferAt = transfer.sentAt
         UserDefaults.standard.set(transfer.sentAt, forKey: lastTransferKey)
         guard let snapshot = transfer.snapshot else {

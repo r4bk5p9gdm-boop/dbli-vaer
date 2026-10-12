@@ -644,13 +644,12 @@ Tester dekker nøyaktig grense, overskridelse, neste gyldige mottak og reparasjo
 av en tidligere lagret framtidsverdi. Swift-parsing og diffkontroll består;
 XCTest er blokkert fordi CoreSimulatorService ikke er tilgjengelig.
 
-**AUTO-524 · ÅPEN** — Hindre at en nyere Watch-transfer-envelope erstatter
-snapshotet med en eldre prognose. Avsenderen setter `sentAt` til nå, selv om
-den inkluderte prognosen kan komme fra en gammel offline-cache; mottakeren
-sorterer bare på envelope-tid og kan dermed nedgradere allerede ferskere
-værdata. Sammenlign snapshotets `updatedAt` med gjeldende snapshot ved mottak,
-behold eksplisitt tømming av stedet, og dekk både avvist eldre data og godkjent
-nyere data i regresjon.
+**AUTO-524 · FULLFØRT 2026-10-12** — Watch-mottakeren kontrollerer nå både
+envelope-tiden og prognosens `updatedAt` før den lagrer overføringen. En eldre
+offline-prognose kan ikke lenger overskrive ferskere værdata, mens en eksplisitt
+tømming fortsatt godtas. Regresjonen dekker eldre, nyere og tømmende payload.
+Swift-parsing og diffkontroll består; XCTest er blokkert fordi
+CoreSimulatorService ikke er tilgjengelig.
 
 **AUTO-525 · ÅPEN** — Reparer framtidsstemplede prognoser ved Store-gjenoppretting.
 `PersistedStoreState` beholder `forecastUpdatedAt` ukritisk når det finnes en
@@ -667,6 +666,13 @@ med en regresjonstest. `WatchSnapshotReceiver` prøver først det nye
 bare `WidgetWeatherSnapshot`-payloaden, med `updatedAt` som `sentAt`. Test den
 faktiske dekoderuten så framtidige endringer i envelope eller validering ikke
 stille gjør klokker med eldre appversjon ute av stand til å motta værdata.
+
+**AUTO-527 · ÅPEN** — Dekk den eksakte størrelsesgrensen for filbasert
+oppsettimport. In-memory-dekoderen har en regresjon akkurat ved grensen, og
+filstrømmen har test for overskridelse, men ikke for en fil på nøyaktig
+`maximumImportSizeBytes`. Test `readImportData(from:)` ved grensen for å låse
+ned samspillet mellom filstørrelsessjekken og chunklesingen uten å svekke
+minnegrensen.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T14:38:01Z",
+  "lastScheduledStart": "2026-10-12T15:11:18Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-523 fullført 2026-10-12: Watch-overføringer avvises dersom sentAt er mer enn fem minutter fram i tid, og samme validering reparerer en tidligere lagret framtidsverdi ved oppstart. Grense, overskridelse, neste gyldige mottak og gjenoppretting er testdekket. Swift-parsing/diffkontroll består; XCTest blokkert av utilgjengelig CoreSimulatorService. Gjennomgang av Watch-kompatibiliteten fant at mottakeren fortsatt har en viktig, uprøvd fallback for eldre bare-snapshot-kontekster; AUTO-526 lagt til. Full køskann: AUTO-524, AUTO-525, AUTO-526."
+  "lastProgress": "AUTO-524 fullført 2026-10-12: Watch-mottak kontrollerer også snapshotets oppdateringstid før det persisterer transfer-tid; eldre prognoser avvises, nyere godtas, og eksplisitt null-snapshot tømmer fortsatt tilstanden. Swift-parsing/diffkontroll består; XCTest blokkert av utilgjengelig CoreSimulatorService. Bred gjennomgang av Watch-overføringsmottak og importens begrensede filstrøm fant en uprøvd legacy Watch-dekoderute (AUTO-526) og manglende eksakt filstørrelsesgrensetest (AUTO-527). Full køskann: AUTO-525, AUTO-526, AUTO-527."
 }

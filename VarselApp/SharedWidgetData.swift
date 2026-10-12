@@ -335,6 +335,12 @@ enum WatchTransferPolicy {
               incoming.timeIntervalSince(now) <= Store.forecastFutureTimestampTolerance else { return false }
         return incoming > last
     }
+
+    static func acceptsSnapshot(_ incoming: WidgetWeatherSnapshot?, replacing current: WidgetWeatherSnapshot?) -> Bool {
+        guard let incoming else { return true }
+        guard let current else { return true }
+        return incoming.updatedAt >= current.updatedAt
+    }
 }
 
 enum SharedWidgetData {

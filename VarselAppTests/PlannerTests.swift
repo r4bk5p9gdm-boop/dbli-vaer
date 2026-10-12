@@ -9253,6 +9253,23 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(WatchTransferPolicy.restoredTimestamp(now, now: now), now)
     }
 
+    func testWatchTransferPolicyRejectsOlderForecastButAllowsNewerAndExplicitClear() {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let hour = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 20, dew: 4)
+        let current = WidgetWeatherSnapshot(place: place, forecast: [hour], updatedAt: base)
+        let older = WidgetWeatherSnapshot(
+            place: place, forecast: [hour], updatedAt: base.addingTimeInterval(-1)
+        )
+        let newer = WidgetWeatherSnapshot(
+            place: place, forecast: [hour], updatedAt: base.addingTimeInterval(1)
+        )
+
+        XCTAssertFalse(WatchTransferPolicy.acceptsSnapshot(older, replacing: current))
+        XCTAssertTrue(WatchTransferPolicy.acceptsSnapshot(newer, replacing: current))
+        XCTAssertTrue(WatchTransferPolicy.acceptsSnapshot(current, replacing: nil))
+        XCTAssertTrue(WatchTransferPolicy.acceptsSnapshot(nil, replacing: current))
+    }
+
     func testWatchRapidTransfersKeepNewestPlaceAndRejectOlderAfterRestart() throws {
         let oldPlace = Place(name: "Klinga", lat: 64, lon: 11)
         let newPlace = Place(name: "Hornburu", lat: 64.1, lon: 11.1)
