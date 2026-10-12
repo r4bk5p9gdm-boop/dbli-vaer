@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-12T08:30:25Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-501 fullført 2026-10-12: Omvendt GPS-geokoding er begrenset til åtte sekunder, kanselleres sammen med kallende Swift-task og beholder fallbacken «Min posisjon»; sen respons ignoreres. Regresjoner dekker timeout, kansellering, trimming, fallback og sen respons. Kildekontroller består; kjørbare iOS-tester fortsatt blokkert av CoreSimulator/SwiftUIMacros. Bred oppstartsgjennomgang fant mulig samtidighet mellom posisjons- og varselstillatelsesdialoger, lagt til som AUTO-504. Neste kø: AUTO-502, AUTO-503, AUTO-504."
+  "lastProgress": "AUTO-502 fullført 2026-10-12: Injiserbar WatchConnectivity-klient og retry av nyeste ventende snapshot. Regresjon simulerer to transportfeil, bytte av sted mellom forsøk og vellykket tømming av køen. Swift-kildeparsing og diffkontroll består; iOS-bygg/test fortsatt blokkert av CoreSimulator og DerivedData-tilgang. Bred gjennomgang fant at GPS-fallbacknavnet fortsatt er hardkodet norsk selv om appen støtter bokmål, inntrøndersk og engelsk; lagt til AUTO-505. Neste kø: AUTO-503, AUTO-504, AUTO-505."
 }

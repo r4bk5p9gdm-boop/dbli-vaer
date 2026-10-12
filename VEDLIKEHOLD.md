@@ -464,11 +464,14 @@ timeout, avbrytelse, fallback, trimming og sen respons testbare.
 verifiseres: CoreSimulator er utilgjengelig, og Xcode får ikke opprette sin
 DerivedData-mappe i dette miljøet.
 
-**AUTO-502 · ÅPEN** — Gjør Watch-overføring robust mot forbigående feil fra
-`WCSession.updateApplicationContext`. `WatchSyncManager` beholder riktig nok
-nyeste payload når sending feiler, men forsøker den bare igjen ved en senere
-aktivering eller ny vær-/innstillingsendring. Injiser Watch-klienten og dekk at
-en forbigående feil prøves på nytt uten å sende en eldre snapshot over en nyere.
+**AUTO-502 · FULLFØRT 2026-10-12** — Watch-overføring bruker nå en injiserbar
+klient for `WCSession.updateApplicationContext`. Regresjonen simulerer to
+forbigående feil mens snapshotet endres, og bekrefter at neste forsøk sender
+det nyeste stedet, at et vellykket forsøk tømmer køen, og at eldre data aldri
+sendes etter nyere.
+`swiftc -parse` og `git diff --check` består. XCTest kunne ikke kjøres i
+miljøet: forrige Xcode-forsøk stoppet før kompilering fordi CoreSimulator ikke
+var tilgjengelig og DerivedData-mappen ikke kunne opprettes.
 
 **AUTO-503 · ÅPEN** — Oppdater valgt steds prognose når appen blir aktiv igjen,
 dersom den lagrede prognosen har blitt foreldet mens appen var i bakgrunnen.
@@ -482,6 +485,12 @@ første oppstart. `VarselApp.task` starter nå varselstillatelsen i en separat
 Task samtidig som `StartupWeatherBootstrap` ber om posisjonstillatelse. Sekvenser
 de to forespørslene uten å forsinke første prognoselasting, og dekk rekkefølgen
 med en regresjonstest for både godkjent og avvist posisjonstilgang.
+
+**AUTO-505 · ÅPEN** — Lokaliser reserve-navnet for GPS-sted når omvendt
+geokoding ikke gir et stedsnavn. `LocationManager` returnerer «Min posisjon»
+uansett språk, mens appens stedstitler ellers følger norsk, inntrøndersk eller
+engelsk. Bruk valgt språkstil ved opprettelse av GPS-sted, og dekk de tre
+reserveformene med regresjoner uten å overskrive et faktisk geokodet navn.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

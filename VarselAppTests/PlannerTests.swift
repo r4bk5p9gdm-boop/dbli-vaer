@@ -42,6 +42,22 @@ private final class FakeOneShotLocationClient: OneShotLocationClient {
 }
 
 @MainActor
+private final class FakeWatchApplicationContextClient: WatchApplicationContextClient {
+    var isSupported = true
+    var isActivated = true
+    var failuresRemaining = 0
+    private(set) var attempts: [[String: Data]] = []
+
+    func updateApplicationContext(_ context: [String: Data]) throws {
+        attempts.append(context)
+        if failuresRemaining > 0 {
+            failuresRemaining -= 1
+            throw NSError(domain: "WatchSync", code: 1)
+        }
+    }
+}
+
+@MainActor
 private final class FakeReverseGeocoderClient: ReverseGeocoderClient {
     private(set) var cancelCount = 0
     private var completion: (@MainActor @Sendable (String?) -> Void)?
@@ -450,6 +466,32 @@ final class PlannerTests: XCTestCase {
         )
         XCTAssertEqual(restored.snapshot?.updatedAt, snapshot.updatedAt)
         XCTAssertEqual(restored.snapshot?.place.id, snapshot.place.id)
+    }
+
+    func testWatchContextRetrySendsNewestSnapshotAfterTransientFailure() throws {
+        let client = FakeWatchApplicationContextClient()
+        client.failuresRemaining = 2
+        let manager = WatchSyncManager(client: client)
+        let oldPlace = Place(name: "Klinga", lat: 64, lon: 11)
+        let newPlace = Place(name: "Hornburu", lat: 64.1, lon: 11.1)
+
+        manager.send(place: oldPlace, forecast: [], updatedAt: base)
+        manager.send(place: newPlace, forecast: [], updatedAt: base.addingTimeInterval(1))
+        XCTAssertEqual(client.attempts.count, 2)
+        XCTAssertEqual(try transferredPlaceName(from: client.attempts[0]), "Klinga")
+        XCTAssertEqual(try transferredPlaceName(from: client.attempts[1]), "Hornburu")
+
+        manager.retryPendingTransfer()
+
+        XCTAssertEqual(client.attempts.count, 3)
+        XCTAssertEqual(try transferredPlaceName(from: client.attempts[2]), "Hornburu")
+        manager.retryPendingTransfer()
+        XCTAssertEqual(client.attempts.count, 3, "A successful retry should clear the pending transfer")
+    }
+
+    private func transferredPlaceName(from context: [String: Data]) throws -> String? {
+        let data = try XCTUnwrap(context["weatherSnapshot"])
+        return try JSONDecoder().decode(WatchWeatherTransfer.self, from: data).snapshot?.place.name
     }
 
     @MainActor

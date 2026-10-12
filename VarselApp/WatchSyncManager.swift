@@ -2,14 +2,32 @@ import Foundation
 import WatchConnectivity
 
 @MainActor
+protocol WatchApplicationContextClient: AnyObject {
+    var isSupported: Bool { get }
+    var isActivated: Bool { get }
+    func updateApplicationContext(_ context: [String: Data]) throws
+}
+
+@MainActor
+private final class SystemWatchApplicationContextClient: WatchApplicationContextClient {
+    var isSupported: Bool { WCSession.isSupported() }
+    var isActivated: Bool { WCSession.default.activationState == .activated }
+    func updateApplicationContext(_ context: [String: Data]) throws {
+        try WCSession.default.updateApplicationContext(context)
+    }
+}
+
+@MainActor
 final class WatchSyncManager: NSObject, WCSessionDelegate {
-    static let shared = WatchSyncManager()
+    static let shared = WatchSyncManager(client: SystemWatchApplicationContextClient(), activateSession: true)
     private static let snapshotKey = "weatherSnapshot"
+    private let client: any WatchApplicationContextClient
     private var pendingTransferData: Data?
 
-    private override init() {
+    init(client: any WatchApplicationContextClient, activateSession: Bool = false) {
+        self.client = client
         super.init()
-        guard WCSession.isSupported() else { return }
+        guard activateSession, client.isSupported else { return }
         WCSession.default.delegate = self
         WCSession.default.activate()
     }
@@ -24,22 +42,24 @@ final class WatchSyncManager: NSObject, WCSessionDelegate {
     }
 
     private func enqueue(_ transfer: WatchWeatherTransfer) {
-        guard WCSession.isSupported(), let data = try? JSONEncoder().encode(transfer) else { return }
+        guard client.isSupported, let data = try? JSONEncoder().encode(transfer) else { return }
         pendingTransferData = data
         flushIfActivated()
     }
 
     private func flushIfActivated() {
-        guard WCSession.isSupported(),
-              WCSession.default.activationState == .activated,
+        guard client.isSupported,
+              client.isActivated,
               let data = pendingTransferData else { return }
         do {
-            try WCSession.default.updateApplicationContext([Self.snapshotKey: data])
+            try client.updateApplicationContext([Self.snapshotKey: data])
             pendingTransferData = nil
         } catch {
             // Keep the newest transfer and retry on the next activation or send.
         }
     }
+
+    func retryPendingTransfer() { flushIfActivated() }
 
     nonisolated func session(
         _ session: WCSession,
