@@ -130,7 +130,10 @@ struct WatchWeatherWidgetView: View {
             }
             if entry.snapshot != nil {
                 if nextStatuses.isEmpty {
-                    Text("Ingen aktuelle varsler")
+                    Text(WeatherGlance.widgetEmptyStateText(
+                        .noCurrentAlerts,
+                        languageStyle: entry.snapshot?.languageStyle ?? .bokmal
+                    ))
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                 } else {
@@ -156,7 +159,10 @@ struct WatchWeatherWidgetView: View {
                     }
                 }
             } else {
-                Text("Åpne appen på iPhone")
+                Text(WeatherGlance.widgetEmptyStateText(
+                    .openPhone,
+                    languageStyle: entry.snapshot?.languageStyle ?? .bokmal
+                ))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -214,9 +220,12 @@ struct WatchWeatherWidgetView: View {
     }
 
     private func compactEventTime(_ date: Date) -> String {
-        let minutes = max(0, Int(date.timeIntervalSince(entry.date) / 60))
-        if minutes < 60 { return "om \(max(1, minutes))m" }
-        return "om \(minutes / 60)t"
+        WeatherGlance.compactRelativeTime(
+            to: date,
+            from: entry.date,
+            languageStyle: entry.snapshot?.languageStyle ?? .bokmal,
+            compact: true
+        )
     }
 
     private func progress(for status: WeatherStatus, at now: Date) -> CGFloat {

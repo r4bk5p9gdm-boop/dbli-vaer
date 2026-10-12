@@ -568,12 +568,14 @@ regresjonsdekning for etikettene på de tre språkstilene. Swift-parsing og
 diffkontroll består; XCTest kunne ikke kjøres fordi CoreSimulatorService ikke
 er tilgjengelig.
 
-**AUTO-514 · ÅPEN** — Lokaliser tomtilstands- og relative tidsfraser i
-CarPlay- og Watch-widgetene etter snapshotets språkstil. CarPlay-widgetens
-«Åpne appen»/«Ingen varsler»-tekster er faste norske strenger, og Watch-
-komplikasjonens relative tid bruker alltid «om … m/t», også med engelsk
-snapshot. Trekk tekstene ut i delte rene funksjoner og dekk engelsk og norsk
-uten å endre tidsberegning eller widgetenes kompakte oppsett.
+**AUTO-514 · FULLFØRT 2026-10-12** — CarPlay- og Watch-widgetenes
+tomtilstander og relative nedtellinger følger nå snapshotets språkstil.
+Snapshot uten prognose, ingen kommende hendelser og ingen aktuelle varsler har
+egne bokmåls-/engelske tekster; Watch bruker også «in 15m»/«in 2h» for engelske
+snapshots, mens norske kompakte former og CarPlays mellomrom beholdes.
+Tidsberegningen og oppsettet er uendret. Regresjon dekker alle tomtilstander i
+bokmål/engelsk og minute-/timeformer på begge flater. Swift-parsing og
+diffkontroll består; XCTest er blokkert av utilgjengelig CoreSimulatorService.
 
 **AUTO-515 · ÅPEN** — Lokaliser Watch-appens seksjonsoverskrifter og tomtilstand
 etter snapshotets språkstil. «Neste 12 timer», «Nå» og «Ingen aktuelle
@@ -586,6 +588,13 @@ konkurranse mellom vellykket refresh og utløpt oppgave. `BackgroundRefresh` har
 en låst fullføringsport for disse to samtidige callbackene, men eksisterende
 regresjon kaller dem bare sekvensielt. Legg til en trådsikker samtidighetstest
 som bekrefter nøyaktig én ferdigmelding uten å starte en faktisk BGTask.
+
+**AUTO-517 · ÅPEN** — Formater «Oppdatert»-klokkeslett etter språkstilen i
+snapshotet, ikke bare enhetens locale. `WeatherGlance.freshness` setter allerede
+engelsk/norsk tekst rundt tidspunktet, men `Date.formatted` arver systemlocale;
+med engelsk apptekst på norsk enhet kan klokkeslettets skilletegn og 12/24-timers
+visning derfor avvike. Velg en deterministisk locale per språkstil og test begge
+stilene uten å endre ferskhetsgrensen eller stale-advarselen.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

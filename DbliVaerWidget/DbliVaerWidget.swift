@@ -146,13 +146,13 @@ struct WeatherWidgetView: View {
                         .font(.title2)
                         .foregroundStyle(Color.orange)
                         .widgetAccentable()
-                    Text("Åpne appen for å hente vær.")
+                    Text(WeatherGlance.widgetEmptyStateText(.openPhone, languageStyle: entry.languageStyle))
                         .font(.subheadline.weight(.semibold))
                         .lineLimit(2)
                     Spacer()
                 } else {
                     Spacer()
-                    Text("Ingen neste varsler.")
+                    Text(WeatherGlance.widgetEmptyStateText(.noUpcomingAlerts, languageStyle: entry.languageStyle))
                         .font(.subheadline.weight(.semibold))
                         .lineLimit(2)
                     Spacer()
@@ -186,15 +186,12 @@ struct WeatherWidgetView: View {
     }
 
     private func compactEventTime(_ date: Date) -> String {
-        let minutes = max(0, Int(date.timeIntervalSince(entry.date) / 60))
-        if minutes < 60 {
-            return entry.languageStyle == .english
-                ? "in \(max(1, minutes)) min"
-                : "om \(max(1, minutes)) min"
-        }
-        return entry.languageStyle == .english
-            ? "in \(minutes / 60)h"
-            : "om \(minutes / 60) t"
+        WeatherGlance.compactRelativeTime(
+            to: date,
+            from: entry.date,
+            languageStyle: entry.languageStyle,
+            compact: false
+        )
     }
 
     private var detailedView: some View {
@@ -203,7 +200,10 @@ struct WeatherWidgetView: View {
 
             if entry.statuses.isEmpty {
                 Spacer()
-                Text(entry.updatedAt == nil ? "Åpne appen for å hente vær." : "Ingen aktuelle varsler.")
+                Text(WeatherGlance.widgetEmptyStateText(
+                    entry.updatedAt == nil ? .openPhone : .noCurrentAlerts,
+                    languageStyle: entry.languageStyle
+                ))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Spacer()

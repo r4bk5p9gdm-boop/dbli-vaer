@@ -3087,6 +3087,76 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(WeatherGlance.nextEvents([current, next], now: now).map(\.type), [.sno])
     }
 
+    func testWidgetEmptyStatesAndRelativeTimesFollowSnapshotLanguage() {
+        XCTAssertEqual(
+            WeatherGlance.widgetEmptyStateText(.openPhone, languageStyle: .bokmal),
+            "Åpne appen på iPhone for å hente vær."
+        )
+        XCTAssertEqual(
+            WeatherGlance.widgetEmptyStateText(.noUpcomingAlerts, languageStyle: .bokmal),
+            "Ingen kommende varsler."
+        )
+        XCTAssertEqual(
+            WeatherGlance.widgetEmptyStateText(.noCurrentAlerts, languageStyle: .bokmal),
+            "Ingen aktuelle varsler."
+        )
+        XCTAssertEqual(
+            WeatherGlance.widgetEmptyStateText(.openPhone, languageStyle: .english),
+            "Open the app on your iPhone to get weather."
+        )
+        XCTAssertEqual(
+            WeatherGlance.widgetEmptyStateText(.noUpcomingAlerts, languageStyle: .english),
+            "No upcoming alerts."
+        )
+        XCTAssertEqual(
+            WeatherGlance.widgetEmptyStateText(.noCurrentAlerts, languageStyle: .english),
+            "No current alerts."
+        )
+
+        XCTAssertEqual(
+            WeatherGlance.compactRelativeTime(
+                to: base.addingTimeInterval(15 * 60), from: base,
+                languageStyle: .bokmal, compact: true
+            ),
+            "om 15m"
+        )
+        XCTAssertEqual(
+            WeatherGlance.compactRelativeTime(
+                to: base.addingTimeInterval(2 * 3_600), from: base,
+                languageStyle: .bokmal, compact: true
+            ),
+            "om 2t"
+        )
+        XCTAssertEqual(
+            WeatherGlance.compactRelativeTime(
+                to: base.addingTimeInterval(15 * 60), from: base,
+                languageStyle: .english, compact: true
+            ),
+            "in 15m"
+        )
+        XCTAssertEqual(
+            WeatherGlance.compactRelativeTime(
+                to: base.addingTimeInterval(2 * 3_600), from: base,
+                languageStyle: .english, compact: true
+            ),
+            "in 2h"
+        )
+        XCTAssertEqual(
+            WeatherGlance.compactRelativeTime(
+                to: base.addingTimeInterval(15 * 60), from: base,
+                languageStyle: .english, compact: false
+            ),
+            "in 15 min"
+        )
+        XCTAssertEqual(
+            WeatherGlance.compactRelativeTime(
+                to: base.addingTimeInterval(2 * 3_600), from: base,
+                languageStyle: .english, compact: false
+            ),
+            "in 2h"
+        )
+    }
+
     func testWatchAndCarPlayNextEventsIgnoreExpiredNowStatus() {
         let expiredNow = WeatherStatus(
             ruleID: UUID(), type: .regn, text: "Regn nå.",

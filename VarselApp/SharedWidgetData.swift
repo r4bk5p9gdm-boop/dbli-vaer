@@ -13,6 +13,50 @@ enum WeatherGlance {
         case dewPoint
     }
 
+    enum WidgetEmptyState {
+        case openPhone
+        case noUpcomingAlerts
+        case noCurrentAlerts
+    }
+
+    static func widgetEmptyStateText(
+        _ state: WidgetEmptyState,
+        languageStyle: AlertLanguageStyle
+    ) -> String {
+        let english: String
+        let bokmal: String
+        switch state {
+        case .openPhone:
+            english = "Open the app on your iPhone to get weather."
+            bokmal = "Åpne appen på iPhone for å hente vær."
+        case .noUpcomingAlerts:
+            english = "No upcoming alerts."
+            bokmal = "Ingen kommende varsler."
+        case .noCurrentAlerts:
+            english = "No current alerts."
+            bokmal = "Ingen aktuelle varsler."
+        }
+        return languageStyle == .english ? english : WeatherLanguage.text(bokmal, style: languageStyle)
+    }
+
+    static func compactRelativeTime(
+        to eventAt: Date,
+        from now: Date,
+        languageStyle: AlertLanguageStyle,
+        compact: Bool
+    ) -> String {
+        let minutes = max(0, Int(eventAt.timeIntervalSince(now) / 60))
+        let prefix = languageStyle == .english ? "in" : "om"
+        if minutes < 60 {
+            let amount = max(1, minutes)
+            let unit = compact ? "m" : " min"
+            return "\(prefix) \(amount)\(unit)"
+        }
+        let hours = minutes / 60
+        let unit = languageStyle == .english ? "h" : (compact ? "t" : " t")
+        return "\(prefix) \(hours)\(unit)"
+    }
+
     static func metricLabel(for metric: Metric, languageStyle: AlertLanguageStyle) -> String {
         switch (metric, languageStyle == .english) {
         case (.precipitation, true): return "Precipitation"
