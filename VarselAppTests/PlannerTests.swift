@@ -7625,6 +7625,18 @@ final class PlannerTests: XCTestCase {
         XCTAssertGreaterThan(decodedClear.sentAt, decodedTransfer.sentAt)
     }
 
+    func testWatchTransferPolicyDecodesExplicitClearAndRetainsSentAt() throws {
+        let clear = WatchWeatherTransfer(snapshot: nil, sentAt: base.addingTimeInterval(2))
+        let payload = try JSONEncoder().encode(clear)
+
+        let decoded = try XCTUnwrap(
+            WatchTransferPolicy.decodeTransferPayload(payload, referenceDate: base)
+        )
+
+        XCTAssertNil(decoded.snapshot)
+        XCTAssertEqual(decoded.sentAt, clear.sentAt)
+    }
+
     func testNextDayRainCanNotifyAtNineTheEveningBefore() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))

@@ -690,12 +690,10 @@ fiksen i hele Core Location-batchen som består `LocationFixPolicy.accepts`.
 Regresjonstesten dekker både en gyldig eldre fiks sammen med en ugyldig nyere
 fiks og en batch uten gyldige fikser.
 
-**AUTO-530 · ÅPEN** — Test at den delte Watch-dekoderen bevarer eksplisitt
-null-snapshot i den versjonerte overføringen. Sletting av siste sted skal rydde
-Watch-cache, men en dekoderendring som feilaktig faller tilbake eller forkaster
-en gyldig clear-envelope kan la gammelt vær bli stående. Dekk `snapshot: nil`
-gjennom `WatchTransferPolicy.decodeTransferPayload` og bekreft at `sentAt`
-beholdes.
+**AUTO-530 · FULLFØRT 2026-10-12** — `WatchTransferPolicy.decodeTransferPayload`
+har nå en regresjonstest for den versjonerte clear-envelope-overføringen.
+Dekodingen beholder `sentAt` og det eksplisitte `snapshot: nil`, slik at sletting
+av siste sted ikke kan forveksles med en ugyldig eller eldre Watch-melding.
 
 **AUTO-531 · ÅPEN** — Gjør varslingskøens bevaringstest uavhengig av
 systemklokken. `requestsToPreserve` tar en injisert `now`, men leser neste
@@ -710,6 +708,13 @@ men starter operasjonen uten å kontrollere om den ventende tasken allerede er
 kansellert; en foreldet plan kan dermed fortsatt begynne å erstatte varsler når
 køen åpnes. Test at kansellert ventende jobb hoppes over, mens aktiv erstatning
 fortsetter atomisk.
+
+**AUTO-533 · ÅPEN** — Sett en realistisk bytegrense for innkommende Watch-
+overføringer før `WatchTransferPolicy.decodeTransferPayload` starter JSON-
+dekoding. Telefonens `applicationContext`-payload går nå rett fra `Data` til
+`JSONDecoder`; mål gyldige snapshots over hele prognosehorisonten, velg grense
+med trygg reserve, og test at en overstor payload avvises før dekoding mens
+klare og normale overføringer fortsatt fungerer.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

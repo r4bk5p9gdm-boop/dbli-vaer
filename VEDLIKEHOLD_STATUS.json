@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T18:36:35Z",
+  "lastScheduledStart": "2026-10-12T18:51:35Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-529 fullført 2026-10-12: LocationManager velger nå den nyeste aksepterte GPS-fiksen fra hele batchen i stedet for å avvise batchen når siste element er for upresist. Regresjonstester dekker gyldig eldre/ugyldig nyere fiks og batch uten gyldige fikser. Swift-parsing og diffkontroll består. XCTest ikke kjørt: simulatorsystemet har tidligere vært blokkert, diskplassen er 14 GB ledig (97 % brukt), og minnestatus kunne ikke leses i sandbox; tung bygging ble derfor unngått. Bred gjennomgang av varselkøen fant AUTO-532: NotificationSchedulingQueue sjekker ikke kansellering etter venting på forrige jobb; legg til deterministisk test for kansellert ventende jobb mens aktiv erstatning fullføres. Full køskann: AUTO-530, AUTO-531, AUTO-532."
+  "lastProgress": "AUTO-530 fullført 2026-10-12: WatchTransferPolicy.decodeTransferPayload har nå en regresjonstest som går gjennom clear-envelope-dekoderen og sikrer at snapshot fortsatt er nil og sentAt bevares. Swift-parsing og diffkontroll består. XCTest ikke kjørt fordi simulatoren har vært blokkert og disken fortsatt har begrenset kapasitet; ingen tung bygging startet. Bred gjennomgang av Watch-overføringsmottaket fant at applicationContext-data går direkte fra Data til JSONDecoder uten payloadgrense; AUTO-533 skal etablere en grense basert på gyldige prognosesnapshots og avvise overdreven inngang før dekoding. Full køskann: AUTO-531, AUTO-532, AUTO-533."
 }
