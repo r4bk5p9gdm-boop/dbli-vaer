@@ -654,11 +654,12 @@ final class PlannerTests: XCTestCase {
 
     func testPersistedForecastCacheSortsDeduplicatesAndBoundsHourTimes() throws {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let weakerDuplicate = PrecipitationSample(time: base.addingTimeInterval(15 * 60), rate: 0.5)
         let inHourSample = PrecipitationSample(time: base.addingTimeInterval(15 * 60), rate: 2)
         let nextHourSample = PrecipitationSample(time: base.addingTimeInterval(3_600), rate: 3)
         let first = ForecastHour(
             time: base, temp: 8, precip: 0, wind: 1, cloud: 30, dew: 4,
-            radarSamples: [inHourSample, nextHourSample]
+            radarSamples: [weakerDuplicate, inHourSample, nextHourSample]
         )
         var expectedFirst = first
         expectedFirst.radarSamples = [inHourSample]

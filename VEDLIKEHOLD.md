@@ -629,12 +629,12 @@ rett over to timer, nøyaktig tre timer og rett over tre timer på bokmål, samt
 engelsk stale-tekst. Swift-parsing og diffkontroll består; XCTest er blokkert
 fordi CoreSimulatorService ikke er tilgjengelig.
 
-**AUTO-522 · ÅPEN** — Dedupér radarprøver som gjenopprettes fra prognosecache
-og Watch/widget-snapshots. Yr-normaliseringen velger høyeste rate ved like
-radartidspunkt, men cachevalideringen gjør ikke det; `Planner` bruker prøvene
-direkte til å beregne intervall og tidspunkt for regn-/snøvarsler. Behold prøven
-med høyest rate for hvert tidspunkt etter bucket-filtrering, marker cachedata
-som endret for reparasjon, og dekk gjentatte prøver med ulike rater i regresjon.
+**AUTO-522 · FULLFØRT 2026-10-12** — Gjenopprettet prognosetimer beholder nå
+bare én radarmåling per tidspunkt, med høyeste nedbørsrate. Samme normalisering
+brukes på iPhone-cache og Watch/widget-snapshots; reparasjonsflagget slås på når
+duplikater fjernes. Regresjonen dekker to like tidspunkter med ulike rater.
+Swift-parsing og diffkontroll består; XCTest er blokkert fordi
+CoreSimulatorService ikke er tilgjengelig.
 
 **AUTO-523 · ÅPEN** — Avgrens Watch-overføringens `sentAt` før den lagres som
 `lastTransferAt`. Overføringspolicyen kontrollerer bare at tidspunktet er nyere
@@ -650,6 +650,15 @@ sorterer bare på envelope-tid og kan dermed nedgradere allerede ferskere
 værdata. Sammenlign snapshotets `updatedAt` med gjeldende snapshot ved mottak,
 behold eksplisitt tømming av stedet, og dekk både avvist eldre data og godkjent
 nyere data i regresjon.
+
+**AUTO-525 · ÅPEN** — Reparer framtidsstemplede prognoser ved Store-gjenoppretting.
+`PersistedStoreState` beholder `forecastUpdatedAt` ukritisk når det finnes en
+prognose; `Store.init` filtrerer bare på sted og tom cache. `widgetSnapshot`
+behandler derfor et vilkårlig framtidig stempel som ferskt og publiserer en
+snapshot som den delte dekoderen nå avviser, mens pushplanleggingen samtidig
+forkaster samme cache. Bruk femminuttersgrensen ved gjenoppretting, marker
+reparasjon og dekk at Watch/widget og planlegging håndterer den ugyldige
+tidsstemplingen konsistent.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

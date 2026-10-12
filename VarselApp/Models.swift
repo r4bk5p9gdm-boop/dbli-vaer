@@ -1092,7 +1092,13 @@ struct ForecastHour: Codable, Identifiable, Hashable {
             guard let samples = hour.radarSamples else { return hour }
             var sanitized = hour
             let end = hour.time.addingTimeInterval(3_600)
-            sanitized.radarSamples = samples.filter { $0.time >= hour.time && $0.time < end }
+            var samplesByTime: [Date: PrecipitationSample] = [:]
+            for sample in samples where sample.time >= hour.time && sample.time < end {
+                if samplesByTime[sample.time].map({ $0.rate >= sample.rate }) != true {
+                    samplesByTime[sample.time] = sample
+                }
+            }
+            sanitized.radarSamples = samplesByTime.values.sorted { $0.time < $1.time }
             return sanitized
         }.sorted { $0.time < $1.time }
     }
