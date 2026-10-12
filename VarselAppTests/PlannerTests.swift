@@ -3144,6 +3144,15 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(WeatherGlance.eventName(for: dew, languageStyle: .inntrondersk), "Dogg")
     }
 
+    func testWatchMetricLabelsFollowSnapshotLanguageStyle() {
+        XCTAssertEqual(WeatherGlance.metricLabel(for: .precipitation, languageStyle: .bokmal), "Nedbør")
+        XCTAssertEqual(WeatherGlance.metricLabel(for: .windGusts, languageStyle: .bokmal), "Vindkast")
+        XCTAssertEqual(WeatherGlance.metricLabel(for: .dewPoint, languageStyle: .bokmal), "Duggpunkt")
+        XCTAssertEqual(WeatherGlance.metricLabel(for: .precipitation, languageStyle: .english), "Precipitation")
+        XCTAssertEqual(WeatherGlance.metricLabel(for: .windGusts, languageStyle: .english), "Wind gusts")
+        XCTAssertEqual(WeatherGlance.metricLabel(for: .dewPoint, languageStyle: .english), "Dew point")
+    }
+
     func testInntronderskCompactLabelsArePresentForEveryAlertType() {
         for type in AlertType.allCases {
             let status = WeatherStatus(

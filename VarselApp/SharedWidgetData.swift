@@ -7,6 +7,23 @@ enum WeatherGlance {
     private static let nowStatusLookahead: TimeInterval = 15 * 60
     static let staleAfter: TimeInterval = 2 * 3_600
 
+    enum Metric: CaseIterable {
+        case precipitation
+        case windGusts
+        case dewPoint
+    }
+
+    static func metricLabel(for metric: Metric, languageStyle: AlertLanguageStyle) -> String {
+        switch (metric, languageStyle == .english) {
+        case (.precipitation, true): return "Precipitation"
+        case (.windGusts, true): return "Wind gusts"
+        case (.dewPoint, true): return "Dew point"
+        case (.precipitation, false): return "Nedbør"
+        case (.windGusts, false): return "Vindkast"
+        case (.dewPoint, false): return "Duggpunkt"
+        }
+    }
+
     struct Freshness: Equatable {
         let label: String
         let isStale: Bool

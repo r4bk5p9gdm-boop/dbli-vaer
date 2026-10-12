@@ -78,14 +78,14 @@ struct WatchContentView: View {
                         }
 
                         Section("Nå") {
-                            watchMetric("Nedbør", value: "\(current.precipitationRiskRate.formatted(.number.precision(.fractionLength(0...1)))) mm", icon: "drop.fill", color: .blue)
+                            watchMetric(WeatherGlance.metricLabel(for: .precipitation, languageStyle: snapshot.languageStyle ?? .bokmal), value: "\(current.precipitationRiskRate.formatted(.number.precision(.fractionLength(0...1)))) mm", icon: "drop.fill", color: .blue)
                             watchMetric(
-                                "Vindkast",
+                                WeatherGlance.metricLabel(for: .windGusts, languageStyle: snapshot.languageStyle ?? .bokmal),
                                 value: current.compactWindAndGust,
                                 icon: "wind",
                                 color: .teal
                             )
-                            watchMetric("Duggpunkt", value: "\(current.dew.formatted(.number.precision(.fractionLength(0...1))))°", icon: "humidity.fill", color: .mint)
+                            watchMetric(WeatherGlance.metricLabel(for: .dewPoint, languageStyle: snapshot.languageStyle ?? .bokmal), value: "\(current.dew.formatted(.number.precision(.fractionLength(0...1))))°", icon: "humidity.fill", color: .mint)
                         }
 
                         if let message = store.message {

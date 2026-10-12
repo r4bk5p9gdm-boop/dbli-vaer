@@ -535,12 +535,11 @@ dekker korrupte verdier og gyldige yttergrenser. Swift-parsing og diffkontroll
 består; XCTest kunne ikke kjøres fordi CoreSimulator/DerivedData fortsatt er
 utilgjengelig.
 
-**AUTO-510 · ÅPEN** — Lokaliser Apple Watch-appens målingsetiketter etter valgt
-språkstil. Hendelsesnavn og ferskhetsstatus følger allerede snapshotets språk,
-men «Nedbør», «Vind» og «Duggpunkt» i målingslisten er faste norske tekster.
-Når brukeren velger engelsk, blandes derfor språk på samme skjerm. Bruk den
-eksisterende snapshot-baserte lokaliseringsflyten og dekk etikettene for norsk
-og engelsk uten å endre rekkefølge eller måleverdier.
+**AUTO-510 · FULLFØRT 2026-10-12** — Apple Watch-målingene for nedbør,
+vindkast og duggpunkt følger nå språkstilen i værbildet: engelske etiketter ved
+engelsk valg og norske etiketter ellers. En regresjonstest dekker alle tre
+etikettene på norsk og engelsk. Swift-parsing og diffkontroll består; XCTest
+kunne ikke kjøres fordi CoreSimulator/DerivedData fortsatt er utilgjengelig.
 
 **AUTO-511 · ÅPEN** — Kontroller fysiske verdier i gjenopprettet prognosecache,
 ikke bare i nye Yr-svar. API-dekoderen avviser nå temperatur, vind og
@@ -558,6 +557,13 @@ varslingskø når prognosen fortsatt er fersk og varslingstillatelsen uendret.
 Ta med relevant kalender-/tidssoneidentitet eller håndter systemets
 tidssoneendring eksplisitt, og test at én replan skjer ved bytte uten å hente
 prognoser på nytt.
+
+**AUTO-513 · ÅPEN** — Lokaliser VoiceOver-forklaringene i værbåndene etter
+valgt språkstil. De visuelle tidslinjeetikettene følger språkvalget, men
+tilgjengelighetsnavnene i `CombinedWeatherBand` og `MoistureWeatherBand` bruker
+fast norsk tekst, også når appen ellers vises på engelsk. La forklaringene om
+samlet regelbånd og manglende/ukjent Yr-prognose følge eksisterende
+værtekstlokalisering, og dekk bokmål, inntrøndersk og engelsk i regresjoner.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

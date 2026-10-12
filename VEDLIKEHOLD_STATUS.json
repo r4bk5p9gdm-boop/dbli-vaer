@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T10:46:08Z",
+  "lastScheduledStart": "2026-10-12T11:01:08Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-509 fullført 2026-10-12: Rule.init(from:) begrenser faste varseltider, ukedag, dagvalg, stille tid og aktive timer til redigererens gyldige domener; ugyldige valg får trygg fallback mens gyldige yttergrenser beholdes. Regresjon dekker korrupte felter og gyldige grenser. Swift-parsing og diffkontroll består; XCTest er blokkert av manglende CoreSimulator/DerivedData-tilgang. Bred gjennomgang av appaktivering, varselplanlegging, cache/gjenoppretting, værdata, bakgrunnsoppdatering og Watch/CarPlay viste at faste ukedagsvarsler kan beholde gammel lokal plan etter systemets tidssonebytte fordi tidssone ikke inngår i Store.replanSignature() og appaktivering ellers ikke tvinger replan når prognosen fortsatt er fersk; lagt til AUTO-512. Neste kø: AUTO-510, AUTO-511, AUTO-512."
+  "lastProgress": "AUTO-510 fullført 2026-10-12: Apple Watch-målingene for nedbør, vindkast og duggpunkt viser nå norsk eller engelsk etikett etter språkstilen i snapshotet; regresjon dekker alle tre på begge språk. Swift-parsing og diffkontroll består; XCTest kunne ikke kjøres fordi CoreSimulator/DerivedData fortsatt er utilgjengelig. Bred gjennomgang av varsel-/prognosevisning, lokal cache, Watch/CarPlay, værbånd og VoiceOver fant at VoiceOver-forklaringene for CombinedWeatherBand og MoistureWeatherBand forblir norsk selv når resten av tidslinjen vises på engelsk; lagt til AUTO-513. Neste kø: AUTO-511, AUTO-512, AUTO-513."
 }
