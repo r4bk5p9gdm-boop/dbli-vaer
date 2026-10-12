@@ -92,6 +92,7 @@ private final class CoreLocationOneShotClient: NSObject, OneShotLocationClient, 
 
 @MainActor
 final class LocationManager: NSObject, ObservableObject {
+    static let reverseGeocodingTimeout: TimeInterval = 8
     private let clientFactory: () -> any OneShotLocationClient
     private var client: (any OneShotLocationClient)?
     private var continuation: CheckedContinuation<CLLocation, Error>?
@@ -182,9 +183,85 @@ final class LocationManager: NSObject, ObservableObject {
         }
     }
 
-    static func name(for loc: CLLocation) async -> String {
-        let marks = try? await CLGeocoder().reverseGeocodeLocation(loc)
-        return marks?.first?.locality ?? marks?.first?.name ?? "Min posisjon"
+    static func name(
+        for loc: CLLocation,
+        timeout: TimeInterval = reverseGeocodingTimeout,
+        clientFactory: (@MainActor () -> any ReverseGeocoderClient)? = nil
+    ) async -> String {
+        let client = (clientFactory ?? { CoreLocationReverseGeocoderClient() })()
+        let request = ReverseGeocodeRequest(client: client, timeout: timeout)
+        return await request.name(for: loc)
+    }
+}
+
+@MainActor
+protocol ReverseGeocoderClient: AnyObject {
+    func reverseGeocode(
+        _ location: CLLocation,
+        completion: @escaping @MainActor @Sendable (String?) -> Void
+    )
+    func cancel()
+}
+
+@MainActor
+private final class CoreLocationReverseGeocoderClient: ReverseGeocoderClient {
+    private let geocoder = CLGeocoder()
+
+    func reverseGeocode(
+        _ location: CLLocation,
+        completion: @escaping @MainActor @Sendable (String?) -> Void
+    ) {
+        geocoder.reverseGeocodeLocation(location) { placemarks, _ in
+            let name = placemarks?.first?.locality ?? placemarks?.first?.name
+            Task { @MainActor in completion(name) }
+        }
+    }
+
+    func cancel() { geocoder.cancelGeocode() }
+}
+
+@MainActor
+private final class ReverseGeocodeRequest {
+    private let client: any ReverseGeocoderClient
+    private let timeout: TimeInterval
+    private var continuation: CheckedContinuation<String, Never>?
+    private var timeoutTask: Task<Void, Never>?
+
+    init(client: any ReverseGeocoderClient, timeout: TimeInterval) {
+        self.client = client
+        self.timeout = timeout.isFinite ? min(max(timeout, 0.1), 30) : LocationManager.reverseGeocodingTimeout
+    }
+
+    func name(for location: CLLocation) async -> String {
+        guard !Task.isCancelled else { return "Min posisjon" }
+        let timeoutSeconds = timeout
+        return await withTaskCancellationHandler {
+            await withCheckedContinuation { continuation in
+                self.continuation = continuation
+                timeoutTask = Task { [weak self, timeoutSeconds] in
+                    do { try await Task.sleep(nanoseconds: UInt64(timeoutSeconds * 1_000_000_000)) }
+                    catch { return }
+                    self?.finish(with: "Min posisjon", cancelGeocoder: true)
+                }
+                client.reverseGeocode(location) { [weak self] name in
+                    let cleanedName = name?.trimmingCharacters(in: .whitespacesAndNewlines)
+                    self?.finish(with: cleanedName.flatMap { $0.isEmpty ? nil : $0 } ?? "Min posisjon")
+                }
+            }
+        } onCancel: {
+            Task { @MainActor [weak self] in
+                self?.finish(with: "Min posisjon", cancelGeocoder: true)
+            }
+        }
+    }
+
+    private func finish(with name: String, cancelGeocoder: Bool = false) {
+        guard let continuation else { return }
+        self.continuation = nil
+        timeoutTask?.cancel()
+        timeoutTask = nil
+        if cancelGeocoder { client.cancel() }
+        continuation.resume(returning: name)
     }
 }
 

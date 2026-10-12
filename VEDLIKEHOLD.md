@@ -455,12 +455,14 @@ bare dette stedet på nytt dersom første lasting ikke allerede fikk med målet.
 Regresjoner dekker forsinket geokoding uten tapt GPS-prognose og mislykket
 posisjonsoppslag med fortsatt prognose for lagret valgt sted.
 
-**AUTO-501 · ÅPEN** — Avgrens ventetiden på omvendt geokoding for GPS-steder.
-`LocationManager.name(for:)` awaiter `CLGeocoder` direkte uten frist eller
-kanselleringshåndtering, og brukes både ved oppstart og når brukeren legger til
-eller velger GPS-sted. Innfør en trygg avbrytbar/fristsatt løsning som beholder
-koordinatene selv om navneoppslaget feiler, med regresjon for sen respons og
-fallback-navn.
+**AUTO-501 · FULLFØRT 2026-10-12** — GPS-steders omvendte geokoding har nå en
+åtte sekunders frist, avbrytes når den kallende Swift-tasken avbrytes og faller
+tilbake til «Min posisjon» ved feil eller tomt navn. Sen geokodingsrespons kan
+ikke fullføre forespørselen på nytt. Injiserbare geokodingsklienter gjør
+timeout, avbrytelse, fallback, trimming og sen respons testbare.
+`swiftc -parse` og `git diff --check` består. Xcode-bygg/test kunne ikke
+verifiseres: CoreSimulator er utilgjengelig, og Xcode får ikke opprette sin
+DerivedData-mappe i dette miljøet.
 
 **AUTO-502 · ÅPEN** — Gjør Watch-overføring robust mot forbigående feil fra
 `WCSession.updateApplicationContext`. `WatchSyncManager` beholder riktig nok
@@ -474,6 +476,12 @@ dersom den lagrede prognosen har blitt foreldet mens appen var i bakgrunnen.
 skjer ved første åpning, bakgrunnsoppgave eller manuelt dra-ned. Lag en
 ferskhetsgrense og regresjon som bekrefter at nylig data ikke gir unødige
 forespørsler, mens gammel eller manglende data oppdateres ved gjenopptak.
+
+**AUTO-504 · ÅPEN** — Unngå samtidige systemdialoger for posisjon og varsler ved
+første oppstart. `VarselApp.task` starter nå varselstillatelsen i en separat
+Task samtidig som `StartupWeatherBootstrap` ber om posisjonstillatelse. Sekvenser
+de to forespørslene uten å forsinke første prognoselasting, og dekk rekkefølgen
+med en regresjonstest for både godkjent og avvist posisjonstilgang.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

@@ -42,7 +42,77 @@ private final class FakeOneShotLocationClient: OneShotLocationClient {
 }
 
 @MainActor
+private final class FakeReverseGeocoderClient: ReverseGeocoderClient {
+    private(set) var cancelCount = 0
+    private var completion: (@MainActor @Sendable (String?) -> Void)?
+    var hasPendingCompletion: Bool { completion != nil }
+
+    func reverseGeocode(
+        _ location: CLLocation,
+        completion: @escaping @MainActor @Sendable (String?) -> Void
+    ) {
+        self.completion = completion
+    }
+
+    func cancel() { cancelCount += 1 }
+    func deliver(_ name: String?) { completion?(name) }
+}
+
+@MainActor
 final class PlannerTests: XCTestCase {
+    func testReverseGeocoderTimeoutFallsBackAndIgnoresLateResponse() async {
+        let client = FakeReverseGeocoderClient()
+        let location = CLLocation(latitude: 64.4, longitude: 11.5)
+
+        let name = await LocationManager.name(
+            for: location,
+            timeout: 0.1,
+            clientFactory: { client }
+        )
+
+        XCTAssertEqual(name, "Min posisjon")
+        XCTAssertEqual(client.cancelCount, 1)
+        client.deliver("Trondheim")
+        XCTAssertEqual(client.cancelCount, 1)
+    }
+
+    func testReverseGeocoderTrimsSuccessfulNameWithoutCancelling() async {
+        let client = FakeReverseGeocoderClient()
+        let location = CLLocation(latitude: 64.4, longitude: 11.5)
+        let request = Task { @MainActor in
+            await LocationManager.name(for: location, timeout: 1, clientFactory: { client })
+        }
+
+        for _ in 0..<20 where !client.hasPendingCompletion {
+            // Yield until the lookup has registered its completion before delivering.
+            await Task.yield()
+        }
+        XCTAssertTrue(client.hasPendingCompletion)
+        client.deliver("  Trondheim  ")
+
+        let name = await request.value
+        XCTAssertEqual(name, "Trondheim")
+        XCTAssertEqual(client.cancelCount, 0)
+    }
+
+    func testCancelledReverseGeocoderFallsBackAndCancelsClient() async {
+        let client = FakeReverseGeocoderClient()
+        let location = CLLocation(latitude: 64.4, longitude: 11.5)
+        let request = Task { @MainActor in
+            await LocationManager.name(for: location, timeout: 1, clientFactory: { client })
+        }
+        for _ in 0..<20 where !client.hasPendingCompletion { await Task.yield() }
+        XCTAssertTrue(client.hasPendingCompletion)
+
+        request.cancel()
+        let name = await request.value
+
+        XCTAssertEqual(name, "Min posisjon")
+        XCTAssertEqual(client.cancelCount, 1)
+        client.deliver("Trondheim")
+        XCTAssertEqual(client.cancelCount, 1)
+    }
+
     func testPlaceDistanceRejectsMalformedCoordinates() {
         let home = CLLocation(latitude: 64, longitude: 11)
         XCTAssertEqual(Place(name: "Hjem", lat: 64, lon: 11).distance(to: home) ?? .nan, 0, accuracy: 0.001)

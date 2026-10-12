@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-12T08:30:25Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-500 fullført 2026-10-12: Første prognose og bakgrunnsplanlegging starter mens GPS/geokoding pågår; varselstillatelse forespørres parallelt. Etter GPS-valg lastes bare valgt sted på nytt ved manglende prognose. Regresjoner for forsinket/mislykket GPS-oppslag lagt til. xcodebuild stoppet av SwiftUIMacros/Swift-plugin-server-feil i eksisterende ContentView.swift; simulator er utilgjengelig. Neste åpne kø: AUTO-501, AUTO-502, AUTO-503."
+  "lastProgress": "AUTO-501 fullført 2026-10-12: Omvendt GPS-geokoding er begrenset til åtte sekunder, kanselleres sammen med kallende Swift-task og beholder fallbacken «Min posisjon»; sen respons ignoreres. Regresjoner dekker timeout, kansellering, trimming, fallback og sen respons. Kildekontroller består; kjørbare iOS-tester fortsatt blokkert av CoreSimulator/SwiftUIMacros. Bred oppstartsgjennomgang fant mulig samtidighet mellom posisjons- og varselstillatelsesdialoger, lagt til som AUTO-504. Neste kø: AUTO-502, AUTO-503, AUTO-504."
 }
