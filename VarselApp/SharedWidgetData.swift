@@ -172,6 +172,43 @@ enum WeatherGlance {
     }
 }
 
+enum WatchWeatherCopy {
+    enum Section {
+        case next12Hours
+        case currentConditions
+    }
+
+    enum EmptyState {
+        case noEvents
+        case waitingTitle
+        case waitingDescription
+    }
+
+    static func sectionTitle(_ section: Section, languageStyle: AlertLanguageStyle) -> String {
+        switch (section, languageStyle) {
+        case (.next12Hours, .english): return "Next 12 hours"
+        case (.next12Hours, .inntrondersk): return "Neste 12 tima"
+        case (.next12Hours, .bokmal): return "Neste 12 timer"
+        case (.currentConditions, .english): return "Now"
+        case (.currentConditions, .inntrondersk): return "No"
+        case (.currentConditions, .bokmal): return "Nå"
+        }
+    }
+
+    static func emptyState(_ state: EmptyState, languageStyle: AlertLanguageStyle) -> String {
+        switch (state, languageStyle) {
+        case (.noEvents, .english): return "No current weather events."
+        case (.noEvents, .inntrondersk): return "Ingen værhendelsa no."
+        case (.noEvents, .bokmal): return "Ingen aktuelle hendelser"
+        case (.waitingTitle, .english): return "Waiting for iPhone"
+        case (.waitingTitle, .inntrondersk), (.waitingTitle, .bokmal): return "Venter på iPhone"
+        case (.waitingDescription, .english): return "Open D bli Vær! on your iPhone to get started."
+        case (.waitingDescription, .inntrondersk), (.waitingDescription, .bokmal):
+            return "Åpne D bli Vær! på iPhone første gang."
+        }
+    }
+}
+
 struct WidgetWeatherSnapshot: Codable {
     let place: Place
     let forecast: [ForecastHour]

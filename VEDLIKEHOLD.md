@@ -577,11 +577,13 @@ Tidsberegningen og oppsettet er uendret. Regresjon dekker alle tomtilstander i
 bokmål/engelsk og minute-/timeformer på begge flater. Swift-parsing og
 diffkontroll består; XCTest er blokkert av utilgjengelig CoreSimulatorService.
 
-**AUTO-515 · ÅPEN** — Lokaliser Watch-appens seksjonsoverskrifter og tomtilstand
-etter snapshotets språkstil. «Neste 12 timer», «Nå» og «Ingen aktuelle
-hendelser» er fortsatt norske strenger selv når Watch mottar et engelsk
-snapshot. Trekk kopien ut i en ren funksjon og dekk bokmål, inntrøndersk og
-engelsk uten å endre skjermens oppsett.
+**AUTO-515 · FULLFØRT 2026-10-12** — Watch-appens seksjonsoverskrifter,
+tilstandsfrase uten hendelser og førstegangs-/venteskjerm følger nå
+snapshotets språkstil. Inntrøndersk bruker «Neste 12 tima», «No» og en egen
+kort tomtilstand; engelsk har tilsvarende overskrifter og ventetekst.
+Skjermoppsettet er uendret. Regresjon dekker Bokmål, Inntrøndersk og engelsk
+for begge seksjoner og alle tomtilstandsfraser. Swift-parsing og diffkontroll
+består; XCTest er blokkert av utilgjengelig CoreSimulatorService.
 
 **AUTO-516 · ÅPEN** — Test at bakgrunnsoppgavens ferdigmelding tåler en reell
 konkurranse mellom vellykket refresh og utløpt oppgave. `BackgroundRefresh` har
@@ -595,6 +597,13 @@ engelsk/norsk tekst rundt tidspunktet, men `Date.formatted` arver systemlocale;
 med engelsk apptekst på norsk enhet kan klokkeslettets skilletegn og 12/24-timers
 visning derfor avvike. Velg en deterministisk locale per språkstil og test begge
 stilene uten å endre ferskhetsgrensen eller stale-advarselen.
+
+**AUTO-518 · ÅPEN** — Lokaliser Watch-appens feil ved mislykket manuell
+oppdatering etter snapshotets språkstil. `WatchWeatherStore.refresh()` setter
+alltid den norske teksten «Kunne ikke oppdatere. Viser sist hentede vær.»;
+med et engelsk snapshot får brukeren altså engelsk vær, men norsk nettfeil.
+Trekk feilmeldingen ut i en ren funksjon, dekk Bokmål/engelsk, og behold at den
+generiske meldingen ikke lekker systemets feildetaljer.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

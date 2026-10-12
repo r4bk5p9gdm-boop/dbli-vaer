@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T12:16:08Z",
+  "lastScheduledStart": "2026-10-12T12:31:08Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-514 fullført 2026-10-12: Delte rene funksjoner gir språkstilbasert tekst for CarPlay-/Watch-widgetenes tre tomtilstander og relative nedtellinger. English Watch compaction now says 'in 15m'/'in 2h'; Norwegian compact labels and CarPlay spacing remain. Regression covers Bokmål/English empty states and minute/hour forms. Swift parsing, JSON validation and diff check pass; XCTest blocked because CoreSimulatorService is unavailable. Broad review of freshness/time rendering found that the updated clock inherits device locale even when the snapshot's language differs; AUTO-517 added. Full queue scan: AUTO-515, AUTO-516, AUTO-517."
+  "lastProgress": "AUTO-515 fullført 2026-10-12: Watch-appens seksjonstitler og tomtilstander kommer nå fra en ren kopifunksjon som følger snapshotets språkstil, med egen inntrøndersk frase. Oppsettet er uendret. Regresjon dekker alle etiketter i bokmål, inntrøndersk og engelsk. Swift-parsing, JSON-validering og diffkontroll består; XCTest blokkert fordi CoreSimulatorService er utilgjengelig. Bred kontroll av bakgrunns-, lagrings- og Watch-oppdateringsflyten fant at manuell Watch-feil alltid vises på norsk også for engelsk snapshot; AUTO-518 lagt til. Komplett køskann: AUTO-516, AUTO-517, AUTO-518."
 }

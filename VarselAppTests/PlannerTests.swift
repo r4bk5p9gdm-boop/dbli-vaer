@@ -3157,6 +3157,35 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testWatchSectionAndEmptyStateCopyFollowsLanguageStyle() {
+        XCTAssertEqual(WatchWeatherCopy.sectionTitle(.next12Hours, languageStyle: .bokmal), "Neste 12 timer")
+        XCTAssertEqual(WatchWeatherCopy.sectionTitle(.currentConditions, languageStyle: .bokmal), "Nå")
+        XCTAssertEqual(WatchWeatherCopy.emptyState(.noEvents, languageStyle: .bokmal), "Ingen aktuelle hendelser")
+        XCTAssertEqual(WatchWeatherCopy.emptyState(.waitingTitle, languageStyle: .bokmal), "Venter på iPhone")
+        XCTAssertEqual(
+            WatchWeatherCopy.emptyState(.waitingDescription, languageStyle: .bokmal),
+            "Åpne D bli Vær! på iPhone første gang."
+        )
+
+        XCTAssertEqual(WatchWeatherCopy.sectionTitle(.next12Hours, languageStyle: .inntrondersk), "Neste 12 tima")
+        XCTAssertEqual(WatchWeatherCopy.sectionTitle(.currentConditions, languageStyle: .inntrondersk), "No")
+        XCTAssertEqual(WatchWeatherCopy.emptyState(.noEvents, languageStyle: .inntrondersk), "Ingen værhendelsa no.")
+        XCTAssertEqual(WatchWeatherCopy.emptyState(.waitingTitle, languageStyle: .inntrondersk), "Venter på iPhone")
+        XCTAssertEqual(
+            WatchWeatherCopy.emptyState(.waitingDescription, languageStyle: .inntrondersk),
+            "Åpne D bli Vær! på iPhone første gang."
+        )
+
+        XCTAssertEqual(WatchWeatherCopy.sectionTitle(.next12Hours, languageStyle: .english), "Next 12 hours")
+        XCTAssertEqual(WatchWeatherCopy.sectionTitle(.currentConditions, languageStyle: .english), "Now")
+        XCTAssertEqual(WatchWeatherCopy.emptyState(.noEvents, languageStyle: .english), "No current weather events.")
+        XCTAssertEqual(WatchWeatherCopy.emptyState(.waitingTitle, languageStyle: .english), "Waiting for iPhone")
+        XCTAssertEqual(
+            WatchWeatherCopy.emptyState(.waitingDescription, languageStyle: .english),
+            "Open D bli Vær! on your iPhone to get started."
+        )
+    }
+
     func testWatchAndCarPlayNextEventsIgnoreExpiredNowStatus() {
         let expiredNow = WeatherStatus(
             ruleID: UUID(), type: .regn, text: "Regn nå.",
