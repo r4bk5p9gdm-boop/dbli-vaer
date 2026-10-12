@@ -667,12 +667,11 @@ forkaster samme cache. Bruk femminuttersgrensen ved gjenoppretting, marker
 reparasjon og dekk at Watch/widget og planlegging håndterer den ugyldige
 tidsstemplingen konsistent.
 
-**AUTO-526 · ÅPEN** — Bevar bakoverkompatibiliteten for eldre Watch-kontekster
-med en regresjonstest. `WatchSnapshotReceiver` prøver først det nye
-`WatchWeatherTransfer`-formatet og faller deretter tilbake til den tidligere
-bare `WidgetWeatherSnapshot`-payloaden, med `updatedAt` som `sentAt`. Test den
-faktiske dekoderuten så framtidige endringer i envelope eller validering ikke
-stille gjør klokker med eldre appversjon ute av stand til å motta værdata.
+**AUTO-526 · FULLFØRT 2026-10-12** — Watch-mottakeren bruker nå en delt
+dekoder for både den nye `WatchWeatherTransfer`-envelopen og eldre rene
+`WidgetWeatherSnapshot`-payloads. Regresjonstesten går gjennom samme
+dekoderute og bekrefter at det gamle oppdateringstidspunktet blir
+overføringstid.
 
 **AUTO-527 · ÅPEN** — Dekk den eksakte størrelsesgrensen for filbasert
 oppsettimport. In-memory-dekoderen har en regresjon akkurat ved grensen, og
@@ -687,6 +686,13 @@ Core Location melder om godkjenning, og skal avslutte forespørselen straks
 brukeren avslår i stedet for å vente på timeout. Test den asynkrone callback-
 ruten med en kontrollert klient, og bekreft at ingen posisjonsforespørsel
 startes etter avslag.
+
+**AUTO-529 · ÅPEN** — Velg en brukbar posisjonsfiks fra hele Core Location-
+batchen. `LocationManager` kontrollerer i dag bare `locations.last`; dersom
+Core Location leverer en eldre, presis fiks sammen med en nyere fiks utenfor
+appens nøyaktighetsgrense, blir hele oppslaget forkastet og ender i timeout.
+Velg den nyeste fiks som består `LocationFixPolicy.accepts`, med tester for
+både gyldig-og-ugyldig batch og batch uten gyldige fikser.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

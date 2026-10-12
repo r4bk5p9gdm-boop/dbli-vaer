@@ -93,14 +93,7 @@ private final class WatchSnapshotReceiver: NSObject, WCSessionDelegate {
 
     private func decode(_ context: [String: Any]) {
         guard let data = context[Self.snapshotKey] as? Data else { return }
-        let decoder = WidgetWeatherSnapshot.decoder()
-        if let transfer = try? decoder.decode(WatchWeatherTransfer.self, from: data) {
-            onTransfer?(transfer)
-            return
-        }
-        // Accept contexts sent by builds from before WatchWeatherTransfer.
-        if let snapshot = try? decoder.decode(WidgetWeatherSnapshot.self, from: data) {
-            onTransfer?(WatchWeatherTransfer(snapshot: snapshot, sentAt: snapshot.updatedAt))
-        }
+        guard let transfer = WatchTransferPolicy.decodeTransferPayload(data) else { return }
+        onTransfer?(transfer)
     }
 }

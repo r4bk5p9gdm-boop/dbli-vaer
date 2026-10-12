@@ -320,6 +320,16 @@ struct WatchWeatherTransfer: Codable {
 }
 
 enum WatchTransferPolicy {
+    static func decodeTransferPayload(_ data: Data, referenceDate: Date = Date()) -> WatchWeatherTransfer? {
+        let decoder = WidgetWeatherSnapshot.decoder(referenceDate: referenceDate)
+        if let transfer = try? decoder.decode(WatchWeatherTransfer.self, from: data) {
+            return transfer
+        }
+        // Read payloads emitted before the versioned WatchWeatherTransfer envelope.
+        guard let snapshot = try? decoder.decode(WidgetWeatherSnapshot.self, from: data) else { return nil }
+        return WatchWeatherTransfer(snapshot: snapshot, sentAt: snapshot.updatedAt)
+    }
+
     static func restoredTimestamp(_ persisted: Date?, now: Date = Date()) -> Date {
         guard let persisted,
               persisted.timeIntervalSince1970.isFinite,

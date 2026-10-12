@@ -516,6 +516,22 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(restored.snapshot?.place.id, snapshot.place.id)
     }
 
+    func testWatchTransferDecoderAcceptsLegacySnapshotPayload() throws {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let snapshot = WidgetWeatherSnapshot(
+            place: place, forecast: forecast(values: [(8, 0, 1, 20, 4)]), updatedAt: base
+        )
+        let legacyPayload = try JSONEncoder().encode(snapshot)
+
+        let decoded = try XCTUnwrap(
+            WatchTransferPolicy.decodeTransferPayload(legacyPayload, referenceDate: base)
+        )
+
+        XCTAssertEqual(decoded.snapshot?.place.id, place.id)
+        XCTAssertEqual(decoded.snapshot?.forecast, snapshot.forecast)
+        XCTAssertEqual(decoded.sentAt, snapshot.updatedAt)
+    }
+
     func testWatchContextRetrySendsNewestSnapshotAfterTransientFailure() throws {
         let client = FakeWatchApplicationContextClient()
         client.failuresRemaining = 2
