@@ -1325,6 +1325,13 @@ enum ForecastHourSelection {
 
 enum ForecastGapAccessibility {
     static let explanation = "Skravert felt betyr at Yr-prognose mangler; været er ukjent, ikke opphold."
+
+    static func explanation(for languageStyle: AlertLanguageStyle) -> String {
+        if languageStyle == .english {
+            return "A hatched area means the Yr forecast is missing; the weather is unknown, not dry."
+        }
+        return WeatherLanguage.text(explanation, style: languageStyle)
+    }
 }
 
 /// Converts liquid-water equivalent from Yr to a rough depth of fresh snow.

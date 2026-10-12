@@ -472,7 +472,7 @@ private struct WeatherBandsForecast: View {
                                 systemImage: "drop.fill",
                                 color: AlertType.regn.color
                             )
-                            MoistureBandTrack(hours: bandHours, rules: moistureRules, day: day.date, includeEarlyMorning: includesEarlyMorningCell, compressForMorning: isMorningCompression && !isToday)
+                            MoistureBandTrack(hours: bandHours, rules: moistureRules, day: day.date, includeEarlyMorning: includesEarlyMorningCell, compressForMorning: isMorningCompression && !isToday, languageStyle: languageStyle)
                         }
                     }
                     ForEach(displayedTypes) { type in
@@ -485,7 +485,7 @@ private struct WeatherBandsForecast: View {
                                     : type.systemImage,
                                 color: type.color
                             )
-                            CombinedDayBandTrack(hours: bandHours, rules: typeRules, type: type, day: day.date, frostMargin: frostMargin, sunThreshold: sunThreshold, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, includeEarlyMorning: includesEarlyMorningCell, compressForMorning: isMorningCompression && !isToday)
+                            CombinedDayBandTrack(hours: bandHours, rules: typeRules, type: type, day: day.date, frostMargin: frostMargin, sunThreshold: sunThreshold, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, includeEarlyMorning: includesEarlyMorningCell, compressForMorning: isMorningCompression && !isToday, languageStyle: languageStyle)
                         }
                     }
                     ViewThatFits(in: .horizontal) {
@@ -572,6 +572,50 @@ enum WeatherBandHatchLegend {
     }
 }
 
+enum WeatherBandAccessibility {
+    static func combinedTrackLabel(
+        type: AlertType,
+        ruleCount: Int,
+        languageStyle: AlertLanguageStyle
+    ) -> String {
+        let weatherName: String
+        if languageStyle == .english {
+            switch type {
+            case .regn: weatherName = "Rain"
+            case .frost: weatherName = "Frost"
+            case .temperatur: weatherName = "Temperature"
+            case .sno: weatherName = "Snow"
+            case .vind: weatherName = "Wind"
+            case .dugg: weatherName = "Dew point"
+            case .sol: weatherName = "Sun"
+            }
+        } else {
+            weatherName = WeatherLanguage.text(type.label, style: languageStyle)
+        }
+        let ruleNoun = languageStyle == .english
+            ? (ruleCount == 1 ? "rule" : "rules")
+            : (ruleCount == 1 ? "regel" : "regler")
+        let summary = languageStyle == .english
+            ? "\(weatherName), combined from \(ruleCount) \(ruleNoun)."
+            : "\(weatherName), samlet fra \(ruleCount) \(ruleNoun)."
+        return "\(summary) \(ForecastGapAccessibility.explanation(for: languageStyle))"
+    }
+
+    static func moistureTrackLabel(languageStyle: AlertLanguageStyle) -> String {
+        let summary = languageStyle == .english
+            ? "Precipitation: rain, snow, and dew risk use separate colors."
+            : "Nedbør: regn, snø og fare for dugg vises med egne farger."
+        return "\(WeatherLanguage.text(summary, style: languageStyle)) \(ForecastGapAccessibility.explanation(for: languageStyle))"
+    }
+
+    static func missingForecastCellLabel(languageStyle: AlertLanguageStyle) -> String {
+        let text = languageStyle == .english
+            ? "Yr forecast is missing; the weather is unknown."
+            : "Manglende Yr-prognose; været er ukjent"
+        return WeatherLanguage.text(text, style: languageStyle)
+    }
+}
+
 private struct WeatherBandLabel: View {
     let title: String
     let systemImage: String
@@ -603,6 +647,7 @@ private struct CombinedDayBandTrack: View {
     let longitude: Double
     let includeEarlyMorning: Bool
     let compressForMorning: Bool
+    let languageStyle: AlertLanguageStyle
 
     var body: some View {
         GeometryReader { proxy in
@@ -624,7 +669,9 @@ private struct CombinedDayBandTrack: View {
         }
         .frame(height: 18)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(type.label), samlet fra \(rules.count) \(rules.count == 1 ? "regel" : "regler"). \(ForecastGapAccessibility.explanation)")
+        .accessibilityLabel(WeatherBandAccessibility.combinedTrackLabel(
+            type: type, ruleCount: rules.count, languageStyle: languageStyle
+        ))
     }
 }
 
@@ -793,6 +840,7 @@ private struct MoistureBandTrack: View {
     let day: Date
     let includeEarlyMorning: Bool
     let compressForMorning: Bool
+    let languageStyle: AlertLanguageStyle
 
     var body: some View {
         GeometryReader { proxy in
@@ -802,11 +850,11 @@ private struct MoistureBandTrack: View {
             let totalHours: CGFloat = (includeEarlyMorning || compressForMorning) ? 26 : 24
             HStack(spacing: spacing) {
                 if includeEarlyMorning {
-                    MoistureHourBandCell(hours: hours, rules: rules, day: day, period: .earlyMorning)
+                    MoistureHourBandCell(hours: hours, rules: rules, day: day, period: .earlyMorning, languageStyle: languageStyle)
                         .frame(width: availableWidth * 2 / 26)
                 }
                 ForEach(WeatherBandPeriod.all) { period in
-                    MoistureHourBandCell(hours: hours, rules: rules, day: day, period: period)
+                    MoistureHourBandCell(hours: hours, rules: rules, day: day, period: period, languageStyle: languageStyle)
                         .frame(width: availableWidth * 8 / totalHours)
                 }
             }
@@ -814,7 +862,7 @@ private struct MoistureBandTrack: View {
         }
         .frame(height: 18)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Nedbør: regn, snø og fare for dugg vises med egne farger. \(ForecastGapAccessibility.explanation)")
+        .accessibilityLabel(WeatherBandAccessibility.moistureTrackLabel(languageStyle: languageStyle))
     }
 }
 
@@ -823,6 +871,7 @@ private struct MoistureHourBandCell: View {
     let rules: [Rule]
     let day: Date
     let period: WeatherBandPeriod
+    let languageStyle: AlertLanguageStyle
 
     private func matchingRule(of type: AlertType, for hour: ForecastHour) -> Rule? {
         rules.first { rule in
@@ -885,7 +934,7 @@ private struct MoistureHourBandCell: View {
                     ForecastGapMark()
                         .frame(width: proxy.size.width / CGFloat(period.hours), height: proxy.size.height)
                         .offset(x: proxy.size.width * CGFloat(offset) / CGFloat(period.hours))
-                        .accessibilityLabel("Manglende Yr-prognose; været er ukjent")
+                        .accessibilityLabel(WeatherBandAccessibility.missingForecastCellLabel(languageStyle: languageStyle))
                 }
                 ForEach(displayedHours) { hour in
                     let hourNumber = Calendar.current.component(.hour, from: hour.time)

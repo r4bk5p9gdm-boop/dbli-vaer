@@ -3561,6 +3561,32 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(ForecastGapAccessibility.explanation.contains("ikke opphold"))
     }
 
+    func testWeatherBandAccessibilityLabelsFollowSelectedLanguage() {
+        let englishCombined = WeatherBandAccessibility.combinedTrackLabel(
+            type: .regn, ruleCount: 2, languageStyle: .english
+        )
+        XCTAssertEqual(
+            englishCombined,
+            "Rain, combined from 2 rules. A hatched area means the Yr forecast is missing; the weather is unknown, not dry."
+        )
+        XCTAssertEqual(
+            WeatherBandAccessibility.combinedTrackLabel(
+                type: .temperatur, ruleCount: 1, languageStyle: .english
+            ),
+            "Temperature, combined from 1 rule. A hatched area means the Yr forecast is missing; the weather is unknown, not dry."
+        )
+        XCTAssertTrue(WeatherBandAccessibility.combinedTrackLabel(
+            type: .regn, ruleCount: 2, languageStyle: .bokmal
+        ).contains("Regn, samlet fra 2 regler"))
+        XCTAssertTrue(WeatherBandAccessibility.combinedTrackLabel(
+            type: .regn, ruleCount: 2, languageStyle: .inntrondersk
+        ).contains("samlet fra 2 regler"))
+        XCTAssertTrue(WeatherBandAccessibility.moistureTrackLabel(languageStyle: .english)
+            .hasPrefix("Precipitation: rain, snow, and dew risk"))
+        XCTAssertTrue(WeatherBandAccessibility.missingForecastCellLabel(languageStyle: .english)
+            .contains("weather is unknown"))
+    }
+
     func testMissingForecastOffsetsCoverCompressedMorningAndAllWeatherBands() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 0))

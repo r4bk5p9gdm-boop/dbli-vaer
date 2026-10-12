@@ -559,12 +559,14 @@ tidssone-/kalenderbytte uten å hente prognosen på nytt, og uendret kalender
 debounces som før. Regresjon dekker endret tidssone og første ukedag.
 Swift-parsing og diffkontroll består; XCTest kunne ikke kjøres i denne økten.
 
-**AUTO-513 · ÅPEN** — Lokaliser VoiceOver-forklaringene i værbåndene etter
-valgt språkstil. De visuelle tidslinjeetikettene følger språkvalget, men
-tilgjengelighetsnavnene i `CombinedWeatherBand` og `MoistureWeatherBand` bruker
-fast norsk tekst, også når appen ellers vises på engelsk. La forklaringene om
-samlet regelbånd og manglende/ukjent Yr-prognose følge eksisterende
-værtekstlokalisering, og dekk bokmål, inntrøndersk og engelsk i regresjoner.
+**AUTO-513 · FULLFØRT 2026-10-12** — VoiceOver-etikettene for sammenslåtte
+regelbånd, nedbørsbånd og manglende Yr-timer følger nå valgt språkstil.
+Engelske etiketter bruker naturlig engelsk tekst; bokmål og inntrøndersk går
+via værtekstlokaliseringen. Forklaringen presiserer fortsatt at manglende
+prognose betyr ukjent vær, ikke opphold. La til rene funksjoner og
+regresjonsdekning for etikettene på de tre språkstilene. Swift-parsing og
+diffkontroll består; XCTest kunne ikke kjøres fordi CoreSimulatorService ikke
+er tilgjengelig.
 
 **AUTO-514 · ÅPEN** — Lokaliser tomtilstands- og relative tidsfraser i
 CarPlay- og Watch-widgetene etter snapshotets språkstil. CarPlay-widgetens
@@ -578,6 +580,12 @@ etter snapshotets språkstil. «Neste 12 timer», «Nå» og «Ingen aktuelle
 hendelser» er fortsatt norske strenger selv når Watch mottar et engelsk
 snapshot. Trekk kopien ut i en ren funksjon og dekk bokmål, inntrøndersk og
 engelsk uten å endre skjermens oppsett.
+
+**AUTO-516 · ÅPEN** — Test at bakgrunnsoppgavens ferdigmelding tåler en reell
+konkurranse mellom vellykket refresh og utløpt oppgave. `BackgroundRefresh` har
+en låst fullføringsport for disse to samtidige callbackene, men eksisterende
+regresjon kaller dem bare sekvensielt. Legg til en trådsikker samtidighetstest
+som bekrefter nøyaktig én ferdigmelding uten å starte en faktisk BGTask.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med
