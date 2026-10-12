@@ -33,8 +33,9 @@ private final class FakeOneShotLocationClient: OneShotLocationClient {
     var onLocations: (([CLLocation]) -> Void)?
     var onFailure: ((Error) -> Void)?
     private(set) var locationRequestCount = 0
+    private(set) var authorizationRequestCount = 0
 
-    func requestWhenInUseAuthorization() {}
+    func requestWhenInUseAuthorization() { authorizationRequestCount += 1 }
     func requestLocation() { locationRequestCount += 1 }
     // Keep callbacks available to model a callback already queued when invalidated.
     func invalidate() {}
@@ -1973,6 +1974,29 @@ final class PlannerTests: XCTestCase {
             LocationAuthorizationDecision.forRawStatus(CLAuthorizationStatus.authorizedWhenInUse.rawValue),
             .requestLocation
         )
+    }
+
+    @MainActor
+    func testOneShotLocationRequestFinishesWhenAuthorizationIsDenied() async {
+        let client = FakeOneShotLocationClient()
+        client.authorizationStatusRawValue = CLAuthorizationStatus.notDetermined.rawValue
+        let locationManager = LocationManager { client }
+        let request = Task { @MainActor in try await locationManager.current() }
+
+        for _ in 0..<20 where client.authorizationRequestCount == 0 { await Task.yield() }
+        XCTAssertEqual(client.authorizationRequestCount, 1)
+        XCTAssertEqual(client.locationRequestCount, 0)
+        client.onAuthorizationChange?(CLAuthorizationStatus.denied.rawValue)
+
+        do {
+            _ = try await request.value
+            XCTFail("Denied location authorization should fail without waiting for a fix")
+        } catch let error as CLError {
+            XCTAssertEqual(error.code, .denied)
+        } catch {
+            XCTFail("Expected a location authorization error, got \(error)")
+        }
+        XCTAssertEqual(client.locationRequestCount, 0)
     }
 
     func testWindDefaultsPreserveExistingRules() throws {
@@ -9203,11 +9227,35 @@ final class PlannerTests: XCTestCase {
         )
         UserDefaults.standard.set(try JSONEncoder().encode(state), forKey: persistenceKey)
 
-        let store = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
-        let restoredTimestamp = try XCTUnwrap(store.forecastUpdatedAt(for: place.id))
+        let store = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey, now: base)
 
-        XCTAssertEqual(restoredTimestamp, future)
-        XCTAssertTrue(Store.isForecastStale(restoredTimestamp, now: base))
+        XCTAssertNil(store.forecastUpdatedAt(for: place.id))
+        XCTAssertTrue(Store.isForecastStale(store.forecastUpdatedAt(for: place.id), now: base))
+        XCTAssertTrue(Store.forecastsForPlanning(
+            store.forecasts, updatedAt: [place.id: future], now: base
+        ).isEmpty)
+        XCTAssertNil(Store.widgetSnapshot(
+            place: place, forecast: store.forecasts[place.id] ?? [], updatedAt: nil,
+            cached: nil, now: base
+        ))
+
+        let repairedData = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
+        let repaired = try JSONDecoder().decode(PersistedStoreState.self, from: repairedData)
+        XCTAssertNil(repaired.forecastUpdatedAt[place.id])
+    }
+
+    func testStoreRestoreKeepsForecastTimestampAtFutureToleranceBoundary() {
+        let place = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let hour = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 20, dew: 4)
+        let accepted = base.addingTimeInterval(Store.forecastFutureTimestampTolerance)
+        let rejected = accepted.addingTimeInterval(1)
+
+        let restored = Store.restoredForecastTimestamps(
+            [place.id: accepted, UUID(): rejected],
+            forecasts: [place.id: [hour]], knownPlaceIDs: [place.id], now: base
+        )
+
+        XCTAssertEqual(restored, [place.id: accepted])
     }
 
     func testOlderForecastCannotReplaceNewerCache() {

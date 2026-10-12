@@ -461,6 +461,7 @@ final class Store: ObservableObject {
             try await YrService.fetch(lat: latitude, lon: longitude)
         },
         persistenceKey: String = "varsel.state",
+        now: Date = Date(),
         notificationRescheduler: @escaping NotificationRescheduler = {
             alerts, languageStyle, places, missingForecastPlaceIDs, nearbyPlaceIDs in
             await NotificationScheduler.reschedule(
@@ -498,9 +499,10 @@ final class Store: ObservableObject {
         }
         let knownPlaceIDs = Set(places.map(\.id))
         rawForecasts = restoredForecasts.filter { knownPlaceIDs.contains($0.key) }
-        forecastUpdatedAt = restoredForecastUpdatedAt.filter {
-            knownPlaceIDs.contains($0.key) && rawForecasts[$0.key]?.isEmpty == false
-        }
+        forecastUpdatedAt = Self.restoredForecastTimestamps(
+            restoredForecastUpdatedAt, forecasts: rawForecasts,
+            knownPlaceIDs: knownPlaceIDs, now: now
+        )
         needsPersistedStateRepair = needsPersistedStateRepair
             || rawForecasts.count != restoredForecasts.count
             || forecastUpdatedAt.count != restoredForecastUpdatedAt.count
@@ -804,6 +806,18 @@ final class Store: ObservableObject {
         guard let existingAt else { return true }
         if existingAt.timeIntervalSince(now) > forecastFutureTimestampTolerance { return true }
         return incomingAt >= existingAt
+    }
+
+    static func restoredForecastTimestamps(
+        _ timestamps: [UUID: Date], forecasts: [UUID: [ForecastHour]],
+        knownPlaceIDs: Set<UUID>, now: Date = Date()
+    ) -> [UUID: Date] {
+        timestamps.filter { placeID, updatedAt in
+            knownPlaceIDs.contains(placeID)
+                && forecasts[placeID]?.isEmpty == false
+                && updatedAt.timeIntervalSince1970.isFinite
+                && updatedAt.timeIntervalSince(now) <= forecastFutureTimestampTolerance
+        }
     }
 
     static func shouldDebounceReplan(

@@ -651,7 +651,14 @@ tømming fortsatt godtas. Regresjonen dekker eldre, nyere og tømmende payload.
 Swift-parsing og diffkontroll består; XCTest er blokkert fordi
 CoreSimulatorService ikke er tilgjengelig.
 
-**AUTO-525 · ÅPEN** — Reparer framtidsstemplede prognoser ved Store-gjenoppretting.
+**AUTO-525 · FULLFØRT 2026-10-12** — Store-gjenoppretting godtar nå bare
+prognosestempler som ligger innenfor femminutters framtidstoleranse, har en
+ikke-tom cache og tilhører et kjent sted. Avviste stempler utløser den
+eksisterende persistensreparasjonen; uten gyldig tidspunkt blir verken
+planlegging eller widget-snapshot bygd fra den suspekte cachen. Testene dekker
+gjenoppretting, reparert lagring og toleransegrensen. Swift-parsing og
+diffkontroll består; XCTest er blokkert fordi CoreSimulatorService ikke er
+tilgjengelig.
 `PersistedStoreState` beholder `forecastUpdatedAt` ukritisk når det finnes en
 prognose; `Store.init` filtrerer bare på sted og tom cache. `widgetSnapshot`
 behandler derfor et vilkårlig framtidig stempel som ferskt og publiserer en
@@ -673,6 +680,13 @@ filstrømmen har test for overskridelse, men ikke for en fil på nøyaktig
 `maximumImportSizeBytes`. Test `readImportData(from:)` ved grensen for å låse
 ned samspillet mellom filstørrelsessjekken og chunklesingen uten å svekke
 minnegrensen.
+
+**AUTO-528 · ÅPEN** — Lås ned avslag på posisjonstillatelse mens en engangs-
+lokasjonsforespørsel venter. Koden starter først selve posisjonsoppslaget når
+Core Location melder om godkjenning, og skal avslutte forespørselen straks
+brukeren avslår i stedet for å vente på timeout. Test den asynkrone callback-
+ruten med en kontrollert klient, og bekreft at ingen posisjonsforespørsel
+startes etter avslag.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med
