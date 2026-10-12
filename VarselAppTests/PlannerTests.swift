@@ -8755,6 +8755,55 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(Store.isForecastStale(missingStore.forecastUpdatedAt(for: place.id)))
     }
 
+    @MainActor
+    func testSelectedForecastFailureThrottlesActivationRetryButNotManualRefresh() async throws {
+        let persistenceKey = "varsel.test.active-failed-forecast-retry.\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
+        let place = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let agedAt = Date().addingTimeInterval(-WeatherGlance.staleAfter - 1)
+        let oldForecast = makeForecast(
+            through: 5, startingAt: Date().addingTimeInterval(-3_600), precipitationOffsets: []
+        )
+        UserDefaults.standard.set(try JSONEncoder().encode(PersistedStoreState(
+            places: [place], selectedID: place.id, log: [],
+            forecasts: [place.id: oldForecast], forecastUpdatedAt: [place.id: agedAt]
+        )), forKey: persistenceKey)
+        let counter = ForecastFetchCounter()
+        let store = Store(
+            forecastFetcher: { _, _ in
+                await counter.increment()
+                throw URLError(.notConnectedToInternet)
+            },
+            persistenceKey: persistenceKey,
+            notificationRescheduler: { _, _, _, _, _ in
+                NotificationScheduleResult(requestedCount: 0, scheduledCount: 0, failedCount: 0, firstScheduledAt: nil)
+            }
+        )
+
+        let firstActivationRefresh = await store.refreshSelectedForecastIfNeeded()
+        let repeatedActivationRefresh = await store.refreshSelectedForecastIfNeeded()
+        let activationFetchCount = await counter.value()
+        XCTAssertFalse(firstActivationRefresh)
+        XCTAssertFalse(repeatedActivationRefresh)
+        XCTAssertEqual(activationFetchCount, 1, "Repeated activation should be paused after a network failure")
+
+        let manualRefresh = await store.refreshAll()
+        let totalFetchCount = await counter.value()
+        XCTAssertFalse(manualRefresh, "The injected fetcher fails even when manually refreshed")
+        XCTAssertEqual(totalFetchCount, 2, "Manual refresh remains available during the activation pause")
+    }
+
+    func testSelectedForecastRetryPauseExpiresAfterFiveMinutes() {
+        let failureAt = base
+        XCTAssertTrue(Store.shouldDeferSelectedForecastRetry(
+            lastFailureAt: failureAt, now: failureAt.addingTimeInterval(299)
+        ))
+        XCTAssertFalse(Store.shouldDeferSelectedForecastRetry(
+            lastFailureAt: failureAt, now: failureAt.addingTimeInterval(300)
+        ))
+        XCTAssertFalse(Store.shouldDeferSelectedForecastRetry(lastFailureAt: nil, now: base))
+    }
+
     func testStaleForecastIsExcludedFromPushPlanningButRemainsCached() {
         let stalePlace = Place(name: "Gammel prognose", lat: 64, lon: 11, rules: [Rule(type: .frost)])
         let boundaryPlace = Place(name: "Grense", lat: 65, lon: 11, rules: [Rule(type: .frost)])

@@ -510,12 +510,14 @@ tillatelse hver gir én replan, mens gjentatt status ikke gjør det.
 Swift-parsing og diffkontroll består; XCTest kunne ikke kjøres fordi
 CoreSimulator/DerivedData fortsatt er utilgjengelig i miljøet.
 
-**AUTO-507 · ÅPEN** — Begrens gjentatte forespørsler når valgt steds foreldede
-prognose ikke kan oppdateres. `refreshSelectedForecastIfNeeded()` forsøker igjen
-ved hver aktivering så lenge forrige Yr-kall feiler; gjentatt veksling mellom
-apper med nettverksfeil kan derfor gi unødvendig trafikk. Innfør en avgrenset
-retry-pause for aktiveringsoppdateringer uten å blokkere manuell oppdatering,
-og test at feil begrenses mens senere gjenopptak fortsatt kan lykkes.
+**AUTO-507 · FULLFØRT 2026-10-12** — Automatisk oppdatering ved appaktivering
+venter nå fem minutter etter en mislykket prognoseforespørsel for samme sted,
+slik at gjentatte appvekslinger offline ikke sender samme forespørsel hver gang.
+Pausen er bare i minnet og gjelder ikke manuell «trekk for å oppdatere» eller
+bakgrunnens vanlige oppdateringsløp. Et gyldig svar nullstiller pausen.
+Regresjoner dekker pausegrensen, gjentatt aktivering og at manuell oppdatering
+fortsatt prøver. Swift-parsing og diffkontroll består; XCTest kunne ikke kjøres
+fordi CoreSimulator/DerivedData fortsatt er utilgjengelig.
 
 **AUTO-508 · ÅPEN** — Valider varselterskelen når en `Rule` dekodes fra lagret
 oppsett eller import. `Rule.init(from:)` dekoder `threshold` direkte, selv om
@@ -532,6 +534,13 @@ ukedag går inn i kalenderberegningen av faste kveldsvarsler og kan flytte eller
 utelate planlagte varsler etter import. Normaliser felt til redigererens
 gyldige domener med bakoverkompatible standarder, og dekk ugyldige/importerte
 verdier med tester.
+
+**AUTO-510 · ÅPEN** — Lokaliser Apple Watch-appens målingsetiketter etter valgt
+språkstil. Hendelsesnavn og ferskhetsstatus følger allerede snapshotets språk,
+men «Nedbør», «Vind» og «Duggpunkt» i målingslisten er faste norske tekster.
+Når brukeren velger engelsk, blandes derfor språk på samme skjerm. Bruk den
+eksisterende snapshot-baserte lokaliseringsflyten og dekk etikettene for norsk
+og engelsk uten å endre rekkefølge eller måleverdier.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

@@ -384,6 +384,7 @@ final class Store: ObservableObject {
     @Published var log: [LogEntry] = [] { didSet { save() } }
     @Published var lastUpdate: Date?
     private var forecastUpdatedAt: [UUID: Date] = [:]
+    private var selectedForecastRefreshFailuresAt: [UUID: Date] = [:]
     @Published var isRefreshing = false
     @Published var notificationsAuthorized: Bool?
     @Published var alertLanguageStyle: AlertLanguageStyle {
@@ -837,6 +838,9 @@ final class Store: ObservableObject {
               )
         else { return false }
         let requestedID = selected.id
+        guard !Self.shouldDeferSelectedForecastRetry(
+            lastFailureAt: selectedForecastRefreshFailuresAt[requestedID], now: now ?? Date()
+        ) else { return false }
         let work = refreshQueue.enqueue {
             await self.performRefresh(backgroundOnly: false, onlyPlaceIDs: [requestedID])
         }
@@ -851,6 +855,13 @@ final class Store: ObservableObject {
         hasForecast: Bool, updatedAt: Date?, now: Date = Date()
     ) -> Bool {
         !hasForecast || isForecastStale(updatedAt, now: now)
+    }
+
+    nonisolated static func shouldDeferSelectedForecastRetry(
+        lastFailureAt: Date?, now: Date = Date(), interval: TimeInterval = 5 * 60
+    ) -> Bool {
+        guard interval > 0, let lastFailureAt else { return false }
+        return now.timeIntervalSince(lastFailureAt) < interval
     }
 
     private func performRefresh(backgroundOnly: Bool, onlyPlaceIDs: Set<UUID>? = nil) async -> Bool {
@@ -904,6 +915,7 @@ final class Store: ObservableObject {
                         successfulPlaceCount += matchingPlaces.count
                         let fetchedAt = Date()
                         for place in matchingPlaces {
+                            selectedForecastRefreshFailuresAt.removeValue(forKey: place.id)
                             guard Self.shouldReplaceForecast(existingAt: forecastUpdatedAt[place.id], incomingAt: fetchedAt) else { continue }
                             forecasts[place.id] = forecast
                             forecastUpdatedAt[place.id] = fetchedAt
@@ -914,6 +926,7 @@ final class Store: ObservableObject {
                         // Do not touch forecasts or timestamps on failure;
                         // surface a place-specific error while keeping good data.
                         for place in matchingPlaces {
+                            selectedForecastRefreshFailuresAt[place.id] = Date()
                             failedNames.append(place.displayName)
                             forecastErrors[place.id] = forecastErrorMessage(for: place, error: error, style: alertLanguageStyle)
                         }
