@@ -738,11 +738,13 @@ in-memory-logg og den lagrede tilstanden; Swift-parsing og JSON/diffkontroll
 bestod, mens XCTest fortsatt er blokkert av manglende CoreSimulatorService/
 runtime.
 
-**AUTO-538 · ÅPEN** — Test den samlede 64-varselgrensen når en replan blander
-bevarte offline-varsler og nye varsler. Koden rangerer begge grupper sammen i
-`nearestRequestIDs`, men regresjonene dekker foreløpig bare utvalg fra hver
-gruppe isolert; bekreft at nærmeste hendelser vinner samlet og at resultatet er
-uavhengig av rekkefølgen på ventende requests.
+**AUTO-538 · FULLFØRT 2026-10-12** —
+`testReplanAppliesNotificationLimitAcrossPreservedAndNewRequests` kjører
+replanlegging med 10 bevarte offline-varsler og 70 nye. Den bekrefter at de
+samlet nærmeste 64 beholdes, og gir samme request-sett når både ventende
+requests og nye varsler kommer i motsatt rekkefølge. Swift-parsing og
+JSON/diffkontroll besto; XCTest kunne ikke starte fordi CoreSimulatorService/
+runtime mangler.
 
 **AUTO-539 · ÅPEN** — Dekk Watch-overføring mens WCSession ikke er aktivert.
 `flushIfActivated` skal beholde nyeste snapshot eller sletting når overføring
@@ -755,6 +757,12 @@ varslingslogg. `LogEntry` er `Identifiable` og vises direkte med `ForEach`, men
 `PersistedStoreState` godtar gjentatte logg-ID-er ved dekoding; reparer slike
 arkiver stabilt og test at to forskjellige meldinger ikke ender med samme
 SwiftUI-identitet etter oppstart.
+
+**AUTO-541 · ÅPEN** — Velg de 50 nyeste varslingsloggoppføringene også når
+lagret rekkefølge er uventet. `retainedLog` filtrerer datoer, men bruker deretter
+`prefix(maxCount)` uten sortering; et usortert eldre arkiv kan derfor beholde
+eldre rader og forkaste nyere. Legg til en rekkefølgetest og normaliser
+gjenopprettet visning til nyeste-først.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

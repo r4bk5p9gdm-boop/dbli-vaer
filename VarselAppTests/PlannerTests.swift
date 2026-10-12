@@ -10047,6 +10047,52 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testReplanAppliesNotificationLimitAcrossPreservedAndNewRequests() async throws {
+        let rule = Rule(type: .regn)
+        let place = Place(name: "Klinga", lat: 64, lon: 11, rules: [rule])
+        let context = try JSONEncoder().encode(
+            NotificationPlanContext(place: place, rule: rule, languageStyle: .bokmal)
+        )
+        let now = Date()
+        let preservedRequests = (0..<10).map { index in
+            let content = UNMutableNotificationContent()
+            content.userInfo[NotificationScheduler.planContextKey] = context
+            return UNNotificationRequest(
+                identifier: String(format: "offline-%02d", index), content: content,
+                trigger: UNTimeIntervalNotificationTrigger(timeInterval: Double(index + 1) * 60, repeats: false)
+            )
+        }
+        let newAlerts = (0..<70).map { index in
+            let fireAt = now.addingTimeInterval(Double(index + 2) * 60)
+            return PlannedAlert(
+                rule: rule, placeID: place.id, placeName: place.nameWithPreposition,
+                eventAt: fireAt, fireAt: fireAt, index: index, total: 70,
+                quiet: false, possible: false, eventDetail: nil
+            )
+        }
+        let expectedIDs = Set((0..<10).map { String(format: "offline-%02d", $0) }
+            + newAlerts.prefix(54).map(\.id))
+
+        func scheduledIDs(pending: [UNNotificationRequest], alerts: [PlannedAlert]) async -> Set<String> {
+            let center = FakeNotificationCenter(pending: pending)
+            let result = await NotificationScheduler.replacePendingAlerts(
+                alerts, languageStyle: .bokmal, places: [place],
+                missingForecastPlaceIDs: [place.id], nearbyPlaceIDs: [], center: center
+            )
+            XCTAssertEqual(result.requestedCount, 64)
+            XCTAssertEqual(result.scheduledCount, 64)
+            XCTAssertEqual(result.failedCount, 0)
+            return Set(center.pending.map(\.identifier))
+        }
+
+        let forward = await scheduledIDs(pending: preservedRequests, alerts: newAlerts)
+        let reversed = await scheduledIDs(pending: Array(preservedRequests.reversed()), alerts: Array(newAlerts.reversed()))
+
+        XCTAssertEqual(forward, expectedIDs)
+        XCTAssertEqual(reversed, expectedIDs)
+    }
+
+    @MainActor
     func testOfflinePreservationRetainsRouteWhenPlacesAreReordered() throws {
         let rule = Rule(type: .regn)
         let target = Place(name: "Klinga", lat: 64, lon: 11, rules: [rule])

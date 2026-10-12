@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T20:36:35Z",
+  "lastScheduledStart": "2026-10-12T20:51:35Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-537 fullført 2026-10-12: Store normaliserer nå gjenopprettet varslingslogg med injisert oppstartstid, fjerner gamle/for framtidige oppføringer og overskytende rader, og lagrer reparasjonen uten å vente på replan. Regresjon dekker både visning og persistens. Swift-parsing og JSON/diffkontroll besto; XCTest blokkert fordi CoreSimulatorService/runtime ikke er tilgjengelig. Bred inspeksjon av loggidentitet fant at PersistedStoreState tillater dupliserte LogEntry-ID-er selv om SwiftUI bruker ForEach(store.log); AUTO-540 lagt til for stabil deduplisering ved restore. Åpne kønumre etter full skann: AUTO-538, AUTO-539, AUTO-540."
+  "lastProgress": "AUTO-538 fullført 2026-10-12: integrert replan-test blander 10 bevarte offline-varsler med 70 nye og bekrefter at nærmeste 64 samlet beholdes uavhengig av rekkefølgen på begge gruppene. Swift-parsing og JSON/diffkontroll besto; XCTest blokkert fordi CoreSimulatorService/runtime ikke er tilgjengelig. Bred gjennomgang av Store-logg-retensjonen fant at prefix(50) forutsetter tidsordnet arkiv; AUTO-541 lagt til for å velge de 50 nyeste selv ved uordnet lagret rekkefølge. Åpne kønumre etter full skann: AUTO-539, AUTO-540, AUTO-541."
 }
