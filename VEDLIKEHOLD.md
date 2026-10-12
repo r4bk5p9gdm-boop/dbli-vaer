@@ -475,9 +475,10 @@ var tilgjengelig og DerivedData-mappen ikke kunne opprettes.
 
 **AUTO-503 · FULLFØRT 2026-10-12** — Valgt steds prognose kontrolleres nå
 når appen kommer tilbake i forgrunnen. Friske data beholdes uten nettverkskall;
-foreldede eller manglende data hentes på nytt. En aktivering som overlapper en
-pågående oppdatering venter på den og vurderer deretter ferskheten, slik at den
-ikke legger en unødvendig forespørsel i kø. Regresjoner dekker ferskhetsgrensen,
+foreldede eller manglende data hentes på nytt, også dersom en manglende prognose
+har et foreldreløst ferskhetsstempel. En aktivering som overlapper en pågående
+oppdatering venter på den og vurderer deretter ferskheten, slik at den ikke
+legger en unødvendig forespørsel i kø. Regresjoner dekker ferskhetsgrensen,
 foreldet cache og manglende cache. `swiftc -parse` og `git diff --check`
 består. XCTest kunne ikke kjøres fordi Xcode-miljøet mangler CoreSimulator og
 ikke kan opprette DerivedData.

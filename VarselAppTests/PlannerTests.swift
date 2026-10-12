@@ -8666,7 +8666,8 @@ final class PlannerTests: XCTestCase {
             forecastUpdatedAt: [place.id: agedAt], lastUpdate: agedAt
         )), forKey: staleKey)
         UserDefaults.standard.set(try JSONEncoder().encode(PersistedStoreState(
-            places: [place], selectedID: place.id, log: []
+            places: [place], selectedID: place.id, log: [],
+            forecastUpdatedAt: [place.id: Date()]
         )), forKey: missingKey)
 
         let refreshedForecast = makeForecast(through: 5, startingAt: Date(), precipitationOffsets: [])

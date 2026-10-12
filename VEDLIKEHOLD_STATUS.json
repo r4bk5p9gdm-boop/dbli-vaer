@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T09:15:38Z",
+  "lastScheduledStart": "2026-10-12T09:30:38Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-503 fullført 2026-10-12: valgt steds prognose friskes ved aktivering når cache er foreldet eller mangler, og aktivering som overlapper en pågående oppdatering unngår dobbeltforespørsel. Regresjoner dekker fersk grense, foreldet og manglende cache. swiftc -parse og git diff --check består; XCTest er fortsatt blokkert av utilgjengelig CoreSimulator og DerivedData-tilgang. Bred gjennomgang fant at endret iOS-varslingstillatelse ikke utløser Store.replan() når appen gjenopptas; lagt til AUTO-506. Neste kø: AUTO-504, AUTO-505, AUTO-506."
+  "lastProgress": "AUTO-503 korrigert 2026-10-12: oppdaget ved oppstartsgjennomgang at en prognose uten timeverdier, men med foreldreløst ferskhetsstempel, ellers kunne bli stående tom. Aktiviseringsoppdateringen behandler nå også tom cache som manglende; regresjonen dekker dette. VarselApp.swift og oppstartstestene for AUTO-504 er under arbeid, men holdes utenfor denne fokuserte rettelsescommiten. Neste kø: AUTO-504, AUTO-505, AUTO-506."
 }

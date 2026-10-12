@@ -831,7 +831,10 @@ final class Store: ObservableObject {
             guard !Task.isCancelled else { return false }
         }
         guard let selected,
-              Self.shouldRefreshSelectedForecast(updatedAt: forecastUpdatedAt[selected.id], now: now ?? Date())
+              Self.shouldRefreshSelectedForecast(
+                  hasForecast: forecasts[selected.id]?.isEmpty == false,
+                  updatedAt: forecastUpdatedAt[selected.id], now: now ?? Date()
+              )
         else { return false }
         let requestedID = selected.id
         let work = refreshQueue.enqueue {
@@ -844,8 +847,10 @@ final class Store: ObservableObject {
         }
     }
 
-    static func shouldRefreshSelectedForecast(updatedAt: Date?, now: Date = Date()) -> Bool {
-        isForecastStale(updatedAt, now: now)
+    static func shouldRefreshSelectedForecast(
+        hasForecast: Bool, updatedAt: Date?, now: Date = Date()
+    ) -> Bool {
+        !hasForecast || isForecastStale(updatedAt, now: now)
     }
 
     private func performRefresh(backgroundOnly: Bool, onlyPlaceIDs: Set<UUID>? = nil) async -> Bool {
