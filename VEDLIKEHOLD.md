@@ -673,12 +673,11 @@ dekoder for både den nye `WatchWeatherTransfer`-envelopen og eldre rene
 dekoderute og bekrefter at det gamle oppdateringstidspunktet blir
 overføringstid.
 
-**AUTO-527 · ÅPEN** — Dekk den eksakte størrelsesgrensen for filbasert
-oppsettimport. In-memory-dekoderen har en regresjon akkurat ved grensen, og
-filstrømmen har test for overskridelse, men ikke for en fil på nøyaktig
-`maximumImportSizeBytes`. Test `readImportData(from:)` ved grensen for å låse
-ned samspillet mellom filstørrelsessjekken og chunklesingen uten å svekke
-minnegrensen.
+**AUTO-527 · FULLFØRT 2026-10-12** — La til en filbasert regresjonstest ved
+nøyaktig `maximumImportSizeBytes`. En gyldig eksport polstres med JSON-
+whitespace til 5 MiB, leses gjennom `readImportData(from:)` og dekodes på nytt;
+testen låser dermed ned både metadata-sjekken, chunklesing ved grensen og at
+den importerte konfigurasjonen fortsatt er intakt.
 
 **AUTO-528 · ÅPEN** — Lås ned avslag på posisjonstillatelse mens en engangs-
 lokasjonsforespørsel venter. Koden starter først selve posisjonsoppslaget når
@@ -693,6 +692,13 @@ Core Location leverer en eldre, presis fiks sammen med en nyere fiks utenfor
 appens nøyaktighetsgrense, blir hele oppslaget forkastet og ender i timeout.
 Velg den nyeste fiks som består `LocationFixPolicy.accepts`, med tester for
 både gyldig-og-ugyldig batch og batch uten gyldige fikser.
+
+**AUTO-530 · ÅPEN** — Test at den delte Watch-dekoderen bevarer eksplisitt
+null-snapshot i den versjonerte overføringen. Sletting av siste sted skal rydde
+Watch-cache, men en dekoderendring som feilaktig faller tilbake eller forkaster
+en gyldig clear-envelope kan la gammelt vær bli stående. Dekk `snapshot: nil`
+gjennom `WatchTransferPolicy.decodeTransferPayload` og bekreft at `sentAt`
+beholdes.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

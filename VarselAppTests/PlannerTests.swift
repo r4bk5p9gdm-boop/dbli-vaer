@@ -8568,6 +8568,29 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testConfigurationImportReadsValidFileAtExactSizeLimit() throws {
+        let place = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let document = WeatherConfigurationDocument(
+            places: [place], selectedPlaceID: place.id, alertLanguageStyle: .english
+        )
+        var atLimit = try document.serializedData()
+        let remainingBytes = WeatherConfigurationDocument.maximumImportSizeBytes - atLimit.count
+        XCTAssertGreaterThanOrEqual(remainingBytes, 0)
+        atLimit.append(Data(repeating: 0x20, count: remainingBytes))
+
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let url = directory.appendingPathComponent("at-limit.json")
+        try atLimit.write(to: url)
+
+        let read = try WeatherConfigurationDocument.readImportData(from: url)
+        let imported = try WeatherConfigurationDocument(data: read).configuration
+
+        XCTAssertEqual(read.count, WeatherConfigurationDocument.maximumImportSizeBytes)
+        XCTAssertEqual(imported.places.map(\.id), [place.id])
+    }
+
     func testConfigurationDocumentRejectsJSONWithNonObjectTopLevelValue() {
         for json in ["null", "[]", "42", "\"configuration\""] {
             let file = FileWrapper(regularFileWithContents: Data(json.utf8))

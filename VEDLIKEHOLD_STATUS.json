@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T17:17:12Z",
+  "lastScheduledStart": "2026-10-12T18:06:26Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-526 fullført 2026-10-12: Watch-applikasjonskontekster dekodes nå gjennom en testbar delt funksjon som håndterer både versjonert transfer og tidligere snapshot-only payload. Legacy snapshotets oppdateringstid brukes som transfer-tid. Swift-parsing/diffkontroll består; XCTest ikke kjørt fordi CoreSimulatorService var utilgjengelig ved forrige kjøring. Bred gjennomgang av bakoverkompatibilitet og import fant AUTO-527 eksakt filstørrelsesgrense, AUTO-528 asynkront posisjonsavslag, og en utestet Core Location-batch der siste fiks er ubrukbar selv om en tidligere er gyldig (AUTO-529). Full køskann: AUTO-527, AUTO-528, AUTO-529."
+  "lastProgress": "AUTO-527 fullført 2026-10-12: Filimport har nå regresjonstest på nøyaktig 5 MiB, med kontroll av både lest byteantall og intakt JSON-dekoding. Swift-parsing, diffkontroll og JSON-kontroll består; XCTest ikke kjørt i denne økten. Bred gjennomgang av Watch clear-envelope, tillatelsesflyt og posisjonsbatch fant et eget uprøvd testpunkt for at eksplisitt null-snapshot dekodes og beholder sentAt (AUTO-530), i tillegg til AUTO-528 og AUTO-529. Full køskann: AUTO-528, AUTO-529, AUTO-530."
 }
