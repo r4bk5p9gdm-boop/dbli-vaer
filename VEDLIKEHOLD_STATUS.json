@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T09:30:38Z",
+  "lastScheduledStart": "2026-10-12T09:45:38Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-504 fullført 2026-10-12: første oppstart spør nå om varslingstillatelse først etter at posisjonsforespørselen er avklart, mens første prognose lastes parallelt uten forsinkelse. Regresjoner dekker godkjent/forsinket og avvist posisjonstilgang. swiftc -parse og diffkontroller består; XCTest er blokkert av manglende CoreSimulator/DerivedData-tilgang. Bred gjennomgang fant at gjentatte appaktiveringer etter en mislykket Yr-oppdatering kan gjenta nettverkskallet uten pause; lagt til AUTO-507. Neste kø: AUTO-505, AUTO-506, AUTO-507."
+  "lastProgress": "AUTO-505 fullført 2026-10-12: reserve-navnet for GPS-sted følger nå valgt språkstil via språkkatalogen, både for automatisk valg og manuelt stedstillegg; regresjon dekker Bokmål, Inntrøndersk, engelsk og bevaring av faktisk geokodet navn. Swift-parsing, JSON-validering og diffkontroll består; XCTest er blokkert av manglende CoreSimulator/DerivedData-tilgang. Bred gjennomgang fant at dekodede varselterskler ikke håndhever AlertType.range; lagt til AUTO-508. Neste kø: AUTO-506, AUTO-507, AUTO-508."
 }

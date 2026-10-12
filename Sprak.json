@@ -415,6 +415,11 @@
       "nb": "Henter posisjon …",
       "tr": "Henter posisjon …"
     },
+    "location.current": {
+      "en": "My location",
+      "nb": "Min posisjon",
+      "tr": "Mi posisjon"
+    },
     "location.timeout": {
       "en": "Location is taking too long. Try again.",
       "nb": "Posisjonen lot vente på seg. Prøv igjen.",

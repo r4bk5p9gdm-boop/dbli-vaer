@@ -186,10 +186,16 @@ final class LocationManager: NSObject, ObservableObject {
     static func name(
         for loc: CLLocation,
         timeout: TimeInterval = reverseGeocodingTimeout,
-        clientFactory: (@MainActor () -> any ReverseGeocoderClient)? = nil
+        clientFactory: (@MainActor () -> any ReverseGeocoderClient)? = nil,
+        languageStyle: AlertLanguageStyle = .bokmal
     ) async -> String {
+        let fallbackName = LanguageCatalog.value(
+            "location.current", language: languageStyle.catalogCode,
+            fallback: languageStyle == .english ? "My location" : languageStyle == .inntrondersk ? "Mi posisjon" : "Min posisjon"
+        )
+        guard !Task.isCancelled else { return fallbackName }
         let client = (clientFactory ?? { CoreLocationReverseGeocoderClient() })()
-        let request = ReverseGeocodeRequest(client: client, timeout: timeout)
+        let request = ReverseGeocodeRequest(client: client, timeout: timeout, fallbackName: fallbackName)
         return await request.name(for: loc)
     }
 }
@@ -224,16 +230,18 @@ private final class CoreLocationReverseGeocoderClient: ReverseGeocoderClient {
 private final class ReverseGeocodeRequest {
     private let client: any ReverseGeocoderClient
     private let timeout: TimeInterval
+    private let fallbackName: String
     private var continuation: CheckedContinuation<String, Never>?
     private var timeoutTask: Task<Void, Never>?
 
-    init(client: any ReverseGeocoderClient, timeout: TimeInterval) {
+    init(client: any ReverseGeocoderClient, timeout: TimeInterval, fallbackName: String) {
         self.client = client
         self.timeout = timeout.isFinite ? min(max(timeout, 0.1), 30) : LocationManager.reverseGeocodingTimeout
+        self.fallbackName = fallbackName
     }
 
     func name(for location: CLLocation) async -> String {
-        guard !Task.isCancelled else { return "Min posisjon" }
+        guard !Task.isCancelled else { return fallbackName }
         let timeoutSeconds = timeout
         return await withTaskCancellationHandler {
             await withCheckedContinuation { continuation in
@@ -241,16 +249,16 @@ private final class ReverseGeocodeRequest {
                 timeoutTask = Task { [weak self, timeoutSeconds] in
                     do { try await Task.sleep(nanoseconds: UInt64(timeoutSeconds * 1_000_000_000)) }
                     catch { return }
-                    self?.finish(with: "Min posisjon", cancelGeocoder: true)
+                    self?.finish(with: fallbackName, cancelGeocoder: true)
                 }
                 client.reverseGeocode(location) { [weak self] name in
                     let cleanedName = name?.trimmingCharacters(in: .whitespacesAndNewlines)
-                    self?.finish(with: cleanedName.flatMap { $0.isEmpty ? nil : $0 } ?? "Min posisjon")
+                    self?.finish(with: cleanedName.flatMap { $0.isEmpty ? nil : $0 } ?? fallbackName)
                 }
             }
         } onCancel: {
             Task { @MainActor [weak self] in
-                self?.finish(with: "Min posisjon", cancelGeocoder: true)
+                self?.finish(with: fallbackName, cancelGeocoder: true)
             }
         }
     }

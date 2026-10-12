@@ -492,11 +492,14 @@ varslingstillatelsen først spørres etter posisjonsflyten og første prognose.
 `swiftc -parse` og `git diff --check` består; XCTest kunne ikke kjøres fordi
 CoreSimulator/DerivedData fortsatt er utilgjengelig i miljøet.
 
-**AUTO-505 · ÅPEN** — Lokaliser reserve-navnet for GPS-sted når omvendt
-geokoding ikke gir et stedsnavn. `LocationManager` returnerer «Min posisjon»
-uansett språk, mens appens stedstitler ellers følger norsk, inntrøndersk eller
-engelsk. Bruk valgt språkstil ved opprettelse av GPS-sted, og dekk de tre
-reserveformene med regresjoner uten å overskrive et faktisk geokodet navn.
+**AUTO-505 · FULLFØRT 2026-10-12** — GPS-stedets reserve-navn følger nå valgt
+språkstil når omvendt geokoding ikke gir et stedsnavn. Tekstene ligger i
+språkkatalogen, og både Hjems automatisk valgte GPS-sted og manuell «Legg til
+min posisjon» bruker valgt språk: «Min posisjon», «Mi posisjon» eller «My
+location». Regresjon dekker tomt geokoderesultat for alle tre språk og
+bekrefter at et faktisk geokodet navn beholdes. Swift-parsing og JSON-/diff-
+kontroller består; XCTest kunne ikke kjøres fordi CoreSimulator/DerivedData
+fortsatt er utilgjengelig i miljøet.
 
 **AUTO-506 · ÅPEN** — Synkroniser pushvarslene når appen kommer tilbake fra
 iOS-innstillinger etter at varslingstillatelsen er endret. Aktiviseringsflyten
@@ -512,6 +515,14 @@ ved hver aktivering så lenge forrige Yr-kall feiler; gjentatt veksling mellom
 apper med nettverksfeil kan derfor gi unødvendig trafikk. Innfør en avgrenset
 retry-pause for aktiveringsoppdateringer uten å blokkere manuell oppdatering,
 og test at feil begrenses mens senere gjenopptak fortsatt kan lykkes.
+
+**AUTO-508 · ÅPEN** — Valider varselterskelen når en `Rule` dekodes fra lagret
+oppsett eller import. `Rule.init(from:)` dekoder `threshold` direkte, selv om
+regelredigeringen begrenser verdien til `AlertType.range` og værmatchingen bare
+har særskilt endelighetskontroll for temperatur. En ugyldig eller ekstrem
+terskel kan dermed overleve import og gi varsler som aldri utløses eller utløses
+for lett. Normaliser eller avvis slike verdier uten å endre gyldige og
+bakoverkompatible regler; dekk NaN/uendelig og typegrenser med regresjoner.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

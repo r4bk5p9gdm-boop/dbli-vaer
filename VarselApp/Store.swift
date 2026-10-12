@@ -657,7 +657,7 @@ final class Store: ObservableObject {
             select(nearest, fromCurrentLocation: true)
             return
         }
-        let name = await LocationManager.name(for: location)
+        let name = await LocationManager.name(for: location, languageStyle: alertLanguageStyle)
         guard Self.shouldApplyCurrentLocationFix(
             selectionAtRequestStart: selectionAtRequestStart,
             currentSelection: selectedID,

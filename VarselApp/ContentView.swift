@@ -2250,7 +2250,7 @@ struct PlacesView: View {
                         Task {
                             do {
                                 let l = try await loc.current()
-                                let name = await LocationManager.name(for: l)
+                                let name = await LocationManager.name(for: l, languageStyle: store.alertLanguageStyle)
                                 await store.add(Place(name: name, lat: l.coordinate.latitude, lon: l.coordinate.longitude, preposition: .i))
                             } catch {
                                 locationError = "Fant ikke posisjonen. Tillat stedstilgang for D bli Vær! i Innstillinger → Personvern og sikkerhet → Stedstjenester."

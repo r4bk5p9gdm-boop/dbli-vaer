@@ -117,6 +117,47 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(client.cancelCount, 0)
     }
 
+    func testReverseGeocoderFallbackUsesSelectedLanguageAndPreservesResolvedName() async {
+        let location = CLLocation(latitude: 63.4305, longitude: 10.3951)
+        let localizedFallbacks: [(AlertLanguageStyle, String)] = [
+            (.bokmal, "Min posisjon"),
+            (.inntrondersk, "Mi posisjon"),
+            (.english, "My location")
+        ]
+
+        for (languageStyle, expectedFallback) in localizedFallbacks {
+            let client = FakeReverseGeocoderClient()
+            let request = Task { @MainActor in
+                await LocationManager.name(
+                    for: location,
+                    timeout: 1,
+                    clientFactory: { client },
+                    languageStyle: languageStyle
+                )
+            }
+            for _ in 0..<20 where !client.hasPendingCompletion { await Task.yield() }
+            XCTAssertTrue(client.hasPendingCompletion)
+            client.deliver("  ")
+            let resolvedName = await request.value
+            XCTAssertEqual(resolvedName, expectedFallback)
+        }
+
+        let client = FakeReverseGeocoderClient()
+        let request = Task { @MainActor in
+            await LocationManager.name(
+                for: location,
+                timeout: 1,
+                clientFactory: { client },
+                languageStyle: .english
+            )
+        }
+        for _ in 0..<20 where !client.hasPendingCompletion { await Task.yield() }
+        XCTAssertTrue(client.hasPendingCompletion)
+        client.deliver(" Trondheim ")
+        let resolvedName = await request.value
+        XCTAssertEqual(resolvedName, "Trondheim")
+    }
+
     func testCancelledReverseGeocoderFallsBackAndCancelsClient() async {
         let client = FakeReverseGeocoderClient()
         let location = CLLocation(latitude: 64.4, longitude: 11.5)
