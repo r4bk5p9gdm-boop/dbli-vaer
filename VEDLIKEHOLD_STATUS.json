@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T19:21:35Z",
+  "lastScheduledStart": "2026-10-12T19:36:35Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-532 fullført 2026-10-12: varselkøen sjekker Task.isCancelled etter å ha ventet på forrige jobb og før den starter operasjonen. Regresjonstest bekrefter at kansellert køjobb hoppes over mens første aktive og nyeste jobb fullføres. La AUTO-535 til etter gjennomgang av varselscheduling; køgrenser for bevarte forespørsler mangler eksplisitt test ved 64-elementstaket. Åpne kønumre etter full skann: AUTO-533, AUTO-534, AUTO-535."
+  "lastProgress": "AUTO-533 fullført 2026-10-12: WatchTransferPolicy avviser nå payload over 256 KiB før dekoding. Testen dekker gyldig ti-døgnsprognose med radarprøver per time og gyldig JSON polstret over grensen. Swift-parsing og JSON/diffkontroll besto; XCTest blokkert fordi CoreSimulatorService/runtime ikke er tilgjengelig. La AUTO-536 til etter bred gjennomgang av appen: bekreft at Watch-clear erstatter en feilet ventende snapshot-overføring og ikke gjenoppliver slettet sted. Åpne kønumre etter full skann: AUTO-534, AUTO-535, AUTO-536."
 }

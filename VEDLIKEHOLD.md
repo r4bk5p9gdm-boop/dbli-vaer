@@ -707,12 +707,12 @@ starter operasjonen. Regresjonstesten holder første jobb aktiv, kansellerer den
 andre i køen og bekrefter at den tredje fortsatt kjører; kansellering av en
 jobb som allerede er aktiv fortsetter dermed å være atomisk.
 
-**AUTO-533 · ÅPEN** — Sett en realistisk bytegrense for innkommende Watch-
-overføringer før `WatchTransferPolicy.decodeTransferPayload` starter JSON-
-dekoding. Telefonens `applicationContext`-payload går nå rett fra `Data` til
-`JSONDecoder`; mål gyldige snapshots over hele prognosehorisonten, velg grense
-med trygg reserve, og test at en overstor payload avvises før dekoding mens
-klare og normale overføringer fortsatt fungerer.
+**AUTO-533 · FULLFØRT 2026-10-12** — Innkommende Watch-overføringer begrenses
+til 256 KiB før `JSONDecoder` kjøres. Grensen har god reserve over et testet
+ti-døgns hourly-snapshot med radarprøver for hver time; regresjonen bekrefter at
+denne gyldige overføringen dekodes, mens samme gyldige JSON med overflødig
+whitespace over grensen avvises. Swift-parsing og JSON/diffkontroll besto;
+XCTest kunne ikke startes fordi CoreSimulatorService/runtime ikke er tilgjengelig.
 
 **AUTO-534 · ÅPEN** — Lås ned regn-/snøskiftet ved 1 °C med verdier rett under,
 nøyaktig på og rett over grensen. `AlertType.matches` bruker `temp > 1` for
@@ -724,6 +724,12 @@ på 64 forespørsler når flere framtidige, gyldige requests finnes. Den aktive
 planen begrenser både nye og offline-bevarte requests, men den nylige
 deterministiske testen dekker bare en gyldig og en utløpt forespørsel; lås
 rekkefølgen for nærmeste varsler og at eldre overskytende requests forkastes.
+
+**AUTO-536 · ÅPEN** — Dekk Watch-sletting etter en midlertidig
+`updateApplicationContext`-feil. `WatchSyncManager` er latest-write-wins og
+beholder mislykket data for retry; test at `clear()` erstatter et ventende
+vær-snapshot med eksplisitt `snapshot: nil`, slik at retry aldri gjenoppliver
+det slettede stedet.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

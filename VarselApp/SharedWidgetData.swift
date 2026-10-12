@@ -320,7 +320,12 @@ struct WatchWeatherTransfer: Codable {
 }
 
 enum WatchTransferPolicy {
+    /// Keep Watch payloads bounded before JSON decoding. A ten-day hourly
+    /// forecast with radar detail remains comfortably below this budget.
+    static let maximumPayloadBytes = 256 * 1_024
+
     static func decodeTransferPayload(_ data: Data, referenceDate: Date = Date()) -> WatchWeatherTransfer? {
+        guard data.count <= maximumPayloadBytes else { return nil }
         let decoder = WidgetWeatherSnapshot.decoder(referenceDate: referenceDate)
         if let transfer = try? decoder.decode(WatchWeatherTransfer.self, from: data) {
             return transfer

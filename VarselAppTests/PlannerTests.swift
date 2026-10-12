@@ -7673,6 +7673,35 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(decoded.sentAt, clear.sentAt)
     }
 
+    func testWatchTransferPolicyBoundsPayloadBytesWithoutRejectingFullForecast() throws {
+        let place = Place(name: "Klinga", lat: 64.5, lon: 11.5)
+        let forecast = (0..<240).map { hourIndex in
+            let hour = base.addingTimeInterval(Double(hourIndex) * 3_600)
+            let radar = (0..<4).map { sampleIndex in
+                PrecipitationSample(
+                    time: hour.addingTimeInterval(Double(sampleIndex) * 15 * 60),
+                    rate: Double(sampleIndex) / 10
+                )
+            }
+            return ForecastHour(
+                time: hour, temp: 6, precip: 0.2, wind: 3, cloud: 50, dew: 4,
+                radarSamples: radar
+            )
+        }
+        let transfer = WatchWeatherTransfer(
+            snapshot: WidgetWeatherSnapshot(place: place, forecast: forecast, updatedAt: base),
+            sentAt: base
+        )
+        let encoded = try JSONEncoder().encode(transfer)
+        XCTAssertLessThan(encoded.count, WatchTransferPolicy.maximumPayloadBytes)
+        XCTAssertNotNil(WatchTransferPolicy.decodeTransferPayload(encoded, referenceDate: base))
+
+        var oversized = encoded
+        oversized.append(Data(repeating: 0x20, count: WatchTransferPolicy.maximumPayloadBytes + 1 - encoded.count))
+        XCTAssertEqual(oversized.count, WatchTransferPolicy.maximumPayloadBytes + 1)
+        XCTAssertNil(WatchTransferPolicy.decodeTransferPayload(oversized, referenceDate: base))
+    }
+
     func testNextDayRainCanNotifyAtNineTheEveningBefore() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
