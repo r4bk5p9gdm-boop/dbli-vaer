@@ -730,12 +730,13 @@ sletting sender ikke det gamle snapshotet på nytt. Swift-parsing og
 JSON/diffkontroll besto; XCTest kunne ikke startes fordi CoreSimulatorService/
 runtime ikke er tilgjengelig.
 
-**AUTO-537 · ÅPEN** — Fjern utløpte varslingsloggoppføringer også ved
-gjenoppretting. `Store` leser `p.log` direkte ved oppstart, mens `retainedLog`
-først brukes etter at en ny varslingsplan er kjørt; med manglende nettverk eller
-varslingstillatelse kan oppføringer eldre enn 72 timer og mer enn 50 rader bli
-stående synlige og lagret. Normaliser den gjenopprettede loggen med oppstartens
-injiserte `now` og test at oppryddingen ikke avhenger av en vellykket replan.
+**AUTO-537 · FULLFØRT 2026-10-12** — Gjenopprettet varslingslogg normaliseres
+nå med oppstartens injiserte `now`, og repareres/lagres hvis gamle eller
+framtidsdaterte oppføringer eller rader over 50-grensen fjernes. Dermed skjer
+oppryddingen selv uten nettverk eller vellykket replan. Testen dekker både
+in-memory-logg og den lagrede tilstanden; Swift-parsing og JSON/diffkontroll
+bestod, mens XCTest fortsatt er blokkert av manglende CoreSimulatorService/
+runtime.
 
 **AUTO-538 · ÅPEN** — Test den samlede 64-varselgrensen når en replan blander
 bevarte offline-varsler og nye varsler. Koden rangerer begge grupper sammen i
@@ -748,6 +749,12 @@ uavhengig av rekkefølgen på ventende requests.
 blir køet før aktivering, og `activationDidCompleteWith` skal sende akkurat
 den nyeste verdien. Test også at en eldre køet værmelding ikke overskriver en
 sletting mens forbindelsen venter på aktivering.
+
+**AUTO-540 · ÅPEN** — Normaliser dupliserte ID-er i gjenopprettet
+varslingslogg. `LogEntry` er `Identifiable` og vises direkte med `ForEach`, men
+`PersistedStoreState` godtar gjentatte logg-ID-er ved dekoding; reparer slike
+arkiver stabilt og test at to forskjellige meldinger ikke ender med samme
+SwiftUI-identitet etter oppstart.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

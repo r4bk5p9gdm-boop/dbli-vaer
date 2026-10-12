@@ -486,7 +486,9 @@ final class Store: ObservableObject {
            !p.places.isEmpty {
             // Restored selection is authoritative when GPS is unavailable;
             // location lookup is only attempted by the explicit startup flow.
-            places = p.places; selectedID = p.selectedID; log = p.log
+            places = p.places; selectedID = p.selectedID
+            log = Self.retainedLog(p.log, now: now)
+            if log.count != p.log.count { needsPersistedStateRepair = true }
             restoredForecasts = p.forecasts
             restoredForecastUpdatedAt = p.forecastUpdatedAt
             restoredLastUpdate = p.lastUpdate
@@ -1072,7 +1074,7 @@ final class Store: ObservableObject {
     static func retainedLog(_ entries: [LogEntry], now: Date, maxAge: TimeInterval = 72 * 3_600, maxCount: Int = 50) -> [LogEntry] {
         guard maxCount > 0 else { return [] }
         let cutoff = now.addingTimeInterval(-maxAge)
-        return Array(entries.filter { $0.time >= cutoff }.prefix(maxCount))
+        return Array(entries.filter { $0.time >= cutoff && $0.time <= now }.prefix(maxCount))
     }
 
     static func notificationPlanLogText(_ result: NotificationScheduleResult) -> String {

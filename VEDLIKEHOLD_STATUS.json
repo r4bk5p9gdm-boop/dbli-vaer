@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T20:21:35Z",
+  "lastScheduledStart": "2026-10-12T20:36:35Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-536 fullført 2026-10-12: la til testWatchClearSupersedesFailedPendingSnapshot, som verifiserer at clear erstatter mislykket Watch-snapshot med snapshot:nil og at vellykket retry ikke sender gammelt snapshot igjen. Swift-parsing og JSON/diffkontroll besto; XCTest blokkert fordi CoreSimulatorService/runtime ikke er tilgjengelig. Gjennomgang av Watch-syncens ventende levering fant et separat udekket tilfelle før WCSession-aktivering; AUTO-539 lagt til for å teste at aktivering bare sender nyeste køede verdi. Åpne kønumre etter full skann: AUTO-537, AUTO-538, AUTO-539."
+  "lastProgress": "AUTO-537 fullført 2026-10-12: Store normaliserer nå gjenopprettet varslingslogg med injisert oppstartstid, fjerner gamle/for framtidige oppføringer og overskytende rader, og lagrer reparasjonen uten å vente på replan. Regresjon dekker både visning og persistens. Swift-parsing og JSON/diffkontroll besto; XCTest blokkert fordi CoreSimulatorService/runtime ikke er tilgjengelig. Bred inspeksjon av loggidentitet fant at PersistedStoreState tillater dupliserte LogEntry-ID-er selv om SwiftUI bruker ForEach(store.log); AUTO-540 lagt til for stabil deduplisering ved restore. Åpne kønumre etter full skann: AUTO-538, AUTO-539, AUTO-540."
 }

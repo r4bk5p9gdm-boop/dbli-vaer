@@ -7540,7 +7540,46 @@ final class PlannerTests: XCTestCase {
     func testNotificationLogRetainsOnlyRecentEntries() {
         let old = LogEntry(time: base.addingTimeInterval(-73 * 3_600), text: "gammel")
         let recent = LogEntry(time: base.addingTimeInterval(-1 * 3_600), text: "ny")
-        XCTAssertEqual(Store.retainedLog([recent, old], now: base).map(\.text), ["ny"])
+        let future = LogEntry(time: base.addingTimeInterval(60), text: "framtidig")
+        XCTAssertEqual(Store.retainedLog([recent, old, future], now: base).map(\.text), ["ny"])
+    }
+
+    @MainActor
+    func testStoreRestorePrunesNotificationLogAndPersistsWithoutReplanning() throws {
+        let persistenceKey = "varsel.test.restore-prunes-notification-log.\(UUID().uuidString)"
+        let launchVersionKey = "varsel.launchPlacesVersion"
+        let previousLaunchVersion = UserDefaults.standard.object(forKey: launchVersionKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousLaunchVersion {
+                UserDefaults.standard.set(previousLaunchVersion, forKey: launchVersionKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: launchVersionKey)
+            }
+        }
+        UserDefaults.standard.set(9, forKey: launchVersionKey)
+
+        let place = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let recentEntries = (0..<51).map { index in
+            LogEntry(time: base.addingTimeInterval(-Double(index * 60)), text: "ny-\(index)")
+        }
+        let staleEntry = LogEntry(time: base.addingTimeInterval(-73 * 3_600), text: "utløpt")
+        let futureEntry = LogEntry(time: base.addingTimeInterval(60), text: "framtidig")
+        UserDefaults.standard.set(try JSONEncoder().encode(PersistedStoreState(
+            places: [place], selectedID: place.id, log: recentEntries + [staleEntry, futureEntry]
+        )), forKey: persistenceKey)
+
+        let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey, now: base)
+
+        XCTAssertEqual(restored.log.count, 50)
+        XCTAssertEqual(restored.log.first?.text, "ny-0")
+        XCTAssertFalse(restored.log.contains { $0.text == "utløpt" })
+        XCTAssertFalse(restored.log.contains { $0.text == "framtidig" })
+        let persistedData = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
+        let persisted = try JSONDecoder().decode(PersistedStoreState.self, from: persistedData)
+        XCTAssertEqual(persisted.log.count, 50)
+        XCTAssertFalse(persisted.log.contains { $0.text == "utløpt" })
+        XCTAssertFalse(persisted.log.contains { $0.text == "framtidig" })
     }
 
     @MainActor
