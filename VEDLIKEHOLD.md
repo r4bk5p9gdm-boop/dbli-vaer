@@ -473,12 +473,14 @@ sendes etter nyere.
 miljøet: forrige Xcode-forsøk stoppet før kompilering fordi CoreSimulator ikke
 var tilgjengelig og DerivedData-mappen ikke kunne opprettes.
 
-**AUTO-503 · ÅPEN** — Oppdater valgt steds prognose når appen blir aktiv igjen,
-dersom den lagrede prognosen har blitt foreldet mens appen var i bakgrunnen.
-`VarselApp` sjekker nå bare varslingstillatelse ved aktivisering; prognoselasting
-skjer ved første åpning, bakgrunnsoppgave eller manuelt dra-ned. Lag en
-ferskhetsgrense og regresjon som bekrefter at nylig data ikke gir unødige
-forespørsler, mens gammel eller manglende data oppdateres ved gjenopptak.
+**AUTO-503 · FULLFØRT 2026-10-12** — Valgt steds prognose kontrolleres nå
+når appen kommer tilbake i forgrunnen. Friske data beholdes uten nettverkskall;
+foreldede eller manglende data hentes på nytt. En aktivering som overlapper en
+pågående oppdatering venter på den og vurderer deretter ferskheten, slik at den
+ikke legger en unødvendig forespørsel i kø. Regresjoner dekker ferskhetsgrensen,
+foreldet cache og manglende cache. `swiftc -parse` og `git diff --check`
+består. XCTest kunne ikke kjøres fordi Xcode-miljøet mangler CoreSimulator og
+ikke kan opprette DerivedData.
 
 **AUTO-504 · ÅPEN** — Unngå samtidige systemdialoger for posisjon og varsler ved
 første oppstart. `VarselApp.task` starter nå varselstillatelsen i en separat
@@ -491,6 +493,14 @@ geokoding ikke gir et stedsnavn. `LocationManager` returnerer «Min posisjon»
 uansett språk, mens appens stedstitler ellers følger norsk, inntrøndersk eller
 engelsk. Bruk valgt språkstil ved opprettelse av GPS-sted, og dekk de tre
 reserveformene med regresjoner uten å overskrive et faktisk geokodet navn.
+
+**AUTO-506 · ÅPEN** — Synkroniser pushvarslene når appen kommer tilbake fra
+iOS-innstillinger etter at varslingstillatelsen er endret. Aktiviseringsflyten
+leser `authorizationStatus()` og oppdaterer `notificationsAuthorized`, men
+denne verdien utløser ikke `Store.replan()`. En bruker som slår varsler av eller
+på mens appen er bakgrunnen, kan derfor møte en plan som ikke er fornyet før en
+annen vær- eller regelendring skjer. Replan bare ved faktisk tillatelsesendring,
+og dekk både avslag og ny tillatelse med en injisert planlegger.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

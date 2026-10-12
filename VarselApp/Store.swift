@@ -255,6 +255,7 @@ enum ForecastRefreshError: Error {
 final class ForecastRefreshQueue {
     private var tail: Task<Bool, Never>?
     private var generation = 0
+    var currentTask: Task<Bool, Never>? { tail }
 
     func enqueue(_ operation: @escaping @MainActor () async -> Bool) -> Task<Bool, Never> {
         // Chained tasks serialize rapid refreshes; cancelling an obsolete
@@ -821,9 +822,17 @@ final class Store: ObservableObject {
     }
 
     @discardableResult
-    func refreshSelectedForecastIfNeeded() async -> Bool {
-        guard let selected, forecasts[selected.id]?.isEmpty != false else { return false }
+    func refreshSelectedForecastIfNeeded(now: Date? = nil) async -> Bool {
         guard !Task.isCancelled else { return false }
+        // If activation races an initial/background refresh, let it finish and
+        // inspect the resulting timestamp instead of queuing a duplicate fetch.
+        while let currentTask = refreshQueue.currentTask {
+            _ = await currentTask.value
+            guard !Task.isCancelled else { return false }
+        }
+        guard let selected,
+              Self.shouldRefreshSelectedForecast(updatedAt: forecastUpdatedAt[selected.id], now: now ?? Date())
+        else { return false }
         let requestedID = selected.id
         let work = refreshQueue.enqueue {
             await self.performRefresh(backgroundOnly: false, onlyPlaceIDs: [requestedID])
@@ -833,6 +842,10 @@ final class Store: ObservableObject {
         } onCancel: {
             work.cancel()
         }
+    }
+
+    static func shouldRefreshSelectedForecast(updatedAt: Date?, now: Date = Date()) -> Bool {
+        isForecastStale(updatedAt, now: now)
     }
 
     private func performRefresh(backgroundOnly: Bool, onlyPlaceIDs: Set<UUID>? = nil) async -> Bool {

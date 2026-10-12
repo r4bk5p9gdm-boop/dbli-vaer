@@ -59,6 +59,7 @@ struct VarselApp: App {
                     guard phase == .active else { return }
                     Task { @MainActor in
                         store.notificationsAuthorized = await NotificationScheduler.authorizationStatus()
+                        _ = await store.refreshSelectedForecastIfNeeded()
                     }
                 }
                 .task {

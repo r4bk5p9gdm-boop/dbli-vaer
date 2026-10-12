@@ -74,6 +74,12 @@ private final class FakeReverseGeocoderClient: ReverseGeocoderClient {
     func deliver(_ name: String?) { completion?(name) }
 }
 
+private actor ForecastFetchCounter {
+    private var storedValue = 0
+    func increment() { storedValue += 1 }
+    func value() -> Int { storedValue }
+}
+
 @MainActor
 final class PlannerTests: XCTestCase {
     func testReverseGeocoderTimeoutFallsBackAndIgnoresLateResponse() async {
@@ -8604,6 +8610,94 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(Store.isForecastStale(base, now: base.addingTimeInterval(2 * 3_600)))
         XCTAssertTrue(Store.isForecastStale(base, now: base.addingTimeInterval(2 * 3_600 + 1)))
         XCTAssertTrue(Store.isForecastStale(nil, now: base))
+    }
+
+    func testSelectedForecastRefreshSkipsFreshCacheIncludingFreshnessBoundary() async throws {
+        let persistenceKey = "varsel.test.active-fresh-forecast.\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
+        let place = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let updatedAt = Date()
+        let cachedForecast = makeForecast(
+            through: 5, startingAt: updatedAt, precipitationOffsets: []
+        )
+        UserDefaults.standard.set(try JSONEncoder().encode(PersistedStoreState(
+            places: [place], selectedID: place.id, log: [],
+            forecasts: [place.id: cachedForecast],
+            forecastUpdatedAt: [place.id: updatedAt], lastUpdate: updatedAt
+        )), forKey: persistenceKey)
+        let counter = ForecastFetchCounter()
+        let refreshedForecast = makeForecast(through: 5, startingAt: Date(), precipitationOffsets: [])
+        let store = Store(
+            forecastFetcher: { _, _ in
+                await counter.increment()
+                return refreshedForecast
+            },
+            persistenceKey: persistenceKey,
+            notificationRescheduler: { _, _, _, _, _ in
+                NotificationScheduleResult(requestedCount: 0, scheduledCount: 0, failedCount: 0, firstScheduledAt: nil)
+            }
+        )
+
+        let refreshed = await store.refreshSelectedForecastIfNeeded(
+            now: updatedAt.addingTimeInterval(WeatherGlance.staleAfter)
+        )
+
+        XCTAssertFalse(refreshed)
+        let fetchCount = await counter.value()
+        XCTAssertEqual(fetchCount, 0, "A still-fresh cached forecast must not cause a network request")
+        XCTAssertEqual(store.forecasts[place.id], cachedForecast)
+    }
+
+    func testSelectedForecastRefreshesStaleAndMissingCachesOnResume() async throws {
+        let staleKey = "varsel.test.active-stale-forecast.\(UUID().uuidString)"
+        let missingKey = "varsel.test.active-missing-forecast.\(UUID().uuidString)"
+        defer {
+            UserDefaults.standard.removeObject(forKey: staleKey)
+            UserDefaults.standard.removeObject(forKey: missingKey)
+        }
+        let place = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let agedAt = Date().addingTimeInterval(-WeatherGlance.staleAfter - 1)
+        let oldForecast = makeForecast(
+            through: 5, startingAt: Date().addingTimeInterval(-3_600), precipitationOffsets: []
+        )
+        UserDefaults.standard.set(try JSONEncoder().encode(PersistedStoreState(
+            places: [place], selectedID: place.id, log: [],
+            forecasts: [place.id: oldForecast],
+            forecastUpdatedAt: [place.id: agedAt], lastUpdate: agedAt
+        )), forKey: staleKey)
+        UserDefaults.standard.set(try JSONEncoder().encode(PersistedStoreState(
+            places: [place], selectedID: place.id, log: []
+        )), forKey: missingKey)
+
+        let refreshedForecast = makeForecast(through: 5, startingAt: Date(), precipitationOffsets: [])
+        func makeStore(key: String, counter: ForecastFetchCounter) -> Store {
+            Store(
+                forecastFetcher: { _, _ in
+                    await counter.increment()
+                    return refreshedForecast
+                },
+                persistenceKey: key,
+                notificationRescheduler: { _, _, _, _, _ in
+                    NotificationScheduleResult(requestedCount: 0, scheduledCount: 0, failedCount: 0, firstScheduledAt: nil)
+                }
+            )
+        }
+        let staleCounter = ForecastFetchCounter()
+        let missingCounter = ForecastFetchCounter()
+        let staleStore = makeStore(key: staleKey, counter: staleCounter)
+        let missingStore = makeStore(key: missingKey, counter: missingCounter)
+
+        let staleRefreshSucceeded = await staleStore.refreshSelectedForecastIfNeeded()
+        let missingRefreshSucceeded = await missingStore.refreshSelectedForecastIfNeeded()
+        XCTAssertTrue(staleRefreshSucceeded)
+        XCTAssertTrue(missingRefreshSucceeded)
+
+        let staleFetches = await staleCounter.value()
+        let missingFetches = await missingCounter.value()
+        XCTAssertEqual(staleFetches, 1)
+        XCTAssertEqual(missingFetches, 1)
+        XCTAssertFalse(Store.isForecastStale(staleStore.forecastUpdatedAt(for: place.id)))
+        XCTAssertFalse(Store.isForecastStale(missingStore.forecastUpdatedAt(for: place.id)))
     }
 
     func testStaleForecastIsExcludedFromPushPlanningButRemainsCached() {
