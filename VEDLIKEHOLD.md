@@ -551,14 +551,13 @@ steder, reparasjonsflagget og samme filtrering ved snapshot-dekoding.
 Swift-parsing og diffkontroll består; XCTest kunne ikke kjøres fordi
 CoreSimulator/DerivedData ikke er tilgjengelig og disken har bare 8 GB ledig.
 
-**AUTO-512 · ÅPEN** — Replanlegg faste ukedagsvarsler når enhetens tidssone
-endres. `Rule` og pushplanleggeren bruker `Calendar.current` for lokale
-ukedager og klokkeslett, men `Store.replanSignature()` inkluderer ikke
-tidssonen. Appaktivering etter tidssonebytte kan derfor beholde en tidligere
-varslingskø når prognosen fortsatt er fersk og varslingstillatelsen uendret.
-Ta med relevant kalender-/tidssoneidentitet eller håndter systemets
-tidssoneendring eksplisitt, og test at én replan skjer ved bytte uten å hente
-prognoser på nytt.
+**AUTO-512 · FULLFØRT 2026-10-12** — Appaktivering ber nå alltid Store
+kontrollere varselplanen, også når varslingstillatelsen ikke endret seg.
+Replanleggingssignaturen inneholder kalenderens identitet, tidssone, locale,
+første ukedag og minste antall dager i første uke. Dermed oppdages et
+tidssone-/kalenderbytte uten å hente prognosen på nytt, og uendret kalender
+debounces som før. Regresjon dekker endret tidssone og første ukedag.
+Swift-parsing og diffkontroll består; XCTest kunne ikke kjøres i denne økten.
 
 **AUTO-513 · ÅPEN** — Lokaliser VoiceOver-forklaringene i værbåndene etter
 valgt språkstil. De visuelle tidslinjeetikettene følger språkvalget, men
@@ -573,6 +572,19 @@ CarPlay- og Watch-widgetene etter snapshotets språkstil. CarPlay-widgetens
 komplikasjonens relative tid bruker alltid «om … m/t», også med engelsk
 snapshot. Trekk tekstene ut i delte rene funksjoner og dekk engelsk og norsk
 uten å endre tidsberegning eller widgetenes kompakte oppsett.
+
+**BRUKER-148 · ÅPEN** — Vis sted og prognosens ferskhet tydelig på Watch,
+widgets og CarPlay, med «sist oppdatert» når dataene eldes og en diskret
+utdatert-markering når snapshotet ikke lenger er ferskt. Bruk snapshotets
+eksisterende steds- og tidsstempeldata.
+
+**BRUKER-149 · ÅPEN** — Gjør Watch-varslingslisten forståelig uten å måtte
+tolke symbolene: vis værtype og klokkeslett per hendelse, behold temperatur og
+værikon øverst, og flytt duggpunkt ut av første blikk.
+
+**BRUKER-150 · ÅPEN** — Prioriter CarPlays neste varslede hendelse med en
+lesbar nedtelling, vis høyst et par påfølgende hendelser og hold siste
+oppdatering diskret, slik at den viktigste informasjonen kan oppfattes raskt.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

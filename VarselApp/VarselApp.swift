@@ -63,6 +63,7 @@ struct VarselApp: App {
                         await store.updateNotificationAuthorization(
                             await NotificationScheduler.authorizationStatus()
                         )
+                        await store.replan()
                         _ = await store.refreshSelectedForecastIfNeeded()
                     }
                 }

@@ -7157,6 +7157,21 @@ final class PlannerTests: XCTestCase {
         XCTAssertNotEqual(Store.configurationSignature(languageStyle: .bokmal, separator: .dash), Store.configurationSignature(languageStyle: .english, separator: .dash))
     }
 
+    func testCalendarChangesChangeReplanSignature() {
+        var osloCalendar = Calendar(identifier: .gregorian)
+        osloCalendar.timeZone = TimeZone(identifier: "Europe/Oslo")!
+        osloCalendar.locale = Locale(identifier: "nb_NO")
+
+        var londonCalendar = osloCalendar
+        londonCalendar.timeZone = TimeZone(identifier: "Europe/London")!
+
+        var sundayCalendar = osloCalendar
+        sundayCalendar.firstWeekday = 1
+
+        XCTAssertNotEqual(Store.calendarSignature(osloCalendar), Store.calendarSignature(londonCalendar))
+        XCTAssertNotEqual(Store.calendarSignature(osloCalendar), Store.calendarSignature(sundayCalendar))
+    }
+
     func testNotificationLogRetainsOnlyRecentEntries() {
         let old = LogEntry(time: base.addingTimeInterval(-73 * 3_600), text: "gammel")
         let recent = LogEntry(time: base.addingTimeInterval(-1 * 3_600), text: "ny")

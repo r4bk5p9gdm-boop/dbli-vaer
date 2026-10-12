@@ -1032,6 +1032,7 @@ final class Store: ObservableObject {
         nearbyPlaceIDs.sorted { $0.uuidString < $1.uuidString }.forEach { hasher.combine($0) }
         hasher.combine(notificationsAuthorized)
         hasher.combine(Self.configurationSignature(languageStyle: alertLanguageStyle, separator: WeatherTextSeparator.current))
+        hasher.combine(Self.calendarSignature(Calendar.current))
         return hasher.finalize()
     }
 
@@ -1039,6 +1040,16 @@ final class Store: ObservableObject {
         var hasher = Hasher()
         hasher.combine(languageStyle.rawValue)
         hasher.combine(separator.rawValue)
+        return hasher.finalize()
+    }
+
+    static func calendarSignature(_ calendar: Calendar) -> Int {
+        var hasher = Hasher()
+        hasher.combine(String(describing: calendar.identifier))
+        hasher.combine(calendar.timeZone.identifier)
+        hasher.combine(calendar.locale?.identifier)
+        hasher.combine(calendar.firstWeekday)
+        hasher.combine(calendar.minimumDaysInFirstWeek)
         return hasher.finalize()
     }
 
