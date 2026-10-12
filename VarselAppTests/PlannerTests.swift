@@ -1142,6 +1142,23 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(place.resolvedDisplaySunThreshold2, 55)
     }
 
+    func testDecodedRuleThresholdsAreClampedToTypeRangeAndNonFiniteValuesUseDefaults() throws {
+        for type in AlertType.allCases {
+            XCTAssertEqual(type.normalizedThreshold(type.range.lowerBound - 1), type.range.lowerBound)
+            XCTAssertEqual(type.normalizedThreshold(type.range.upperBound + 1), type.range.upperBound)
+            XCTAssertEqual(type.normalizedThreshold(.nan), type.defaultThreshold)
+            XCTAssertEqual(type.normalizedThreshold(.infinity), type.defaultThreshold)
+            XCTAssertEqual(type.normalizedThreshold(-.infinity), type.defaultThreshold)
+        }
+
+        let tooHigh = try JSONDecoder().decode(Rule.self, from: Data(#"{"type":"regn","threshold":100}"#.utf8))
+        let tooLow = try JSONDecoder().decode(Rule.self, from: Data(#"{"type":"vind","threshold":-100}"#.utf8))
+        let legacyWind = try JSONDecoder().decode(Rule.self, from: Data(#"{"type":"vind"}"#.utf8))
+        XCTAssertEqual(tooHigh.threshold, AlertType.regn.range.upperBound)
+        XCTAssertEqual(tooLow.threshold, AlertType.vind.range.lowerBound)
+        XCTAssertEqual(legacyWind.threshold, 10, "Historical wind default remains unchanged")
+    }
+
     func testMalformedPlaceSnapshotUsesSafeDefaults() throws {
         let data = Data(#"{"name":" ","lat":64,"lon":11,"rules":[{"type":"vind","threshold":"bad"}]}"#.utf8)
         let place = try JSONDecoder().decode(Place.self, from: data)

@@ -689,6 +689,10 @@ enum AlertType: String, Codable, CaseIterable, Identifiable {
     var range: ClosedRange<Double> {
         switch self { case .regn, .sno: 0.1...5; case .frost: -10...4; case .temperatur: -20...30; case .vind: 4...50; case .dugg: 0...3; case .sol: 0...90 }
     }
+    func normalizedThreshold(_ value: Double) -> Double {
+        guard value.isFinite else { return defaultThreshold }
+        return min(max(value, range.lowerBound), range.upperBound)
+    }
     var step: Double {
         switch self { case .regn, .sno: 0.1; case .frost, .temperatur, .dugg: 0.5; case .vind: 1; case .sol: 5 }
     }
@@ -865,7 +869,9 @@ struct Rule: Codable, Identifiable, Hashable {
         memoSuggestion = try values.decodeIfPresent(String.self, forKey: .memoSuggestion) ?? ""
         type = try values.decode(AlertType.self, forKey: .type)
         // Preserve the historical wind default for older saved rules.
-        threshold = try values.decodeIfPresent(Double.self, forKey: .threshold) ?? (type == .vind ? 10 : type.defaultThreshold)
+        let decodedThreshold = try values.decodeIfPresent(Double.self, forKey: .threshold)
+            ?? (type == .vind ? 10 : type.defaultThreshold)
+        threshold = type.normalizedThreshold(decodedThreshold)
         temperatureDirection = try values.decodeIfPresent(TemperatureDirection.self, forKey: .temperatureDirection) ?? .below
         durationHours = Self.clamp(
             try values.decodeIfPresent(Int.self, forKey: .durationHours) ?? 4,

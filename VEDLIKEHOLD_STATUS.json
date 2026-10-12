@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T10:16:01Z",
+  "lastScheduledStart": "2026-10-12T10:31:01Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-507 fullført 2026-10-12: valgt steds aktiveringsoppdatering venter fem minutter etter mislykket Yr-forespørsel. Pausen gjelder ikke manuell oppdatering og nullstilles på gyldig svar. Regresjoner dekker gjentatt aktivering, manuell bypass og pausegrense. Swift-parsing og diffkontroll består; XCTest er blokkert av manglende CoreSimulator/DerivedData-tilgang. Bred gjennomgang av brukerflyt, personvern/stedsvalg, lagring/import, værlogikk, bakgrunnsoppdatering, widget/Watch, tilgjengelighet og tester fant også faste norske målingsetiketter i den engelske Watch-visningen; lagt til AUTO-510. Neste kø: AUTO-508, AUTO-509, AUTO-510."
+  "lastProgress": "AUTO-508 fullført 2026-10-12: Rule.init(from:) begrenser nå terskler til AlertType.range; NaN/uendelig faller tilbake til type-standard, gyldige verdier og historisk vindstandard beholdes. Regresjon dekker alle range-grenser, ikke-endelige verdier og gammel manglende vindterskel. Swift-parsing og diffkontroll består; XCTest er blokkert av manglende CoreSimulator/DerivedData-tilgang. Bred gjennomgang av Yr-dekoding, bakgrunnskjøring, persistert tilstand, Watch/CarPlay og vær-/varselvisning fant at lokale prognosecacher ikke får de fysiske plausibilitetskontrollene som API-svar får; lagt til AUTO-511. Neste kø: AUTO-509, AUTO-510, AUTO-511."
 }

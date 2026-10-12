@@ -519,13 +519,12 @@ Regresjoner dekker pausegrensen, gjentatt aktivering og at manuell oppdatering
 fortsatt prøver. Swift-parsing og diffkontroll består; XCTest kunne ikke kjøres
 fordi CoreSimulator/DerivedData fortsatt er utilgjengelig.
 
-**AUTO-508 · ÅPEN** — Valider varselterskelen når en `Rule` dekodes fra lagret
-oppsett eller import. `Rule.init(from:)` dekoder `threshold` direkte, selv om
-regelredigeringen begrenser verdien til `AlertType.range` og værmatchingen bare
-har særskilt endelighetskontroll for temperatur. En ugyldig eller ekstrem
-terskel kan dermed overleve import og gi varsler som aldri utløses eller utløses
-for lett. Normaliser eller avvis slike verdier uten å endre gyldige og
-bakoverkompatible regler; dekk NaN/uendelig og typegrenser med regresjoner.
+**AUTO-508 · FULLFØRT 2026-10-12** — Dekodede varselgrenser begrenses nå til
+den valgte varseltypens område. Ikke-endelige verdier faller tilbake til
+typens standard, mens det historiske vindstandardvalget 10 m/s og alle gyldige
+verdier beholdes. Tester dekker alle typegrenser, NaN/uendelig og gammel
+vindregel uten terskel. Swift-parsing og diffkontroll består; XCTest kunne ikke
+kjøres fordi CoreSimulator/DerivedData fortsatt er utilgjengelig.
 
 **AUTO-509 · ÅPEN** — Valider tids- og ukedagsfeltene i dekodede varselregler.
 `Rule.init(from:)` begrenser flere varighetsfelt, men lar blant annet
@@ -541,6 +540,14 @@ men «Nedbør», «Vind» og «Duggpunkt» i målingslisten er faste norske teks
 Når brukeren velger engelsk, blandes derfor språk på samme skjerm. Bruk den
 eksisterende snapshot-baserte lokaliseringsflyten og dekk etikettene for norsk
 og engelsk uten å endre rekkefølge eller måleverdier.
+
+**AUTO-511 · ÅPEN** — Kontroller fysiske verdier i gjenopprettet prognosecache,
+ikke bare i nye Yr-svar. API-dekoderen avviser nå temperatur, vind og
+skydekke utenfor brede fysiske grenser, men `PersistedStoreState` dekoder
+`ForecastHour` direkte fra lokal lagring. En ekstrem, men gyldig JSON-verdi kan
+dermed nå visning eller varselplanlegging etter omstart selv om samme verdi fra
+nettverket ville blitt forkastet. Filtrer korrupte cacheposter tapsfritt slik
+at friske steder beholdes, og dekk grensene med gjenopprettingstester.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig
