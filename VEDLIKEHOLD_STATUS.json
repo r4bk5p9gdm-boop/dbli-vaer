@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-12T09:30:38Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-503 korrigert 2026-10-12: oppdaget ved oppstartsgjennomgang at en prognose uten timeverdier, men med foreldreløst ferskhetsstempel, ellers kunne bli stående tom. Aktiviseringsoppdateringen behandler nå også tom cache som manglende; regresjonen dekker dette. VarselApp.swift og oppstartstestene for AUTO-504 er under arbeid, men holdes utenfor denne fokuserte rettelsescommiten. Neste kø: AUTO-504, AUTO-505, AUTO-506."
+  "lastProgress": "AUTO-504 fullført 2026-10-12: første oppstart spør nå om varslingstillatelse først etter at posisjonsforespørselen er avklart, mens første prognose lastes parallelt uten forsinkelse. Regresjoner dekker godkjent/forsinket og avvist posisjonstilgang. swiftc -parse og diffkontroller består; XCTest er blokkert av manglende CoreSimulator/DerivedData-tilgang. Bred gjennomgang fant at gjentatte appaktiveringer etter en mislykket Yr-oppdatering kan gjenta nettverkskallet uten pause; lagt til AUTO-507. Neste kø: AUTO-505, AUTO-506, AUTO-507."
 }

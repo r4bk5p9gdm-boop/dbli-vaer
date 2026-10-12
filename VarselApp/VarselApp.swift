@@ -8,12 +8,14 @@ enum StartupWeatherBootstrap {
         selectCurrentLocation: @escaping @MainActor () async -> Void,
         refreshInitialForecast: @escaping @MainActor () async -> Void,
         scheduleBackgroundRefresh: @escaping @MainActor () -> Void,
+        requestNotificationsPermission: @escaping @MainActor () async -> Void,
         refreshSelectedForecastIfNeeded: @escaping @MainActor () async -> Void
     ) async {
         async let locationSelection = selectCurrentLocation()
         scheduleBackgroundRefresh()
         await refreshInitialForecast()
         await locationSelection
+        await requestNotificationsPermission()
         await refreshSelectedForecastIfNeeded()
     }
 }
@@ -63,15 +65,16 @@ struct VarselApp: App {
                     }
                 }
                 .task {
-                    if !CommandLine.arguments.contains("-skipPermissionPrompts") {
-                        Task { @MainActor in
-                            store.notificationsAuthorized = await NotificationScheduler.requestPermission()
-                        }
-                    }
+                    let shouldAskForPermissions = !CommandLine.arguments.contains("-skipPermissionPrompts")
                     await StartupWeatherBootstrap.run(
                         selectCurrentLocation: { await store.selectCurrentLocationIfPossible() },
                         refreshInitialForecast: { _ = await store.refreshAll() },
                         scheduleBackgroundRefresh: { BackgroundRefresh.schedule() },
+                        requestNotificationsPermission: {
+                            if shouldAskForPermissions {
+                                store.notificationsAuthorized = await NotificationScheduler.requestPermission()
+                            }
+                        },
                         refreshSelectedForecastIfNeeded: { _ = await store.refreshSelectedForecastIfNeeded() }
                     )
                 }

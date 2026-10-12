@@ -483,11 +483,14 @@ foreldet cache og manglende cache. `swiftc -parse` og `git diff --check`
 består. XCTest kunne ikke kjøres fordi Xcode-miljøet mangler CoreSimulator og
 ikke kan opprette DerivedData.
 
-**AUTO-504 · ÅPEN** — Unngå samtidige systemdialoger for posisjon og varsler ved
-første oppstart. `VarselApp.task` starter nå varselstillatelsen i en separat
-Task samtidig som `StartupWeatherBootstrap` ber om posisjonstillatelse. Sekvenser
-de to forespørslene uten å forsinke første prognoselasting, og dekk rekkefølgen
-med en regresjonstest for både godkjent og avvist posisjonstilgang.
+**AUTO-504 · FULLFØRT 2026-10-12** — Første oppstart ber nå om varslingstillatelse
+etter at posisjonstillatelsen er avklart, slik at iOS ikke må vise to
+systemdialoger samtidig. Første prognoselasting og planlegging av
+bakgrunnsoppdatering starter fortsatt mens posisjonsoppslaget pågår. Regresjoner
+dekker både en forsinket posisjonsflyt og avslag, og bekrefter at
+varslingstillatelsen først spørres etter posisjonsflyten og første prognose.
+`swiftc -parse` og `git diff --check` består; XCTest kunne ikke kjøres fordi
+CoreSimulator/DerivedData fortsatt er utilgjengelig i miljøet.
 
 **AUTO-505 · ÅPEN** — Lokaliser reserve-navnet for GPS-sted når omvendt
 geokoding ikke gir et stedsnavn. `LocationManager` returnerer «Min posisjon»
@@ -502,6 +505,13 @@ denne verdien utløser ikke `Store.replan()`. En bruker som slår varsler av ell
 på mens appen er bakgrunnen, kan derfor møte en plan som ikke er fornyet før en
 annen vær- eller regelendring skjer. Replan bare ved faktisk tillatelsesendring,
 og dekk både avslag og ny tillatelse med en injisert planlegger.
+
+**AUTO-507 · ÅPEN** — Begrens gjentatte forespørsler når valgt steds foreldede
+prognose ikke kan oppdateres. `refreshSelectedForecastIfNeeded()` forsøker igjen
+ved hver aktivering så lenge forrige Yr-kall feiler; gjentatt veksling mellom
+apper med nettverksfeil kan derfor gi unødvendig trafikk. Innfør en avgrenset
+retry-pause for aktiveringsoppdateringer uten å blokkere manuell oppdatering,
+og test at feil begrenses mens senere gjenopptak fortsatt kan lykkes.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

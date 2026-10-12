@@ -855,6 +855,7 @@ final class PlannerTests: XCTestCase {
         let initialRefreshFinished = expectation(description: "Initial saved-place forecast finishes before geocoding")
         var backgroundRefreshWasScheduled = false
         var selectedRefreshFinished = false
+        var notificationPermissionRequested = false
 
         let startup = Task { @MainActor in
             await StartupWeatherBootstrap.run(
@@ -869,6 +870,10 @@ final class PlannerTests: XCTestCase {
                     initialRefreshFinished.fulfill()
                 },
                 scheduleBackgroundRefresh: { backgroundRefreshWasScheduled = true },
+                requestNotificationsPermission: {
+                    XCTAssertTrue(locationSelectionFinished)
+                    notificationPermissionRequested = true
+                },
                 refreshSelectedForecastIfNeeded: {
                     _ = await store.refreshSelectedForecastIfNeeded()
                     selectedRefreshFinished = true
@@ -879,10 +884,12 @@ final class PlannerTests: XCTestCase {
         await fulfillment(of: [initialRefreshFinished], timeout: 2)
         XCTAssertTrue(backgroundRefreshWasScheduled)
         XCTAssertFalse(locationSelectionFinished)
+        XCTAssertFalse(notificationPermissionRequested)
         XCTAssertFalse(selectedRefreshFinished)
         await startup.value
 
         XCTAssertTrue(selectedRefreshFinished)
+        XCTAssertTrue(notificationPermissionRequested)
         XCTAssertNotNil(store.forecasts[gpsPlace.id])
     }
 
@@ -901,6 +908,7 @@ final class PlannerTests: XCTestCase {
         store.select(savedPlace)
         var initialRefreshFinished = false
         var selectedRefreshFinished = false
+        var notificationPermissionRequested = false
 
         await StartupWeatherBootstrap.run(
             selectCurrentLocation: { /* Models denied GPS access or a failed geocoder. */ },
@@ -909,6 +917,10 @@ final class PlannerTests: XCTestCase {
                 initialRefreshFinished = true
             },
             scheduleBackgroundRefresh: {},
+            requestNotificationsPermission: {
+                XCTAssertTrue(initialRefreshFinished)
+                notificationPermissionRequested = true
+            },
             refreshSelectedForecastIfNeeded: {
                 _ = await store.refreshSelectedForecastIfNeeded()
                 selectedRefreshFinished = true
@@ -916,6 +928,7 @@ final class PlannerTests: XCTestCase {
         )
 
         XCTAssertTrue(initialRefreshFinished)
+        XCTAssertTrue(notificationPermissionRequested)
         XCTAssertTrue(selectedRefreshFinished)
         XCTAssertNotNil(store.forecasts[savedPlace.id])
     }
