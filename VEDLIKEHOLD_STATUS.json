@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T19:51:35Z",
+  "lastScheduledStart": "2026-10-12T20:06:35Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-534 fullført 2026-10-12 som allerede implementert: testRainAndSnowAlertsSwitchExactlyAtOneDegree ble lagt til i commit 07f8495 og dekker neste flyttall under, eksakt 1 °C og neste over. Swift-parsing, JSON- og diffkontroll besto; XCTest ikke kjørt fordi CoreSimulatorService/runtime mangler. Bred gjennomgang fant separat oppstartsatferd i Store: gjenopprettet varslingslogg går rett til UI/lagring uten 72-timers/50-raders normalisering før replan. AUTO-537 lagt til. Åpne kønumre etter full skann: AUTO-535, AUTO-536, AUTO-537."
+  "lastProgress": "AUTO-535 fullført 2026-10-12: requestsToPreserve er testet med 70 framtidige, gyldige requests i omvendt rekkefølge og beholder nøyaktig de 64 nærmeste i dato-/ID-sortert rekkefølge. Swift-parsing, JSON og diffkontroll består; XCTest blokkert fordi CoreSimulatorService/runtime ikke er tilgjengelig. Bred gjennomgang fant at nearestRequestIDs også velger globalt blant nye og bevarte varsler; AUTO-538 lagt til for integrert grense-/rekkefølgetest. Åpne kønumre etter full skann: AUTO-536, AUTO-537, AUTO-538."
 }

@@ -719,11 +719,9 @@ XCTest kunne ikke startes fordi CoreSimulatorService/runtime ikke er tilgjengeli
 `07f8495`. Den tester `nextDown`, nøyaktig 1 °C og `nextUp`, og bekrefter at
 snøvarsel dekker temperaturer på/under grensen mens regnvarsel starter over.
 
-**AUTO-535 · ÅPEN** — Test at bevaring av ventende varsler respekterer grensen
-på 64 forespørsler når flere framtidige, gyldige requests finnes. Den aktive
-planen begrenser både nye og offline-bevarte requests, men den nylige
-deterministiske testen dekker bare en gyldig og en utløpt forespørsel; lås
-rekkefølgen for nærmeste varsler og at eldre overskytende requests forkastes.
+**AUTO-535 · FULLFØRT 2026-10-12** — `requestsToPreserve` er nå dekket med 70
+framtidige requests gitt i omvendt rekkefølge. Regresjonen bekrefter at de 64
+nærmeste bevares i kronologisk rekkefølge, mens de seks fjerneste forkastes.
 
 **AUTO-536 · ÅPEN** — Dekk Watch-sletting etter en midlertidig
 `updateApplicationContext`-feil. `WatchSyncManager` er latest-write-wins og
@@ -737,6 +735,12 @@ først brukes etter at en ny varslingsplan er kjørt; med manglende nettverk ell
 varslingstillatelse kan oppføringer eldre enn 72 timer og mer enn 50 rader bli
 stående synlige og lagret. Normaliser den gjenopprettede loggen med oppstartens
 injiserte `now` og test at oppryddingen ikke avhenger av en vellykket replan.
+
+**AUTO-538 · ÅPEN** — Test den samlede 64-varselgrensen når en replan blander
+bevarte offline-varsler og nye varsler. Koden rangerer begge grupper sammen i
+`nearestRequestIDs`, men regresjonene dekker foreløpig bare utvalg fra hver
+gruppe isolert; bekreft at nærmeste hendelser vinner samlet og at resultatet er
+uavhengig av rekkefølgen på ventende requests.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

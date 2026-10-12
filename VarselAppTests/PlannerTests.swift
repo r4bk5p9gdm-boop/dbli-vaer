@@ -9958,6 +9958,32 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testOfflineNotificationPreservationKeepsNearest64Requests() throws {
+        let rule = Rule(type: .regn)
+        let place = Place(name: "Klinga", lat: 64, lon: 11, rules: [rule])
+        let context = try JSONEncoder().encode(
+            NotificationPlanContext(place: place, rule: rule, languageStyle: .bokmal)
+        )
+        var fireDates: [String: Date] = [:]
+        let requests = (0..<70).map { index -> UNNotificationRequest in
+            let identifier = String(format: "offline-%02d", index)
+            fireDates[identifier] = base.addingTimeInterval(Double(index + 1) * 60)
+            let content = UNMutableNotificationContent()
+            content.userInfo[NotificationScheduler.planContextKey] = context
+            return UNNotificationRequest(identifier: identifier, content: content, trigger: nil)
+        }
+
+        let preserved = NotificationScheduler.requestsToPreserve(
+            Array(requests.reversed()), places: [place], missingForecastPlaceIDs: [place.id],
+            nearbyPlaceIDs: [], languageStyle: .bokmal, now: base,
+            resolveFireDate: { fireDates[$0.identifier] }
+        )
+
+        XCTAssertEqual(preserved.count, 64)
+        XCTAssertEqual(preserved.map(\.identifier), (0..<64).map { String(format: "offline-%02d", $0) })
+    }
+
+    @MainActor
     func testOfflinePreservationRetainsRouteWhenPlacesAreReordered() throws {
         let rule = Rule(type: .regn)
         let target = Place(name: "Klinga", lat: 64, lon: 11, rules: [rule])
