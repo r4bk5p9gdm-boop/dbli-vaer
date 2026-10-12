@@ -820,16 +820,32 @@ final class Store: ObservableObject {
         }
     }
 
-    private func performRefresh(backgroundOnly: Bool) async -> Bool {
+    @discardableResult
+    func refreshSelectedForecastIfNeeded() async -> Bool {
+        guard let selected, forecasts[selected.id]?.isEmpty != false else { return false }
+        guard !Task.isCancelled else { return false }
+        let requestedID = selected.id
+        let work = refreshQueue.enqueue {
+            await self.performRefresh(backgroundOnly: false, onlyPlaceIDs: [requestedID])
+        }
+        return await withTaskCancellationHandler {
+            await work.value
+        } onCancel: {
+            work.cancel()
+        }
+    }
+
+    private func performRefresh(backgroundOnly: Bool, onlyPlaceIDs: Set<UUID>? = nil) async -> Bool {
         guard !Task.isCancelled else { return false }
         calibration.prune(now: Date())
         calibration.saveForecasts()
         isRefreshing = true
         defer { isRefreshing = false }
 
-        let requestedPlaces = backgroundOnly
-            ? Self.placesNeededForBackgroundRefresh(places, selectedID: selectedID)
-            : places
+        let requestedPlaces = places.filter { place in
+            guard onlyPlaceIDs?.contains(place.id) ?? true else { return false }
+            return !backgroundOnly || !Self.placesNeededForBackgroundRefresh([place], selectedID: selectedID).isEmpty
+        }
         let locationGroups = Self.groupedByForecastLocation(requestedPlaces)
         var failedNames: [String] = []
         var successfulPlaceCount = 0

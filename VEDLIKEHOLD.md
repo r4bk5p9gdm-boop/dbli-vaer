@@ -448,12 +448,12 @@ continuation og timeout før en ny forespørsel kan begynne; regresjonen kansell
 en aktiv forespørsel, starter en ny, leverer et sent svar fra den gamle klienten
 og bekrefter at bare den nye posisjonen fullfører oppgaven.
 
-**AUTO-500 · ÅPEN** — Hold førstegangs oppstart responsiv mens nåværende GPS-sted
-slås opp. Appens oppstartsoppgave venter nå på posisjon og omvendt geokoding før
-den ber om varselstillatelse og starter første prognoselasting; posisjonsløpet
-har opptil 30 sekunders ventetid, og geokoding har ingen lokal frist. Undersøk
-en trygg parallell/sekvensiell oppstartsmodell som ikke mister GPS-stedet som
-prognosemål, og dekk forsinket eller mislykket geokoding med regresjon.
+**AUTO-500 · FULLFØRT 2026-10-12** — Første prognoselasting og planlegging av
+bakgrunnsoppdatering starter nå mens GPS og omvendt geokoding pågår; varsel-
+tillatelsen forespørres parallelt. Når GPS-stedet til slutt blir valgt, lastes
+bare dette stedet på nytt dersom første lasting ikke allerede fikk med målet.
+Regresjoner dekker forsinket geokoding uten tapt GPS-prognose og mislykket
+posisjonsoppslag med fortsatt prognose for lagret valgt sted.
 
 **AUTO-501 · ÅPEN** — Avgrens ventetiden på omvendt geokoding for GPS-steder.
 `LocationManager.name(for:)` awaiter `CLGeocoder` direkte uten frist eller
@@ -467,6 +467,13 @@ fallback-navn.
 nyeste payload når sending feiler, men forsøker den bare igjen ved en senere
 aktivering eller ny vær-/innstillingsendring. Injiser Watch-klienten og dekk at
 en forbigående feil prøves på nytt uten å sende en eldre snapshot over en nyere.
+
+**AUTO-503 · ÅPEN** — Oppdater valgt steds prognose når appen blir aktiv igjen,
+dersom den lagrede prognosen har blitt foreldet mens appen var i bakgrunnen.
+`VarselApp` sjekker nå bare varslingstillatelse ved aktivisering; prognoselasting
+skjer ved første åpning, bakgrunnsoppgave eller manuelt dra-ned. Lag en
+ferskhetsgrense og regresjon som bekrefter at nylig data ikke gir unødige
+forespørsler, mens gammel eller manglende data oppdateres ved gjenopptak.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

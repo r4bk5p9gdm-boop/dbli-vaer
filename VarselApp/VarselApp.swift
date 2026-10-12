@@ -2,6 +2,22 @@ import SwiftUI
 import BackgroundTasks
 import UserNotifications
 
+@MainActor
+enum StartupWeatherBootstrap {
+    static func run(
+        selectCurrentLocation: @escaping @MainActor () async -> Void,
+        refreshInitialForecast: @escaping @MainActor () async -> Void,
+        scheduleBackgroundRefresh: @escaping @MainActor () -> Void,
+        refreshSelectedForecastIfNeeded: @escaping @MainActor () async -> Void
+    ) async {
+        async let locationSelection = selectCurrentLocation()
+        scheduleBackgroundRefresh()
+        await refreshInitialForecast()
+        await locationSelection
+        await refreshSelectedForecastIfNeeded()
+    }
+}
+
 final class AppNotificationDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     func application(
         _ application: UIApplication,
@@ -47,10 +63,16 @@ struct VarselApp: App {
                 }
                 .task {
                     if !CommandLine.arguments.contains("-skipPermissionPrompts") {
-                        store.notificationsAuthorized = await NotificationScheduler.requestPermission()
+                        Task { @MainActor in
+                            store.notificationsAuthorized = await NotificationScheduler.requestPermission()
+                        }
                     }
-                    _ = await store.refreshAll()
-                    BackgroundRefresh.schedule()
+                    await StartupWeatherBootstrap.run(
+                        selectCurrentLocation: { await store.selectCurrentLocationIfPossible() },
+                        refreshInitialForecast: { _ = await store.refreshAll() },
+                        scheduleBackgroundRefresh: { BackgroundRefresh.schedule() },
+                        refreshSelectedForecastIfNeeded: { _ = await store.refreshSelectedForecastIfNeeded() }
+                    )
                 }
         }
     }

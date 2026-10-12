@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-11T22:42:01Z",
+  "lastScheduledStart": "2026-10-12T08:30:25Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-147 fullført 2026-10-12: Watch viser navngitte hendelser og tidspunkt, mens CarPlay og Watch-widget viser høyst to varsler med lesbar relativ tid og status for dataenes ferskhet. Data eldre enn to timer får oransje varsel om mulig foreldelse. Kildekontroll for iOS-widget og watchOS består; full bygg/test blokkert av eksisterende ucommittet ContentView.swift-feil og utilgjengelig simulator. Neste åpne kø fra fullskanning: AUTO-500, AUTO-501 og AUTO-502."
+  "lastProgress": "AUTO-500 fullført 2026-10-12: Første prognose og bakgrunnsplanlegging starter mens GPS/geokoding pågår; varselstillatelse forespørres parallelt. Etter GPS-valg lastes bare valgt sted på nytt ved manglende prognose. Regresjoner for forsinket/mislykket GPS-oppslag lagt til. xcodebuild stoppet av SwiftUIMacros/Swift-plugin-server-feil i eksisterende ContentView.swift; simulator er utilgjengelig. Neste åpne kø: AUTO-501, AUTO-502, AUTO-503."
 }

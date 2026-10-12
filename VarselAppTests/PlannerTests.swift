@@ -719,6 +719,89 @@ final class PlannerTests: XCTestCase {
         ))
     }
 
+    func testStartupForecastRefreshRunsWhileGPSNameResolutionIsDelayed() async {
+        let persistenceKey = "varsel.test.startup-delayed-gps.\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
+        let savedPlace = Place(name: "Hjem", lat: 64.4, lon: 11.5)
+        let gpsPlace = Place(name: "Min posisjon", lat: 63.4, lon: 10.4)
+        let forecast = makeForecast(through: 5)
+        let store = Store(
+            forecastFetcher: { _, _ in forecast }, persistenceKey: persistenceKey,
+            notificationRescheduler: { _, _, _, _, _ in
+                NotificationScheduleResult(requestedCount: 0, scheduledCount: 0, failedCount: 0, firstScheduledAt: nil)
+            }
+        )
+        store.places = [savedPlace]
+        store.select(savedPlace)
+        var locationSelectionFinished = false
+        let initialRefreshFinished = expectation(description: "Initial saved-place forecast finishes before geocoding")
+        var backgroundRefreshWasScheduled = false
+        var selectedRefreshFinished = false
+
+        let startup = Task { @MainActor in
+            await StartupWeatherBootstrap.run(
+                selectCurrentLocation: {
+                    try? await Task.sleep(nanoseconds: 100_000_000)
+                    store.places.append(gpsPlace)
+                    store.select(gpsPlace, fromCurrentLocation: true)
+                    locationSelectionFinished = true
+                },
+                refreshInitialForecast: {
+                    _ = await store.refreshAll()
+                    initialRefreshFinished.fulfill()
+                },
+                scheduleBackgroundRefresh: { backgroundRefreshWasScheduled = true },
+                refreshSelectedForecastIfNeeded: {
+                    _ = await store.refreshSelectedForecastIfNeeded()
+                    selectedRefreshFinished = true
+                }
+            )
+        }
+
+        await fulfillment(of: [initialRefreshFinished], timeout: 2)
+        XCTAssertTrue(backgroundRefreshWasScheduled)
+        XCTAssertFalse(locationSelectionFinished)
+        XCTAssertFalse(selectedRefreshFinished)
+        await startup.value
+
+        XCTAssertTrue(selectedRefreshFinished)
+        XCTAssertNotNil(store.forecasts[gpsPlace.id])
+    }
+
+    func testStartupForecastFallsBackToSavedPlaceWhenGPSLookupFails() async {
+        let persistenceKey = "varsel.test.startup-failed-gps.\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
+        let savedPlace = Place(name: "Hjem", lat: 64.4, lon: 11.5)
+        let forecast = makeForecast(through: 5)
+        let store = Store(
+            forecastFetcher: { _, _ in forecast }, persistenceKey: persistenceKey,
+            notificationRescheduler: { _, _, _, _, _ in
+                NotificationScheduleResult(requestedCount: 0, scheduledCount: 0, failedCount: 0, firstScheduledAt: nil)
+            }
+        )
+        store.places = [savedPlace]
+        store.select(savedPlace)
+        var initialRefreshFinished = false
+        var selectedRefreshFinished = false
+
+        await StartupWeatherBootstrap.run(
+            selectCurrentLocation: { /* Models denied GPS access or a failed geocoder. */ },
+            refreshInitialForecast: {
+                _ = await store.refreshAll()
+                initialRefreshFinished = true
+            },
+            scheduleBackgroundRefresh: {},
+            refreshSelectedForecastIfNeeded: {
+                _ = await store.refreshSelectedForecastIfNeeded()
+                selectedRefreshFinished = true
+            }
+        )
+
+        XCTAssertTrue(initialRefreshFinished)
+        XCTAssertTrue(selectedRefreshFinished)
+        XCTAssertNotNil(store.forecasts[savedPlace.id])
+    }
+
     @MainActor
     func testNewLocationCourseDoesNotChangeSelectedPlaceOrForecast() {
         let persistenceKey = "varsel.test.location-course.\(UUID().uuidString)"
