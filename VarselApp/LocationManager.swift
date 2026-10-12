@@ -18,6 +18,12 @@ enum LocationFixPolicy {
             && coordinate.longitude.isFinite
             && (-180...180).contains(coordinate.longitude)
     }
+
+    static func newestAccepted(in locations: [CLLocation], now: Date = Date()) -> CLLocation? {
+        locations
+            .filter { accepts($0, now: now) }
+            .max { $0.timestamp < $1.timestamp }
+    }
 }
 
 enum LocationAuthorizationDecision: Equatable {
@@ -137,8 +143,7 @@ final class LocationManager: NSObject, ObservableObject {
                 }
                 source.onLocations = { [weak self, weak source] locations in
                     guard let self, let source, self.client === source, self.requestID == id,
-                          let location = locations.last,
-                          LocationFixPolicy.accepts(location) else { return }
+                          let location = LocationFixPolicy.newestAccepted(in: locations) else { return }
                     self.finish(.success(location))
                 }
                 source.onFailure = { [weak self, weak source] error in

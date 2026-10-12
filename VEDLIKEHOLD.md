@@ -685,12 +685,10 @@ avslår: den returnerer `.denied` og starter ikke `requestLocation()`. Testen
 bruker en kontrollert klient og går gjennom den asynkrone autorisasjons-
 callbacken.
 
-**AUTO-529 · ÅPEN** — Velg en brukbar posisjonsfiks fra hele Core Location-
-batchen. `LocationManager` kontrollerer i dag bare `locations.last`; dersom
-Core Location leverer en eldre, presis fiks sammen med en nyere fiks utenfor
-appens nøyaktighetsgrense, blir hele oppslaget forkastet og ender i timeout.
-Velg den nyeste fiks som består `LocationFixPolicy.accepts`, med tester for
-både gyldig-og-ugyldig batch og batch uten gyldige fikser.
+**AUTO-529 · FULLFØRT 2026-10-12** — `LocationManager` velger nå den nyeste
+fiksen i hele Core Location-batchen som består `LocationFixPolicy.accepts`.
+Regresjonstesten dekker både en gyldig eldre fiks sammen med en ugyldig nyere
+fiks og en batch uten gyldige fikser.
 
 **AUTO-530 · ÅPEN** — Test at den delte Watch-dekoderen bevarer eksplisitt
 null-snapshot i den versjonerte overføringen. Sletting av siste sted skal rydde
@@ -705,6 +703,13 @@ tidspunkt direkte fra `UNNotificationTrigger`; dermed kan en fast testdato og
 en ekte `UNTimeIntervalNotificationTrigger` havne på hver sin tidslinje. La
 beregningen motta en kontrollert triggerdato og dekk både bevart og utløpt
 tidsintervallforespørsel deterministisk.
+
+**AUTO-532 · ÅPEN** — Dekk avbrytelse av en varselplanlegging som står i kø bak
+en pågående erstatning. `NotificationSchedulingQueue` venter på forrige jobb,
+men starter operasjonen uten å kontrollere om den ventende tasken allerede er
+kansellert; en foreldet plan kan dermed fortsatt begynne å erstatte varsler når
+køen åpnes. Test at kansellert ventende jobb hoppes over, mens aktiv erstatning
+fortsetter atomisk.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

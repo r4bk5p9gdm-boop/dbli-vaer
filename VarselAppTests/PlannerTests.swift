@@ -1003,6 +1003,26 @@ final class PlannerTests: XCTestCase {
         ))
     }
 
+    func testLocationBatchSelectsNewestAcceptedFixInsteadOfRejectingBatchTail() {
+        let now = Date(timeIntervalSince1970: 1_800_000_000)
+        let acceptable = CLLocation(
+            coordinate: CLLocationCoordinate2D(latitude: 64.4, longitude: 11.5),
+            altitude: 0, horizontalAccuracy: 50, verticalAccuracy: 5,
+            course: -1, speed: -1, timestamp: now.addingTimeInterval(-30)
+        )
+        let tooInaccurate = CLLocation(
+            coordinate: CLLocationCoordinate2D(latitude: 64.5, longitude: 11.6),
+            altitude: 0, horizontalAccuracy: 150, verticalAccuracy: 5,
+            course: -1, speed: -1, timestamp: now.addingTimeInterval(-10)
+        )
+
+        XCTAssertEqual(
+            LocationFixPolicy.newestAccepted(in: [acceptable, tooInaccurate], now: now)?.timestamp,
+            acceptable.timestamp
+        )
+        XCTAssertNil(LocationFixPolicy.newestAccepted(in: [tooInaccurate], now: now))
+    }
+
     func testStartupForecastRefreshRunsWhileGPSNameResolutionIsDelayed() async {
         let persistenceKey = "varsel.test.startup-delayed-gps.\(UUID().uuidString)"
         defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
