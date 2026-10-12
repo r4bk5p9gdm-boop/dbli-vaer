@@ -599,12 +599,11 @@ Regresjon dekker klokkeslettene «14:07» i begge språkstiler. Swift-parsing,
 formatprøve med Foundation og diffkontroll består; XCTest er blokkert fordi
 CoreSimulatorService ikke er tilgjengelig.
 
-**AUTO-518 · ÅPEN** — Lokaliser Watch-appens feil ved mislykket manuell
-oppdatering etter snapshotets språkstil. `WatchWeatherStore.refresh()` setter
-alltid den norske teksten «Kunne ikke oppdatere. Viser sist hentede vær.»;
-med et engelsk snapshot får brukeren altså engelsk vær, men norsk nettfeil.
-Trekk feilmeldingen ut i en ren funksjon, dekk Bokmål/engelsk, og behold at den
-generiske meldingen ikke lekker systemets feildetaljer.
+**AUTO-518 · FULLFØRT 2026-10-12** — Watch-appen bruker nå en ren
+kopifunksjon for nettverksfeil ved manuell oppdatering. Bokmål og engelsk
+følges etter snapshotets språkstil, og feilen holdes generisk uten å vise
+systemdetaljer. Regresjon dekker begge tekster. Swift-parsing og diffkontroll
+består; XCTest er blokkert fordi CoreSimulatorService ikke er tilgjengelig.
 
 **AUTO-519 · ÅPEN** — Kontroller tidsrekkefølge og duplikater i gjenopprettet
 prognosecache og delte Watch/widget-snapshots. Dekodingen forkaster nå verdier
@@ -622,6 +621,14 @@ null og viser datoen som en fersk oppdatering. Store har allerede en grense for
 fremtidige hentetidspunkter, men delte Watch/widget-data går utenom den.
 Gjenbruk en tydelig fremtidsgrense ved snapshot-gjenoppretting, behold vanlig
 stale-oppførsel, og dekk grenseverdien samt en klart fremtidig timestamp.
+
+**AUTO-521 · ÅPEN** — Rund stale-friskhetsalderen opp slik at advarselen ikke
+underrapporterer hvor lenge prognosen har vært gammel. `WeatherGlance.freshness`
+bytter til utdatert-varsel rett etter to timer, men beregner deretter heltimer
+med `Int(age / 3_600)`, som runder ned; en snapshot som er nesten tre timer
+gammel vises derfor som «2h ago». Bruk oppoveravrunding bare for stale-teksten
+og dekk grensen rett over to timer samt overgangen ved tre timer, uten å endre
+ferskhetsgrensen.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

@@ -3186,6 +3186,17 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testWatchRefreshFailureCopyFollowsLanguageStyleWithoutErrorDetails() {
+        XCTAssertEqual(
+            WatchWeatherCopy.refreshFailure(languageStyle: .bokmal),
+            "Kunne ikke oppdatere. Viser sist hentede vær."
+        )
+        XCTAssertEqual(
+            WatchWeatherCopy.refreshFailure(languageStyle: .english),
+            "Could not update. Showing the last fetched weather."
+        )
+    }
+
     func testWatchAndCarPlayNextEventsIgnoreExpiredNowStatus() {
         let expiredNow = WeatherStatus(
             ruleID: UUID(), type: .regn, text: "Regn nå.",

@@ -39,7 +39,7 @@ final class WatchWeatherStore: ObservableObject {
             accept(updated)
         } catch {
             guard !Task.isCancelled, revision == snapshotRevision else { return }
-            message = "Kunne ikke oppdatere. Viser sist hentede vær."
+            message = WatchWeatherCopy.refreshFailure(languageStyle: startingSnapshot.languageStyle ?? .bokmal)
         }
     }
 

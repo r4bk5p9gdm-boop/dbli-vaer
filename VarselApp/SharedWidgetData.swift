@@ -187,6 +187,12 @@ enum WatchWeatherCopy {
         case waitingDescription
     }
 
+    static func refreshFailure(languageStyle: AlertLanguageStyle) -> String {
+        languageStyle == .english
+            ? "Could not update. Showing the last fetched weather."
+            : "Kunne ikke oppdatere. Viser sist hentede vær."
+    }
+
     static func sectionTitle(_ section: Section, languageStyle: AlertLanguageStyle) -> String {
         switch (section, languageStyle) {
         case (.next12Hours, .english): return "Next 12 hours"

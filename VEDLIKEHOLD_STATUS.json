@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T13:01:09Z",
+  "lastScheduledStart": "2026-10-12T13:16:09Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-517 fullført 2026-10-12: friskhetsklokkeslett følger nå snapshotets språkstil med nb_NO for bokmål/inntrøndersk og en_GB for engelsk; tidssone forblir lokal. Swift-parsing, Foundation-formatprøve og diffkontroll består; XCTest blokkert av utilgjengelig CoreSimulatorService. Bred gjennomgang fant at delt Widget/Watch-snapshot godtar fremtidig updatedAt uten grense, mens freshness viser det som ferskt; AUTO-520 lagt til. Full køskann: AUTO-518, AUTO-519, AUTO-520."
+  "lastProgress": "AUTO-518 fullført 2026-10-12: Watch-feil ved mislykket manuell oppdatering følger nå snapshotets språkstil via ren kopifunksjon, og teksten eksponerer ikke systemfeildetaljer. Swift-parsing og diffkontroll består; XCTest blokkert av utilgjengelig CoreSimulatorService. Bred gjennomgang av Watch/widget-friskhetsvisningen fant at stale-alder rundes ned og undervurderes med nesten én time; AUTO-521 lagt til. Full køskann: AUTO-519, AUTO-520, AUTO-521."
 }
