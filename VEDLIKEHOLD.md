@@ -622,13 +622,12 @@ Regresjon dekker grensen, ett sekund over og stale-data. Swift-parsing og
 diffkontroll består; XCTest er blokkert fordi CoreSimulatorService ikke er
 tilgjengelig.
 
-**AUTO-521 · ÅPEN** — Rund stale-friskhetsalderen opp slik at advarselen ikke
-underrapporterer hvor lenge prognosen har vært gammel. `WeatherGlance.freshness`
-bytter til utdatert-varsel rett etter to timer, men beregner deretter heltimer
-med `Int(age / 3_600)`, som runder ned; en snapshot som er nesten tre timer
-gammel vises derfor som «2h ago». Bruk oppoveravrunding bare for stale-teksten
-og dekk grensen rett over to timer samt overgangen ved tre timer, uten å endre
-ferskhetsgrensen.
+**AUTO-521 · FULLFØRT 2026-10-12** — Stale-alderen rundes nå opp til nærmeste
+time, slik at en prognose som er mer enn to timer gammel ikke beskrives med en
+kortere alder enn den faktisk har. Ferskhetsgrensen er uendret. Regresjon dekker
+rett over to timer, nøyaktig tre timer og rett over tre timer på bokmål, samt
+engelsk stale-tekst. Swift-parsing og diffkontroll består; XCTest er blokkert
+fordi CoreSimulatorService ikke er tilgjengelig.
 
 **AUTO-522 · ÅPEN** — Dedupér radarprøver som gjenopprettes fra prognosecache
 og Watch/widget-snapshots. Yr-normaliseringen velger høyeste rate ved like
@@ -643,6 +642,14 @@ enn forrige mottak; en korrupt eller urimelig framtidig envelope kan derfor
 forhindre alle senere gyldige oppdateringer. Gjenbruk snapshotets femminutters
 framtidstoleranse uten å avvise ordinære eldre snapshots, og test grensen,
 overskridelse og at et avvist tidspunkt ikke forgifter neste mottak.
+
+**AUTO-524 · ÅPEN** — Hindre at en nyere Watch-transfer-envelope erstatter
+snapshotet med en eldre prognose. Avsenderen setter `sentAt` til nå, selv om
+den inkluderte prognosen kan komme fra en gammel offline-cache; mottakeren
+sorterer bare på envelope-tid og kan dermed nedgradere allerede ferskere
+værdata. Sammenlign snapshotets `updatedAt` med gjeldende snapshot ved mottak,
+behold eksplisitt tømming av stedet, og dekk både avvist eldre data og godkjent
+nyere data i regresjon.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

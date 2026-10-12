@@ -82,7 +82,7 @@ enum WeatherGlance {
         let age = max(0, now.timeIntervalSince(updatedAt))
         let isStale = age > staleAfter
         if isStale {
-            let hours = max(2, Int(age / 3_600))
+            let hours = max(2, Int((age / 3_600).rounded(.up)))
             let label = languageStyle == .english
                 ? "May be outdated · last updated \(hours)h ago"
                 : "Kan være utdatert · sist oppdatert for \(hours) t siden"

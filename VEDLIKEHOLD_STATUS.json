@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T13:46:09Z",
+  "lastScheduledStart": "2026-10-12T14:01:09Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-520 fullført 2026-10-12: delt snapshot-dekoding avviser oppdateringstidspunkt mer enn fem minutter fram i tid, men beholder gyldige gamle snapshots så vanlig stale-advarsel vises. Grensetoleranse, overskridelse og stale-oppførsel har regresjon. Swift-parsing/diffkontroll består; XCTest blokkert av utilgjengelig CoreSimulatorService. Bred gjennomgang av Watch-transfer-laget fant at envelope.sentAt bare sammenlignes med forrige mottak og kan forgifte lagret monotontid; AUTO-523 lagt til. Full køskann: AUTO-521, AUTO-522, AUTO-523."
+  "lastProgress": "AUTO-521 fullført 2026-10-12: stale-friskhetstekst runder alder oppover uten å endre to-timersgrensen. Regresjon dekker rett over to timer, nøyaktig tre timer og rett over tre timer samt engelsk tekst. Swift-parsing/diffkontroll består; XCTest blokkert av utilgjengelig CoreSimulatorService. Bred gjennomgang av Watch-overføringens snapshot kontra envelope fant at fersk sentAt kan frakte gammel offline-cache og nedgradere ferskere klokkevær; AUTO-524 lagt til. Full køskann: AUTO-522, AUTO-523, AUTO-524."
 }

@@ -3337,7 +3337,22 @@ final class PlannerTests: XCTestCase {
         ))
         XCTAssertTrue(stale.isStale)
         XCTAssertTrue(stale.label.contains("utdatert"))
-        XCTAssertTrue(stale.label.contains("2 t siden"))
+        XCTAssertTrue(stale.label.contains("3 t siden"))
+
+        let threeHours = try XCTUnwrap(WeatherGlance.freshness(
+            updatedAt: base,
+            now: base.addingTimeInterval(3 * 3_600),
+            languageStyle: .bokmal
+        ))
+        XCTAssertTrue(threeHours.isStale)
+        XCTAssertTrue(threeHours.label.contains("3 t siden"))
+
+        let justOverThreeHours = try XCTUnwrap(WeatherGlance.freshness(
+            updatedAt: base,
+            now: base.addingTimeInterval(3 * 3_600 + 1),
+            languageStyle: .bokmal
+        ))
+        XCTAssertTrue(justOverThreeHours.label.contains("4 t siden"))
 
         let english = try XCTUnwrap(WeatherGlance.freshness(
             updatedAt: base,
@@ -3346,7 +3361,7 @@ final class PlannerTests: XCTestCase {
         ))
         XCTAssertTrue(english.isStale)
         XCTAssertTrue(english.label.contains("May be outdated"))
-        XCTAssertTrue(english.label.contains("2h ago"))
+        XCTAssertTrue(english.label.contains("3h ago"))
     }
 
     func testGlanceFreshnessClockUsesSnapshotLanguageLocale() throws {
