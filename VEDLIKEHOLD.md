@@ -526,13 +526,14 @@ verdier beholdes. Tester dekker alle typegrenser, NaN/uendelig og gammel
 vindregel uten terskel. Swift-parsing og diffkontroll består; XCTest kunne ikke
 kjøres fordi CoreSimulator/DerivedData fortsatt er utilgjengelig.
 
-**AUTO-509 · ÅPEN** — Valider tids- og ukedagsfeltene i dekodede varselregler.
-`Rule.init(from:)` begrenser flere varighetsfelt, men lar blant annet
-`notificationWeekday`, klokkeslett, minutt og `days` passere uendret. En ugyldig
-ukedag går inn i kalenderberegningen av faste kveldsvarsler og kan flytte eller
-utelate planlagte varsler etter import. Normaliser felt til redigererens
-gyldige domener med bakoverkompatible standarder, og dekk ugyldige/importerte
-verdier med tester.
+**AUTO-509 · FULLFØRT 2026-10-12** — Dekodede varselregler normaliserer nå
+ukedager, faste varselklokkeslett, minuttdeler, valgte dager, stille tid og
+aktive timer til de gyldige områdene fra redigereren. Ugyldig valgfri fast tid
+eller ukedag faller tilbake til trygg standardplan, ugyldige dager filtreres
+uten å endre gyldige valg, og eksisterende gyldige grenser bevares. Regresjon
+dekker korrupte verdier og gyldige yttergrenser. Swift-parsing og diffkontroll
+består; XCTest kunne ikke kjøres fordi CoreSimulator/DerivedData fortsatt er
+utilgjengelig.
 
 **AUTO-510 · ÅPEN** — Lokaliser Apple Watch-appens målingsetiketter etter valgt
 språkstil. Hendelsesnavn og ferskhetsstatus følger allerede snapshotets språk,
@@ -548,6 +549,15 @@ skydekke utenfor brede fysiske grenser, men `PersistedStoreState` dekoder
 dermed nå visning eller varselplanlegging etter omstart selv om samme verdi fra
 nettverket ville blitt forkastet. Filtrer korrupte cacheposter tapsfritt slik
 at friske steder beholdes, og dekk grensene med gjenopprettingstester.
+
+**AUTO-512 · ÅPEN** — Replanlegg faste ukedagsvarsler når enhetens tidssone
+endres. `Rule` og pushplanleggeren bruker `Calendar.current` for lokale
+ukedager og klokkeslett, men `Store.replanSignature()` inkluderer ikke
+tidssonen. Appaktivering etter tidssonebytte kan derfor beholde en tidligere
+varslingskø når prognosen fortsatt er fersk og varslingstillatelsen uendret.
+Ta med relevant kalender-/tidssoneidentitet eller håndter systemets
+tidssoneendring eksplisitt, og test at én replan skjer ved bytte uten å hente
+prognoser på nytt.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

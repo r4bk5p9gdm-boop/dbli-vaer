@@ -882,9 +882,15 @@ struct Rule: Codable, Identifiable, Hashable {
             to: 15...1440
         )
         previousDayNotificationHour = try values.decodeIfPresent(Int.self, forKey: .previousDayNotificationHour)
-        previousDayNotificationMinute = try values.decodeIfPresent(Int.self, forKey: .previousDayNotificationMinute) ?? 0
+            .flatMap { (0..<24).contains($0) ? $0 : nil }
+        previousDayNotificationMinute = Self.clamp(
+            try values.decodeIfPresent(Int.self, forKey: .previousDayNotificationMinute) ?? 0,
+            to: 0...59
+        )
         notificationWeekday = try values.decodeIfPresent(Int.self, forKey: .notificationWeekday)
-        notificationDayOffset = try values.decodeIfPresent(Int.self, forKey: .notificationDayOffset)
+            .flatMap { (0..<7).contains($0) ? $0 : nil }
+        let decodedDayOffset = try values.decodeIfPresent(Int.self, forKey: .notificationDayOffset)
+        notificationDayOffset = notificationWeekday == nil && decodedDayOffset == 0 ? 0 : nil
         count = Self.clamp(
             try values.decodeIfPresent(Int.self, forKey: .count) ?? 2,
             to: 2...10

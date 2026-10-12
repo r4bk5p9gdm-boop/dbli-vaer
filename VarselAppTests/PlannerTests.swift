@@ -1159,6 +1159,32 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(legacyWind.threshold, 10, "Historical wind default remains unchanged")
     }
 
+    func testDecodedRuleScheduleFieldsStayWithinEditorDomains() throws {
+        let corrupt = Data(#"{"type":"frost","previousDayNotificationHour":24,"previousDayNotificationMinute":-10,"notificationWeekday":7,"notificationDayOffset":99,"days":[-1,0,6,7],"quietFrom":0,"quietTo":24,"activeFromHour":-1,"activeToHour":24}"#.utf8)
+        let rule = try JSONDecoder().decode(Rule.self, from: corrupt)
+
+        XCTAssertNil(rule.previousDayNotificationHour)
+        XCTAssertEqual(rule.previousDayNotificationMinute, 0)
+        XCTAssertNil(rule.notificationWeekday)
+        XCTAssertNil(rule.notificationDayOffset)
+        XCTAssertEqual(rule.days, [0, 6])
+        XCTAssertEqual(rule.quietFrom, 18)
+        XCTAssertEqual(rule.quietTo, 10)
+        XCTAssertEqual(rule.activeFromHour, 0)
+        XCTAssertEqual(rule.activeToHour, 23)
+
+        let valid = Data(#"{"type":"frost","previousDayNotificationHour":23,"previousDayNotificationMinute":59,"notificationWeekday":6,"days":[0,6],"quietFrom":23,"quietTo":10,"activeFromHour":23,"activeToHour":0}"#.utf8)
+        let boundary = try JSONDecoder().decode(Rule.self, from: valid)
+        XCTAssertEqual(boundary.previousDayNotificationHour, 23)
+        XCTAssertEqual(boundary.previousDayNotificationMinute, 59)
+        XCTAssertEqual(boundary.notificationWeekday, 6)
+        XCTAssertEqual(boundary.days, [0, 6])
+        XCTAssertEqual(boundary.quietFrom, 23)
+        XCTAssertEqual(boundary.quietTo, 10)
+        XCTAssertEqual(boundary.activeFromHour, 23)
+        XCTAssertEqual(boundary.activeToHour, 0)
+    }
+
     func testMalformedPlaceSnapshotUsesSafeDefaults() throws {
         let data = Data(#"{"name":" ","lat":64,"lon":11,"rules":[{"type":"vind","threshold":"bad"}]}"#.utf8)
         let place = try JSONDecoder().decode(Place.self, from: data)
