@@ -1031,7 +1031,7 @@ final class Store: ObservableObject {
             forecastUpdatedAt: forecastUpdatedAt
         )
         updateWidget()
-        let text = Self.notificationPlanLogText(scheduleResult)
+        let text = Self.notificationPlanLogText(scheduleResult, languageStyle: alertLanguageStyle)
         log.insert(LogEntry(time: now, text: text), at: 0)
         log = Self.retainedLog(log, now: now)
     }
@@ -1082,18 +1082,35 @@ final class Store: ObservableObject {
             .prefix(maxCount))
     }
 
-    static func notificationPlanLogText(_ result: NotificationScheduleResult) -> String {
+    static func notificationPlanLogText(
+        _ result: NotificationScheduleResult,
+        languageStyle: AlertLanguageStyle = .bokmal
+    ) -> String {
+        func localized(_ bokmal: String, english: String) -> String {
+            languageStyle == .english ? english : WeatherLanguage.text(bokmal, style: languageStyle)
+        }
         if result.requestedCount == 0 {
-            return "Varslingsplan oppdatert – ingen varsler planlagt."
+            return localized("Varslingsplan oppdatert – ingen varsler planlagt.", english: "Notification plan updated – no alerts scheduled.")
         }
         if result.failedCount > 0 {
             if result.scheduledCount == 0 {
-                return "Kunne ikke aktivere \(result.requestedCount) planlagte varsler."
+                return localized(
+                    "Kunne ikke aktivere \(result.requestedCount) planlagte varsler.",
+                    english: "Could not activate \(result.requestedCount) scheduled alerts."
+                )
             }
-            return "Varslingsplan delvis oppdatert – \(result.scheduledCount) av \(result.requestedCount) varsler aktivert."
+            return localized(
+                "Varslingsplan delvis oppdatert – \(result.scheduledCount) av \(result.requestedCount) varsler aktivert.",
+                english: "Notification plan partially updated – \(result.scheduledCount) of \(result.requestedCount) alerts activated."
+            )
         }
-        let first = result.firstScheduledAt.map { ", første \(eventTimePhrase($0))" } ?? ""
-        return "Varslingsplan oppdatert – \(result.scheduledCount) varsler planlagt\(first)."
+        let first = result.firstScheduledAt.map {
+            localized(", første \(eventTimePhrase($0))", english: ", first \(WeatherLanguage.text(eventTimePhrase($0), style: .english))")
+        } ?? ""
+        return localized(
+            "Varslingsplan oppdatert – \(result.scheduledCount) varsler planlagt\(first).",
+            english: "Notification plan updated – \(result.scheduledCount) alerts scheduled\(first)."
+        )
     }
 
     func select(_ place: Place, fromCurrentLocation: Bool = false) {

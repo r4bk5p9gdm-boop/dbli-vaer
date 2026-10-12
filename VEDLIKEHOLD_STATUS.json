@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T21:50:58Z",
+  "lastScheduledStart": "2026-10-12T22:06:02Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-541 fullført 2026-10-12: retainedLog sorterer nå gyldige oppføringer nyeste-først før kapptelling; regresjonstesten verifiserer rekkefølge og valg av nyeste ved maxCount. Swift-parsing, jq JSON-validering og git diff --check besto; XCTest blokkert fordi CoreSimulatorService/runtime ikke er tilgjengelig. Store-gjenopprettingstest står separat som AUTO-543; grenseverdier står som AUTO-544. Full køskann viser at alle BRUKER-oppgaver enten er FULLFØRT eller PÅ VENT. Neste åpne kønumre: AUTO-542, AUTO-543, AUTO-544."
+  "lastProgress": "AUTO-542 fullført 2026-10-12: UpdateLogView har nå engelsk tittel/tomtilstand og lokal datoformatering; nye planresultatlogger bruker valgt språkstil, engelsk tidsfrase inkludert, uten retroaktiv omskriving av historikk. XCTest-cases for tom, feilet, delvis og vellykket engelsk resultat lagt til. Swift-parsing, JSON-validering, Foundation-datoformatkontroll og git diff --check besto; XCTest ikke kjørt fordi CoreSimulatorService/runtime mangler, og ledig diskplass var 16 GB, så tung bygging ble unngått. Bred gjennomgang av varsling, lagring, import/eksport, Watch/widgets, værvisning og tester fant språkdekningsgap for inntrøndersk planresultat; AUTO-545 lagt til. Full køskann: BRUKER-oppgaver er fullført eller på vent. Neste åpne kønumre: AUTO-543, AUTO-544, AUTO-545."
 }

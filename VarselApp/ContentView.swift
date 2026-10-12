@@ -2956,26 +2956,38 @@ private struct PlaceRow: View {
 
 struct UpdateLogView: View {
     @EnvironmentObject var store: Store
+
+    private func localized(_ bokmal: String, english: String) -> String {
+        store.alertLanguageStyle == .english ? english : WeatherLanguage.text(bokmal, style: store.alertLanguageStyle)
+    }
+
     var body: some View {
         List {
             if store.log.isEmpty {
                 ContentUnavailableView(
-                    "Ingen oppdateringer ennå",
+                    localized("Ingen oppdateringer ennå", english: "No updates yet"),
                     systemImage: "arrow.triangle.2.circlepath",
-                    description: Text("Oppdateringshistorikken vises når prognosen er hentet.")
+                    description: Text(localized(
+                        "Oppdateringshistorikken vises når prognosen er hentet.",
+                        english: "Update history appears after a forecast has been fetched."
+                    ))
                 )
             } else {
                 ForEach(store.log) { entry in
                     VStack(alignment: .leading, spacing: 3) {
                         Text(entry.text).font(.footnote)
-                        Text(entry.time.formatted(.dateTime.day().month().hour().minute()))
+                        Text(entry.time.formatted(
+                            .dateTime.day().month().hour().minute().locale(
+                                Locale(identifier: store.alertLanguageStyle == .english ? "en_US" : "nb_NO")
+                            )
+                        ))
                             .font(.caption2)
                             .foregroundStyle(.secondary)
                     }
                 }
             }
         }
-        .navigationTitle("Oppdateringslogg")
+        .navigationTitle(localized("Oppdateringslogg", english: "Update log"))
     }
 }
 

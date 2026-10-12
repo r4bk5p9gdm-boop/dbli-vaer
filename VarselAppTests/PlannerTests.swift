@@ -7768,6 +7768,37 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    @MainActor
+    func testNotificationPlanLogUsesEnglishForEmptySuccessfulAndFailedResults() {
+        XCTAssertEqual(
+            Store.notificationPlanLogText(
+                .init(requestedCount: 0, scheduledCount: 0, failedCount: 0, firstScheduledAt: nil),
+                languageStyle: .english
+            ),
+            "Notification plan updated – no alerts scheduled."
+        )
+        XCTAssertEqual(
+            Store.notificationPlanLogText(
+                .init(requestedCount: 3, scheduledCount: 0, failedCount: 3, firstScheduledAt: nil),
+                languageStyle: .english
+            ),
+            "Could not activate 3 scheduled alerts."
+        )
+        XCTAssertEqual(
+            Store.notificationPlanLogText(
+                .init(requestedCount: 3, scheduledCount: 2, failedCount: 1, firstScheduledAt: base),
+                languageStyle: .english
+            ),
+            "Notification plan partially updated – 2 of 3 alerts activated."
+        )
+        XCTAssertTrue(
+            Store.notificationPlanLogText(
+                .init(requestedCount: 2, scheduledCount: 2, failedCount: 0, firstScheduledAt: base),
+                languageStyle: .english
+            ).hasPrefix("Notification plan updated – 2 alerts scheduled, first ")
+        )
+    }
+
     func testWatchTransferRoundTripsLatestSnapshotAndExplicitClear() throws {
         let place = Place(name: "Namsos", lat: 64.5, lon: 11.5)
         let snapshot = WidgetWeatherSnapshot(

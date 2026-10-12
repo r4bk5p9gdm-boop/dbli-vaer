@@ -768,11 +768,12 @@ Swift-parsing, JSON-validering og `git diff --check` besto; XCTest er blokkert
 fordi CoreSimulatorService/runtime ikke er tilgjengelig. End-to-end-test av
 gjenoppretting/persistens står separat i AUTO-543.
 
-**AUTO-542 · ÅPEN** — Lokaliser «Oppdateringslogg»-skjermen og nye
-varslingsplanresultater for engelsk språkstil. `UpdateLogView` og
-`notificationPlanLogText` bruker fortsatt hardkodet norsk selv om Store har
-valgt språkstil; test tom-, vellykket- og feilet planvisning på engelsk uten å
-endre lagret historikk retroaktivt.
+**AUTO-542 · FULLFØRT 2026-10-12** — «Oppdateringslogg» viser nå engelsk
+tittel/tomtilstand og engelsk datoformat når engelsk språkstil er valgt. Nye
+varslingsplanresultater følger språkstilen, også tidsfrasen for første varsel;
+allerede lagrede historikktekster endres ikke. XCTest kunne ikke kjøres fordi
+CoreSimulatorService/runtime mangler. Swift-parsing, JSON-validering,
+Foundation-datoformatkontroll og `git diff --check` besto.
 
 **AUTO-543 · ÅPEN** — Legg til en Store-gjenopprettingstest for usortert
 varslingshistorikk som bekrefter at de 50 nyeste radene både vises og persisteres
@@ -783,6 +784,12 @@ hjelpefunksjonen; denne testen dekker hele restore-/lagringsbanen.
 72-timersgrensen og `now` beholdes, mens oppføringer rett utenfor vinduet
 forkastes. Dette beskytter den inklusive nedre grensen og eksklusive framtidige
 verdier uavhengig av sorteringsrekkefølgen.
+
+**AUTO-545 · ÅPEN** — Legg til regresjonstester for at nye
+varslingsplanresultater fortsatt følger inntrøndersk språkstil etter
+lokaliseringen. `notificationPlanLogText` går nå gjennom `WeatherLanguage` for
+ikke-engelsk stil; test tom, fullført, delvis og feilet plan med tellere og
+tidsfrase, mens historiske loggoppføringer skal forbli urørt.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med
