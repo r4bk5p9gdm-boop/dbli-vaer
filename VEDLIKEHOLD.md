@@ -679,12 +679,11 @@ whitespace til 5 MiB, leses gjennom `readImportData(from:)` og dekodes på nytt;
 testen låser dermed ned både metadata-sjekken, chunklesing ved grensen og at
 den importerte konfigurasjonen fortsatt er intakt.
 
-**AUTO-528 · ÅPEN** — Lås ned avslag på posisjonstillatelse mens en engangs-
-lokasjonsforespørsel venter. Koden starter først selve posisjonsoppslaget når
-Core Location melder om godkjenning, og skal avslutte forespørselen straks
-brukeren avslår i stedet for å vente på timeout. Test den asynkrone callback-
-ruten med en kontrollert klient, og bekreft at ingen posisjonsforespørsel
-startes etter avslag.
+**AUTO-528 · FULLFØRT 2026-10-12** — Regresjonstesten bekrefter at en
+engangsforespørsel som venter på lokasjonstillatelse avsluttes straks brukeren
+avslår: den returnerer `.denied` og starter ikke `requestLocation()`. Testen
+bruker en kontrollert klient og går gjennom den asynkrone autorisasjons-
+callbacken.
 
 **AUTO-529 · ÅPEN** — Velg en brukbar posisjonsfiks fra hele Core Location-
 batchen. `LocationManager` kontrollerer i dag bare `locations.last`; dersom
@@ -699,6 +698,13 @@ Watch-cache, men en dekoderendring som feilaktig faller tilbake eller forkaster
 en gyldig clear-envelope kan la gammelt vær bli stående. Dekk `snapshot: nil`
 gjennom `WatchTransferPolicy.decodeTransferPayload` og bekreft at `sentAt`
 beholdes.
+
+**AUTO-531 · ÅPEN** — Gjør varslingskøens bevaringstest uavhengig av
+systemklokken. `requestsToPreserve` tar en injisert `now`, men leser neste
+tidspunkt direkte fra `UNNotificationTrigger`; dermed kan en fast testdato og
+en ekte `UNTimeIntervalNotificationTrigger` havne på hver sin tidslinje. La
+beregningen motta en kontrollert triggerdato og dekk både bevart og utløpt
+tidsintervallforespørsel deterministisk.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

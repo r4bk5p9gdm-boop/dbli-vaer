@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T18:06:26Z",
+  "lastScheduledStart": "2026-10-12T18:21:35Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-527 fullført 2026-10-12: Filimport har nå regresjonstest på nøyaktig 5 MiB, med kontroll av både lest byteantall og intakt JSON-dekoding. Swift-parsing, diffkontroll og JSON-kontroll består; XCTest ikke kjørt i denne økten. Bred gjennomgang av Watch clear-envelope, tillatelsesflyt og posisjonsbatch fant et eget uprøvd testpunkt for at eksplisitt null-snapshot dekodes og beholder sentAt (AUTO-530), i tillegg til AUTO-528 og AUTO-529. Full køskann: AUTO-528, AUTO-529, AUTO-530."
+  "lastProgress": "AUTO-528 fullført 2026-10-12: Den kontrollerte OneShotLocationClient-testen dekker den asynkrone avslagscallbacken: forespørselen avsluttes med denied uten å starte et posisjonsoppslag. Testen var allerede implementert i commit 115edf5; køstatus er nå samordnet med koden. Swift-parsing, diffkontroll og JSON-kontroll består; XCTest ikke kjørt grunnet tidligere CoreSimulatorService-blokkering. Bred gjennomgang av posisjon, Watch-clear-envelope og varslingstestenes tidskilder fant AUTO-531: requestsToPreserve bruker injisert now, men trigger.nextTriggerDate() bruker systemklokken, så fast dato og time-interval-varsler kan være inkonsistente. Full køskann: AUTO-529, AUTO-530, AUTO-531."
 }
