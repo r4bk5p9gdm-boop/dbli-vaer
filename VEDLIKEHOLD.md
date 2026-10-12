@@ -701,12 +701,11 @@ blander den med `UNNotificationTrigger.nextTriggerDate()` sin systemklokke.
 Regresjonen dekker deterministisk at en fremtidig forespørsel bevares mens en
 utløpt forespørsel forkastes.
 
-**AUTO-532 · ÅPEN** — Dekk avbrytelse av en varselplanlegging som står i kø bak
-en pågående erstatning. `NotificationSchedulingQueue` venter på forrige jobb,
-men starter operasjonen uten å kontrollere om den ventende tasken allerede er
-kansellert; en foreldet plan kan dermed fortsatt begynne å erstatte varsler når
-køen åpnes. Test at kansellert ventende jobb hoppes over, mens aktiv erstatning
-fortsetter atomisk.
+**AUTO-532 · FULLFØRT 2026-10-12** — `NotificationSchedulingQueue` hopper nå
+over en kansellert jobb etter at den foregående erstatningen er ferdig, før den
+starter operasjonen. Regresjonstesten holder første jobb aktiv, kansellerer den
+andre i køen og bekrefter at den tredje fortsatt kjører; kansellering av en
+jobb som allerede er aktiv fortsetter dermed å være atomisk.
 
 **AUTO-533 · ÅPEN** — Sett en realistisk bytegrense for innkommende Watch-
 overføringer før `WatchTransferPolicy.decodeTransferPayload` starter JSON-
@@ -719,6 +718,12 @@ klare og normale overføringer fortsatt fungerer.
 nøyaktig på og rett over grensen. `AlertType.matches` bruker `temp > 1` for
 regn og `temp <= 1` for snø; presise tilstøtende verdier sikrer at ingen liten
 flyttalls- eller terskelendring gir dobbeltvarsel eller et hull i dekningen.
+
+**AUTO-535 · ÅPEN** — Test at bevaring av ventende varsler respekterer grensen
+på 64 forespørsler når flere framtidige, gyldige requests finnes. Den aktive
+planen begrenser både nye og offline-bevarte requests, men den nylige
+deterministiske testen dekker bare en gyldig og en utløpt forespørsel; lås
+rekkefølgen for nærmeste varsler og at eldre overskytende requests forkastes.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

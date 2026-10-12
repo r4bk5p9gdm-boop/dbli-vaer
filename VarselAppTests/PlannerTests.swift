@@ -7206,6 +7206,42 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(pending.isEmpty)
     }
 
+    @MainActor
+    func testCancelledQueuedNotificationReplacementIsSkipped() async {
+        let queue = NotificationSchedulingQueue()
+        var operations: [String] = []
+        var resumeFirst: CheckedContinuation<Void, Never>?
+        let firstStarted = expectation(description: "First replacement is active")
+        let result = NotificationScheduleResult(requestedCount: 1, scheduledCount: 1,
+                                              failedCount: 0, firstScheduledAt: base)
+
+        let first = queue.enqueue {
+            operations.append("first")
+            await withCheckedContinuation { continuation in
+                resumeFirst = continuation
+                firstStarted.fulfill()
+            }
+            return result
+        }
+        await fulfillment(of: [firstStarted], timeout: 5)
+
+        let cancelled = queue.enqueue {
+            operations.append("cancelled")
+            return result
+        }
+        let newest = queue.enqueue {
+            operations.append("newest")
+            return result
+        }
+        cancelled.cancel()
+        resumeFirst?.resume()
+
+        _ = await first.value
+        _ = await cancelled.value
+        _ = await newest.value
+        XCTAssertEqual(operations, ["first", "newest"])
+    }
+
     func testSharedNotificationSlotKeepsNearestEventRegardlessOfInputOrder() {
         let rule = Rule(type: .regn)
         let placeID = UUID()

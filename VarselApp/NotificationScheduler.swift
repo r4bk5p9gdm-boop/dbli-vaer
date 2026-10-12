@@ -233,6 +233,14 @@ final class NotificationSchedulingQueue {
         let currentGeneration = generation
         let task = Task { @MainActor in
             _ = await previous?.value
+            guard !Task.isCancelled else {
+                return NotificationScheduleResult(
+                    requestedCount: 0,
+                    scheduledCount: 0,
+                    failedCount: 0,
+                    firstScheduledAt: nil
+                )
+            }
             let result = await operation()
             if generation == currentGeneration { tail = nil }
             return result
