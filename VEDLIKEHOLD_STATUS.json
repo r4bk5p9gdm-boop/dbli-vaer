@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T21:06:35Z",
+  "lastScheduledStart": "2026-10-12T21:21:35Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-539 fullført 2026-10-12: la til test som køer et snapshot og deretter en sletting mens WCSession er inaktiv, og bekrefter at aktiveringscallbacken bare sender siste overføring. Swift-parsing og JSON/diffkontroll besto; XCTest blokkert fordi CoreSimulatorService/runtime ikke er tilgjengelig. Bred gjennomgang av oppdateringsloggen fant at skjermens tittel/tomtilstand og planresultatene fortsatt er hardkodet norsk selv ved engelsk språkstil; AUTO-542 lagt til for målrettet lokalisering. Åpne kønumre etter full skann: AUTO-540, AUTO-541, AUTO-542."
+  "lastProgress": "AUTO-540 fullført 2026-10-12: PersistedStoreState dedupliserer nå LogEntry-ID-er, flagger reparasjonen og Store lagrer den rene historikken ved oppstart; repair-flagget kombineres slik at logg- og cache-reparasjon ikke kan overskrive hverandre. Regresjon tester to distinkte meldinger med samme ID og persistens etter restore. Swift-parsing og JSON/diffkontroll besto; XCTest blokkert fordi CoreSimulatorService/runtime ikke er tilgjengelig. Bred køgjennomgang bekreftet et nært, men separat problem: retainedLog tar 50 første etter filter og forutsetter sortert lagring; AUTO-543 lagt til for nyeste-først-retensjon ved uordnet historikk. Åpne kønumre etter full skann: AUTO-541, AUTO-542, AUTO-543."
 }

@@ -752,11 +752,14 @@ er inaktiv, og at aktiveringscallbacken sender bare den nyeste slettingen.
 Swift-parsing og JSON/diffkontroll besto; XCTest kunne ikke starte fordi
 CoreSimulatorService/runtime mangler.
 
-**AUTO-540 · ÅPEN** — Normaliser dupliserte ID-er i gjenopprettet
-varslingslogg. `LogEntry` er `Identifiable` og vises direkte med `ForEach`, men
-`PersistedStoreState` godtar gjentatte logg-ID-er ved dekoding; reparer slike
-arkiver stabilt og test at to forskjellige meldinger ikke ender med samme
-SwiftUI-identitet etter oppstart.
+**AUTO-540 · FULLFØRT 2026-10-12** — `PersistedStoreState` fjerner nå gjentatte
+`LogEntry.id` ved dekoding og markerer arkivet som reparert; `Store` lagrer den
+normaliserte loggen ved oppstart. Repair-flagget ble også generalisert og
+kombineres med andre reparasjoner, slik at loggfeil ikke overskrives av
+forecast-cache-status. Testen bekrefter at to ulike meldinger ikke får samme
+SwiftUI-identitet og at dedupliseringen vedvarer etter lagring. Swift-parsing
+og JSON/diffkontroll besto; XCTest er blokkert av manglende
+CoreSimulatorService/runtime.
 
 **AUTO-541 · ÅPEN** — Velg de 50 nyeste varslingsloggoppføringene også når
 lagret rekkefølge er uventet. `retainedLog` filtrerer datoer, men bruker deretter
@@ -769,6 +772,11 @@ varslingsplanresultater for engelsk språkstil. `UpdateLogView` og
 `notificationPlanLogText` bruker fortsatt hardkodet norsk selv om Store har
 valgt språkstil; test tom-, vellykket- og feilet planvisning på engelsk uten å
 endre lagret historikk retroaktivt.
+
+**AUTO-543 · ÅPEN** — Kontroller at varslingshistorikken beholder de nyeste
+50 radene når lagret logg er usortert. `retainedLog` tar foreløpig de første
+radene etter datofilteret; eldre arkivrekkefølge kan dermed fortrenge nyere
+oppføringer. Test både valgt innhold og nyeste-først-rekkefølge ved gjenoppretting.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

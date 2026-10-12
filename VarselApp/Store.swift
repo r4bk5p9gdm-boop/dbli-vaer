@@ -198,7 +198,7 @@ struct PersistedStoreState: Codable {
     var forecasts: [UUID: [ForecastHour]] = [:]
     var forecastUpdatedAt: [UUID: Date] = [:]
     var lastUpdate: Date?
-    var needsForecastCacheRepair = false
+    var needsPersistedStateRepair = false
 
     private enum CodingKeys: String, CodingKey { case places, selectedID, log, forecasts, forecastUpdatedAt, lastUpdate }
 
@@ -209,7 +209,7 @@ struct PersistedStoreState: Codable {
         self.forecasts = forecasts
         self.forecastUpdatedAt = forecastUpdatedAt
         self.lastUpdate = lastUpdate
-        needsForecastCacheRepair = false
+        needsPersistedStateRepair = false
     }
 
     init(from decoder: Decoder) throws {
@@ -225,7 +225,10 @@ struct PersistedStoreState: Codable {
         } else {
             selectedID = nil
         }
-        log = (try? values.decode([LossyDecodable<LogEntry>].self, forKey: .log))?.compactMap(\.value) ?? []
+        let decodedLog = (try? values.decode([LossyDecodable<LogEntry>].self, forKey: .log))?.compactMap(\.value) ?? []
+        var seenLogIDs = Set<UUID>()
+        log = decodedLog.filter { seenLogIDs.insert($0.id).inserted }
+        if log.count != decodedLog.count { needsPersistedStateRepair = true }
         let lossyTimestamps = (try? values.decode([UUID: LossyDecodable<Date>].self, forKey: .forecastUpdatedAt)) ?? [:]
         forecastUpdatedAt = lossyTimestamps.compactMapValues(\.value)
         lastUpdate = try? values.decode(Date.self, forKey: .lastUpdate)
@@ -236,7 +239,7 @@ struct PersistedStoreState: Codable {
             let safeHours = ForecastHour.sanitizedCacheSequence(
                 hours, fetchedAt: forecastUpdatedAt[placeID] ?? lastUpdate
             )
-            if safeHours != hours { needsForecastCacheRepair = true }
+            if safeHours != hours { needsPersistedStateRepair = true }
             repairedForecasts[placeID] = safeHours
         }
         forecasts = repairedForecasts
@@ -492,7 +495,7 @@ final class Store: ObservableObject {
             restoredForecasts = p.forecasts
             restoredForecastUpdatedAt = p.forecastUpdatedAt
             restoredLastUpdate = p.lastUpdate
-            needsPersistedStateRepair = p.needsForecastCacheRepair
+            needsPersistedStateRepair = needsPersistedStateRepair || p.needsPersistedStateRepair
             restoredSavedPlaces = true
         } else {
             places = Self.launchPlaces; selectedID = places.first?.id; log = []

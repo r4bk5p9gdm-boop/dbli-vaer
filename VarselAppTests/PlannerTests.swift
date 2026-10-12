@@ -705,9 +705,9 @@ final class PlannerTests: XCTestCase {
 
         XCTAssertEqual(decoded.forecasts[first.id], [healthy, healthyLater])
         XCTAssertEqual(decoded.forecasts[second.id], [healthy])
-        XCTAssertTrue(decoded.needsForecastCacheRepair)
+        XCTAssertTrue(decoded.needsPersistedStateRepair)
         let encoded = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(decoded)) as? [String: Any])
-        XCTAssertNil(encoded["needsForecastCacheRepair"], "Repair bookkeeping is not part of the stored format")
+        XCTAssertNil(encoded["needsPersistedStateRepair"], "Repair bookkeeping is not part of the stored format")
 
         let snapshot = try JSONDecoder().decode(
             WidgetWeatherSnapshot.self,
@@ -746,7 +746,7 @@ final class PlannerTests: XCTestCase {
         )
 
         XCTAssertEqual(decoded.forecasts[place.id], [expectedFirst, second])
-        XCTAssertTrue(decoded.needsForecastCacheRepair)
+        XCTAssertTrue(decoded.needsPersistedStateRepair)
 
         let snapshot = try JSONDecoder().decode(
             WidgetWeatherSnapshot.self,
@@ -7605,6 +7605,42 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(persisted.log.count, 50)
         XCTAssertFalse(persisted.log.contains { $0.text == "utløpt" })
         XCTAssertFalse(persisted.log.contains { $0.text == "framtidig" })
+    }
+
+    @MainActor
+    func testStoreRestoreDeduplicatesNotificationLogIDsAndPersistsRepair() throws {
+        let persistenceKey = "varsel.test.restore-deduplicates-notification-log.\(UUID().uuidString)"
+        let launchVersionKey = "varsel.launchPlacesVersion"
+        let previousLaunchVersion = UserDefaults.standard.object(forKey: launchVersionKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousLaunchVersion {
+                UserDefaults.standard.set(previousLaunchVersion, forKey: launchVersionKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: launchVersionKey)
+            }
+        }
+        UserDefaults.standard.set(9, forKey: launchVersionKey)
+
+        let place = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let duplicateID = UUID()
+        let state = PersistedStoreState(
+            places: [place], selectedID: place.id,
+            log: [
+                LogEntry(id: duplicateID, time: base, text: "første"),
+                LogEntry(id: duplicateID, time: base.addingTimeInterval(-60), text: "duplikat")
+            ]
+        )
+        UserDefaults.standard.set(try JSONEncoder().encode(state), forKey: persistenceKey)
+
+        let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey, now: base)
+
+        XCTAssertEqual(restored.log.map(\.text), ["første"])
+        XCTAssertEqual(Set(restored.log.map(\.id)).count, restored.log.count)
+        let persistedData = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
+        let persisted = try JSONDecoder().decode(PersistedStoreState.self, from: persistedData)
+        XCTAssertEqual(persisted.log.map(\.text), ["første"])
+        XCTAssertEqual(Set(persisted.log.map(\.id)).count, persisted.log.count)
     }
 
     @MainActor
