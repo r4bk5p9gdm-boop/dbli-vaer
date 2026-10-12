@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T12:46:09Z",
+  "lastScheduledStart": "2026-10-12T13:01:09Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-516 fullført 2026-10-12: la til en regresjon som lar 64 samtidige kall med vekslende utfall konkurrere om bakgrunnsoppgavens fullføringsport og bekrefter nøyaktig én ferdigmelding, uten BGTask. Swift-parsing og diffkontroll består; XCTest blokkert fordi CoreSimulatorService er utilgjengelig. Bred gjennomgang av prognoseinntak fant at fysisk validering av cache ikke begrenser datoer, selv om nettverksflyten avviser dupliserte/usammenhengende timer; AUTO-519 lagt til. Full køskann: AUTO-517, AUTO-518, AUTO-519."
+  "lastProgress": "AUTO-517 fullført 2026-10-12: friskhetsklokkeslett følger nå snapshotets språkstil med nb_NO for bokmål/inntrøndersk og en_GB for engelsk; tidssone forblir lokal. Swift-parsing, Foundation-formatprøve og diffkontroll består; XCTest blokkert av utilgjengelig CoreSimulatorService. Bred gjennomgang fant at delt Widget/Watch-snapshot godtar fremtidig updatedAt uten grense, mens freshness viser det som ferskt; AUTO-520 lagt til. Full køskann: AUTO-518, AUTO-519, AUTO-520."
 }

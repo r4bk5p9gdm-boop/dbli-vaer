@@ -3267,6 +3267,28 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(english.label.contains("2h ago"))
     }
 
+    func testGlanceFreshnessClockUsesSnapshotLanguageLocale() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = .current
+        let updatedAt = try XCTUnwrap(calendar.date(from: DateComponents(
+            year: 2030, month: 1, day: 1, hour: 14, minute: 7
+        )))
+        let now = updatedAt.addingTimeInterval(30 * 60)
+
+        XCTAssertEqual(
+            WeatherGlance.freshness(updatedAt: updatedAt, now: now, languageStyle: .bokmal)?.label,
+            "Oppdatert 14:07"
+        )
+        XCTAssertEqual(
+            WeatherGlance.freshness(updatedAt: updatedAt, now: now, languageStyle: .inntrondersk)?.label,
+            "Oppdatert 14:07"
+        )
+        XCTAssertEqual(
+            WeatherGlance.freshness(updatedAt: updatedAt, now: now, languageStyle: .english)?.label,
+            "Updated 14:07"
+        )
+    }
+
     func testGlanceEventNamesAreReadableAndLocalized() {
         let rain = WeatherStatus(
             ruleID: UUID(), type: .regn, text: "Regn", eventAt: base, isNow: false

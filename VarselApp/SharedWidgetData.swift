@@ -89,7 +89,10 @@ enum WeatherGlance {
             return Freshness(label: label, isStale: true)
         }
 
-        let time = updatedAt.formatted(.dateTime.hour().minute())
+        let localeIdentifier = languageStyle == .english ? "en_GB" : "nb_NO"
+        let time = updatedAt.formatted(
+            .dateTime.hour().minute().locale(Locale(identifier: localeIdentifier))
+        )
         let label = languageStyle == .english ? "Updated \(time)" : "Oppdatert \(time)"
         return Freshness(label: label, isStale: false)
     }

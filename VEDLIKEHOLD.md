@@ -592,12 +592,12 @@ bruker verken BGTaskScheduler eller en faktisk bakgrunnsoppgave. Swift-parsing
 og diffkontroll består; XCTest er blokkert fordi CoreSimulatorService ikke er
 tilgjengelig.
 
-**AUTO-517 · ÅPEN** — Formater «Oppdatert»-klokkeslett etter språkstilen i
-snapshotet, ikke bare enhetens locale. `WeatherGlance.freshness` setter allerede
-engelsk/norsk tekst rundt tidspunktet, men `Date.formatted` arver systemlocale;
-med engelsk apptekst på norsk enhet kan klokkeslettets skilletegn og 12/24-timers
-visning derfor avvike. Velg en deterministisk locale per språkstil og test begge
-stilene uten å endre ferskhetsgrensen eller stale-advarselen.
+**AUTO-517 · FULLFØRT 2026-10-12** — «Oppdatert»-klokkeslettet bruker nå en
+fast locale som følger snapshotets språkstil: britisk engelsk for engelsk tekst
+og norsk for bokmål/inntrøndersk. Tidssonen forblir enhetens lokale tid.
+Regresjon dekker klokkeslettene «14:07» i begge språkstiler. Swift-parsing,
+formatprøve med Foundation og diffkontroll består; XCTest er blokkert fordi
+CoreSimulatorService ikke er tilgjengelig.
 
 **AUTO-518 · ÅPEN** — Lokaliser Watch-appens feil ved mislykket manuell
 oppdatering etter snapshotets språkstil. `WatchWeatherStore.refresh()` setter
@@ -614,6 +614,14 @@ usammenhengende timer ved nettverksoppdatering, men denne kontrollen brukes ikke
 ved lokal gjenoppretting. Avgrens tidsvalideringen slik at gamle, men nyttige
 cachedata fortsatt kan vises, marker korrupte cachedata for reparasjon, og dekk
 usorterte, dupliserte og urimelig langt-frem-i-tid-timer med regresjoner.
+
+**AUTO-520 · ÅPEN** — Avvis eller merk urimelig fremtidige
+`WidgetWeatherSnapshot.updatedAt`-verdier. Snapshot-dekodingen godtar nå
+tidspunktet ukritisk, og `WeatherGlance.freshness` klemmer negativ alder til
+null og viser datoen som en fersk oppdatering. Store har allerede en grense for
+fremtidige hentetidspunkter, men delte Watch/widget-data går utenom den.
+Gjenbruk en tydelig fremtidsgrense ved snapshot-gjenoppretting, behold vanlig
+stale-oppførsel, og dekk grenseverdien samt en klart fremtidig timestamp.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med
