@@ -7566,7 +7566,15 @@ final class PlannerTests: XCTestCase {
         let old = LogEntry(time: base.addingTimeInterval(-73 * 3_600), text: "gammel")
         let recent = LogEntry(time: base.addingTimeInterval(-1 * 3_600), text: "ny")
         let future = LogEntry(time: base.addingTimeInterval(60), text: "framtidig")
-        XCTAssertEqual(Store.retainedLog([recent, old, future], now: base).map(\.text), ["ny"])
+        let olderRecent = LogEntry(time: base.addingTimeInterval(-2 * 3_600), text: "eldre ny")
+        XCTAssertEqual(
+            Store.retainedLog([olderRecent, recent, old, future], now: base).map(\.text),
+            ["ny", "eldre ny"]
+        )
+        XCTAssertEqual(
+            Store.retainedLog([olderRecent, recent], now: base, maxCount: 1).map(\.text),
+            ["ny"]
+        )
     }
 
     @MainActor

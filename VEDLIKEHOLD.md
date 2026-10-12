@@ -761,11 +761,12 @@ SwiftUI-identitet og at dedupliseringen vedvarer etter lagring. Swift-parsing
 og JSON/diffkontroll besto; XCTest er blokkert av manglende
 CoreSimulatorService/runtime.
 
-**AUTO-541 · ÅPEN** — Velg de 50 nyeste varslingsloggoppføringene også når
-lagret rekkefølge er uventet. `retainedLog` filtrerer datoer, men bruker deretter
-`prefix(maxCount)` uten sortering; et usortert eldre arkiv kan derfor beholde
-eldre rader og forkaste nyere. Legg til en rekkefølgetest og normaliser
-gjenopprettet visning til nyeste-først.
+**AUTO-541 · FULLFØRT 2026-10-12** — `retainedLog` sorterer nå gyldige
+oppføringer nyeste-først før `prefix(maxCount)`. Regresjonen bruker usortert
+input og bekrefter både rekkefølgen og at kapptellingen velger nyeste rad.
+Swift-parsing, JSON-validering og `git diff --check` besto; XCTest er blokkert
+fordi CoreSimulatorService/runtime ikke er tilgjengelig. End-to-end-test av
+gjenoppretting/persistens står separat i AUTO-543.
 
 **AUTO-542 · ÅPEN** — Lokaliser «Oppdateringslogg»-skjermen og nye
 varslingsplanresultater for engelsk språkstil. `UpdateLogView` og
@@ -773,10 +774,15 @@ varslingsplanresultater for engelsk språkstil. `UpdateLogView` og
 valgt språkstil; test tom-, vellykket- og feilet planvisning på engelsk uten å
 endre lagret historikk retroaktivt.
 
-**AUTO-543 · ÅPEN** — Kontroller at varslingshistorikken beholder de nyeste
-50 radene når lagret logg er usortert. `retainedLog` tar foreløpig de første
-radene etter datofilteret; eldre arkivrekkefølge kan dermed fortrenge nyere
-oppføringer. Test både valgt innhold og nyeste-først-rekkefølge ved gjenoppretting.
+**AUTO-543 · ÅPEN** — Legg til en Store-gjenopprettingstest for usortert
+varslingshistorikk som bekrefter at de 50 nyeste radene både vises og persisteres
+i nyeste-først-rekkefølge. AUTO-541 tester sortering og utvalg direkte i
+hjelpefunksjonen; denne testen dekker hele restore-/lagringsbanen.
+
+**AUTO-544 · ÅPEN** — Lås tidsgrensene i `retainedLog`: oppføringer nøyaktig ved
+72-timersgrensen og `now` beholdes, mens oppføringer rett utenfor vinduet
+forkastes. Dette beskytter den inklusive nedre grensen og eksklusive framtidige
+verdier uavhengig av sorteringsrekkefølgen.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

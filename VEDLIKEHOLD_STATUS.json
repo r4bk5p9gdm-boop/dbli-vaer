@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T21:21:35Z",
+  "lastScheduledStart": "2026-10-12T21:50:58Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-540 fullført 2026-10-12: PersistedStoreState dedupliserer nå LogEntry-ID-er, flagger reparasjonen og Store lagrer den rene historikken ved oppstart; repair-flagget kombineres slik at logg- og cache-reparasjon ikke kan overskrive hverandre. Regresjon tester to distinkte meldinger med samme ID og persistens etter restore. Swift-parsing og JSON/diffkontroll besto; XCTest blokkert fordi CoreSimulatorService/runtime ikke er tilgjengelig. Bred køgjennomgang bekreftet et nært, men separat problem: retainedLog tar 50 første etter filter og forutsetter sortert lagring; AUTO-543 lagt til for nyeste-først-retensjon ved uordnet historikk. Åpne kønumre etter full skann: AUTO-541, AUTO-542, AUTO-543."
+  "lastProgress": "AUTO-541 fullført 2026-10-12: retainedLog sorterer nå gyldige oppføringer nyeste-først før kapptelling; regresjonstesten verifiserer rekkefølge og valg av nyeste ved maxCount. Swift-parsing, jq JSON-validering og git diff --check besto; XCTest blokkert fordi CoreSimulatorService/runtime ikke er tilgjengelig. Store-gjenopprettingstest står separat som AUTO-543; grenseverdier står som AUTO-544. Full køskann viser at alle BRUKER-oppgaver enten er FULLFØRT eller PÅ VENT. Neste åpne kønumre: AUTO-542, AUTO-543, AUTO-544."
 }
