@@ -690,6 +690,39 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(snapshot.forecast, [expectedFirst, second])
     }
 
+    func testWidgetSnapshotRejectsOnlyImplausiblyFutureUpdateTimes() throws {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let hour = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 30, dew: 4)
+        let tolerance = Store.forecastFutureTimestampTolerance
+
+        func encodedSnapshot(updatedAt: Date) throws -> Data {
+            try JSONEncoder().encode(WidgetWeatherSnapshot(
+                place: place, forecast: [hour], updatedAt: updatedAt
+            ))
+        }
+
+        let decoder = WidgetWeatherSnapshot.decoder(referenceDate: base)
+        XCTAssertNoThrow(try decoder.decode(
+            WidgetWeatherSnapshot.self,
+            from: encodedSnapshot(updatedAt: base.addingTimeInterval(tolerance))
+        ))
+        XCTAssertThrowsError(try decoder.decode(
+            WidgetWeatherSnapshot.self,
+            from: encodedSnapshot(updatedAt: base.addingTimeInterval(tolerance + 1))
+        ))
+
+        let staleTime = base.addingTimeInterval(-WeatherGlance.staleAfter - 1)
+        let stale = try decoder.decode(
+            WidgetWeatherSnapshot.self,
+            from: encodedSnapshot(updatedAt: staleTime)
+        )
+        XCTAssertEqual(
+            WeatherGlance.freshness(updatedAt: stale.updatedAt, now: base)?.isStale,
+            true,
+            "A stale snapshot remains available so the normal stale warning can be shown"
+        )
+    }
+
     @MainActor
     func testStoreRestoresHealthyForecastsAroundCorruptAndUnknownEntries() throws {
         let persistenceKey = "varsel.test.store-corrupt-forecast-entry.\(UUID().uuidString)"

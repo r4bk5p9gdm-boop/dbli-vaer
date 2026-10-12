@@ -614,13 +614,13 @@ usorterte/dupliserte timer, en time elleve dager etter hentetid, reparasjonsflag
 og samme filtrering i snapshot. Swift-parsing og diffkontroll består; XCTest er
 blokkert fordi CoreSimulatorService ikke er tilgjengelig.
 
-**AUTO-520 · ÅPEN** — Avvis eller merk urimelig fremtidige
-`WidgetWeatherSnapshot.updatedAt`-verdier. Snapshot-dekodingen godtar nå
-tidspunktet ukritisk, og `WeatherGlance.freshness` klemmer negativ alder til
-null og viser datoen som en fersk oppdatering. Store har allerede en grense for
-fremtidige hentetidspunkter, men delte Watch/widget-data går utenom den.
-Gjenbruk en tydelig fremtidsgrense ved snapshot-gjenoppretting, behold vanlig
-stale-oppførsel, og dekk grenseverdien samt en klart fremtidig timestamp.
+**AUTO-520 · FULLFØRT 2026-10-12** — Watch/widget-snapshotdekoding bruker nå
+samme femminutters framtidstoleranse som Store. Urealistisk framtidige
+`updatedAt` avvises i delte lagrings- og Watch-overføringsbaner; grenseverdien
+godtas, og gamle snapshots beholdes så vanlig stale-advarsel fortsatt vises.
+Regresjon dekker grensen, ett sekund over og stale-data. Swift-parsing og
+diffkontroll består; XCTest er blokkert fordi CoreSimulatorService ikke er
+tilgjengelig.
 
 **AUTO-521 · ÅPEN** — Rund stale-friskhetsalderen opp slik at advarselen ikke
 underrapporterer hvor lenge prognosen har vært gammel. `WeatherGlance.freshness`
@@ -636,6 +636,13 @@ radartidspunkt, men cachevalideringen gjør ikke det; `Planner` bruker prøvene
 direkte til å beregne intervall og tidspunkt for regn-/snøvarsler. Behold prøven
 med høyest rate for hvert tidspunkt etter bucket-filtrering, marker cachedata
 som endret for reparasjon, og dekk gjentatte prøver med ulike rater i regresjon.
+
+**AUTO-523 · ÅPEN** — Avgrens Watch-overføringens `sentAt` før den lagres som
+`lastTransferAt`. Overføringspolicyen kontrollerer bare at tidspunktet er nyere
+enn forrige mottak; en korrupt eller urimelig framtidig envelope kan derfor
+forhindre alle senere gyldige oppdateringer. Gjenbruk snapshotets femminutters
+framtidstoleranse uten å avvise ordinære eldre snapshots, og test grensen,
+overskridelse og at et avvist tidspunkt ikke forgifter neste mottak.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

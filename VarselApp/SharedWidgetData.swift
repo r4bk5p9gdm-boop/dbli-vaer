@@ -219,6 +219,8 @@ enum WatchWeatherCopy {
 }
 
 struct WidgetWeatherSnapshot: Codable {
+    private static let validationReferenceDateKey = CodingUserInfoKey(rawValue: "WidgetWeatherSnapshot.validationReferenceDate")!
+
     let place: Place
     let forecast: [ForecastHour]
     let updatedAt: Date
@@ -227,6 +229,12 @@ struct WidgetWeatherSnapshot: Codable {
 
     private enum CodingKeys: String, CodingKey {
         case place, forecast, updatedAt, languageStyle, textSeparator
+    }
+
+    static func decoder(referenceDate: Date = Date()) -> JSONDecoder {
+        let decoder = JSONDecoder()
+        decoder.userInfo[validationReferenceDateKey] = referenceDate
+        return decoder
     }
 
     init(
@@ -247,6 +255,14 @@ struct WidgetWeatherSnapshot: Codable {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         place = try values.decode(Place.self, forKey: .place)
         updatedAt = try values.decode(Date.self, forKey: .updatedAt)
+        if let referenceDate = decoder.userInfo[Self.validationReferenceDateKey] as? Date,
+           updatedAt.timeIntervalSince(referenceDate) > Store.forecastFutureTimestampTolerance {
+            throw DecodingError.dataCorruptedError(
+                forKey: .updatedAt,
+                in: values,
+                debugDescription: "Snapshot update time is implausibly far in the future."
+            )
+        }
         forecast = ForecastHour.sanitizedCacheSequence(
             try values.decode([ForecastHour].self, forKey: .forecast),
             fetchedAt: updatedAt
@@ -361,7 +377,7 @@ enum SharedWidgetData {
 
     static func load() -> WidgetWeatherSnapshot? {
         guard let data = withDefaults({ $0.data(forKey: snapshotKey) }) ?? nil else { return nil }
-        return try? JSONDecoder().decode(WidgetWeatherSnapshot.self, from: data)
+        return try? WidgetWeatherSnapshot.decoder().decode(WidgetWeatherSnapshot.self, from: data)
     }
 
     static func clear() {
