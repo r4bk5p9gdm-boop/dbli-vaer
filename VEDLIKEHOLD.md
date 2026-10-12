@@ -573,18 +573,23 @@ komplikasjonens relative tid bruker alltid «om … m/t», også med engelsk
 snapshot. Trekk tekstene ut i delte rene funksjoner og dekk engelsk og norsk
 uten å endre tidsberegning eller widgetenes kompakte oppsett.
 
-**BRUKER-148 · ÅPEN** — Vis sted og prognosens ferskhet tydelig på Watch,
-widgets og CarPlay, med «sist oppdatert» når dataene eldes og en diskret
-utdatert-markering når snapshotet ikke lenger er ferskt. Bruk snapshotets
-eksisterende steds- og tidsstempeldata.
+**AUTO-515 · ÅPEN** — Lokaliser Watch-appens seksjonsoverskrifter og tomtilstand
+etter snapshotets språkstil. «Neste 12 timer», «Nå» og «Ingen aktuelle
+hendelser» er fortsatt norske strenger selv når Watch mottar et engelsk
+snapshot. Trekk kopien ut i en ren funksjon og dekk bokmål, inntrøndersk og
+engelsk uten å endre skjermens oppsett.
 
-**BRUKER-149 · ÅPEN** — Gjør Watch-varslingslisten forståelig uten å måtte
-tolke symbolene: vis værtype og klokkeslett per hendelse, behold temperatur og
-værikon øverst, og flytt duggpunkt ut av første blikk.
+**BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
+BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med
+alder og advarsel når snapshotet er utdatert.
 
-**BRUKER-150 · ÅPEN** — Prioriter CarPlays neste varslede hendelse med en
-lesbar nedtelling, vis høyst et par påfølgende hendelser og hold siste
-oppdatering diskret, slik at den viktigste informasjonen kan oppfattes raskt.
+**BRUKER-149 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
+BRUKER-147: Watch viser navn og klokkeslett for hendelsene, mens duggpunktet
+ligger i den lavere «Nå»-delen.
+
+**BRUKER-150 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
+BRUKER-147: CarPlay-widgeten prioriterer de to neste hendelsene med lesbar
+nedtelling og diskret oppdateringsstatus.
 
 **AUTO-455 · FULLFØRT 2026-10-10** — Valider geografiske koordinater ved gjenoppretting og
 før prognoseforespørsler. `Place` avviser nå koordinatpar utenfor gyldig

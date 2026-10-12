@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T11:31:08Z",
+  "lastScheduledStart": "2026-10-12T11:46:08Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-512 fullført 2026-10-12: Replanleggingssignaturen inkluderer kalenderidentitet, tidssone, locale og ukestart, og appaktivering ber Store replanlegge selv når varslingstillatelsen er uendret. Dette fanger tidssonebytte uten å hente fersk prognose på nytt. Regresjon dekker tidssone og ukestart. Swift-parsing, prosjektfilkontroll, JSON- og diffkontroll består; XCTest ikke kjørt. Bred gjennomgang av oppstart, lagring, bakgrunnsoppdatering, varselplanlegging og Watch/widget fulgte opp brukerens godkjente anbefalinger: tydelig datoferskhet (BRUKER-148), lesbar Watch-hendelsesliste (BRUKER-149) og fokusert CarPlay-hendelse/nedtelling (BRUKER-150). Neste kø: BRUKER-148, BRUKER-149, BRUKER-150."
+  "lastProgress": "BRUKER-148 til BRUKER-150 avklart 2026-10-12: Fullskanning viste at BRUKER-147 allerede leverer alle tre anbefalingene med regresjonsdekning, så duplikatene er dokumentert som fullført uten ny funksjonskode. Bred gjennomgang fant én separat språkglipp i Watch-appens norske seksjonsoverskrifter og tomtilstand ved engelsk snapshot; AUTO-515 lagt til. Diffkontroll og JSON-validering kjørt. Neste kø fra komplett liste: AUTO-513, AUTO-514, AUTO-515."
 }
