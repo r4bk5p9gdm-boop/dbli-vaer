@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T19:36:35Z",
+  "lastScheduledStart": "2026-10-12T19:51:35Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-533 fullført 2026-10-12: WatchTransferPolicy avviser nå payload over 256 KiB før dekoding. Testen dekker gyldig ti-døgnsprognose med radarprøver per time og gyldig JSON polstret over grensen. Swift-parsing og JSON/diffkontroll besto; XCTest blokkert fordi CoreSimulatorService/runtime ikke er tilgjengelig. La AUTO-536 til etter bred gjennomgang av appen: bekreft at Watch-clear erstatter en feilet ventende snapshot-overføring og ikke gjenoppliver slettet sted. Åpne kønumre etter full skann: AUTO-534, AUTO-535, AUTO-536."
+  "lastProgress": "AUTO-534 fullført 2026-10-12 som allerede implementert: testRainAndSnowAlertsSwitchExactlyAtOneDegree ble lagt til i commit 07f8495 og dekker neste flyttall under, eksakt 1 °C og neste over. Swift-parsing, JSON- og diffkontroll besto; XCTest ikke kjørt fordi CoreSimulatorService/runtime mangler. Bred gjennomgang fant separat oppstartsatferd i Store: gjenopprettet varslingslogg går rett til UI/lagring uten 72-timers/50-raders normalisering før replan. AUTO-537 lagt til. Åpne kønumre etter full skann: AUTO-535, AUTO-536, AUTO-537."
 }

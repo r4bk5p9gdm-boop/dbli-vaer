@@ -714,10 +714,10 @@ denne gyldige overføringen dekodes, mens samme gyldige JSON med overflødig
 whitespace over grensen avvises. Swift-parsing og JSON/diffkontroll besto;
 XCTest kunne ikke startes fordi CoreSimulatorService/runtime ikke er tilgjengelig.
 
-**AUTO-534 · ÅPEN** — Lås ned regn-/snøskiftet ved 1 °C med verdier rett under,
-nøyaktig på og rett over grensen. `AlertType.matches` bruker `temp > 1` for
-regn og `temp <= 1` for snø; presise tilstøtende verdier sikrer at ingen liten
-flyttalls- eller terskelendring gir dobbeltvarsel eller et hull i dekningen.
+**AUTO-534 · FULLFØRT 2026-10-12** — Regresjonstesten
+`testRainAndSnowAlertsSwitchExactlyAtOneDegree` var allerede levert i commit
+`07f8495`. Den tester `nextDown`, nøyaktig 1 °C og `nextUp`, og bekrefter at
+snøvarsel dekker temperaturer på/under grensen mens regnvarsel starter over.
 
 **AUTO-535 · ÅPEN** — Test at bevaring av ventende varsler respekterer grensen
 på 64 forespørsler når flere framtidige, gyldige requests finnes. Den aktive
@@ -730,6 +730,13 @@ rekkefølgen for nærmeste varsler og at eldre overskytende requests forkastes.
 beholder mislykket data for retry; test at `clear()` erstatter et ventende
 vær-snapshot med eksplisitt `snapshot: nil`, slik at retry aldri gjenoppliver
 det slettede stedet.
+
+**AUTO-537 · ÅPEN** — Fjern utløpte varslingsloggoppføringer også ved
+gjenoppretting. `Store` leser `p.log` direkte ved oppstart, mens `retainedLog`
+først brukes etter at en ny varslingsplan er kjørt; med manglende nettverk eller
+varslingstillatelse kan oppføringer eldre enn 72 timer og mer enn 50 rader bli
+stående synlige og lagret. Normaliser den gjenopprettede loggen med oppstartens
+injiserte `now` og test at oppryddingen ikke avhenger av en vellykket replan.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med
