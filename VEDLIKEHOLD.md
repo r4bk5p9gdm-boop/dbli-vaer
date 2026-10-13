@@ -894,6 +894,13 @@ Marker ugyldige toppnivåbeholdere for reparasjon og legg til regresjon som
 bekrefter at gyldige steder gjenopprettes, loggen normaliseres og JSON skrives
 tilbake ved oppstart.
 
+**AUTO-558 · FULLFØRT 2026-10-13** — En eksisterende `log`-nøkkel med feil
+beholdertype markerer nå lagret tilstand for reparasjon, også når stedene kan
+gjenopprettes. Oppstart skriver straks tilbake gyldige steder og en tom,
+normalisert logg. Regresjon dekker at original JSON erstattes ved første
+oppstart; Swift-parsing, JSON-validering og `git diff --check` besto. XCTest
+kunne ikke kjøres fordi CoreSimulatorService/runtime mangler.
+
 **AUTO-559 · ÅPEN** — `CalibrationHistory.load` ignorerer ukodelige bytes i
 UserDefaults-arkivet for kalibreringsprognoser. I motsetning til den separate
 observasjonsfilen blir den opprinnelige verdien ikke satt til side for mulig
@@ -906,6 +913,12 @@ fysisk gyldige time ved duplisert tidsstempel. For skadet eller sammensatt
 cache avhenger dermed værdata som vises og planlegges av rekkefølgen i arkivet,
 selv når samme gyldige rader finnes. Definer en deterministisk konfliktregel
 for like tidsstempler og test at omstokking gir identisk normalisert prognose.
+
+**AUTO-561 · ÅPEN** — `PersistedStoreState` tolererer feil beholdertype i
+`forecasts` og `forecastUpdatedAt` ved å bruke tomme ordbøker, men markerer
+ikke alltid tilstanden for reparasjon. Bevar gyldige steder ved gjenoppretting,
+marker feilformede toppnivåfelter og test at normaliserte cacheordbøker skrives
+tilbake ved oppstart.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

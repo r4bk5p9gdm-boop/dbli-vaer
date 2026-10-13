@@ -7868,6 +7868,37 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testStoreRestoreRepairsWrongTypeLogContainerImmediately() throws {
+        let persistenceKey = "varsel.test.restore-wrong-type-log-container.\(UUID().uuidString)"
+        let launchVersionKey = "varsel.launchPlacesVersion"
+        let previousLaunchVersion = UserDefaults.standard.object(forKey: launchVersionKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousLaunchVersion {
+                UserDefaults.standard.set(previousLaunchVersion, forKey: launchVersionKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: launchVersionKey)
+            }
+        }
+        UserDefaults.standard.set(9, forKey: launchVersionKey)
+        let placeID = UUID()
+        let malformedData = Data("""
+        {"places":[{"id":"\(placeID)","name":"Klinga","lat":64.4,"lon":11.4}],"selectedID":"\(placeID)","log":"not-an-array"}
+        """.utf8)
+        UserDefaults.standard.set(malformedData, forKey: persistenceKey)
+
+        let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey, now: base)
+
+        XCTAssertEqual(restored.places.map(\.id), [placeID])
+        XCTAssertEqual(restored.log, [])
+        let repairedData = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
+        XCTAssertNotEqual(repairedData, malformedData)
+        let repaired = try JSONDecoder().decode(PersistedStoreState.self, from: repairedData)
+        XCTAssertEqual(repaired.places.map(\.id), [placeID])
+        XCTAssertEqual(repaired.log, [])
+    }
+
+    @MainActor
     func testStoreRestoreRepairsAndPersistsDuplicatePlaceIDs() throws {
         let persistenceKey = "varsel.test.restore-deduplicates-place-ids.\(UUID().uuidString)"
         let launchVersionKey = "varsel.launchPlacesVersion"

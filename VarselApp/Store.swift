@@ -229,7 +229,20 @@ struct PersistedStoreState: Codable {
         } else {
             selectedID = nil
         }
-        let lossyLogEntries = (try? values.decode([LossyDecodable<LogEntry>].self, forKey: .log)) ?? []
+        let lossyLogEntries: [LossyDecodable<LogEntry>]
+        if values.contains(.log) {
+            do {
+                lossyLogEntries = try values.decode([LossyDecodable<LogEntry>].self, forKey: .log)
+            } catch {
+                // A present but malformed container is different from a
+                // legacy document with no log key: persist its normalization
+                // now instead of waiting for an unrelated later mutation.
+                lossyLogEntries = []
+                needsPersistedStateRepair = true
+            }
+        } else {
+            lossyLogEntries = []
+        }
         let decodedLog = lossyLogEntries.compactMap(\.value)
         var seenLogIDs = Set<UUID>()
         log = decodedLog.filter { seenLogIDs.insert($0.id).inserted }
