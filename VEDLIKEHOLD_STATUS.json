@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T23:27:41Z",
+  "lastScheduledStart": "2026-10-12T23:46:45Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-543 fullført 2026-10-12: Store markerer nå loggen som reparert også når retainedLog endrer rekkefølgen uten å endre antall. Restore-regresjonen starter med 51 oppføringer i motsatt tidsrekkefølge, og bekrefter at de 50 nyeste vises og persisteres nyeste-først, uten utløpte/framtidige rader. Swift-parsing, jq-validering og git diff --check besto; XCTest ikke kjørt fordi CoreSimulatorService/runtime mangler. Bred køgjennomgang etter nylig Store-/varsling-/språk-/Watch-arbeid fant parallelle manglende repair-flagg ved deduplisering av steds-ID-er i PersistedStoreState; AUTO-546 lagt til. Full køskann: BRUKER-oppgaver er fullført eller på vent. Neste åpne kønumre: AUTO-544, AUTO-545, AUTO-546."
+  "lastProgress": "AUTO-544 fullført 2026-10-12: retainedLog-regresjonen dekker eksakt 72-timersgrense, eksakt nåtid og prøver 1 ms utenfor hver grense; forventet er inklusiv nedre grense og eksklusiv framtid. Swift-parsing, jq-validering og git diff --check besto; XCTest ikke kjørt fordi CoreSimulatorService/runtime mangler. Bred gjennomgang av lagret tilstandsdekoding fant at ugyldige forecastUpdatedAt-verdier forkastes tapsfritt, men ikke alltid markerer arkivet for reparasjon; AUTO-547 lagt til ved siden av oppgaven om dupliserte steds-ID-er. Full køskann viser BRUKER-oppgaver fullført eller på vent. Neste åpne kønumre: AUTO-545, AUTO-546, AUTO-547."
 }

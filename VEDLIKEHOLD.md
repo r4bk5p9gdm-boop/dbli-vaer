@@ -783,10 +783,11 @@ nyeste-først-rekkefølge, uten utløpte eller framtidige rader. Swift-parsing,
 JSON-validering og `git diff --check` besto; XCTest kunne ikke kjøres fordi
 CoreSimulatorService/runtime mangler.
 
-**AUTO-544 · ÅPEN** — Lås tidsgrensene i `retainedLog`: oppføringer nøyaktig ved
-72-timersgrensen og `now` beholdes, mens oppføringer rett utenfor vinduet
-forkastes. Dette beskytter den inklusive nedre grensen og eksklusive framtidige
-verdier uavhengig av sorteringsrekkefølgen.
+**AUTO-544 · FULLFØRT 2026-10-12** — Regresjonen låser begge tidsgrensene i
+`retainedLog`: raden nøyaktig 72 timer gammel og raden ved `now` beholdes, mens
+rader 1 ms eldre og 1 ms i framtiden forkastes. Swift-parsing, JSON-validering
+og `git diff --check` besto; XCTest kunne ikke kjøres fordi
+CoreSimulatorService/runtime mangler.
 
 **AUTO-545 · ÅPEN** — Legg til regresjonstester for at nye
 varslingsplanresultater fortsatt følger inntrøndersk språkstil etter
@@ -799,6 +800,13 @@ dekoding, men setter ikke `needsPersistedStateRepair` når steder fjernes. Store
 kan dermed vise den dedupliserte listen uten å skrive den tilbake, og gjenta
 reparasjonen ved hver oppstart. Test at restore både beholder første forekomst
 og persisterer den unike listen.
+
+**AUTO-547 · ÅPEN** — Når `PersistedStoreState` dekoder en ugyldig
+`forecastUpdatedAt`-verdi, `LossyDecodable<Date>` forkaster den, men dekoderen
+markerer ikke nødvendigvis state som reparert. Hvis ingen annen normalisering
+utløser lagring, blir den korrupte tidsverdien stående på disk og forkastes på
+hvert oppstart. Legg til en fil-/restore-regresjon som bekrefter at ugyldig
+tidsstempel ryddes og at resten av prognosecachen bevares.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

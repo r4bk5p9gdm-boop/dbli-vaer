@@ -7575,6 +7575,16 @@ final class PlannerTests: XCTestCase {
             Store.retainedLog([olderRecent, recent], now: base, maxCount: 1).map(\.text),
             ["ny"]
         )
+
+        let cutoff = base.addingTimeInterval(-72 * 3_600)
+        let atCutoff = LogEntry(time: cutoff, text: "akkurat 72 timer")
+        let beforeCutoff = LogEntry(time: cutoff.addingTimeInterval(-0.001), text: "eldre enn 72 timer")
+        let atNow = LogEntry(time: base, text: "akkurat nå")
+        let justFuture = LogEntry(time: base.addingTimeInterval(0.001), text: "svakt i framtiden")
+        XCTAssertEqual(
+            Store.retainedLog([atCutoff, beforeCutoff, justFuture, atNow], now: base).map(\.text),
+            ["akkurat nå", "akkurat 72 timer"]
+        )
     }
 
     @MainActor
