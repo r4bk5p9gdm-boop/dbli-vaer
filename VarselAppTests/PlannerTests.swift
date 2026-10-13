@@ -83,6 +83,66 @@ private actor ForecastFetchCounter {
     func value() -> Int { storedValue }
 }
 
+private actor ForecastRefreshConcurrencyProbe {
+    private let concurrencyLimit: Int
+    private var activeRequests = 0
+    private var maximumConcurrentRequests = 0
+    private var startedLocations = Set<String>()
+    private var releaseWaiters: [CheckedContinuation<Void, Never>] = []
+    private var hasReleasedRequests = false
+    private var thresholdWaiter: CheckedContinuation<Bool, Never>?
+
+    init(concurrencyLimit: Int) {
+        self.concurrencyLimit = concurrencyLimit
+    }
+
+    func recordAndWait(latitude: Double, longitude: Double) async {
+        activeRequests += 1
+        maximumConcurrentRequests = max(maximumConcurrentRequests, activeRequests)
+        startedLocations.insert("\(Int((latitude * 10_000).rounded())):\(Int((longitude * 10_000).rounded()))")
+        if maximumConcurrentRequests >= concurrencyLimit {
+            thresholdWaiter?.resume(returning: true)
+            thresholdWaiter = nil
+        }
+
+        guard !hasReleasedRequests else {
+            activeRequests -= 1
+            return
+        }
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            releaseWaiters.append(continuation)
+        }
+        activeRequests -= 1
+    }
+
+    func waitForLimitOrTimeout() async -> Bool {
+        guard maximumConcurrentRequests < concurrencyLimit else { return true }
+        return await withCheckedContinuation { (continuation: CheckedContinuation<Bool, Never>) in
+            thresholdWaiter = continuation
+            Task {
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                await self.finishThresholdWaitIfNeeded()
+            }
+        }
+    }
+
+    func releaseAll() {
+        hasReleasedRequests = true
+        let waiters = releaseWaiters
+        releaseWaiters.removeAll()
+        waiters.forEach { $0.resume() }
+    }
+
+    func snapshot() -> (maximumConcurrentRequests: Int, startedLocations: Set<String>) {
+        (maximumConcurrentRequests, startedLocations)
+    }
+
+    private func finishThresholdWaitIfNeeded() {
+        thresholdWaiter?.resume(returning: maximumConcurrentRequests >= concurrencyLimit)
+        thresholdWaiter = nil
+    }
+}
+
 @MainActor
 final class PlannerTests: XCTestCase {
     func testReverseGeocoderTimeoutFallsBackAndIgnoresLateResponse() async {
@@ -12218,6 +12278,50 @@ final class PlannerTests: XCTestCase {
         )
         XCTAssertFalse(Store.isUsableForecast([]))
         XCTAssertTrue(Store.isUsableForecast(makeForecast(through: 2, precipitationOffsets: []), now: base))
+    }
+
+    @MainActor
+    func testRefreshLimitsConcurrentRequestsAndEventuallyFetchesEveryUniqueLocation() async {
+        let persistenceKey = "varsel.test.refresh-concurrency-limit.\(UUID().uuidString)"
+        defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
+
+        let places = (0..<11).map { index in
+            Place(name: "Sted \(index)", lat: 60 + Double(index), lon: 5 + Double(index))
+        }
+        let locations = Store.forecastLocations(in: places)
+        let concurrencyLimit = Store.forecastRequestConcurrencyLimit
+        let probe = ForecastRefreshConcurrencyProbe(concurrencyLimit: concurrencyLimit)
+        let store = Store(
+            forecastFetcher: { latitude, longitude in
+                await probe.recordAndWait(latitude: latitude, longitude: longitude)
+                return (1...6).map { offset in
+                    ForecastHour(
+                        time: Date().addingTimeInterval(TimeInterval(offset * 3_600)),
+                        temp: 8, precip: 0, wind: 2, cloud: 40, dew: 4
+                    )
+                }
+            },
+            persistenceKey: persistenceKey,
+            notificationRescheduler: { _, _, _, _, _ in
+                NotificationScheduleResult(requestedCount: 0, scheduledCount: 0, failedCount: 0, firstScheduledAt: nil)
+            }
+        )
+        store.places = places
+
+        let refresh = Task { @MainActor in await store.refreshAll() }
+        let reachedConcurrencyLimit = await probe.waitForLimitOrTimeout()
+        await probe.releaseAll()
+        let refreshSucceeded = await refresh.value
+        let snapshot = await probe.snapshot()
+        let expectedLocations = Set(locations.map {
+            "\($0.latitudeE4):\($0.longitudeE4)"
+        })
+
+        XCTAssertTrue(reachedConcurrencyLimit, "The first batch should exercise the configured request limit")
+        XCTAssertEqual(snapshot.maximumConcurrentRequests, concurrencyLimit)
+        XCTAssertEqual(snapshot.startedLocations, expectedLocations)
+        XCTAssertEqual(snapshot.startedLocations.count, locations.count)
+        XCTAssertTrue(refreshSucceeded)
     }
 
     @MainActor

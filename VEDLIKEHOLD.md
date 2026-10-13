@@ -840,11 +840,12 @@ med når den dekodede kopien kodes på nytt. Swift-parsing, JSON-validering og
 `git diff --check` besto; XCTest kunne ikke kjøres fordi CoreSimulatorService/
 runtime mangler.
 
-**AUTO-552 · ÅPEN** — `Store.performRefresh` begrenser samtidig Yr-forespørsler
-til fire koordinater, men testene verifiserer ikke denne ressursgrensen når
-flere steder oppdateres. Legg til en deterministisk regresjonstest som måler
-maksimalt antall samtidige kall og samtidig bekrefter at alle unike
-prognoseposisjoner til slutt behandles.
+**AUTO-552 · FULLFØRT 2026-10-13** — La til en deterministisk
+Store-regresjonstest med en kontrollert henteport. Den måler at fire Yr-kall
+kan være aktive samtidig, at samtidigheten ikke overskrider grensen, og at alle
+elleve unike prognoseposisjoner til slutt behandles. Swift-parsing,
+JSON-validering og `git diff --check` besto; XCTest kunne ikke kjøres fordi
+CoreSimulatorService/runtime mangler.
 
 **AUTO-553 · ÅPEN** — `BackgroundRefreshCompletionGate` er testet isolert,
 men `BackgroundRefresh.handle` kobler sammen oppgavens utløpscallback,
@@ -859,6 +860,12 @@ direkte planlegging. Legg til en deterministisk Store-regresjon som endrer
 justeringen mens Yr-prognosene ligger i cache, bekrefter at varselplanleggeren
 får de lokalt justerte verdiene uten nytt Yr-kall, og at et annet steds rådata
 ikke påvirkes.
+
+**AUTO-555 · ÅPEN** — Importen teller nå steder som ikke kan dekodes, men
+`WeatherConfigurationExport.uniquePlaces` fjerner også senere gyldige rader med
+duplisert steds-ID uten å ta med dem i forhåndsvisningens antall. Utvid
+diagnostikken slik at forhåndsvisningen varsler om begge typer forkastede
+rader, og test dupliserte ID-er sammen med et annet gyldig sted.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med
