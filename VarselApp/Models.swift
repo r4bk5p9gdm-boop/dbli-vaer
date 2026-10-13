@@ -1077,6 +1077,9 @@ struct ForecastHour: Codable, Identifiable, Hashable {
     // Yr responses are capped at nine days; one day of margin avoids rejecting
     // a legitimate boundary hour after the response was fetched.
     private static let cachedForecastMaximumHorizon: TimeInterval = 10 * 24 * 3_600
+    // Keep corrupt archives within the same generous upper bound as the
+    // location-forecast response, even when their timestamps are unusually dense.
+    private static let cachedForecastMaximumHourCount = YrService.maximumLocationForecastTimeSteps
 
     private static func cacheCompletenessScore(_ hour: ForecastHour) -> Int {
         let optionalValues: [Double?] = [
@@ -1124,7 +1127,8 @@ struct ForecastHour: Codable, Identifiable, Hashable {
                 uniqueByTime[hour.time] = hour
             }
         }
-        return uniqueByTime.keys.sorted().compactMap { uniqueByTime[$0] }.map { hour in
+        let retainedTimes = uniqueByTime.keys.sorted().suffix(cachedForecastMaximumHourCount)
+        return retainedTimes.compactMap { uniqueByTime[$0] }.map { hour in
             guard let samples = hour.radarSamples else { return hour }
             var sanitized = hour
             let end = hour.time.addingTimeInterval(3_600)

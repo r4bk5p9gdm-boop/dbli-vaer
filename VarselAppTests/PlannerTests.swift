@@ -874,6 +874,24 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(snapshot.forecast, [expectedFirst, second])
     }
 
+    func testPersistedForecastCacheCapsUniqueHoursAndKeepsNewestDeterministically() {
+        let limit = YrService.maximumLocationForecastTimeSteps
+        let hours = (0...limit).map { minute in
+            ForecastHour(
+                time: base.addingTimeInterval(TimeInterval(minute * 60)),
+                temp: 8, precip: 0, wind: 1, cloud: 30, dew: 4
+            )
+        }
+
+        let forward = ForecastHour.sanitizedCacheSequence(hours, fetchedAt: base)
+        let reversed = ForecastHour.sanitizedCacheSequence(Array(hours.reversed()), fetchedAt: base)
+
+        XCTAssertEqual(forward.count, limit)
+        XCTAssertEqual(forward, reversed)
+        XCTAssertEqual(forward.first?.time, hours[1].time, "Drop the oldest usable hour")
+        XCTAssertEqual(forward.last, hours.last)
+    }
+
     func testWidgetSnapshotRejectsOnlyImplausiblyFutureUpdateTimes() throws {
         let place = Place(name: "Klinga", lat: 64, lon: 11)
         let hour = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 30, dew: 4)

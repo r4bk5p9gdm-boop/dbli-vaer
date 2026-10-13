@@ -926,11 +926,13 @@ dekker begge egenskapene. Swift-parsing, JSON-validering og
 `git diff --check` besto; XCTest kunne ikke kjøres fordi CoreSimulatorService/
 runtime mangler.
 
-**AUTO-563 · ÅPEN** — `ForecastHour.sanitizedCacheSequence` begrenser hvert
-tidspunkt, men har ingen eksplisitt øvre grense for antall unike timer i et
-korrupt persistensarkiv. Sett en grense som samsvarer med støttet Yr-dekning og
-test at svært lange lokale cacher avkortes deterministisk uten å miste de
-nyeste brukbare timene.
+**AUTO-563 · FULLFØRT 2026-10-13** — `ForecastHour.sanitizedCacheSequence`
+begrenser nå antall unike timer til den sjenerøse 500-grensen som også brukes
+for Yr-locationforecastens tidssteg. Når et lokalt arkiv overskrider grensen,
+beholdes de nyeste brukbare tidene deterministisk etter eksisterende
+fysikk-, horisont- og duplikatfiltrering. Regresjon bruker 501 ulike tider
+innenfor horisonten og verifiserer grense, avkorting, nyeste time og uavhengighet
+av input-rekkefølge.
 
 **AUTO-564 · ÅPEN** — Hvis hele `varsel.state`-bloben ikke kan dekodes, eller
 dekodingen ikke gjenoppretter noen steder, starter `Store` med standardsteder
@@ -943,6 +945,12 @@ systemet spille varslingslyd, mens stille planer settes med `sound = nil` og
 passivt avbruddsnivå. Verifiser at forgrunnsvisning bevarer varselets
 individuelle lyd-/avbruddspolicy, og dekk både stille og lydvarsler med en
 testbar presentasjonspolicy.
+
+**AUTO-566 · ÅPEN** — Tøm-knappen i stedssøk viser bare SF Symbol-ikonet
+`xmark.circle.fill` og mangler eksplisitt VoiceOver-etikett, mens søkefeltet
+ellers er lokalisert. Legg til en språkriktig tilgjengelighetskopi for å tømme
+søk, og dekk label-valget med en liten test slik at ikonets form ikke er eneste
+beskrivelse av handlingen.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med
