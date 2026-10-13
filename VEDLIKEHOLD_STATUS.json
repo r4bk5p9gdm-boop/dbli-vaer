@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-12T23:46:45Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-544 fullført 2026-10-12: retainedLog-regresjonen dekker eksakt 72-timersgrense, eksakt nåtid og prøver 1 ms utenfor hver grense; forventet er inklusiv nedre grense og eksklusiv framtid. Swift-parsing, jq-validering og git diff --check besto; XCTest ikke kjørt fordi CoreSimulatorService/runtime mangler. Bred gjennomgang av lagret tilstandsdekoding fant at ugyldige forecastUpdatedAt-verdier forkastes tapsfritt, men ikke alltid markerer arkivet for reparasjon; AUTO-547 lagt til ved siden av oppgaven om dupliserte steds-ID-er. Full køskann viser BRUKER-oppgaver fullført eller på vent. Neste åpne kønumre: AUTO-545, AUTO-546, AUTO-547."
+  "lastProgress": "AUTO-545 fullført 2026-10-12: la til inntrøndersk regresjon for tom, vellykket, delvis og helt feilet varslingsplan, med tidsfrase ‘om to tima’. Swift-parsing, JSON-validering og git diff --check besto; XCTest ikke kjørt fordi CoreSimulatorService/runtime mangler. Bred gjennomgang fant en utilgjengelig fatalError for temperatur i engelskspråklig varselnavn; AUTO-548 lagt til som avgrenset robusthetsoppgave. Full køskann viser BRUKER-oppgaver fullført eller på vent. Neste åpne kønumre: AUTO-546, AUTO-547, AUTO-548."
 }

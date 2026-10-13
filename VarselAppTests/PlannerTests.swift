@@ -7812,6 +7812,42 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    @MainActor
+    func testNotificationPlanLogUsesInntronderskForEverySchedulingOutcome() {
+        XCTAssertEqual(
+            Store.notificationPlanLogText(
+                .init(requestedCount: 0, scheduledCount: 0, failedCount: 0, firstScheduledAt: nil),
+                languageStyle: .inntrondersk
+            ),
+            "Varslingsplan oppdatert – ingen varsler planlagt."
+        )
+        XCTAssertEqual(
+            Store.notificationPlanLogText(
+                .init(requestedCount: 3, scheduledCount: 0, failedCount: 3, firstScheduledAt: nil),
+                languageStyle: .inntrondersk
+            ),
+            "Kunne ikke aktivere 3 planlagte varsler."
+        )
+        XCTAssertEqual(
+            Store.notificationPlanLogText(
+                .init(requestedCount: 3, scheduledCount: 2, failedCount: 1, firstScheduledAt: nil),
+                languageStyle: .inntrondersk
+            ),
+            "Varslingsplan delvis oppdatert – 2 av 3 varsler aktivert."
+        )
+
+        let result = NotificationScheduleResult(
+            requestedCount: 2,
+            scheduledCount: 2,
+            failedCount: 0,
+            firstScheduledAt: Date().addingTimeInterval(2 * 3_600)
+        )
+        let text = Store.notificationPlanLogText(result, languageStyle: .inntrondersk)
+        XCTAssertTrue(text.hasPrefix("Varslingsplan oppdatert – 2 varsler planlagt, første "))
+        XCTAssertTrue(text.hasSuffix("om to tima."))
+        XCTAssertFalse(text.hasSuffix("om to timer."))
+    }
+
     func testWatchTransferRoundTripsLatestSnapshotAndExplicitClear() throws {
         let place = Place(name: "Namsos", lat: 64.5, lon: 11.5)
         let snapshot = WidgetWeatherSnapshot(

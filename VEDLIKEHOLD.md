@@ -789,11 +789,13 @@ rader 1 ms eldre og 1 ms i framtiden forkastes. Swift-parsing, JSON-validering
 og `git diff --check` besto; XCTest kunne ikke kjøres fordi
 CoreSimulatorService/runtime mangler.
 
-**AUTO-545 · ÅPEN** — Legg til regresjonstester for at nye
+**AUTO-545 · FULLFØRT 2026-10-12** — La til regresjonstester for at nye
 varslingsplanresultater fortsatt følger inntrøndersk språkstil etter
 lokaliseringen. `notificationPlanLogText` går nå gjennom `WeatherLanguage` for
-ikke-engelsk stil; test tom, fullført, delvis og feilet plan med tellere og
-tidsfrase, mens historiske loggoppføringer skal forbli urørt.
+tom, fullført, delvis og feilet plan. Den vellykkede planen kontrollerer også
+første tidsfrase «om to tima»; historiske loggoppføringer forblir urørt.
+Swift-parsing, JSON-validering og `git diff --check` besto; XCTest kunne ikke
+kjøres fordi CoreSimulatorService/runtime mangler.
 
 **AUTO-546 · ÅPEN** — `PersistedStoreState` fjerner gjentatte steds-ID-er ved
 dekoding, men setter ikke `needsPersistedStateRepair` når steder fjernes. Store
@@ -807,6 +809,12 @@ markerer ikke nødvendigvis state som reparert. Hvis ingen annen normalisering
 utløser lagring, blir den korrupte tidsverdien stående på disk og forkastes på
 hvert oppstart. Legg til en fil-/restore-regresjon som bekrefter at ugyldig
 tidsstempel ryddes og at resten av prognosecachen bevares.
+
+**AUTO-548 · ÅPEN** — `NotificationScheduler.localizedWeatherName` bruker
+`fatalError` for `.temperatur` i den engelske `switch`-grenen, selv om metoden
+har en forutgående temperaturgren som gjør fallet utilgjengelig i dag. Fjern
+den skjøre krasjbanen uten å endre dagens språkvalg, og dekk engelske over- og
+under-temperaturvarsler gjennom den offentlige meldingsflyten.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med
