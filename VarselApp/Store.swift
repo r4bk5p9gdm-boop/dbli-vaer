@@ -214,10 +214,13 @@ struct PersistedStoreState: Codable {
 
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
-        let decodedPlaces = (try? values.decode([LossyDecodable<Place>].self, forKey: .places))?.compactMap(\.value) ?? []
+        let lossyPlaceEntries = (try? values.decode([LossyDecodable<Place>].self, forKey: .places)) ?? []
+        let decodedPlaces = lossyPlaceEntries.compactMap(\.value)
         var seenPlaceIDs = Set<UUID>()
         places = decodedPlaces.filter { seenPlaceIDs.insert($0.id).inserted }
-        if places.count != decodedPlaces.count { needsPersistedStateRepair = true }
+        if decodedPlaces.count != lossyPlaceEntries.count || places.count != decodedPlaces.count {
+            needsPersistedStateRepair = true
+        }
         let decodedSelection = try? values.decode(UUID.self, forKey: .selectedID)
         if let decodedSelection {
             selectedID = places.contains(where: { $0.id == decodedSelection })
@@ -226,10 +229,13 @@ struct PersistedStoreState: Codable {
         } else {
             selectedID = nil
         }
-        let decodedLog = (try? values.decode([LossyDecodable<LogEntry>].self, forKey: .log))?.compactMap(\.value) ?? []
+        let lossyLogEntries = (try? values.decode([LossyDecodable<LogEntry>].self, forKey: .log)) ?? []
+        let decodedLog = lossyLogEntries.compactMap(\.value)
         var seenLogIDs = Set<UUID>()
         log = decodedLog.filter { seenLogIDs.insert($0.id).inserted }
-        if log.count != decodedLog.count { needsPersistedStateRepair = true }
+        if decodedLog.count != lossyLogEntries.count || log.count != decodedLog.count {
+            needsPersistedStateRepair = true
+        }
         let lossyTimestamps = (try? values.decode([UUID: LossyDecodable<Date>].self, forKey: .forecastUpdatedAt)) ?? [:]
         forecastUpdatedAt = lossyTimestamps.compactMapValues(\.value)
         if forecastUpdatedAt.count != lossyTimestamps.count { needsPersistedStateRepair = true }

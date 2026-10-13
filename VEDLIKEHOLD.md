@@ -871,12 +871,13 @@ antallet forkastede rader vises. Swift-parsing, JSON-validering og
 `git diff --check` besto; XCTest kunne ikke kjøres fordi CoreSimulatorService/
 runtime mangler.
 
-**AUTO-556 · ÅPEN** — `PersistedStoreState` hopper over ugyldige sted- og
-loggrader via `LossyDecodable`, men setter ikke alltid
-`needsPersistedStateRepair` når dekodingen forkaster slike rader. En skadet
-lagret rad kan derfor bli forkastet på hver oppstart uten at den normaliserte
-tilstanden skrives tilbake. Tell forkastede rader eksplisitt, marker tilstanden
-for reparasjon og legg til regresjoner for både steder og loggoppføringer.
+**AUTO-556 · FULLFØRT 2026-10-13** — `PersistedStoreState` markerer nå
+reparasjon når `LossyDecodable` forkaster feilformede sted- eller loggrader,
+og fortsatt når dupliserte ID-er fjernes. Store-regresjonen bekrefter at gyldige
+steder og loggoppføringer overlever, de feilformede radene faller bort og den
+normaliserte tilstanden skrives tilbake ved oppstart. Swift-parsing,
+`git diff --check` og JSON-validering besto; XCTest kunne ikke kjøres fordi
+CoreSimulatorService/runtime mangler.
 
 **AUTO-557 · ÅPEN** — Eget stedsnavn kan redigeres fritt i Steder-visningen,
 og `Place`-dekoderen beholder det uten lengdegrense. En importfil innenfor
@@ -892,6 +893,13 @@ normaliserte loggen først skrevet tilbake ved en senere, urelatert lagring.
 Marker ugyldige toppnivåbeholdere for reparasjon og legg til regresjon som
 bekrefter at gyldige steder gjenopprettes, loggen normaliseres og JSON skrives
 tilbake ved oppstart.
+
+**AUTO-559 · ÅPEN** — `CalibrationHistory.load` ignorerer ukodelige bytes i
+UserDefaults-arkivet for kalibreringsprognoser. I motsetning til den separate
+observasjonsfilen blir den opprinnelige verdien ikke satt til side for mulig
+gjenoppretting, og en senere lagring kan overskrive den. Bevar en skadet
+prognoseblob før normal videre bruk og test at observasjoner kan lastes videre
+og at originalbytes fortsatt kan gjenfinnes.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

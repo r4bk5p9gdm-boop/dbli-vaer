@@ -7828,6 +7828,46 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testStoreRestorePersistsLossyPlaceAndLogRows() throws {
+        let persistenceKey = "varsel.test.restore-lossy-place-and-log-rows.\(UUID().uuidString)"
+        let launchVersionKey = "varsel.launchPlacesVersion"
+        let previousLaunchVersion = UserDefaults.standard.object(forKey: launchVersionKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousLaunchVersion {
+                UserDefaults.standard.set(previousLaunchVersion, forKey: launchVersionKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: launchVersionKey)
+            }
+        }
+        UserDefaults.standard.set(9, forKey: launchVersionKey)
+
+        let validPlaceID = UUID()
+        let invalidPlaceID = UUID()
+        let validLogID = UUID()
+        let logTimestamp = base.timeIntervalSinceReferenceDate
+        let data = Data("""
+        {"places":[
+          {"id":"\(validPlaceID)","name":"Klinga","lat":64.4,"lon":11.4},
+          {"id":"\(invalidPlaceID)","name":"Ugyldig","lat":91,"lon":0}
+        ],"selectedID":"\(validPlaceID)","log":[
+          {"id":"\(validLogID)","time":\(logTimestamp),"text":"beholdt"},
+          {"time":\(logTimestamp),"text":42}
+        ]}
+        """.utf8)
+        UserDefaults.standard.set(data, forKey: persistenceKey)
+
+        let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey, now: base)
+
+        XCTAssertEqual(restored.places.map(\.id), [validPlaceID])
+        XCTAssertEqual(restored.log.map(\.text), ["beholdt"])
+        let repairedData = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
+        let repaired = try JSONDecoder().decode(PersistedStoreState.self, from: repairedData)
+        XCTAssertEqual(repaired.places.map(\.id), [validPlaceID])
+        XCTAssertEqual(repaired.log.map(\.id), [validLogID])
+    }
+
+    @MainActor
     func testStoreRestoreRepairsAndPersistsDuplicatePlaceIDs() throws {
         let persistenceKey = "varsel.test.restore-deduplicates-place-ids.\(UUID().uuidString)"
         let launchVersionKey = "varsel.launchPlacesVersion"
@@ -8707,6 +8747,7 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(state.places[0].rules[0].activeFromHour, 7)
         XCTAssertTrue(state.places[0].areNotificationsEnabled)
         XCTAssertTrue(state.log.isEmpty)
+        XCTAssertTrue(state.needsPersistedStateRepair)
     }
 
     func testLegacyNamesForLanguageAndWeatherTypesRemainReadable() throws {
