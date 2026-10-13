@@ -2478,12 +2478,12 @@ struct PlacesView: View {
                     )
                     if configuration.discardedPlaceCount > 0 {
                         LabeledContent(
-                            localized("Ugyldige steder hoppet over", english: "Invalid places skipped"),
+                            localized("Steder hoppet over", english: "Places skipped"),
                             value: "\(configuration.discardedPlaceCount)"
                         )
                         Text(localized(
-                            "Noen steder kunne ikke leses og blir ikke gjenopprettet. Kontroller kopien før du erstatter oppsettet.",
-                            english: "Some places could not be read and will not be restored. Review the backup before replacing your setup."
+                            "Noen steder ble hoppet over fordi de var ugyldige eller hadde duplisert ID. Kontroller kopien før du erstatter oppsettet.",
+                            english: "Some places were skipped because they were invalid or had duplicate IDs. Review the backup before replacing your setup."
                         ))
                         .font(.footnote)
                         .foregroundStyle(.orange)

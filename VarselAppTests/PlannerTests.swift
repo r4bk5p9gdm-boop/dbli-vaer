@@ -9194,6 +9194,7 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(imported.places.map(\.id), [duplicateID, other.id])
         XCTAssertEqual(imported.places.map(\.name), ["Første", "Annet sted"])
         XCTAssertEqual(imported.selectedPlaceID, duplicateID)
+        XCTAssertEqual(imported.discardedPlaceCount, 1)
     }
 
     func testConfigurationImportRejectsMissingOrWrongTypePlacesField() throws {

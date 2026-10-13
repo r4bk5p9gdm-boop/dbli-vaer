@@ -97,8 +97,9 @@ struct WeatherConfigurationExport: Codable {
     let alertLanguageStyle: AlertLanguageStyle?
     let appSettings: ApplicationSettingsBackup?
     let places: [Place]
-    /// Number of malformed place entries skipped while decoding an imported backup.
-    /// This is import-preview metadata, so it is intentionally not encoded again.
+    /// Number of place entries skipped while decoding an imported backup,
+    /// including malformed entries and duplicate IDs. Import-preview metadata
+    /// is intentionally not encoded again.
     let discardedPlaceCount: Int
 
     init(
@@ -121,9 +122,18 @@ struct WeatherConfigurationExport: Codable {
         return places.first?.id
     }
 
-    private static func uniquePlaces(_ places: [Place]) -> [Place] {
+    private static func uniquePlaces(_ places: [Place]) -> (places: [Place], discardedCount: Int) {
         var seenIDs = Set<UUID>()
-        return places.filter { seenIDs.insert($0.id).inserted }
+        var uniquePlaces: [Place] = []
+        var discardedCount = 0
+        for place in places {
+            if seenIDs.insert(place.id).inserted {
+                uniquePlaces.append(place)
+            } else {
+                discardedCount += 1
+            }
+        }
+        return (uniquePlaces, discardedCount)
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -145,11 +155,13 @@ struct WeatherConfigurationExport: Codable {
         alertLanguageStyle = try? values.decode(AlertLanguageStyle.self, forKey: .alertLanguageStyle)
         appSettings = try? values.decode(ApplicationSettingsBackup.self, forKey: .appSettings)
         let decodedPlaceEntries = try values.decode([LossyDecodable<Place>].self, forKey: .places)
-        discardedPlaceCount = decodedPlaceEntries.reduce(into: 0) { count, entry in
+        let malformedPlaceCount = decodedPlaceEntries.reduce(into: 0) { count, entry in
             if entry.value == nil { count += 1 }
         }
         let decodedPlaces = decodedPlaceEntries.compactMap(\.value)
-        places = Self.uniquePlaces(decodedPlaces)
+        let uniquePlaces = Self.uniquePlaces(decodedPlaces)
+        places = uniquePlaces.places
+        discardedPlaceCount = malformedPlaceCount + uniquePlaces.discardedCount
         let decodedSelection = try? values.decode(UUID.self, forKey: .selectedPlaceID)
         selectedPlaceID = Self.resolvedSelection(decodedSelection, in: places)
     }
