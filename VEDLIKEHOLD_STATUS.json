@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-12T23:46:45Z",
+  "lastScheduledStart": "2026-10-13T01:42:05Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-545 fullført 2026-10-12: la til inntrøndersk regresjon for tom, vellykket, delvis og helt feilet varslingsplan, med tidsfrase ‘om to tima’. Swift-parsing, JSON-validering og git diff --check besto; XCTest ikke kjørt fordi CoreSimulatorService/runtime mangler. Bred gjennomgang fant en utilgjengelig fatalError for temperatur i engelskspråklig varselnavn; AUTO-548 lagt til som avgrenset robusthetsoppgave. Full køskann viser BRUKER-oppgaver fullført eller på vent. Neste åpne kønumre: AUTO-546, AUTO-547, AUTO-548."
+  "lastProgress": "AUTO-546 fullført 2026-10-13: persisted-state-dekoding markerer nå reparasjon når ugyldige eller gjentatte steder fjernes. Restore-regresjon bekrefter første-ID-forekomst, persistert unik liste og bevart valg/prognosecache etter ny oppstart. Swift-parsing, JSON-validering og git diff --check besto; XCTest ikke kjørt fordi CoreSimulatorService/runtime mangler. Bred appgjennomgang fant fast bokmålsbaserte VoiceOver-etiketter for temperatur, klokke og skodde i TimelineView; AUTO-549 lagt til. Full køskann viser BRUKER-oppgaver fullført eller på vent. Neste åpne kønumre: AUTO-547, AUTO-548, AUTO-549."
 }

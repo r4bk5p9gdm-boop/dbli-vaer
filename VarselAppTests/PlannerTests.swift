@@ -7665,6 +7665,48 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testStoreRestoreRepairsAndPersistsDuplicatePlaceIDs() throws {
+        let persistenceKey = "varsel.test.restore-deduplicates-place-ids.\(UUID().uuidString)"
+        let launchVersionKey = "varsel.launchPlacesVersion"
+        let previousLaunchVersion = UserDefaults.standard.object(forKey: launchVersionKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousLaunchVersion {
+                UserDefaults.standard.set(previousLaunchVersion, forKey: launchVersionKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: launchVersionKey)
+            }
+        }
+        UserDefaults.standard.set(9, forKey: launchVersionKey)
+
+        let first = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        var duplicate = first
+        duplicate.name = "Duplikat"
+        let other = Place(name: "Namsos", lat: 64.5, lon: 11.5)
+        let cachedHour = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 30, dew: 4)
+        let state = PersistedStoreState(
+            places: [first, duplicate, other], selectedID: first.id, log: [],
+            forecasts: [first.id: [cachedHour]], forecastUpdatedAt: [first.id: base], lastUpdate: base
+        )
+        UserDefaults.standard.set(try JSONEncoder().encode(state), forKey: persistenceKey)
+
+        let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey, now: base)
+
+        XCTAssertEqual(restored.places.map(\.name), ["Klinga", "Namsos"])
+        XCTAssertEqual(restored.places.map(\.id), [first.id, other.id])
+        XCTAssertEqual(restored.forecasts[first.id], [cachedHour])
+        let persistedData = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
+        let persisted = try JSONDecoder().decode(PersistedStoreState.self, from: persistedData)
+        XCTAssertEqual(persisted.places.map(\.id), [first.id, other.id])
+        XCTAssertEqual(persisted.forecasts[first.id], [cachedHour])
+        XCTAssertEqual(persisted.forecastUpdatedAt[first.id], base)
+
+        let relaunched = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey, now: base)
+        XCTAssertEqual(relaunched.places.map(\.id), [first.id, other.id])
+        XCTAssertEqual(relaunched.forecasts[first.id], [cachedHour])
+    }
+
+    @MainActor
     func testSelectingPlaceFromHomeUsesSameSelectionForRules() {
         let store = Store.shared
         let original = store.selectedID

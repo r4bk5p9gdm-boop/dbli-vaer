@@ -797,11 +797,12 @@ første tidsfrase «om to tima»; historiske loggoppføringer forblir urørt.
 Swift-parsing, JSON-validering og `git diff --check` besto; XCTest kunne ikke
 kjøres fordi CoreSimulatorService/runtime mangler.
 
-**AUTO-546 · ÅPEN** — `PersistedStoreState` fjerner gjentatte steds-ID-er ved
-dekoding, men setter ikke `needsPersistedStateRepair` når steder fjernes. Store
-kan dermed vise den dedupliserte listen uten å skrive den tilbake, og gjenta
-reparasjonen ved hver oppstart. Test at restore både beholder første forekomst
-og persisterer den unike listen.
+**AUTO-546 · FULLFØRT 2026-10-13** — `PersistedStoreState` markerer nå
+dekodingen for reparasjon når tapsfri steddekoding fjerner ugyldige eller
+gjentatte elementer. Restore-testen bekrefter at første forekomst beholdes,
+den unike listen persisteres, og valgt sted samt prognosecache overlever en
+ny oppstart. Swift-parsing, JSON-validering og `git diff --check` besto; XCTest
+kunne ikke kjøres fordi CoreSimulatorService/runtime mangler.
 
 **AUTO-547 · ÅPEN** — Når `PersistedStoreState` dekoder en ugyldig
 `forecastUpdatedAt`-verdi, `LossyDecodable<Date>` forkaster den, men dekoderen
@@ -815,6 +816,12 @@ tidsstempel ryddes og at resten av prognosecachen bevares.
 har en forutgående temperaturgren som gjør fallet utilgjengelig i dag. Fjern
 den skjøre krasjbanen uten å endre dagens språkvalg, og dekk engelske over- og
 under-temperaturvarsler gjennom den offentlige meldingsflyten.
+
+**AUTO-549 · ÅPEN** — Flere VoiceOver-etiketter i `TimelineView` er fast
+bokmål selv om visningen allerede kjenner valgt språk: temperaturverdien,
+klokken «Nå» og skoddeintensiteten (`TimelineView.swift` rundt linje 319,
+534 og 817). Lokaliser disse tilgjengelighetsstrengene uten å endre synlige
+etiketter, og test norsk, inntrøndersk og engelsk.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med
