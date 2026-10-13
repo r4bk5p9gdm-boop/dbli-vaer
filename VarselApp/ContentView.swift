@@ -2914,6 +2914,10 @@ private struct PlaceRow: View {
                 Form {
                     Section("Eget navn") {
                         TextField("For eksempel Hytta", text: $nameDraft)
+                            .onChange(of: nameDraft) { _, newValue in
+                                let limitedValue = String(newValue.prefix(Place.maximumCustomNameLength))
+                                if limitedValue != newValue { nameDraft = limitedValue }
+                            }
                         Text("Det opprinnelige stedsnavnet er \(place.name). La feltet stå tomt for å bruke det igjen.")
                             .font(.footnote).foregroundStyle(.secondary)
                     }
@@ -2924,7 +2928,7 @@ private struct PlaceRow: View {
                     ToolbarItem(placement: .cancellationAction) { Button("Avbryt") { showingNameEditor = false } }
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Lagre") {
-                            update { $0.customName = nameDraft }
+                            update { $0.customName = Place.normalizedCustomName(nameDraft) }
                             showingNameEditor = false
                         }
                     }

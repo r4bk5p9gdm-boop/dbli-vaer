@@ -879,12 +879,12 @@ normaliserte tilstanden skrives tilbake ved oppstart. Swift-parsing,
 `git diff --check` og JSON-validering besto; XCTest kunne ikke kjøres fordi
 CoreSimulatorService/runtime mangler.
 
-**AUTO-557 · ÅPEN** — Eget stedsnavn kan redigeres fritt i Steder-visningen,
-og `Place`-dekoderen beholder det uten lengdegrense. En importfil innenfor
-størrelsesgrensen kan dermed gi et uforholdsmessig langt navn som gjentas i
-værkort, varsler og Watch/widget-data. Definer en konsekvent grense ved både
-redigering og dekoding, og test normalisering av importerte og gjenopprettede
-navn uten å endre vanlige navn.
+**AUTO-557 · FULLFØRT 2026-10-13** — Egne stedsnavn trimmes og begrenses nå
+til 40 tegn ved modellopprettelse, dekoding og lagring fra navnefeltet. Feltet
+klipper også mens brukeren skriver. Regresjon dekker vanlig navn, blankt navn,
+emoji-grafemer og både import-/persistensdekoding. Swift-parsing,
+`git diff --check` og JSON-validering besto; XCTest kunne ikke kjøres fordi
+CoreSimulatorService/runtime mangler.
 
 **AUTO-558 · ÅPEN** — `PersistedStoreState` faller tilbake til tom logg når
 `log`-feltet i lagret JSON har feil beholdertype, men markerer ikke alltid
@@ -900,6 +900,12 @@ observasjonsfilen blir den opprinnelige verdien ikke satt til side for mulig
 gjenoppretting, og en senere lagring kan overskrive den. Bevar en skadet
 prognoseblob før normal videre bruk og test at observasjoner kan lastes videre
 og at originalbytes fortsatt kan gjenfinnes.
+
+**AUTO-560 · ÅPEN** — `ForecastHour.sanitizedCacheSequence` beholder første
+fysisk gyldige time ved duplisert tidsstempel. For skadet eller sammensatt
+cache avhenger dermed værdata som vises og planlegges av rekkefølgen i arkivet,
+selv når samme gyldige rader finnes. Definer en deterministisk konfliktregel
+for like tidsstempler og test at omstokking gir identisk normalisert prognose.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

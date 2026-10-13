@@ -1421,6 +1421,8 @@ enum PlacePreposition: String, Codable, CaseIterable, Identifiable {
 }
 
 struct Place: Codable, Identifiable, Hashable {
+    static let maximumCustomNameLength = 40
+
     var id = UUID()
     var name: String
     var customName: String? = nil
@@ -1447,6 +1449,13 @@ struct Place: Codable, Identifiable, Hashable {
         latitude.isFinite && longitude.isFinite
             && (-90...90).contains(latitude)
             && (-180...180).contains(longitude)
+    }
+
+    static func normalizedCustomName(_ value: String?) -> String? {
+        guard let value else { return nil }
+        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return nil }
+        return String(trimmed.prefix(maximumCustomNameLength))
     }
 
     func displayThreshold(for type: AlertType) -> Double {
@@ -1505,7 +1514,7 @@ struct Place: Codable, Identifiable, Hashable {
     ) {
         self.id = id
         self.name = name
-        self.customName = customName
+        self.customName = Self.normalizedCustomName(customName)
         self.lat = lat
         self.lon = lon
         self.preposition = preposition
@@ -1523,7 +1532,7 @@ struct Place: Codable, Identifiable, Hashable {
         // when one persisted or imported coordinate pair is unusable.
         let decodedName = try? values.decode(String.self, forKey: .name)
         name = decodedName?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false ? decodedName! : "Ukjent sted"
-        customName = try? values.decode(String.self, forKey: .customName)
+        customName = Self.normalizedCustomName(try? values.decode(String.self, forKey: .customName))
         guard let decodedLatitude = try? values.decode(Double.self, forKey: .lat),
               decodedLatitude.isFinite, (-90...90).contains(decodedLatitude) else {
             throw DecodingError.dataCorruptedError(

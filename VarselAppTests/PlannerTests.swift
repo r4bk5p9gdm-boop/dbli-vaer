@@ -8784,6 +8784,30 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(saved.rules[0].onlyWhenNearby)
     }
 
+    func testPlaceCustomNameIsNormalizedAndLengthBounded() throws {
+        let ordinary = Place(name: "Klinga", customName: "  Hytta  ", lat: 64.4, lon: 11.4)
+        XCTAssertEqual(ordinary.customName, "Hytta")
+        XCTAssertEqual(ordinary.displayName, "Hytta")
+
+        let repeatedGrapheme = "👨‍👩‍👧‍👦"
+        let importedName = String(repeating: repeatedGrapheme, count: Place.maximumCustomNameLength + 5)
+        let rawPlaceJSON = """
+        {"id":"\(UUID())","name":"Klinga","customName":"\(importedName)","lat":64.4,"lon":11.4}
+        """
+        let imported = try JSONDecoder().decode(Place.self, from: Data(rawPlaceJSON.utf8))
+        let rawStateJSON = """
+        {"places":[\(rawPlaceJSON)],"selectedID":null,"log":[]}
+        """
+        let restored = try JSONDecoder().decode(PersistedStoreState.self, from: Data(rawStateJSON.utf8))
+        let expectedName = String(importedName.prefix(Place.maximumCustomNameLength))
+
+        XCTAssertEqual(imported.customName?.count, Place.maximumCustomNameLength)
+        XCTAssertEqual(imported.customName, expectedName)
+        XCTAssertEqual(restored.places.first?.customName, expectedName)
+        XCTAssertEqual(Place.normalizedCustomName(" \(importedName) ")?.count, Place.maximumCustomNameLength)
+        XCTAssertNil(Place.normalizedCustomName(" \n "))
+    }
+
     func testConfigurationExportPreservesLanguageAndSelectedPlaceAcrossRestart() throws {
         var place = Place(name: "Namsos", lat: 64.5, lon: 11.5, preposition: .nerri)
         place.temperatureOffset = -1.5
