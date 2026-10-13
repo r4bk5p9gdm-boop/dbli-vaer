@@ -929,6 +929,12 @@ korrupt persistensarkiv. Sett en grense som samsvarer med støttet Yr-dekning og
 test at svært lange lokale cacher avkortes deterministisk uten å miste de
 nyeste brukbare timene.
 
+**AUTO-564 · ÅPEN** — Hvis hele `varsel.state`-bloben ikke kan dekodes, eller
+dekodingen ikke gjenoppretter noen steder, starter `Store` med standardsteder
+og kan skrive dem over den eneste skadede originalen. Bevar originalbloben i
+en verifisert recovery-nøkkel før fallback lagres, og test at både trygg
+oppstart og byte-for-byte gjenfinning virker.
+
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med
 alder og advarsel når snapshotet er utdatert.

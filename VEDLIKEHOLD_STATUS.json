@@ -1,5 +1,5 @@
 {
   "lastScheduledStart": "2026-10-13T10:45:05Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-561 fullført 2026-10-13: PersistedStoreState markerer nå feilformede toppnivåbeholdere for forecasts/forecastUpdatedAt samt ugyldige forecast-oppføringer som reparasjonsbehov. Store bevarer lesbare steder og skriver normaliserte cacheordbøker tilbake ved oppstart. Regresjon dekker dekoding og faktisk lagring. Swift-parsing, JSON-validering og git diff --check besto; XCTest ikke kjørt fordi CoreSimulatorService/runtime mangler. Neste åpne kønumre fra fullskanningen: AUTO-562, AUTO-563."
+  "lastProgress": "AUTO-561 fullført 2026-10-13: PersistedStoreState markerer nå feilformede toppnivåbeholdere for forecasts/forecastUpdatedAt samt ugyldige forecast-oppføringer som reparasjonsbehov. Store bevarer lesbare steder og skriver normaliserte cacheordbøker tilbake ved oppstart. Regresjon dekker dekoding og faktisk lagring. Swift-parsing, JSON-validering og git diff --check besto; XCTest ikke kjørt fordi CoreSimulatorService/runtime mangler. Bred gjennomgang fant en separat fallbackrisiko: når hele varsel.state ikke kan dekodes eller mangler gjenopprettbare steder, kan seed-data overskrive eneste originalblob. AUTO-564 lagt til for verifisert recovery-kopi før fallback. Neste åpne kønumre fra fullskanningen: AUTO-562, AUTO-563, AUTO-564."
 }
