@@ -104,16 +104,7 @@ enum NotificationCopy {
 
     private static func localizedWeatherName(for rule: Rule, languageStyle: AlertLanguageStyle) -> String {
         if rule.type == .temperatur {
-            let key = rule.temperatureDirection == .above
-                ? "weather.temperature_above"
-                : "weather.temperature_below"
-            let fallback = "\(rule.temperatureDirection == .above ? "Over" : "Under") {temperatur}°"
-            return LanguageCatalog.value(
-                key,
-                language: languageStyle.catalogCode,
-                fallback: fallback,
-                arguments: ["temperatur": rule.threshold.formatted(.number.precision(.fractionLength(0...1)))]
-            )
+            return localizedTemperatureName(for: rule, languageStyle: languageStyle)
         }
         guard languageStyle == .english else {
             return languageStyle == .inntrondersk
@@ -125,10 +116,23 @@ enum NotificationCopy {
         case .sno: return LanguageCatalog.value("weather.snow", language: "en", fallback: "Snow")
         case .dugg: return LanguageCatalog.value("weather.dew", language: "en", fallback: "Dew")
         case .frost: return LanguageCatalog.value("weather.frost", language: "en", fallback: "Frost")
-        case .temperatur: fatalError("Handled above")
+        case .temperatur: return localizedTemperatureName(for: rule, languageStyle: languageStyle)
         case .vind: return LanguageCatalog.value("weather.wind", language: "en", fallback: "Wind")
         case .sol: return LanguageCatalog.value("weather.sun", language: "en", fallback: "Sun")
         }
+    }
+
+    private static func localizedTemperatureName(for rule: Rule, languageStyle: AlertLanguageStyle) -> String {
+        let key = rule.temperatureDirection == .above
+            ? "weather.temperature_above"
+            : "weather.temperature_below"
+        let fallback = "\(rule.temperatureDirection == .above ? "Over" : "Under") {temperatur}°"
+        return LanguageCatalog.value(
+            key,
+            language: languageStyle.catalogCode,
+            fallback: fallback,
+            arguments: ["temperatur": rule.threshold.formatted(.number.precision(.fractionLength(0...1)))]
+        )
     }
 
     private static func titleKey(for rule: Rule, possible: Bool, languageStyle: AlertLanguageStyle) -> String {

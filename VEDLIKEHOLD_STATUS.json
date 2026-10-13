@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-13T02:18:39Z",
+  "lastScheduledStart": "2026-10-13T02:54:20Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-547 fullført 2026-10-13: PersistedStoreState markerer nå reparasjon når LossyDecodable forkaster ugyldige forecastUpdatedAt-verdier. Restore-regresjon bekrefter at cache beholdes, ugyldig dato fjernes fra arkivet og cache overlever relaunch. Swift-parsing, JSON-validering og git diff --check besto; XCTest ikke kjørt fordi CoreSimulatorService/runtime mangler. Bred gjennomgang på tvers av værlogikk, varsler, import/eksport, posisjon, bakgrunnsoppdatering, widget/Watch og tilgjengelighet fant at 1 °C regn/snø-grensen er duplisert mellom time- og radarplanlegging; AUTO-550 lagt til for offentlig ende-til-ende grensetest. BRUKER-kø fullført eller på vent. Neste åpne kønumre: AUTO-548, AUTO-549, AUTO-550."
+  "lastProgress": "AUTO-548 fullført 2026-10-13: Fjernet fatalError-fallback for temperatur i NotificationScheduler uten å endre normal språkflyt; offentlig engelsk varseltittel er testutvidet for både under og over. Swift-parsing, JSON-validering og git diff --check besto; XCTest ikke kjørt fordi CoreSimulatorService/runtime mangler. Bred appgjennomgang fant at tapsfri importdekoding kan forkaste ugyldige steder uten at forhåndsvisningen viser delvis gjenoppretting; AUTO-551 lagt til for tellende og tydelig advarsel før import. BRUKER-kø fullført eller på vent. Neste åpne kønumre: AUTO-549, AUTO-550, AUTO-551."
 }

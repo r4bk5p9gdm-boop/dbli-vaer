@@ -812,11 +812,12 @@ kopien, og at cache fortsatt finnes etter ny oppstart. Swift-parsing,
 JSON-validering og `git diff --check` besto; XCTest kunne ikke kjøres fordi
 CoreSimulatorService/runtime mangler.
 
-**AUTO-548 · ÅPEN** — `NotificationScheduler.localizedWeatherName` bruker
-`fatalError` for `.temperatur` i den engelske `switch`-grenen, selv om metoden
-har en forutgående temperaturgren som gjør fallet utilgjengelig i dag. Fjern
-den skjøre krasjbanen uten å endre dagens språkvalg, og dekk engelske over- og
-under-temperaturvarsler gjennom den offentlige meldingsflyten.
+**AUTO-548 · FULLFØRT 2026-10-13** — Fjernet den skjøre `fatalError`-grenen
+for `.temperatur` i `NotificationScheduler.localizedWeatherName`; dagens
+temperaturflyt og språkvalg er uendret. Den offentlige engelske varseltittelen
+er regresjonstestet for både under- og over-grense. Swift-parsing,
+JSON-validering og `git diff --check` besto; XCTest kunne ikke kjøres fordi
+CoreSimulatorService/runtime mangler.
 
 **AUTO-549 · ÅPEN** — Flere VoiceOver-etiketter i `TimelineView` er fast
 bokmål selv om visningen allerede kjenner valgt språk: temperaturverdien,
@@ -830,6 +831,13 @@ timeprognosens grense og værikonet, men ikke at radarbaserte varslingshendelser
 bruker samme klassifisering akkurat ved og rundt 1 °C. Dekk offentlig
 planlegging for radarprøver ved 1 °C og på hver side av grensen, slik at
 regn-/snøvarsel ikke avviker fra prognosestatusen ved denne grenseverdien.
+
+**AUTO-551 · ÅPEN** — Importdekoderen forkaster ugyldige stedoppføringer
+tapsfritt med `LossyDecodable`, men importforhåndsvisningen viser bare antallet
+som overlevde dekoding. En delvis korrupt kopi kan dermed se ut som en liten,
+gyldig kopi før brukeren velger destruktiv erstatning. Bevar antallet forkastede
+oppføringer i importmodellen, vis en tydelig lokaliserbar advarsel før valg av
+sammenføying/erstatning, og test en kopi med både gyldige og ugyldige steder.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

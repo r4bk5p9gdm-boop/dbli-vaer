@@ -1687,6 +1687,12 @@ final class PlannerTests: XCTestCase {
             NotificationCopy.title(for: temperature, placeName: "in Oslo", languageStyle: .english),
             "It’s Below 10°! in Oslo"
         )
+        temperature.temperatureDirection = .above
+        temperature.threshold = 20
+        XCTAssertEqual(
+            NotificationCopy.title(for: temperature, placeName: "in Oslo", languageStyle: .english),
+            "It’s Above 20°! in Oslo"
+        )
     }
 
     func testSharedSnapshotPreservesDialectDuringWatchRefresh() throws {
