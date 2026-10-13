@@ -819,11 +819,11 @@ er regresjonstestet for både under- og over-grense. Swift-parsing,
 JSON-validering og `git diff --check` besto; XCTest kunne ikke kjøres fordi
 CoreSimulatorService/runtime mangler.
 
-**AUTO-549 · ÅPEN** — Flere VoiceOver-etiketter i `TimelineView` er fast
-bokmål selv om visningen allerede kjenner valgt språk: temperaturverdien,
-klokken «Nå» og skoddeintensiteten (`TimelineView.swift` rundt linje 319,
-534 og 817). Lokaliser disse tilgjengelighetsstrengene uten å endre synlige
-etiketter, og test norsk, inntrøndersk og engelsk.
+**AUTO-549 · FULLFØRT 2026-10-13** — Lokaliserte VoiceOver-etikettene for
+temperaturverdi, nå-markør og skoddeintensitet i `TimelineView` for bokmål,
+inntrøndersk og engelsk uten å endre synlig tekst. La til enhetstest for alle
+tre språk. Swift-parsing, JSON-validering og `git diff --check` besto; XCTest
+kunne ikke kjøres fordi CoreSimulatorService/runtime mangler.
 
 **AUTO-550 · ÅPEN** — Nedbørens regn/snø-grense på 1 °C er implementert både i
 `AlertType.matches` og `Planner.sampleMatches`. Eksisterende tester dekker
@@ -838,6 +838,12 @@ som overlevde dekoding. En delvis korrupt kopi kan dermed se ut som en liten,
 gyldig kopi før brukeren velger destruktiv erstatning. Bevar antallet forkastede
 oppføringer i importmodellen, vis en tydelig lokaliserbar advarsel før valg av
 sammenføying/erstatning, og test en kopi med både gyldige og ugyldige steder.
+
+**AUTO-552 · ÅPEN** — `Store.performRefresh` begrenser samtidig Yr-forespørsler
+til fire koordinater, men testene verifiserer ikke denne ressursgrensen når
+flere steder oppdateres. Legg til en deterministisk regresjonstest som måler
+maksimalt antall samtidige kall og samtidig bekrefter at alle unike
+prognoseposisjoner til slutt behandles.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

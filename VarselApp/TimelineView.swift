@@ -316,7 +316,9 @@ private struct TimeCardsForecast: View {
                         Text(compactTemperatureText(hour.temp))
                             .font(.caption)
                             .foregroundStyle(hour.temp <= temperatureLowThreshold ? Color.secondary : hour.temp >= temperatureHighThreshold ? Color.orange : Color.primary)
-                            .accessibilityLabel("Temperatur \(Int(hour.temp.rounded())) grader")
+                            .accessibilityLabel(WeatherBandAccessibility.temperatureValueLabel(
+                                Int(hour.temp.rounded()), languageStyle: languageStyle
+                            ))
                         ZStack(alignment: .bottom) {
                             RoundedRectangle(cornerRadius: 5).fill(Color.blue.opacity(0.08))
                             RoundedRectangle(cornerRadius: 5).fill(Color.blue.opacity(0.75))
@@ -329,7 +331,7 @@ private struct TimeCardsForecast: View {
                     }
                     .frame(width: 45)
                     .accessibilityElement(children: .combine)
-                    .accessibilityLabel("\(label.accessibility), \(condition.accessibilityLabel(languageStyle: languageStyle, isDaylight: isDaylight)), \(Int(hour.temp.rounded())) grader, \(hour.precip.formatted()) millimeter nedbør")
+                    .accessibilityLabel("\(label.accessibility), \(condition.accessibilityLabel(languageStyle: languageStyle, isDaylight: isDaylight)), \(WeatherBandAccessibility.temperatureValueLabel(Int(hour.temp.rounded()), languageStyle: languageStyle)), \(hour.precip.formatted()) millimeter nedbør")
                 }
             }
         }
@@ -531,7 +533,9 @@ private struct WeatherBandsForecast: View {
                         .foregroundStyle(Color.orange)
                         .position(x: markerX, y: proxy.size.height + 5)
                         .accessibilityElement(children: .ignore)
-                        .accessibilityLabel("Nå er klokken \(now.formatted(.dateTime.hour().minute()))")
+                        .accessibilityLabel(WeatherBandAccessibility.nowMarkerLabel(
+                            clock: now.formatted(.dateTime.hour().minute()), languageStyle: languageStyle
+                        ))
                 }
                 .allowsHitTesting(false)
             }
@@ -573,6 +577,28 @@ enum WeatherBandHatchLegend {
 }
 
 enum WeatherBandAccessibility {
+    static func temperatureValueLabel(_ temperature: Int, languageStyle: AlertLanguageStyle) -> String {
+        switch languageStyle {
+        case .bokmal, .inntrondersk: "Temperatur \(temperature) grader"
+        case .english: "Temperature \(temperature) degrees"
+        }
+    }
+
+    static func nowMarkerLabel(clock: String, languageStyle: AlertLanguageStyle) -> String {
+        switch languageStyle {
+        case .bokmal: "Nå er klokken \(clock)"
+        case .inntrondersk: "No e klokka \(clock)"
+        case .english: "Current time, \(clock)"
+        }
+    }
+
+    static func fogLevelLabel(_ level: Int, languageStyle: AlertLanguageStyle) -> String {
+        switch languageStyle {
+        case .bokmal, .inntrondersk: "Skodde, styrke \(level) prosent"
+        case .english: "Fog, strength \(level) percent"
+        }
+    }
+
     static func combinedTrackLabel(
         type: AlertType,
         ruleCount: Int,
@@ -657,11 +683,11 @@ private struct CombinedDayBandTrack: View {
             let totalHours: CGFloat = (includeEarlyMorning || compressForMorning) ? 26 : 24
             HStack(spacing: spacing) {
                 if includeEarlyMorning {
-                    CombinedHourBandCell(hours: hours, rules: rules, type: type, day: day, period: .earlyMorning, frostMargin: frostMargin, sunThreshold: sunThreshold, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude)
+                    CombinedHourBandCell(hours: hours, rules: rules, type: type, day: day, period: .earlyMorning, frostMargin: frostMargin, sunThreshold: sunThreshold, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, languageStyle: languageStyle)
                         .frame(width: availableWidth * 2 / 26)
                 }
                 ForEach(WeatherBandPeriod.all) { period in
-                    CombinedHourBandCell(hours: hours, rules: rules, type: type, day: day, period: period, frostMargin: frostMargin, sunThreshold: sunThreshold, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude)
+                    CombinedHourBandCell(hours: hours, rules: rules, type: type, day: day, period: period, frostMargin: frostMargin, sunThreshold: sunThreshold, sunThreshold2: sunThreshold2, temperatureLowThreshold: temperatureLowThreshold, temperatureHighThreshold: temperatureHighThreshold, latitude: latitude, longitude: longitude, languageStyle: languageStyle)
                         .frame(width: availableWidth * 8 / totalHours)
                 }
             }
@@ -688,6 +714,7 @@ private struct CombinedHourBandCell: View {
     let temperatureHighThreshold: Double
     let latitude: Double
     let longitude: Double
+    let languageStyle: AlertLanguageStyle
 
     private func missingOffsets(for period: WeatherBandPeriod) -> [Int] {
         missingHourOffsets(for: day, period: period, forecast: hours)
@@ -814,7 +841,9 @@ private struct CombinedHourBandCell: View {
                                 x: proxy.size.width * CGFloat(offset) / CGFloat(period.hours) + hourCellWidth / 2,
                                 y: proxy.size.height / 2
                             )
-                            .accessibilityLabel("Skodde, styrke \(Int(fogLevel.rounded())) prosent")
+                            .accessibilityLabel(WeatherBandAccessibility.fogLevelLabel(
+                                Int(fogLevel.rounded()), languageStyle: languageStyle
+                            ))
                     } else if offset < period.hours, let solarTransition {
                         Image(systemName: solarTransition.systemImage)
                             .resizable()

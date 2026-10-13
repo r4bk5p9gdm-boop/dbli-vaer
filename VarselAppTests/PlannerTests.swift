@@ -3966,6 +3966,19 @@ final class PlannerTests: XCTestCase {
             .contains("weather is unknown"))
     }
 
+    func testTimelineDetailAccessibilityLabelsFollowSelectedLanguage() {
+        let styles: [(AlertLanguageStyle, String, String, String)] = [
+            (.bokmal, "Temperatur 7 grader", "Nå er klokken 12:34", "Skodde, styrke 50 prosent"),
+            (.inntrondersk, "Temperatur 7 grader", "No e klokka 12:34", "Skodde, styrke 50 prosent"),
+            (.english, "Temperature 7 degrees", "Current time, 12:34", "Fog, strength 50 percent"),
+        ]
+        for (style, temperature, now, fog) in styles {
+            XCTAssertEqual(WeatherBandAccessibility.temperatureValueLabel(7, languageStyle: style), temperature)
+            XCTAssertEqual(WeatherBandAccessibility.nowMarkerLabel(clock: "12:34", languageStyle: style), now)
+            XCTAssertEqual(WeatherBandAccessibility.fogLevelLabel(50, languageStyle: style), fog)
+        }
+    }
+
     func testMissingForecastOffsetsCoverCompressedMorningAndAllWeatherBands() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 0))

@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-13T02:54:20Z",
+  "lastScheduledStart": "2026-10-13T03:18:23Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-548 fullført 2026-10-13: Fjernet fatalError-fallback for temperatur i NotificationScheduler uten å endre normal språkflyt; offentlig engelsk varseltittel er testutvidet for både under og over. Swift-parsing, JSON-validering og git diff --check besto; XCTest ikke kjørt fordi CoreSimulatorService/runtime mangler. Bred appgjennomgang fant at tapsfri importdekoding kan forkaste ugyldige steder uten at forhåndsvisningen viser delvis gjenoppretting; AUTO-551 lagt til for tellende og tydelig advarsel før import. BRUKER-kø fullført eller på vent. Neste åpne kønumre: AUTO-549, AUTO-550, AUTO-551."
+  "lastProgress": "AUTO-549 fullført 2026-10-13: Lokaliserte VoiceOver-etikettene for temperaturverdi, nå-markør og skoddeintensitet i TimelineView for bokmål, inntrøndersk og engelsk uten å endre synlig tekst; la til enhetstest for alle tre språk. Swift-parsing, JSON-validering og git diff --check besto; XCTest ikke kjørt fordi CoreSimulatorService/runtime mangler. Bred appgjennomgang fant at Store.performRefresh har en konkret fire-forespørselsgrense uten regresjonstest av faktisk samtidighet og full behandling; AUTO-552 lagt til. BRUKER-kø fullført eller på vent. Neste åpne kønumre: AUTO-550, AUTO-551, AUTO-552."
 }
