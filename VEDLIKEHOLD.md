@@ -886,27 +886,12 @@ emoji-grafemer og både import-/persistensdekoding. Swift-parsing,
 `git diff --check` og JSON-validering besto; XCTest kunne ikke kjøres fordi
 CoreSimulatorService/runtime mangler.
 
-**AUTO-558 · ÅPEN** — `PersistedStoreState` faller tilbake til tom logg når
-`log`-feltet i lagret JSON har feil beholdertype, men markerer ikke alltid
-tilstanden for reparasjon dersom stedene fortsatt kan dekodes. Da blir den
-normaliserte loggen først skrevet tilbake ved en senere, urelatert lagring.
-Marker ugyldige toppnivåbeholdere for reparasjon og legg til regresjon som
-bekrefter at gyldige steder gjenopprettes, loggen normaliseres og JSON skrives
-tilbake ved oppstart.
-
 **AUTO-558 · FULLFØRT 2026-10-13** — En eksisterende `log`-nøkkel med feil
 beholdertype markerer nå lagret tilstand for reparasjon, også når stedene kan
 gjenopprettes. Oppstart skriver straks tilbake gyldige steder og en tom,
 normalisert logg. Regresjon dekker at original JSON erstattes ved første
 oppstart; Swift-parsing, JSON-validering og `git diff --check` besto. XCTest
 kunne ikke kjøres fordi CoreSimulatorService/runtime mangler.
-
-**AUTO-559 · ÅPEN** — `CalibrationHistory.load` ignorerer ukodelige bytes i
-UserDefaults-arkivet for kalibreringsprognoser. I motsetning til den separate
-observasjonsfilen blir den opprinnelige verdien ikke satt til side for mulig
-gjenoppretting, og en senere lagring kan overskrive den. Bevar en skadet
-prognoseblob før normal videre bruk og test at observasjoner kan lastes videre
-og at originalbytes fortsatt kan gjenfinnes.
 
 **AUTO-559 · FULLFØRT 2026-10-13** — Ukodelige bytes i
 kalibreringsprognosearkivet flyttes nå først til en egen UserDefaults-nøkkel
@@ -916,11 +901,13 @@ eneste kopi av skadet data. Regresjon dekker bevaring av originalbytes,
 observasjonsinnlasting og senere lagring. Swift-parsing og diffkontroll besto;
 XCTest kunne ikke kjøres fordi CoreSimulatorService/runtime mangler.
 
-**AUTO-560 · ÅPEN** — `ForecastHour.sanitizedCacheSequence` beholder første
-fysisk gyldige time ved duplisert tidsstempel. For skadet eller sammensatt
-cache avhenger dermed værdata som vises og planlegges av rekkefølgen i arkivet,
-selv når samme gyldige rader finnes. Definer en deterministisk konfliktregel
-for like tidsstempler og test at omstokking gir identisk normalisert prognose.
+**AUTO-560 · FULLFØRT 2026-10-13** — `ForecastHour.sanitizedCacheSequence`
+velger nå duplikattimen med flest brukbare tilleggsverdier og radartidspunkter.
+Ved lik dekning avgjør en kanonisk, sortert JSON-representasjon, slik at
+motstridende rader normaliseres likt uansett arkivrekkefølge. Regresjon dekker
+rikere timevalg, stabilt resultat ved omstokking og sortering av radardata.
+Swift-parsing, JSON-validering og `git diff --check` besto; XCTest kunne ikke
+kjøres fordi CoreSimulatorService/runtime mangler.
 
 **AUTO-561 · ÅPEN** — `PersistedStoreState` tolererer feil beholdertype i
 `forecasts` og `forecastUpdatedAt` ved å bruke tomme ordbøker, men markerer
@@ -933,6 +920,12 @@ kalibreringsprognosearrayet hvis én enkelt rad ikke kan dekodes. Selv om
 arkivet bevares for gjenoppretting, går alle øvrige lesbare prognoseversjoner
 midlertidig tapt for kalibreringsvisningen. Vurder tapsfri raddekoding og test
 at gyldige prognoser overlever en feilformet nabo uten å miste råarkivet.
+
+**AUTO-563 · ÅPEN** — `ForecastHour.sanitizedCacheSequence` begrenser hvert
+tidspunkt, men har ingen eksplisitt øvre grense for antall unike timer i et
+korrupt persistensarkiv. Sett en grense som samsvarer med støttet Yr-dekning og
+test at svært lange lokale cacher avkortes deterministisk uten å miste de
+nyeste brukbare timene.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

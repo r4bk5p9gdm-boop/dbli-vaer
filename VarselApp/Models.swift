@@ -1078,17 +1078,53 @@ struct ForecastHour: Codable, Identifiable, Hashable {
     // a legitimate boundary hour after the response was fetched.
     private static let cachedForecastMaximumHorizon: TimeInterval = 10 * 24 * 3_600
 
+    private static func cacheCompletenessScore(_ hour: ForecastHour) -> Int {
+        let optionalValues: [Double?] = [
+            hour.precipMin, hour.precipMax, hour.precipProbability, hour.gust,
+            hour.fog, hour.temperatureLow, hour.temperatureHigh, hour.yrTemperature
+        ]
+        let radarSamples = hour.radarSamples ?? []
+        let end = hour.time.addingTimeInterval(3_600)
+        let distinctRadarTimes = Set(radarSamples.compactMap { sample in
+            sample.time >= hour.time && sample.time < end ? sample.time : nil
+        })
+        return optionalValues.compactMap { $0 }.count + distinctRadarTimes.count
+    }
+
+    private static func cacheTieBreakKey(_ hour: ForecastHour) -> Data {
+        var canonical = hour
+        canonical.radarSamples = hour.radarSamples?.sorted {
+            if $0.time != $1.time { return $0.time < $1.time }
+            return $0.rate < $1.rate
+        }
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        return (try? encoder.encode(canonical)) ?? Data()
+    }
+
+    private static func cacheCandidatePrecedes(_ candidate: ForecastHour, _ current: ForecastHour) -> Bool {
+        let candidateScore = cacheCompletenessScore(candidate)
+        let currentScore = cacheCompletenessScore(current)
+        if candidateScore != currentScore { return candidateScore > currentScore }
+        return cacheTieBreakKey(candidate).lexicographicallyPrecedes(cacheTieBreakKey(current))
+    }
+
     static func sanitizedCacheSequence(_ hours: [ForecastHour], fetchedAt: Date?) -> [ForecastHour] {
         let earliest = fetchedAt?.addingTimeInterval(-cachedForecastPastTolerance)
         let latest = fetchedAt?.addingTimeInterval(cachedForecastMaximumHorizon)
-        var seen = Set<Date>()
-        let unique = hours.filter { hour in
-            hour.isPhysicallyPlausible
-                && (earliest.map { hour.time >= $0 } ?? true)
-                && (latest.map { hour.time <= $0 } ?? true)
-                && seen.insert(hour.time).inserted
+        var uniqueByTime: [Date: ForecastHour] = [:]
+        for hour in hours where hour.isPhysicallyPlausible
+            && (earliest.map { hour.time >= $0 } ?? true)
+            && (latest.map { hour.time <= $0 } ?? true) {
+            if let current = uniqueByTime[hour.time] {
+                if Self.cacheCandidatePrecedes(hour, current) {
+                    uniqueByTime[hour.time] = hour
+                }
+            } else {
+                uniqueByTime[hour.time] = hour
+            }
         }
-        return unique.map { hour in
+        return uniqueByTime.keys.sorted().compactMap { uniqueByTime[$0] }.map { hour in
             guard let samples = hour.radarSamples else { return hour }
             var sanitized = hour
             let end = hour.time.addingTimeInterval(3_600)

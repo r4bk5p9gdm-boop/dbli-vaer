@@ -9979,6 +9979,46 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(Store.shouldReplaceForecast(existingAt: nil, incomingAt: base))
     }
 
+    func testForecastCacheDuplicateTimestampsNormalizeIndependentlyOfInputOrder() {
+        let duplicateTime = base.addingTimeInterval(3_600)
+        let sparse = ForecastHour(
+            time: duplicateTime, temp: 8, precip: 0, wind: 1, cloud: 20, dew: 4
+        )
+        let firstRich = ForecastHour(
+            time: duplicateTime, temp: 9, precip: 0.2, wind: 2, cloud: 25, dew: 5,
+            precipProbability: 35, gust: 4,
+            radarSamples: [
+                PrecipitationSample(time: duplicateTime.addingTimeInterval(600), rate: 0.3),
+                PrecipitationSample(time: duplicateTime.addingTimeInterval(300), rate: 0.2)
+            ]
+        )
+        let secondRich = ForecastHour(
+            time: duplicateTime, temp: 10, precip: 0.3, wind: 3, cloud: 30, dew: 6,
+            precipProbability: 40, gust: 5,
+            radarSamples: [
+                PrecipitationSample(time: duplicateTime.addingTimeInterval(300), rate: 0.2),
+                PrecipitationSample(time: duplicateTime.addingTimeInterval(600), rate: 0.3)
+            ]
+        )
+        let nextHour = ForecastHour(
+            time: duplicateTime.addingTimeInterval(3_600), temp: 7, precip: 0, wind: 1, cloud: 15, dew: 3
+        )
+
+        let forward = ForecastHour.sanitizedCacheSequence(
+            [sparse, firstRich, secondRich, nextHour], fetchedAt: base
+        )
+        let reversed = ForecastHour.sanitizedCacheSequence(
+            [nextHour, secondRich, firstRich, sparse], fetchedAt: base
+        )
+
+        XCTAssertEqual(forward, reversed)
+        XCTAssertEqual(forward.map(\.time), [duplicateTime, nextHour.time])
+        XCTAssertNotEqual(forward.first, sparse, "Prefer the duplicate with more usable weather details")
+        XCTAssertEqual(forward.first?.radarSamples?.map(\.time), [
+            duplicateTime.addingTimeInterval(300), duplicateTime.addingTimeInterval(600)
+        ])
+    }
+
     func testForecastWithImplausibleFutureTimestampCanBeReplaced() {
         let now = base
         let future = now.addingTimeInterval(Store.forecastFutureTimestampTolerance + 60)
