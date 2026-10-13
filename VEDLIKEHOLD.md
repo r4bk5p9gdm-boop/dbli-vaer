@@ -934,11 +934,13 @@ fysikk-, horisont- og duplikatfiltrering. Regresjon bruker 501 ulike tider
 innenfor horisonten og verifiserer grense, avkorting, nyeste time og uavhengighet
 av input-rekkefølge.
 
-**AUTO-564 · ÅPEN** — Hvis hele `varsel.state`-bloben ikke kan dekodes, eller
-dekodingen ikke gjenoppretter noen steder, starter `Store` med standardsteder
-og kan skrive dem over den eneste skadede originalen. Bevar originalbloben i
-en verifisert recovery-nøkkel før fallback lagres, og test at både trygg
-oppstart og byte-for-byte gjenfinning virker.
+**AUTO-564 · FULLFØRT 2026-10-13** — Før `Store` faller tilbake til
+standardsteder når `varsel.state` ikke kan dekodes eller ikke inneholder
+brukbare steder, kopierer den nå originalbloben til en unik recovery-nøkkel og
+verifiserer at byteinnholdet stemmer før den reparerte tilstanden lagres. Hvis
+kopieringen ikke kan bekreftes, blokkeres overskriving av originalnøkkelen.
+Regresjoner dekker både ukodelige bytes og en dekodbar tilstand uten steder,
+med byte-for-byte gjenfinning etter fallback.
 
 **AUTO-565 · ÅPEN** — `AppNotificationDelegate.willPresent` ber alltid
 systemet spille varslingslyd, mens stille planer settes med `sound = nil` og
@@ -951,6 +953,12 @@ testbar presentasjonspolicy.
 ellers er lokalisert. Legg til en språkriktig tilgjengelighetskopi for å tømme
 søk, og dekk label-valget med en liten test slik at ikonets form ikke er eneste
 beskrivelse av handlingen.
+
+**AUTO-567 · ÅPEN** — `BackgroundRefresh.schedule` logger feil fra
+`BGTaskScheduler.submit`, men etter en midlertidig feil ved oppstart forsøker
+appen ikke å registrere neste refresh igjen når scenen senere blir aktiv. Legg
+til en avgrenset ny planleggingsmulighet ved foreground-aktivering og test at
+submission-feil ikke gjør bakgrunnsoppdatering avhengig av full omstart.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

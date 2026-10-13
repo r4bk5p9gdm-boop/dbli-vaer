@@ -10870,8 +10870,16 @@ final class PlannerTests: XCTestCase {
     @MainActor
     func testCorruptedStoreBytesAreReplacedWithStableLaunchPlaces() throws {
         let persistenceKey = "varsel.test.corrupted-store-bytes.\(UUID().uuidString)"
-        defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
-        UserDefaults.standard.set(Data([0xFF, 0x00, 0x7B, 0xC3]), forKey: persistenceKey)
+        let defaults = UserDefaults.standard
+        let recoveryPrefix = Store.unreadableStoreStateRecoveryKeyPrefix(for: persistenceKey)
+        let originalData = Data([0xFF, 0x00, 0x7B, 0xC3])
+        defer {
+            defaults.removeObject(forKey: persistenceKey)
+            for key in defaults.dictionaryRepresentation().keys where key.hasPrefix(recoveryPrefix) {
+                defaults.removeObject(forKey: key)
+            }
+        }
+        defaults.set(originalData, forKey: persistenceKey)
 
         let recovered = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
         let recoveredIDs = recovered.places.map(\.id)
@@ -10882,10 +10890,37 @@ final class PlannerTests: XCTestCase {
         let repairedState = try JSONDecoder().decode(PersistedStoreState.self, from: repairedData)
         XCTAssertEqual(repairedState.places.map(\.id), recoveredIDs)
         XCTAssertEqual(repairedState.selectedID, recovered.selectedID)
+        let recoveryKeys = defaults.dictionaryRepresentation().keys.filter { $0.hasPrefix(recoveryPrefix) }
+        XCTAssertEqual(recoveryKeys.count, 1)
+        XCTAssertEqual(defaults.data(forKey: try XCTUnwrap(recoveryKeys.first)), originalData)
 
         let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
         XCTAssertEqual(restored.places.map(\.id), recoveredIDs)
         XCTAssertEqual(restored.selectedID, recovered.selectedID)
+    }
+
+    @MainActor
+    func testEmptyPersistedStorePlacesArePreservedBeforeLaunchFallback() throws {
+        let persistenceKey = "varsel.test.empty-store-places.\(UUID().uuidString)"
+        let defaults = UserDefaults.standard
+        let recoveryPrefix = Store.unreadableStoreStateRecoveryKeyPrefix(for: persistenceKey)
+        let originalData = try JSONEncoder().encode(PersistedStoreState(places: [], selectedID: nil, log: []))
+        defer {
+            defaults.removeObject(forKey: persistenceKey)
+            for key in defaults.dictionaryRepresentation().keys where key.hasPrefix(recoveryPrefix) {
+                defaults.removeObject(forKey: key)
+            }
+        }
+        defaults.set(originalData, forKey: persistenceKey)
+
+        let recovered = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+
+        XCTAssertFalse(recovered.places.isEmpty)
+        let recoveryKeys = defaults.dictionaryRepresentation().keys.filter { $0.hasPrefix(recoveryPrefix) }
+        XCTAssertEqual(recoveryKeys.count, 1)
+        XCTAssertEqual(defaults.data(forKey: try XCTUnwrap(recoveryKeys.first)), originalData)
+        let repairedData = try XCTUnwrap(defaults.data(forKey: persistenceKey))
+        XCTAssertFalse(try JSONDecoder().decode(PersistedStoreState.self, from: repairedData).places.isEmpty)
     }
 
     @MainActor

@@ -504,6 +504,7 @@ final class Store: ObservableObject {
     private var lastReplanAt: Date?
 
     private let key: String
+    private var persistedStateCanBeReplaced = true
     private let forecastFetcher: ForecastFetcher
     private let notificationRescheduler: NotificationRescheduler
     private let languageStyleKey = "varsel.alertLanguageStyle"
@@ -562,9 +563,17 @@ final class Store: ObservableObject {
         var restoredLastUpdate: Date?
         var needsPersistedStateRepair = false
         let restoredSavedPlaces: Bool
-        if let d = UserDefaults.standard.data(forKey: key),
-           let p = try? JSONDecoder().decode(PersistedStoreState.self, from: d),
-           !p.places.isEmpty {
+        let persistedStateData = UserDefaults.standard.data(forKey: key)
+        let decodedPersistedState = persistedStateData.flatMap {
+            try? JSONDecoder().decode(PersistedStoreState.self, from: $0)
+        }
+        let usablePersistedState = decodedPersistedState.flatMap { $0.places.isEmpty ? nil : $0 }
+        if let persistedStateData, usablePersistedState == nil {
+            persistedStateCanBeReplaced = Self.preserveUnreadableStoreState(
+                persistedStateData, key: key, defaults: .standard
+            )
+        }
+        if let p = usablePersistedState {
             // Restored selection is authoritative when GPS is unavailable;
             // location lookup is only attempted by the explicit startup flow.
             places = p.places; selectedID = p.selectedID
@@ -1289,6 +1298,7 @@ final class Store: ObservableObject {
     }
 
     private func save() {
+        guard persistedStateCanBeReplaced else { return }
         let cachedForecasts = rawForecasts.filter { !$0.value.isEmpty }
         let cachedTimestamps = forecastUpdatedAt.filter { cachedForecasts[$0.key] != nil }
         if let d = try? JSONEncoder().encode(PersistedStoreState(
@@ -1298,6 +1308,18 @@ final class Store: ObservableObject {
         )) {
             UserDefaults.standard.set(d, forKey: key)
         }
+    }
+
+    static func unreadableStoreStateRecoveryKeyPrefix(for key: String) -> String {
+        "\(key).unreadable."
+    }
+
+    private static func preserveUnreadableStoreState(
+        _ data: Data, key: String, defaults: UserDefaults
+    ) -> Bool {
+        let recoveryKey = "\(unreadableStoreStateRecoveryKeyPrefix(for: key))\(UUID().uuidString)"
+        defaults.set(data, forKey: recoveryKey)
+        return defaults.data(forKey: recoveryKey) == data
     }
 
     static func widgetSnapshot(
