@@ -909,11 +909,13 @@ rikere timevalg, stabilt resultat ved omstokking og sortering av radardata.
 Swift-parsing, JSON-validering og `git diff --check` besto; XCTest kunne ikke
 kjøres fordi CoreSimulatorService/runtime mangler.
 
-**AUTO-561 · ÅPEN** — `PersistedStoreState` tolererer feil beholdertype i
-`forecasts` og `forecastUpdatedAt` ved å bruke tomme ordbøker, men markerer
-ikke alltid tilstanden for reparasjon. Bevar gyldige steder ved gjenoppretting,
-marker feilformede toppnivåfelter og test at normaliserte cacheordbøker skrives
-tilbake ved oppstart.
+**AUTO-561 · FULLFØRT 2026-10-13** — Feilformede toppnivåfelter for
+`forecasts` og `forecastUpdatedAt` markerer nå `PersistedStoreState` for
+reparasjon; feilformede enkeltoppføringer i prognoseordboken gjør det samme.
+Gyldige steder beholdes, og `Store` skriver normaliserte tomme cacheordbøker
+tilbake ved oppstart. Regresjon dekker både dekoding og faktisk oppstartslagring.
+Swift-parsing, JSON-validering og `git diff --check` besto; XCTest kunne ikke
+kjøres fordi CoreSimulatorService/runtime mangler.
 
 **AUTO-562 · ÅPEN** — `CalibrationHistory.load` avviser hele
 kalibreringsprognosearrayet hvis én enkelt rad ikke kan dekodes. Selv om

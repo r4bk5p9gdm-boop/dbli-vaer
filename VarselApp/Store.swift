@@ -264,14 +264,37 @@ struct PersistedStoreState: Codable {
         if decodedLog.count != lossyLogEntries.count || log.count != decodedLog.count {
             needsPersistedStateRepair = true
         }
-        let lossyTimestamps = (try? values.decode([UUID: LossyDecodable<Date>].self, forKey: .forecastUpdatedAt)) ?? [:]
+        let lossyTimestamps: [UUID: LossyDecodable<Date>]
+        if values.contains(.forecastUpdatedAt) {
+            do {
+                lossyTimestamps = try values.decode([UUID: LossyDecodable<Date>].self, forKey: .forecastUpdatedAt)
+            } catch {
+                lossyTimestamps = [:]
+                needsPersistedStateRepair = true
+            }
+        } else {
+            lossyTimestamps = [:]
+        }
         forecastUpdatedAt = lossyTimestamps.compactMapValues(\.value)
         if forecastUpdatedAt.count != lossyTimestamps.count { needsPersistedStateRepair = true }
         lastUpdate = try? values.decode(Date.self, forKey: .lastUpdate)
-        let lossyForecasts = (try? values.decode([UUID: LossyDecodable<[ForecastHour]>].self, forKey: .forecasts)) ?? [:]
+        let lossyForecasts: [UUID: LossyDecodable<[ForecastHour]>]
+        if values.contains(.forecasts) {
+            do {
+                lossyForecasts = try values.decode([UUID: LossyDecodable<[ForecastHour]>].self, forKey: .forecasts)
+            } catch {
+                lossyForecasts = [:]
+                needsPersistedStateRepair = true
+            }
+        } else {
+            lossyForecasts = [:]
+        }
         var repairedForecasts: [UUID: [ForecastHour]] = [:]
         for (placeID, decoded) in lossyForecasts {
-            guard let hours = decoded.value else { continue }
+            guard let hours = decoded.value else {
+                needsPersistedStateRepair = true
+                continue
+            }
             let safeHours = ForecastHour.sanitizedCacheSequence(
                 hours, fetchedAt: forecastUpdatedAt[placeID] ?? lastUpdate
             )

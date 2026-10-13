@@ -742,6 +742,63 @@ final class PlannerTests: XCTestCase {
         XCTAssertNil(decoded.forecasts[second.id])
     }
 
+    func testPersistedStoreStateMarksMalformedForecastContainersForRepair() throws {
+        let place = Place(name: "Klinga", lat: 64, lon: 11)
+        let state = PersistedStoreState(places: [place], selectedID: place.id, log: [])
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(state)) as? [String: Any])
+        object["forecasts"] = "not a dictionary"
+        object["forecastUpdatedAt"] = "not a dictionary"
+
+        let decoded = try JSONDecoder().decode(
+            PersistedStoreState.self,
+            from: JSONSerialization.data(withJSONObject: object)
+        )
+
+        XCTAssertEqual(decoded.places.map(\.id), [place.id])
+        XCTAssertTrue(decoded.forecasts.isEmpty)
+        XCTAssertTrue(decoded.forecastUpdatedAt.isEmpty)
+        XCTAssertTrue(decoded.needsPersistedStateRepair)
+    }
+
+    @MainActor
+    func testStorePersistsMalformedForecastContainerRepairAtLaunch() throws {
+        let persistenceKey = "varsel.test.malformed-forecast-container.\(UUID().uuidString)"
+        let launchVersionKey = "varsel.launchPlacesVersion"
+        let previousLaunchVersion = UserDefaults.standard.object(forKey: launchVersionKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousLaunchVersion {
+                UserDefaults.standard.set(previousLaunchVersion, forKey: launchVersionKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: launchVersionKey)
+            }
+        }
+        UserDefaults.standard.set(9, forKey: launchVersionKey)
+
+        let place = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let hour = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 30, dew: 4)
+        let state = PersistedStoreState(
+            places: [place], selectedID: place.id, log: [],
+            forecasts: [place.id: [hour]], forecastUpdatedAt: [place.id: base]
+        )
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(state)) as? [String: Any])
+        object["forecasts"] = "not a dictionary"
+        object["forecastUpdatedAt"] = "not a dictionary"
+        UserDefaults.standard.set(
+            try JSONSerialization.data(withJSONObject: object), forKey: persistenceKey
+        )
+
+        let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        XCTAssertEqual(restored.places.map(\.id), [place.id])
+        XCTAssertTrue(restored.forecasts.isEmpty)
+
+        let repairedData = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
+        let repairedObject = try XCTUnwrap(JSONSerialization.jsonObject(with: repairedData) as? [String: Any])
+        XCTAssertTrue(try XCTUnwrap(repairedObject["forecasts"] as? [String: Any]).isEmpty)
+        XCTAssertTrue(try XCTUnwrap(repairedObject["forecastUpdatedAt"] as? [String: Any]).isEmpty)
+        XCTAssertEqual(try JSONDecoder().decode(PersistedStoreState.self, from: repairedData).places.map(\.id), [place.id])
+    }
+
     func testPersistedStoreStateFiltersImplausibleForecastHoursAndRequestsRepair() throws {
         let first = Place(name: "Klinga", lat: 64, lon: 11)
         let second = Place(name: "Namsos", lat: 64.5, lon: 11.5)
