@@ -97,6 +97,9 @@ struct WeatherConfigurationExport: Codable {
     let alertLanguageStyle: AlertLanguageStyle?
     let appSettings: ApplicationSettingsBackup?
     let places: [Place]
+    /// Number of malformed place entries skipped while decoding an imported backup.
+    /// This is import-preview metadata, so it is intentionally not encoded again.
+    let discardedPlaceCount: Int
 
     init(
         places: [Place], selectedPlaceID: UUID?, alertLanguageStyle: AlertLanguageStyle,
@@ -108,6 +111,7 @@ struct WeatherConfigurationExport: Codable {
         self.selectedPlaceID = Self.resolvedSelection(selectedPlaceID, in: places)
         self.alertLanguageStyle = alertLanguageStyle
         self.appSettings = appSettings
+        discardedPlaceCount = 0
     }
 
     private static func resolvedSelection(_ selectedPlaceID: UUID?, in places: [Place]) -> UUID? {
@@ -140,10 +144,24 @@ struct WeatherConfigurationExport: Codable {
         exportedAt = (try? values.decode(Date.self, forKey: .exportedAt)) ?? .distantPast
         alertLanguageStyle = try? values.decode(AlertLanguageStyle.self, forKey: .alertLanguageStyle)
         appSettings = try? values.decode(ApplicationSettingsBackup.self, forKey: .appSettings)
-        let decodedPlaces = try values.decode([LossyDecodable<Place>].self, forKey: .places).compactMap(\.value)
+        let decodedPlaceEntries = try values.decode([LossyDecodable<Place>].self, forKey: .places)
+        discardedPlaceCount = decodedPlaceEntries.reduce(into: 0) { count, entry in
+            if entry.value == nil { count += 1 }
+        }
+        let decodedPlaces = decodedPlaceEntries.compactMap(\.value)
         places = Self.uniquePlaces(decodedPlaces)
         let decodedSelection = try? values.decode(UUID.self, forKey: .selectedPlaceID)
         selectedPlaceID = Self.resolvedSelection(decodedSelection, in: places)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var values = encoder.container(keyedBy: CodingKeys.self)
+        try values.encode(formatVersion, forKey: .formatVersion)
+        try values.encode(exportedAt, forKey: .exportedAt)
+        try values.encodeIfPresent(selectedPlaceID, forKey: .selectedPlaceID)
+        try values.encodeIfPresent(alertLanguageStyle, forKey: .alertLanguageStyle)
+        try values.encodeIfPresent(appSettings, forKey: .appSettings)
+        try values.encode(places, forKey: .places)
     }
 }
 

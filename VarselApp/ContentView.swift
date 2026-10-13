@@ -2476,6 +2476,18 @@ struct PlacesView: View {
                         localized("Varslingsspråk", english: "Alert language"),
                         value: configuration.alertLanguageStyle?.label ?? localized("Uendret", english: "Unchanged")
                     )
+                    if configuration.discardedPlaceCount > 0 {
+                        LabeledContent(
+                            localized("Ugyldige steder hoppet over", english: "Invalid places skipped"),
+                            value: "\(configuration.discardedPlaceCount)"
+                        )
+                        Text(localized(
+                            "Noen steder kunne ikke leses og blir ikke gjenopprettet. Kontroller kopien før du erstatter oppsettet.",
+                            english: "Some places could not be read and will not be restored. Review the backup before replacing your setup."
+                        ))
+                        .font(.footnote)
+                        .foregroundStyle(.orange)
+                    }
                     if configuration.appSettings != nil {
                         Text(localized(
                             "Kopien inneholder også favoritter, Hjem/Hytta-snarveier, sortering, tekstformat, Watch-sted og Live Activity-valg. iOS-tillatelser og oppstartsstatus kopieres ikke.",

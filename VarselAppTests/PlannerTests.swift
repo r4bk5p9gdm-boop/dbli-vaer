@@ -9299,6 +9299,16 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(imported.places.map(\.id), [firstValidPlace.id, secondValidPlace.id])
         XCTAssertEqual(imported.selectedPlaceID, firstValidPlace.id)
         XCTAssertEqual(imported.alertLanguageStyle, .english)
+        XCTAssertEqual(imported.discardedPlaceCount, 1)
+
+        let directlyReencodedData = try encoder.encode(imported)
+        let directDecoder = JSONDecoder()
+        directDecoder.dateDecodingStrategy = .iso8601
+        let directlyReimported = try directDecoder.decode(
+            WeatherConfigurationExport.self,
+            from: directlyReencodedData
+        )
+        XCTAssertEqual(directlyReimported.discardedPlaceCount, 0)
 
         let reexportedDocument = WeatherConfigurationDocument(
             places: imported.places,
@@ -9310,6 +9320,7 @@ final class PlannerTests: XCTestCase {
         let reimported = reimportedDocument.configuration
         XCTAssertEqual(reimported.places.map(\.id), [firstValidPlace.id, secondValidPlace.id])
         XCTAssertEqual(reimported.selectedPlaceID, firstValidPlace.id)
+        XCTAssertEqual(reimported.discardedPlaceCount, 0, "Import diagnostics must not leak into a new backup")
     }
 
     func testConfigurationImportWithOnlyMalformedPlacesKeepsLanguageAndNoSelection() throws {

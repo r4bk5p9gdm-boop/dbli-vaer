@@ -832,12 +832,13 @@ varselplanlegging med radarprøver for både regn og snø ved `nextDown`, nøyak
 verdier under. Swift-parsing, JSON-validering og `git diff --check` besto;
 XCTest kunne ikke kjøres fordi CoreSimulatorService/runtime mangler.
 
-**AUTO-551 · ÅPEN** — Importdekoderen forkaster ugyldige stedoppføringer
-tapsfritt med `LossyDecodable`, men importforhåndsvisningen viser bare antallet
-som overlevde dekoding. En delvis korrupt kopi kan dermed se ut som en liten,
-gyldig kopi før brukeren velger destruktiv erstatning. Bevar antallet forkastede
-oppføringer i importmodellen, vis en tydelig lokaliserbar advarsel før valg av
-sammenføying/erstatning, og test en kopi med både gyldige og ugyldige steder.
+**AUTO-551 · FULLFØRT 2026-10-13** — Importmodellen bevarer nå antallet
+ugyldige stedoppføringer som dekoderen hopper over, og forhåndsvisningen viser
+en lokalisert advarsel før brukeren velger sammenføying eller erstatning. La til
+regresjon for blandet gyldig/ugyldig import og for at diagnostikken ikke følger
+med når den dekodede kopien kodes på nytt. Swift-parsing, JSON-validering og
+`git diff --check` besto; XCTest kunne ikke kjøres fordi CoreSimulatorService/
+runtime mangler.
 
 **AUTO-552 · ÅPEN** — `Store.performRefresh` begrenser samtidig Yr-forespørsler
 til fire koordinater, men testene verifiserer ikke denne ressursgrensen når
@@ -851,6 +852,13 @@ avbryting av Store-oppdateringen og ferdigmelding uten en testbar
 orkestreringsgrense. Trekk ut en liten policy/coordinator og test at utløp gir
 én feilet fullføring selv om den avbrutte oppdateringen senere returnerer
 suksess, samtidig som normal fullføring fortsatt rapporterer faktisk resultat.
+
+**AUTO-554 · ÅPEN** — Temperaturjusteringen per sted brukes både i visningen og
+`Store.replan`, men eksisterende tester dekker hovedsakelig terskelberegning og
+direkte planlegging. Legg til en deterministisk Store-regresjon som endrer
+justeringen mens Yr-prognosene ligger i cache, bekrefter at varselplanleggeren
+får de lokalt justerte verdiene uten nytt Yr-kall, og at et annet steds rådata
+ikke påvirkes.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med
