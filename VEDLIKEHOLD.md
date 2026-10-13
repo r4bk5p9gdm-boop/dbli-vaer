@@ -856,12 +856,12 @@ bevaring av normale suksess-/feilresultater. Swift-parsing og
 `git diff --check` besto; XCTest kunne ikke kjøres fordi
 CoreSimulatorService/runtime mangler.
 
-**AUTO-554 · ÅPEN** — Temperaturjusteringen per sted brukes både i visningen og
-`Store.replan`, men eksisterende tester dekker hovedsakelig terskelberegning og
-direkte planlegging. Legg til en deterministisk Store-regresjon som endrer
-justeringen mens Yr-prognosene ligger i cache, bekrefter at varselplanleggeren
-får de lokalt justerte verdiene uten nytt Yr-kall, og at et annet steds rådata
-ikke påvirkes.
+**AUTO-554 · FULLFØRT 2026-10-13** — La til en deterministisk
+Store-regresjon som endrer temperaturjusteringen for ett sted mens Yr-dataene
+ligger i cache. Replanlegging lager nå varselet for det justerte stedet uten
+nytt Yr-kall, samtidig som råtemperaturen og det andre stedets prognose forblir
+uendret. Swift-parsing, JSON-validering og `git diff --check` besto; XCTest
+kunne ikke kjøres fordi CoreSimulatorService/runtime mangler.
 
 **AUTO-555 · ÅPEN** — Importen teller nå steder som ikke kan dekodes, men
 `WeatherConfigurationExport.uniquePlaces` fjerner også senere gyldige rader med
@@ -875,6 +875,13 @@ loggrader via `LossyDecodable`, men setter ikke alltid
 lagret rad kan derfor bli forkastet på hver oppstart uten at den normaliserte
 tilstanden skrives tilbake. Tell forkastede rader eksplisitt, marker tilstanden
 for reparasjon og legg til regresjoner for både steder og loggoppføringer.
+
+**AUTO-557 · ÅPEN** — Eget stedsnavn kan redigeres fritt i Steder-visningen,
+og `Place`-dekoderen beholder det uten lengdegrense. En importfil innenfor
+størrelsesgrensen kan dermed gi et uforholdsmessig langt navn som gjentas i
+værkort, varsler og Watch/widget-data. Definer en konsekvent grense ved både
+redigering og dekoding, og test normalisering av importerte og gjenopprettede
+navn uten å endre vanlige navn.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

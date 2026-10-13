@@ -10792,6 +10792,61 @@ final class PlannerTests: XCTestCase {
     }
 
     @MainActor
+    func testChangingCachedPlaceTemperatureOffsetReplansWithoutFetchingOrMutatingOtherPlace() async throws {
+        let persistenceKey = "varsel.test.cached-place-temperature-offset." + UUID().uuidString
+        defer { UserDefaults.standard.removeObject(forKey: persistenceKey) }
+        let now = Date()
+        let fetchCounter = ForecastFetchCounter()
+        var targetRule = Rule(type: .temperatur)
+        targetRule.temperatureDirection = .above
+        targetRule.threshold = 10
+        var otherRule = Rule(type: .temperatur)
+        otherRule.temperatureDirection = .above
+        otherRule.threshold = 10
+        let target = Place(name: "Målsted", lat: 64, lon: 11, rules: [targetRule])
+        let other = Place(name: "Annet sted", lat: 63, lon: 10, rules: [otherRule])
+        let targetForecast = makeForecast(
+            through: 5, startingAt: now.addingTimeInterval(4 * 3_600), precipitationOffsets: []
+        )
+        let otherForecast = targetForecast
+        UserDefaults.standard.set(try JSONEncoder().encode(PersistedStoreState(
+            places: [target, other], selectedID: target.id, log: [],
+            forecasts: [target.id: targetForecast, other.id: otherForecast],
+            forecastUpdatedAt: [target.id: now, other.id: now], lastUpdate: now
+        )), forKey: persistenceKey)
+
+        var scheduledAlerts: [PlannedAlert] = []
+        let store = Store(
+            forecastFetcher: { _, _ in
+                await fetchCounter.increment()
+                return []
+            },
+            persistenceKey: persistenceKey,
+            notificationRescheduler: { alerts, _, _, _, _ in
+                scheduledAlerts = alerts
+                return NotificationScheduleResult(
+                    requestedCount: alerts.count, scheduledCount: alerts.count,
+                    failedCount: 0, firstScheduledAt: alerts.first?.fireAt
+                )
+            }
+        )
+
+        var calibratedTarget = try XCTUnwrap(store.places.first { $0.id == target.id })
+        calibratedTarget.temperatureOffset = 3
+        store.update(calibratedTarget)
+        await store.replan()
+
+        XCTAssertNotNil(scheduledAlerts.first { $0.placeID == target.id })
+        XCTAssertFalse(scheduledAlerts.contains { $0.placeID == other.id })
+        XCTAssertEqual(store.forecasts[target.id]?.first?.temp, 11)
+        XCTAssertEqual(store.forecasts[target.id]?.first?.yrTemperature, 8)
+        XCTAssertEqual(store.forecasts[other.id]?.first?.temp, 8)
+        XCTAssertNil(store.forecasts[other.id]?.first?.yrTemperature)
+        let fetchCount = await fetchCounter.value()
+        XCTAssertEqual(fetchCount, 0, "Replanning cached data must not fetch from Yr")
+    }
+
+    @MainActor
     func testFailedReplanCanRetrySamePlanAndSuccessfulRetryIsDebounced() async {
         var schedulingAttempts = 0
         let store = Store(
