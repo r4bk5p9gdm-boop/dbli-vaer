@@ -847,12 +847,14 @@ elleve unike prognoseposisjoner til slutt behandles. Swift-parsing,
 JSON-validering og `git diff --check` besto; XCTest kunne ikke kjøres fordi
 CoreSimulatorService/runtime mangler.
 
-**AUTO-553 · ÅPEN** — `BackgroundRefreshCompletionGate` er testet isolert,
-men `BackgroundRefresh.handle` kobler sammen oppgavens utløpscallback,
-avbryting av Store-oppdateringen og ferdigmelding uten en testbar
-orkestreringsgrense. Trekk ut en liten policy/coordinator og test at utløp gir
-én feilet fullføring selv om den avbrutte oppdateringen senere returnerer
-suksess, samtidig som normal fullføring fortsatt rapporterer faktisk resultat.
+**AUTO-553 · FULLFØRT 2026-10-13** — Trakk ut
+`BackgroundRefreshCoordinator` slik at oppgaveutløp og arbeidet deler én
+testbar fullføringspolicy. Utløp reserverer nå feilresultatet atomisk før
+avbryting, så en samtidig eller sen suksess ikke kan vinne kappløpet. Tester
+dekker utløp mens avbrytingen utløser suksess, nøyaktig én fullføring og
+bevaring av normale suksess-/feilresultater. Swift-parsing og
+`git diff --check` besto; XCTest kunne ikke kjøres fordi
+CoreSimulatorService/runtime mangler.
 
 **AUTO-554 · ÅPEN** — Temperaturjusteringen per sted brukes både i visningen og
 `Store.replan`, men eksisterende tester dekker hovedsakelig terskelberegning og
@@ -866,6 +868,13 @@ ikke påvirkes.
 duplisert steds-ID uten å ta med dem i forhåndsvisningens antall. Utvid
 diagnostikken slik at forhåndsvisningen varsler om begge typer forkastede
 rader, og test dupliserte ID-er sammen med et annet gyldig sted.
+
+**AUTO-556 · ÅPEN** — `PersistedStoreState` hopper over ugyldige sted- og
+loggrader via `LossyDecodable`, men setter ikke alltid
+`needsPersistedStateRepair` når dekodingen forkaster slike rader. En skadet
+lagret rad kan derfor bli forkastet på hver oppstart uten at den normaliserte
+tilstanden skrives tilbake. Tell forkastede rader eksplisitt, marker tilstanden
+for reparasjon og legg til regresjoner for både steder og loggoppføringer.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

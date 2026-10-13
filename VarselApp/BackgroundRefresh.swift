@@ -16,6 +16,37 @@ final class BackgroundRefreshCompletionGate: @unchecked Sendable {
         lock.unlock()
         complete(success)
     }
+
+    func expire(cancelWork: () -> Void, complete: (Bool) -> Void) {
+        lock.lock()
+        guard !hasCompleted else {
+            lock.unlock()
+            return
+        }
+        hasCompleted = true
+        lock.unlock()
+
+        // Claim failure before cancellation can cause the work to finish.
+        cancelWork()
+        complete(false)
+    }
+}
+
+final class BackgroundRefreshCoordinator: @unchecked Sendable {
+    private let completionGate = BackgroundRefreshCompletionGate()
+    private let complete: (Bool) -> Void
+
+    init(complete: @escaping (Bool) -> Void) {
+        self.complete = complete
+    }
+
+    func finish(success: Bool) {
+        completionGate.finish(success: success, complete: complete)
+    }
+
+    func expire(cancelWork: () -> Void) {
+        completionGate.expire(cancelWork: cancelWork, complete: complete)
+    }
 }
 
 enum BackgroundRefresh {
@@ -62,19 +93,14 @@ enum BackgroundRefresh {
 
     private static func handle(_ task: BGAppRefreshTask) {
         schedule()
-        let completionGate = BackgroundRefreshCompletionGate()
+        let coordinator = BackgroundRefreshCoordinator { task.setTaskCompleted(success: $0) }
         let work = Task {
             let store = await Store.shared
             let success = await store.refreshAll(backgroundOnly: true)
-            completionGate.finish(success: success && !Task.isCancelled) {
-                task.setTaskCompleted(success: $0)
-            }
+            coordinator.finish(success: success && !Task.isCancelled)
         }
         task.expirationHandler = {
-            work.cancel()
-            completionGate.finish(success: false) {
-                task.setTaskCompleted(success: $0)
-            }
+            coordinator.expire { work.cancel() }
         }
     }
 }

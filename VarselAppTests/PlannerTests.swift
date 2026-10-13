@@ -12211,6 +12211,30 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(workFirstResults, [true])
     }
 
+    func testBackgroundRefreshCoordinatorExpirationCancelsAndFailsOnlyOnce() {
+        var results: [Bool] = []
+        var canceled = false
+        let coordinator = BackgroundRefreshCoordinator { results.append($0) }
+
+        coordinator.expire {
+            canceled = true
+            coordinator.finish(success: true) // Cancellation can race with a late success.
+        }
+        coordinator.finish(success: true) // Nor can work finish successfully afterward.
+
+        XCTAssertTrue(canceled)
+        XCTAssertEqual(results, [false])
+    }
+
+    func testBackgroundRefreshCoordinatorPreservesNormalWorkResult() {
+        for result in [false, true] {
+            var completions: [Bool] = []
+            let coordinator = BackgroundRefreshCoordinator { completions.append($0) }
+            coordinator.finish(success: result)
+            XCTAssertEqual(completions, [result])
+        }
+    }
+
     func testBackgroundRefreshCompletionGateCompletesOnlyOnceUnderConcurrency() {
         let gate = BackgroundRefreshCompletionGate()
         let resultsLock = NSLock()
