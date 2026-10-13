@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-13T09:34:26Z",
+  "lastScheduledStart": "2026-10-13T09:49:38Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-558 fullført 2026-10-13: Et tilstedeværende log-felt med feil beholdertype markerer nå PersistedStoreState for reparasjon, slik at gyldige steder gjenopprettes og tom logg normaliseres til JSON ved oppstart. Regresjon lagt til; Swift-parsing, JSON-validering og git diff --check besto. XCTest ikke kjørt fordi CoreSimulatorService/runtime mangler. Bred gjennomgang av fersk historie og appområdene fant samme risikomønster for feil toppnivåbeholdere i forecasts og forecastUpdatedAt: gyldige steder kan beholdes mens korrupt cache blir tom uten umiddelbar normalisering. AUTO-561 lagt til for cacheordbøker. Neste åpne kønumre: AUTO-559, AUTO-560, AUTO-561."
+  "lastProgress": "AUTO-559 fullført 2026-10-13: Ukodelige bytes i calibrationForecasts UserDefaults-arkivet kopieres nå til egen recovery-nøkkel og originalen fjernes først etter kontrollert gjenlesing. Observasjonsarkivet lastes videre; senere prognoselagring overskriver ikke recoverable bytes. Regresjon dekker recovery, observasjoner og senere lagring. Swift-parsing, JSON-validering og git diff --check besto; XCTest ikke kjørt fordi CoreSimulatorService/runtime mangler. Bred appgjennomgang fant at CalibrationHistory dekoder forecast-array strengt, så én feilformet rad skjuler andre lesbare kalibreringsprognoser; AUTO-562 lagt til for tapsfri raddekoding. Neste åpne kønumre: AUTO-560, AUTO-561, AUTO-562."
 }

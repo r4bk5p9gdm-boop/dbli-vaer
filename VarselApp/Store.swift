@@ -34,6 +34,7 @@ struct CalibrationHistory: Codable {
     static let retention: TimeInterval = 48 * 3600
     private static let legacyKey = "varsel.calibrationHistory.v1"
     private static let forecastsKey = "varsel.calibrationForecasts.v1"
+    private static let unreadableForecastsKeyPrefix = "\(forecastsKey).unreadable."
     private static var observationsFileURL: URL? {
         FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first?
             .appendingPathComponent("D bli Vær", isDirectory: true)
@@ -140,9 +141,14 @@ struct CalibrationHistory: Codable {
         observationsURL: URL? = nil
     ) -> Self {
         let legacy = defaults.data(forKey: legacyKey).flatMap { try? JSONDecoder().decode(Self.self, from: $0) }
-        let forecasts = defaults.data(forKey: forecastsKey)
-            .flatMap { try? JSONDecoder().decode([CalibrationForecast].self, from: $0) }
-            ?? legacy?.forecasts ?? []
+        let storedForecastData = defaults.data(forKey: forecastsKey)
+        let decodedForecasts = storedForecastData.flatMap {
+            try? JSONDecoder().decode([CalibrationForecast].self, from: $0)
+        }
+        if let storedForecastData, decodedForecasts == nil {
+            quarantineUnreadableForecasts(storedForecastData, defaults: defaults)
+        }
+        let forecasts = decodedForecasts ?? legacy?.forecasts ?? []
         let archiveURL = observationsURL ?? Self.observationsFileURL
         var observationsArchiveCanBeReplaced = true
         var archivedObservations: [LocalWeatherObservation]?
@@ -186,6 +192,15 @@ struct CalibrationHistory: Codable {
             // only remaining copy of the unreadable archive.
             return !manager.fileExists(atPath: url.path)
         }
+    }
+
+    @discardableResult
+    private static func quarantineUnreadableForecasts(_ data: Data, defaults: UserDefaults) -> Bool {
+        let recoveryKey = "\(unreadableForecastsKeyPrefix)\(UUID().uuidString)"
+        defaults.set(data, forKey: recoveryKey)
+        guard defaults.data(forKey: recoveryKey) == data else { return false }
+        defaults.removeObject(forKey: forecastsKey)
+        return true
     }
 }
 

@@ -908,6 +908,14 @@ gjenoppretting, og en senere lagring kan overskrive den. Bevar en skadet
 prognoseblob før normal videre bruk og test at observasjoner kan lastes videre
 og at originalbytes fortsatt kan gjenfinnes.
 
+**AUTO-559 · FULLFØRT 2026-10-13** — Ukodelige bytes i
+kalibreringsprognosearkivet flyttes nå først til en egen UserDefaults-nøkkel
+og originalnøkkelen fjernes bare etter at kopien kan leses tilbake. Dermed kan
+observasjoner lastes videre, og en senere prognoselagring overskriver ikke
+eneste kopi av skadet data. Regresjon dekker bevaring av originalbytes,
+observasjonsinnlasting og senere lagring. Swift-parsing og diffkontroll besto;
+XCTest kunne ikke kjøres fordi CoreSimulatorService/runtime mangler.
+
 **AUTO-560 · ÅPEN** — `ForecastHour.sanitizedCacheSequence` beholder første
 fysisk gyldige time ved duplisert tidsstempel. For skadet eller sammensatt
 cache avhenger dermed værdata som vises og planlegges av rekkefølgen i arkivet,
@@ -919,6 +927,12 @@ for like tidsstempler og test at omstokking gir identisk normalisert prognose.
 ikke alltid tilstanden for reparasjon. Bevar gyldige steder ved gjenoppretting,
 marker feilformede toppnivåfelter og test at normaliserte cacheordbøker skrives
 tilbake ved oppstart.
+
+**AUTO-562 · ÅPEN** — `CalibrationHistory.load` avviser hele
+kalibreringsprognosearrayet hvis én enkelt rad ikke kan dekodes. Selv om
+arkivet bevares for gjenoppretting, går alle øvrige lesbare prognoseversjoner
+midlertidig tapt for kalibreringsvisningen. Vurder tapsfri raddekoding og test
+at gyldige prognoser overlever en feilformet nabo uten å miste råarkivet.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

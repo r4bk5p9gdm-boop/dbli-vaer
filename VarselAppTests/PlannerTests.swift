@@ -3822,6 +3822,47 @@ final class PlannerTests: XCTestCase {
         XCTAssertTrue(FileManager.default.fileExists(atPath: recoveryFiles[0].path))
     }
 
+    func testUnreadableCalibrationForecastBlobIsPreservedWhileObservationsLoad() throws {
+        let suiteName = "varsel.test.calibration-corrupt-forecasts.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("calibration-forecast-corrupt-\(UUID().uuidString)", isDirectory: true)
+        let archiveURL = directory.appendingPathComponent("observations.json")
+        let corruptData = Data("truncated forecast archive".utf8)
+        let place = Place(name: "Home", lat: 64, lon: 11)
+        let observation = LocalWeatherObservation(
+            place: place, observedAt: base, registeredAt: base,
+            measuredTemperature: 3, frost: nil, surface: "",
+            forecastFetchedAt: nil, evidence: [], nightForecast: nil
+        )
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        try JSONEncoder().encode([observation]).write(to: archiveURL)
+        defaults.set(corruptData, forKey: "varsel.calibrationForecasts.v1")
+        defer {
+            defaults.removePersistentDomain(forName: suiteName)
+            try? FileManager.default.removeItem(at: directory)
+        }
+
+        var history = CalibrationHistory.load(now: base, defaults: defaults, observationsURL: archiveURL)
+
+        XCTAssertEqual(history.observations.map(\.id), [observation.id])
+        XCTAssertNil(defaults.data(forKey: "varsel.calibrationForecasts.v1"))
+        let recoveryKeys = defaults.dictionaryRepresentation().keys
+            .filter { $0.hasPrefix("varsel.calibrationForecasts.v1.unreadable.") }
+        XCTAssertEqual(recoveryKeys.count, 1)
+        let recoveryKey = try XCTUnwrap(recoveryKeys.first)
+        XCTAssertEqual(defaults.data(forKey: recoveryKey), corruptData)
+
+        history.record(place: place, hours: [], fetchedAt: base)
+
+        XCTAssertEqual(defaults.data(forKey: "varsel.calibrationForecasts.v1"), try JSONEncoder().encode([CalibrationForecast]()))
+        XCTAssertEqual(defaults.data(forKey: recoveryKey), corruptData)
+        XCTAssertEqual(
+            try JSONDecoder().decode([LocalWeatherObservation].self, from: Data(contentsOf: archiveURL)).map(\.id),
+            [observation.id]
+        )
+    }
+
     func testUnreadableCalibrationArchiveFallsBackToLegacyAndMigratesSafely() throws {
         let suiteName = "varsel.test.calibration-corrupt-legacy.\(UUID().uuidString)"
         let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
