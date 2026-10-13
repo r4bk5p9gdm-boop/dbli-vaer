@@ -917,11 +917,14 @@ tilbake ved oppstart. Regresjon dekker både dekoding og faktisk oppstartslagrin
 Swift-parsing, JSON-validering og `git diff --check` besto; XCTest kunne ikke
 kjøres fordi CoreSimulatorService/runtime mangler.
 
-**AUTO-562 · ÅPEN** — `CalibrationHistory.load` avviser hele
-kalibreringsprognosearrayet hvis én enkelt rad ikke kan dekodes. Selv om
-arkivet bevares for gjenoppretting, går alle øvrige lesbare prognoseversjoner
-midlertidig tapt for kalibreringsvisningen. Vurder tapsfri raddekoding og test
-at gyldige prognoser overlever en feilformet nabo uten å miste råarkivet.
+**AUTO-562 · FULLFØRT 2026-10-13** — `CalibrationHistory.load` dekoder nå
+prognoseversjoner radvis, beholder gyldige rader og skriver en normalisert
+liste tilbake etter at originalbloben er kopiert og verifisert under en
+recovery-nøkkel. Feilformede rader kan dermed ikke skjule lesbare versjoner,
+og råarkivet kan gjenfinnes også etter senere lagring og ny oppstart. Regresjon
+dekker begge egenskapene. Swift-parsing, JSON-validering og
+`git diff --check` besto; XCTest kunne ikke kjøres fordi CoreSimulatorService/
+runtime mangler.
 
 **AUTO-563 · ÅPEN** — `ForecastHour.sanitizedCacheSequence` begrenser hvert
 tidspunkt, men har ingen eksplisitt øvre grense for antall unike timer i et
@@ -934,6 +937,12 @@ dekodingen ikke gjenoppretter noen steder, starter `Store` med standardsteder
 og kan skrive dem over den eneste skadede originalen. Bevar originalbloben i
 en verifisert recovery-nøkkel før fallback lagres, og test at både trygg
 oppstart og byte-for-byte gjenfinning virker.
+
+**AUTO-565 · ÅPEN** — `AppNotificationDelegate.willPresent` ber alltid
+systemet spille varslingslyd, mens stille planer settes med `sound = nil` og
+passivt avbruddsnivå. Verifiser at forgrunnsvisning bevarer varselets
+individuelle lyd-/avbruddspolicy, og dekk både stille og lydvarsler med en
+testbar presentasjonspolicy.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

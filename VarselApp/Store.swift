@@ -142,11 +142,23 @@ struct CalibrationHistory: Codable {
     ) -> Self {
         let legacy = defaults.data(forKey: legacyKey).flatMap { try? JSONDecoder().decode(Self.self, from: $0) }
         let storedForecastData = defaults.data(forKey: forecastsKey)
-        let decodedForecasts = storedForecastData.flatMap {
-            try? JSONDecoder().decode([CalibrationForecast].self, from: $0)
+        var droppedUnreadableForecastRows = false
+        let decodedForecasts: [CalibrationForecast]? = storedForecastData.flatMap { data in
+            guard let rows = try? JSONDecoder().decode([LossyDecodable<CalibrationForecast>].self, from: data) else {
+                return nil
+            }
+            let validRows = rows.compactMap(\.value)
+            droppedUnreadableForecastRows = validRows.count != rows.count
+            return validRows
         }
         if let storedForecastData, decodedForecasts == nil {
             quarantineUnreadableForecasts(storedForecastData, defaults: defaults)
+        }
+        let forecastArchiveCanBeReplaced: Bool
+        if droppedUnreadableForecastRows, let storedForecastData {
+            forecastArchiveCanBeReplaced = preserveUnreadableForecasts(storedForecastData, defaults: defaults)
+        } else {
+            forecastArchiveCanBeReplaced = true
         }
         let forecasts = decodedForecasts ?? legacy?.forecasts ?? []
         let archiveURL = observationsURL ?? Self.observationsFileURL
@@ -169,10 +181,12 @@ struct CalibrationHistory: Codable {
         if legacy != nil {
             // Keep the old combined archive until both new stores are safely
             // written, so a file-system failure cannot discard observations.
-            if history.saveObservations(to: archiveURL), history.saveForecasts(defaults: defaults) {
+            if history.saveObservations(to: archiveURL), forecastArchiveCanBeReplaced,
+               history.saveForecasts(defaults: defaults) {
                 defaults.removeObject(forKey: legacyKey)
             }
-        } else if history.forecasts.count != forecastCountBeforePruning {
+        } else if forecastArchiveCanBeReplaced,
+                  droppedUnreadableForecastRows || history.forecasts.count != forecastCountBeforePruning {
             history.saveForecasts(defaults: defaults)
         }
         return history
@@ -196,10 +210,15 @@ struct CalibrationHistory: Codable {
 
     @discardableResult
     private static func quarantineUnreadableForecasts(_ data: Data, defaults: UserDefaults) -> Bool {
+        guard preserveUnreadableForecasts(data, defaults: defaults) else { return false }
+        defaults.removeObject(forKey: forecastsKey)
+        return true
+    }
+
+    private static func preserveUnreadableForecasts(_ data: Data, defaults: UserDefaults) -> Bool {
         let recoveryKey = "\(unreadableForecastsKeyPrefix)\(UUID().uuidString)"
         defaults.set(data, forKey: recoveryKey)
         guard defaults.data(forKey: recoveryKey) == data else { return false }
-        defaults.removeObject(forKey: forecastsKey)
         return true
     }
 }
