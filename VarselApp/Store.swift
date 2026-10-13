@@ -232,6 +232,7 @@ struct PersistedStoreState: Codable {
         if log.count != decodedLog.count { needsPersistedStateRepair = true }
         let lossyTimestamps = (try? values.decode([UUID: LossyDecodable<Date>].self, forKey: .forecastUpdatedAt)) ?? [:]
         forecastUpdatedAt = lossyTimestamps.compactMapValues(\.value)
+        if forecastUpdatedAt.count != lossyTimestamps.count { needsPersistedStateRepair = true }
         lastUpdate = try? values.decode(Date.self, forKey: .lastUpdate)
         let lossyForecasts = (try? values.decode([UUID: LossyDecodable<[ForecastHour]>].self, forKey: .forecasts)) ?? [:]
         var repairedForecasts: [UUID: [ForecastHour]] = [:]

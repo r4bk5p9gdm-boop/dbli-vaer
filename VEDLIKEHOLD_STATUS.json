@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-13T01:42:05Z",
+  "lastScheduledStart": "2026-10-13T02:18:39Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-546 fullført 2026-10-13: persisted-state-dekoding markerer nå reparasjon når ugyldige eller gjentatte steder fjernes. Restore-regresjon bekrefter første-ID-forekomst, persistert unik liste og bevart valg/prognosecache etter ny oppstart. Swift-parsing, JSON-validering og git diff --check besto; XCTest ikke kjørt fordi CoreSimulatorService/runtime mangler. Bred appgjennomgang fant fast bokmålsbaserte VoiceOver-etiketter for temperatur, klokke og skodde i TimelineView; AUTO-549 lagt til. Full køskann viser BRUKER-oppgaver fullført eller på vent. Neste åpne kønumre: AUTO-547, AUTO-548, AUTO-549."
+  "lastProgress": "AUTO-547 fullført 2026-10-13: PersistedStoreState markerer nå reparasjon når LossyDecodable forkaster ugyldige forecastUpdatedAt-verdier. Restore-regresjon bekrefter at cache beholdes, ugyldig dato fjernes fra arkivet og cache overlever relaunch. Swift-parsing, JSON-validering og git diff --check besto; XCTest ikke kjørt fordi CoreSimulatorService/runtime mangler. Bred gjennomgang på tvers av værlogikk, varsler, import/eksport, posisjon, bakgrunnsoppdatering, widget/Watch og tilgjengelighet fant at 1 °C regn/snø-grensen er duplisert mellom time- og radarplanlegging; AUTO-550 lagt til for offentlig ende-til-ende grensetest. BRUKER-kø fullført eller på vent. Neste åpne kønumre: AUTO-548, AUTO-549, AUTO-550."
 }

@@ -850,6 +850,51 @@ final class PlannerTests: XCTestCase {
         XCTAssertNil(relaunched.forecastUpdatedAt(for: unknownID))
     }
 
+    @MainActor
+    func testStoreRepairsInvalidForecastTimestampAndKeepsForecastCache() throws {
+        let persistenceKey = "varsel.test.invalid-forecast-timestamp.\(UUID().uuidString)"
+        let launchVersionKey = "varsel.launchPlacesVersion"
+        let previousLaunchVersion = UserDefaults.standard.object(forKey: launchVersionKey)
+        defer {
+            UserDefaults.standard.removeObject(forKey: persistenceKey)
+            if let previousLaunchVersion {
+                UserDefaults.standard.set(previousLaunchVersion, forKey: launchVersionKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: launchVersionKey)
+            }
+        }
+        UserDefaults.standard.set(9, forKey: launchVersionKey)
+
+        let now = Date()
+        let place = Place(name: "Klinga", lat: 64.4, lon: 11.4)
+        let forecast = (0..<3).map { offset in
+            ForecastHour(
+                time: now.addingTimeInterval(Double(offset) * 3_600),
+                temp: 7, precip: 0, wind: 1, cloud: 30, dew: 4
+            )
+        }
+        let state = PersistedStoreState(
+            places: [place], selectedID: place.id, log: [],
+            forecasts: [place.id: forecast], forecastUpdatedAt: [place.id: now]
+        )
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: JSONEncoder().encode(state)) as? [String: Any])
+        object["forecastUpdatedAt"] = [place.id.uuidString: "not-a-date"]
+        UserDefaults.standard.set(try JSONSerialization.data(withJSONObject: object), forKey: persistenceKey)
+
+        let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        XCTAssertEqual(restored.forecasts[place.id], forecast)
+        XCTAssertNil(restored.forecastUpdatedAt(for: place.id))
+
+        let repairedData = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
+        let repairedState = try JSONDecoder().decode(PersistedStoreState.self, from: repairedData)
+        XCTAssertEqual(repairedState.forecasts[place.id], forecast)
+        XCTAssertTrue(repairedState.forecastUpdatedAt.isEmpty)
+
+        let relaunched = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey)
+        XCTAssertEqual(relaunched.forecasts[place.id], forecast)
+        XCTAssertNil(relaunched.forecastUpdatedAt(for: place.id))
+    }
+
     func testPersistedCacheCanBeFilteredToKnownPlaces() throws {
         let known = Place(name: "Klinga", lat: 64, lon: 11)
         let deletedID = UUID()

@@ -804,12 +804,13 @@ den unike listen persisteres, og valgt sted samt prognosecache overlever en
 ny oppstart. Swift-parsing, JSON-validering og `git diff --check` besto; XCTest
 kunne ikke kjøres fordi CoreSimulatorService/runtime mangler.
 
-**AUTO-547 · ÅPEN** — Når `PersistedStoreState` dekoder en ugyldig
-`forecastUpdatedAt`-verdi, `LossyDecodable<Date>` forkaster den, men dekoderen
-markerer ikke nødvendigvis state som reparert. Hvis ingen annen normalisering
-utløser lagring, blir den korrupte tidsverdien stående på disk og forkastes på
-hvert oppstart. Legg til en fil-/restore-regresjon som bekrefter at ugyldig
-tidsstempel ryddes og at resten av prognosecachen bevares.
+**AUTO-547 · FULLFØRT 2026-10-13** — `PersistedStoreState` markerer nå
+arkivet for reparasjon når tapsfri dekoding forkaster ett eller flere
+`forecastUpdatedAt`-tidsstempler. Restore-regresjonen injiserer en ugyldig dato,
+bekrefter at prognosecachen beholdes, at timestampet fjernes fra den lagrede
+kopien, og at cache fortsatt finnes etter ny oppstart. Swift-parsing,
+JSON-validering og `git diff --check` besto; XCTest kunne ikke kjøres fordi
+CoreSimulatorService/runtime mangler.
 
 **AUTO-548 · ÅPEN** — `NotificationScheduler.localizedWeatherName` bruker
 `fatalError` for `.temperatur` i den engelske `switch`-grenen, selv om metoden
@@ -822,6 +823,13 @@ bokmål selv om visningen allerede kjenner valgt språk: temperaturverdien,
 klokken «Nå» og skoddeintensiteten (`TimelineView.swift` rundt linje 319,
 534 og 817). Lokaliser disse tilgjengelighetsstrengene uten å endre synlige
 etiketter, og test norsk, inntrøndersk og engelsk.
+
+**AUTO-550 · ÅPEN** — Nedbørens regn/snø-grense på 1 °C er implementert både i
+`AlertType.matches` og `Planner.sampleMatches`. Eksisterende tester dekker
+timeprognosens grense og værikonet, men ikke at radarbaserte varslingshendelser
+bruker samme klassifisering akkurat ved og rundt 1 °C. Dekk offentlig
+planlegging for radarprøver ved 1 °C og på hver side av grensen, slik at
+regn-/snøvarsel ikke avviker fra prognosestatusen ved denne grenseverdien.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med
