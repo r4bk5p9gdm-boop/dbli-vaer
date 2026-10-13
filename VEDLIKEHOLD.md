@@ -825,12 +825,12 @@ inntrøndersk og engelsk uten å endre synlig tekst. La til enhetstest for alle
 tre språk. Swift-parsing, JSON-validering og `git diff --check` besto; XCTest
 kunne ikke kjøres fordi CoreSimulatorService/runtime mangler.
 
-**AUTO-550 · ÅPEN** — Nedbørens regn/snø-grense på 1 °C er implementert både i
-`AlertType.matches` og `Planner.sampleMatches`. Eksisterende tester dekker
-timeprognosens grense og værikonet, men ikke at radarbaserte varslingshendelser
-bruker samme klassifisering akkurat ved og rundt 1 °C. Dekk offentlig
-planlegging for radarprøver ved 1 °C og på hver side av grensen, slik at
-regn-/snøvarsel ikke avviker fra prognosestatusen ved denne grenseverdien.
+**AUTO-550 · FULLFØRT 2026-10-13** — La til
+`testRadarRainAndSnowAlertsSwitchExactlyAtOneDegree`, som tester offentlig
+varselplanlegging med radarprøver for både regn og snø ved `nextDown`, nøyaktig
+1 °C og `nextUp`. Regn starter først over grensen, snø inkluderer grensen og
+verdier under. Swift-parsing, JSON-validering og `git diff --check` besto;
+XCTest kunne ikke kjøres fordi CoreSimulatorService/runtime mangler.
 
 **AUTO-551 · ÅPEN** — Importdekoderen forkaster ugyldige stedoppføringer
 tapsfritt med `LossyDecodable`, men importforhåndsvisningen viser bare antallet
@@ -844,6 +844,13 @@ til fire koordinater, men testene verifiserer ikke denne ressursgrensen når
 flere steder oppdateres. Legg til en deterministisk regresjonstest som måler
 maksimalt antall samtidige kall og samtidig bekrefter at alle unike
 prognoseposisjoner til slutt behandles.
+
+**AUTO-553 · ÅPEN** — `BackgroundRefreshCompletionGate` er testet isolert,
+men `BackgroundRefresh.handle` kobler sammen oppgavens utløpscallback,
+avbryting av Store-oppdateringen og ferdigmelding uten en testbar
+orkestreringsgrense. Trekk ut en liten policy/coordinator og test at utløp gir
+én feilet fullføring selv om den avbrutte oppdateringen senere returnerer
+suksess, samtidig som normal fullføring fortsatt rapporterer faktisk resultat.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

@@ -4258,6 +4258,45 @@ final class PlannerTests: XCTestCase {
         XCTAssertFalse(AlertType.regn.matches(hour, threshold: 0.5))
     }
 
+    func testRadarRainAndSnowAlertsSwitchExactlyAtOneDegree() {
+        let sampleTime = base.addingTimeInterval(15 * 60)
+        let temperatures = [Double(1).nextDown, 1.0, Double(1).nextUp]
+
+        func plannedEvent(type: AlertType, temperature: Double) -> Date? {
+            var rule = Rule(type: type)
+            rule.threshold = 0.5
+            let hour = ForecastHour(
+                time: base,
+                temp: temperature,
+                precip: 0,
+                wind: 1,
+                cloud: 100,
+                dew: 0,
+                radarSamples: [PrecipitationSample(time: sampleTime, rate: 0.8)]
+            )
+            return Planner.plan(
+                rule: rule,
+                forecast: [hour],
+                placeName: "Klinga",
+                now: base.addingTimeInterval(-60)
+            ).eventAt
+        }
+
+        for temperature in temperatures {
+            let isSnow = temperature <= 1
+            XCTAssertEqual(
+                plannedEvent(type: .sno, temperature: temperature),
+                isSnow ? sampleTime : nil,
+                "Snow radar event classification at \(temperature)°C"
+            )
+            XCTAssertEqual(
+                plannedEvent(type: .regn, temperature: temperature),
+                isSnow ? nil : sampleTime,
+                "Rain radar event classification at \(temperature)°C"
+            )
+        }
+    }
+
     func testSnowAmountConvertsWaterEquivalentUsingTemperature() {
         XCTAssertEqual(estimatedFreshSnowMillimeters(waterEquivalent: 1, temperature: 0), 4.179, accuracy: 0.01)
         XCTAssertEqual(estimatedFreshSnowMillimeters(waterEquivalent: 1, temperature: -2), 9.9, accuracy: 0.1)

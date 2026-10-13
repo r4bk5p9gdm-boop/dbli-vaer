@@ -1,5 +1,5 @@
 {
-  "lastScheduledStart": "2026-10-13T03:18:23Z",
+  "lastScheduledStart": "2026-10-13T04:07:09Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-549 fullført 2026-10-13: Lokaliserte VoiceOver-etikettene for temperaturverdi, nå-markør og skoddeintensitet i TimelineView for bokmål, inntrøndersk og engelsk uten å endre synlig tekst; la til enhetstest for alle tre språk. Swift-parsing, JSON-validering og git diff --check besto; XCTest ikke kjørt fordi CoreSimulatorService/runtime mangler. Bred appgjennomgang fant at Store.performRefresh har en konkret fire-forespørselsgrense uten regresjonstest av faktisk samtidighet og full behandling; AUTO-552 lagt til. BRUKER-kø fullført eller på vent. Neste åpne kønumre: AUTO-550, AUTO-551, AUTO-552."
+  "lastProgress": "AUTO-550 fullført 2026-10-13: La til regresjonstest for offentlig regn-/snøvarselplanlegging med radarprøver på nextDown, nøyaktig 1 °C og nextUp, for begge varseltyper. Swift-parsing, JSON-validering og git diff --check besto; XCTest ikke kjørt fordi CoreSimulatorService/runtime mangler. Bred gjennomgang av vær, varsling, sted/posisjon, lagring/import, bakgrunnsoppdatering, widget/Watch, ytelse og tester fant at BackgroundRefreshCompletionGate er testet isolert, men utløpscallbackens avbryting og sene oppdateringsresultat ikke testes sammen; AUTO-553 lagt til. BRUKER-kø fullført eller på vent. Neste åpne kønumre: AUTO-551, AUTO-552, AUTO-553."
 }
