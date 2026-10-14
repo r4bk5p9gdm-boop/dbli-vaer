@@ -12879,6 +12879,11 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(PlaceSearchCopy.searchArea(.world, style: .inntrondersk), WeatherLanguage.text("Hele verden", style: .inntrondersk))
     }
 
+    func testPlaceSearchClearSearchCopyUsesSelectedLanguage() {
+        XCTAssertEqual(PlaceSearchCopy.clearSearch(.english), "Clear search")
+        XCTAssertEqual(PlaceSearchCopy.clearSearch(.bokmal), "Tøm søk")
+    }
+
     @MainActor
     func testPlaceSearchEmptyAndFailureMessagesUseRequestedLanguage() async {
         let noNorwayResults = PlaceSearchModel { _, _ in [] }

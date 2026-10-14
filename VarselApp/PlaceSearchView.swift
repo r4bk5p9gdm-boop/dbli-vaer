@@ -37,6 +37,10 @@ enum PlaceSearchCopy {
         text("Lukk", english: "Close", style: style)
     }
 
+    static func clearSearch(_ style: AlertLanguageStyle) -> String {
+        text("Tøm søk", english: "Clear search", style: style)
+    }
+
     static func searchAreaTitle(_ style: AlertLanguageStyle) -> String {
         text("Søkeområde", english: "Search area", style: style)
     }
@@ -233,6 +237,7 @@ struct PlaceSearchView: View {
                             Image(systemName: "xmark.circle.fill")
                                 .foregroundStyle(.secondary)
                         }
+                        .accessibilityLabel(PlaceSearchCopy.clearSearch(store.alertLanguageStyle))
                     }
                 }
                 .padding(.horizontal, 12)

@@ -969,6 +969,12 @@ verdiene akkurat på tersklene, men ikke tilstandsskiftene rett utenfor dem.
 Legg til en kompakt grensematrise for 19/20/21 % og 65/66 % slik at ikonbytte
 ikke glir én prosent feil ved senere værlogikkendringer.
 
+**AUTO-569 · ÅPEN** — Preposisjonsvalgene i stedssøk viser valgt verdi bare
+gjennom blå bakgrunn og hvit tekst. VoiceOver-knappene får dermed ikke en
+eksplisitt valgt/ikke valgt-semantikk. Eksponer valgt tilstand for hver knapp
+og legg til en tilgjengelighetsregresjon som sikrer at valget fortsatt
+kunngjøres når man navigerer mellom preposisjonene.
+
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med
 alder og advarsel når snapshotet er utdatert.
