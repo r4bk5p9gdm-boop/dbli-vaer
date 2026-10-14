@@ -12688,6 +12688,15 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual((reportedError as NSError?)?.code, expectedError.code)
     }
 
+    func testBackgroundRefreshRetriesSchedulingWhenSceneBecomesActive() {
+        var schedules = 0
+        BackgroundRefresh.scheduleWhenActive(isActive: false) { schedules += 1 }
+        XCTAssertEqual(schedules, 0)
+
+        BackgroundRefresh.scheduleWhenActive(isActive: true) { schedules += 1 }
+        XCTAssertEqual(schedules, 1)
+    }
+
     @MainActor
     func testForecastRequestsDeduplicateCoordinatesAtApiPrecision() {
         let first = Place(name: "Namsos", lat: 64.466241, lon: 11.495719)

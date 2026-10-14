@@ -951,17 +951,15 @@ og lydvarsler og at begge fortsatt vises som banner og i varslingslisten.
 Swift-parsing og `git diff --check` består; XCTest er ikke kjørt fordi
 CoreSimulatorService/runtime er utilgjengelig og disken har 13 GB ledig.
 
-**AUTO-566 · ÅPEN** — Tøm-knappen i stedssøk viser bare SF Symbol-ikonet
-`xmark.circle.fill` og mangler eksplisitt VoiceOver-etikett, mens søkefeltet
-ellers er lokalisert. Legg til en språkriktig tilgjengelighetskopi for å tømme
-søk, og dekk label-valget med en liten test slik at ikonets form ikke er eneste
-beskrivelse av handlingen.
+**AUTO-566 · FULLFØRT 2026-10-14** — Tøm-knappen i stedssøk har nå et
+eksplisitt VoiceOver-navn gjennom lokalisert kopi («Tøm søk» / «Clear search»).
+Regresjonstest dekker bokmål og engelsk.
 
-**AUTO-567 · ÅPEN** — `BackgroundRefresh.schedule` logger feil fra
-`BGTaskScheduler.submit`, men etter en midlertidig feil ved oppstart forsøker
-appen ikke å registrere neste refresh igjen når scenen senere blir aktiv. Legg
-til en avgrenset ny planleggingsmulighet ved foreground-aktivering og test at
-submission-feil ikke gjør bakgrunnsoppdatering avhengig av full omstart.
+**AUTO-567 · FULLFØRT 2026-10-14** — Appen forsøker nå å planlegge
+`BGAppRefreshTask` på nytt hver gang scenen blir aktiv, i tillegg til
+oppstartsplanleggingen. En feil ved `BGTaskScheduler.submit` gjør derfor ikke
+bakgrunnsoppdateringen avhengig av full omstart. Enhetstest bekrefter at
+planlegging bare utløses ved aktiv scene.
 
 **AUTO-568 · ÅPEN** — `CurrentWeatherCondition.resolve` deler sol, solgløtt og
 skyet ved henholdsvis 20 % og 65 % skydekke. Eksisterende regresjon dekker
@@ -974,6 +972,11 @@ gjennom blå bakgrunn og hvit tekst. VoiceOver-knappene får dermed ikke en
 eksplisitt valgt/ikke valgt-semantikk. Eksponer valgt tilstand for hver knapp
 og legg til en tilgjengelighetsregresjon som sikrer at valget fortsatt
 kunngjøres når man navigerer mellom preposisjonene.
+
+**AUTO-570 · ÅPEN** — Hjelp-knappen i `RulePresetPickerView` setter
+VoiceOver-etiketten direkte til «Hjelp: …», mens appen ellers tilbyr engelsk
+og inntrøndersk språkstil. Lokaliser hjelpepåbudet uten å endre den synlige
+knappen, og dekk alle språkvariantene i kopitester.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

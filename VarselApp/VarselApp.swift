@@ -60,6 +60,9 @@ struct VarselApp: App {
             ContentView()
                 .environmentObject(store)
                 .onChange(of: scenePhase) { _, phase in
+                    BackgroundRefresh.scheduleWhenActive(isActive: phase == .active) {
+                        BackgroundRefresh.schedule()
+                    }
                     guard phase == .active else { return }
                     Task { @MainActor in
                         await store.updateNotificationAuthorization(

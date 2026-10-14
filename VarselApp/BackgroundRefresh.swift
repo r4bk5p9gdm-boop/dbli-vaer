@@ -73,6 +73,11 @@ enum BackgroundRefresh {
         }
     }
 
+    static func scheduleWhenActive(isActive: Bool, schedule: () -> Void) {
+        guard isActive else { return }
+        schedule()
+    }
+
     static func schedule(
         now: Date = Date(),
         submit: (BGAppRefreshTaskRequest) throws -> Void,
