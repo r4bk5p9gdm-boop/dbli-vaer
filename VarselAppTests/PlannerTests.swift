@@ -7543,6 +7543,20 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(Set(scheduled.map(\.id)).count, scheduled.count)
     }
 
+    func testNotificationPresentationPolicyPreservesQuietAndAudibleAlertBehavior() {
+        let quietOptions = NotificationPresentationPolicy.options(hasSound: false)
+        let audibleOptions = NotificationPresentationPolicy.options(hasSound: true)
+
+        XCTAssertTrue(quietOptions.contains(.banner))
+        XCTAssertTrue(quietOptions.contains(.list))
+        XCTAssertFalse(quietOptions.contains(.sound))
+        XCTAssertEqual(audibleOptions, [.banner, .list, .sound])
+        XCTAssertNil(NotificationPresentationPolicy.sound(isQuiet: true))
+        XCTAssertNotNil(NotificationPresentationPolicy.sound(isQuiet: false))
+        XCTAssertEqual(NotificationPresentationPolicy.interruptionLevel(isQuiet: true), .passive)
+        XCTAssertEqual(NotificationPresentationPolicy.interruptionLevel(isQuiet: false), .active)
+    }
+
     @MainActor
     func testNotificationReplacementsDoNotInterleaveAtSuspensionPoints() async {
         let queue = NotificationSchedulingQueue()

@@ -33,7 +33,9 @@ final class AppNotificationDelegate: NSObject, UIApplicationDelegate, UNUserNoti
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification
     ) async -> UNNotificationPresentationOptions {
-        [.banner, .list, .sound]
+        NotificationPresentationPolicy.options(
+            hasSound: notification.request.content.sound != nil
+        )
     }
 
     func userNotificationCenter(

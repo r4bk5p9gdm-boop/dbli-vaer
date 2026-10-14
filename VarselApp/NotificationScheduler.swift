@@ -1,5 +1,21 @@
 import UserNotifications
 
+enum NotificationPresentationPolicy {
+    static func options(hasSound: Bool) -> UNNotificationPresentationOptions {
+        var options: UNNotificationPresentationOptions = [.banner, .list]
+        if hasSound { options.insert(.sound) }
+        return options
+    }
+
+    static func sound(isQuiet: Bool) -> UNNotificationSound? {
+        isQuiet ? nil : .default
+    }
+
+    static func interruptionLevel(isQuiet: Bool) -> UNNotificationInterruptionLevel {
+        isQuiet ? .passive : .active
+    }
+}
+
 enum NotificationRoute {
     static let placeIDKey = "placeID"
     static let requested = Notification.Name("varsel.openPlaceFromNotification")
@@ -430,8 +446,8 @@ enum NotificationScheduler {
             let c = UNMutableNotificationContent()
             c.title = NotificationCopy.title(for: a.rule, placeName: a.placeName, eventAt: a.eventAt, referenceAt: a.fireAt, possible: a.possible, languageStyle: languageStyle)
             c.body = NotificationCopy.message(for: a.rule, eventAt: a.eventAt, referenceAt: a.fireAt, possible: a.possible, eventDetail: a.eventDetail, languageStyle: languageStyle)
-            c.sound = a.quiet ? nil : .default
-            c.interruptionLevel = a.quiet ? .passive : .active
+            c.sound = NotificationPresentationPolicy.sound(isQuiet: a.quiet)
+            c.interruptionLevel = NotificationPresentationPolicy.interruptionLevel(isQuiet: a.quiet)
             c.threadIdentifier = a.rule.id.uuidString
             if let placeID = a.placeID {
                 c.userInfo = [NotificationRoute.placeIDKey: placeID.uuidString]

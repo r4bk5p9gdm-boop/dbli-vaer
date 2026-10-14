@@ -942,11 +942,14 @@ kopieringen ikke kan bekreftes, blokkeres overskriving av originalnøkkelen.
 Regresjoner dekker både ukodelige bytes og en dekodbar tilstand uten steder,
 med byte-for-byte gjenfinning etter fallback.
 
-**AUTO-565 · ÅPEN** — `AppNotificationDelegate.willPresent` ber alltid
-systemet spille varslingslyd, mens stille planer settes med `sound = nil` og
-passivt avbruddsnivå. Verifiser at forgrunnsvisning bevarer varselets
-individuelle lyd-/avbruddspolicy, og dekk både stille og lydvarsler med en
-testbar presentasjonspolicy.
+**AUTO-565 · FULLFØRT 2026-10-14** — Forgrunnspresentasjon ber nå bare om
+lyd når det mottatte varselet faktisk har lyd. En ren
+`NotificationPresentationPolicy` deler lydvalg, aktivt/passivt avbruddsnivå og
+visningsalternativer; stille planer beholder `sound = nil` og `.passive`, mens
+vanlige varsler beholder standardlyd og `.active`. Regresjonstest dekker stille
+og lydvarsler og at begge fortsatt vises som banner og i varslingslisten.
+Swift-parsing og `git diff --check` består; XCTest er ikke kjørt fordi
+CoreSimulatorService/runtime er utilgjengelig og disken har 13 GB ledig.
 
 **AUTO-566 · ÅPEN** — Tøm-knappen i stedssøk viser bare SF Symbol-ikonet
 `xmark.circle.fill` og mangler eksplisitt VoiceOver-etikett, mens søkefeltet
@@ -959,6 +962,12 @@ beskrivelse av handlingen.
 appen ikke å registrere neste refresh igjen når scenen senere blir aktiv. Legg
 til en avgrenset ny planleggingsmulighet ved foreground-aktivering og test at
 submission-feil ikke gjør bakgrunnsoppdatering avhengig av full omstart.
+
+**AUTO-568 · ÅPEN** — `CurrentWeatherCondition.resolve` deler sol, solgløtt og
+skyet ved henholdsvis 20 % og 65 % skydekke. Eksisterende regresjon dekker
+verdiene akkurat på tersklene, men ikke tilstandsskiftene rett utenfor dem.
+Legg til en kompakt grensematrise for 19/20/21 % og 65/66 % slik at ikonbytte
+ikke glir én prosent feil ved senere værlogikkendringer.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med
