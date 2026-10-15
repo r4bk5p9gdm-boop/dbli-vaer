@@ -876,7 +876,7 @@ final class Store: ObservableObject {
         successfulPlaceCount > 0 || failedPlaceCount == 0
     }
 
-    static let forecastFutureTimestampTolerance: TimeInterval = 5 * 60
+    static let forecastFutureTimestampTolerance = ForecastPayloadLimits.futureTimestampTolerance
 
     static func isForecastStale(_ updatedAt: Date?, now: Date = Date(), threshold: TimeInterval = WeatherGlance.staleAfter) -> Bool {
         guard let updatedAt else { return true }

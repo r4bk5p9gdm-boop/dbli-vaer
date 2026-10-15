@@ -701,7 +701,7 @@ enum ContextHelpTopic {
         guard languageStyle == .english else {
             return WeatherLanguage.text(title, style: languageStyle)
         }
-        switch self {
+        return switch self {
         case .home: "How to read Home"
         case .places: "Places and cabin"
         case .alerts: "What does the alert list mean?"
@@ -738,7 +738,7 @@ enum ContextHelpTopic {
         guard languageStyle == .english else {
             return WeatherLanguage.text(introduction, style: languageStyle)
         }
-        switch self {
+        return switch self {
         case .home: "Home shows the weather for the selected place and the coming days. Tap the pencil to customize rows, thresholds, and push alerts."
         case .places: "Add your home, cabin, and other places. Places with active rules get their own alerts and can be selected on Home."
         case .alerts: "Here you can see alerts already scheduled to be sent and active rules that keep monitoring the forecast."
@@ -760,7 +760,7 @@ enum ContextHelpTopic {
         guard languageStyle == .english else {
             return steps.map { WeatherLanguage.text($0, style: languageStyle) }
         }
-        switch self {
+        return switch self {
         case .home:
             ["The weather bands show when the forecast crosses a marked threshold.", "Tap the pencil to change what is shown and which push alerts are used.", "Swipe sideways to browse favorite places."]
         case .places:

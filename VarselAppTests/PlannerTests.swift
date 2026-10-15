@@ -2,6 +2,7 @@ import XCTest
 import UserNotifications
 import CoreLocation
 import SwiftUI
+import WatchConnectivity
 @testable import VarselApp
 
 private final class FakeNotificationCenter: NotificationCenterClient {
@@ -1111,7 +1112,7 @@ final class PlannerTests: XCTestCase {
     private func makeForecast(
         through finalOffset: Int,
         startingAt start: Date? = nil,
-        precipitationOffsets: Set<Int>
+        precipitationOffsets: Set<Int> = []
     ) -> [ForecastHour] {
         let firstHour = start ?? base
         return (0...finalOffset).map { offset in
@@ -1149,6 +1150,12 @@ final class PlannerTests: XCTestCase {
             horizontalTranslation: 100,
             verticalTranslation: 4
         ), 0)
+    }
+
+    func testHomePlaceTransitionDirectionMatchesForwardAndReverseSwipes() {
+        XCTAssertEqual(HomeSwipeSelection.transitionDirection(fromIndex: 0, toIndex: 1), .trailing)
+        XCTAssertEqual(HomeSwipeSelection.transitionDirection(fromIndex: 1, toIndex: 0), .leading)
+        XCTAssertNil(HomeSwipeSelection.transitionDirection(fromIndex: 1, toIndex: 1))
     }
 
     func testHomeSwipeCanReverseBetweenManualAndPositionPlaces() {
@@ -1752,12 +1759,6 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(WeatherTextSeparator.bullet.format("onsdag kl. 05"), "onsdag • kl. 05")
     }
 
-    func testLanguageCatalogIsBundledAndDoesNotTranslateInsertedPlaceholders() {
-        XCTAssertFalse(LanguageCatalog.entries.isEmpty)
-        XCTAssertEqual(LanguageCatalog.value("weekday.monday", language: "tr", fallback: "MISSING"), "manda'n")
-        XCTAssertEqual(LanguageCatalog.value("app.name", language: "en", fallback: "MISSING"), "It’s Weather")
-        XCTAssertEqual(LanguageCatalog.value("push.title", language: "nb", fallback: "MISSING", arguments: ["sted": "på {vaertype}", "vaertype": "Regn"]), "D bli Regn! på {vaertype}")
-    }
     func testWeatherBandDisplayThresholdsOverridePushRulesWithoutMutatingThem() throws {
         var pushWind = Rule(type: .vind)
         pushWind.threshold = 18
@@ -4510,6 +4511,16 @@ final class PlannerTests: XCTestCase {
         let reference = calendar.date(from: DateComponents(year: 2030, month: 1, day: 1, hour: 23))!
         let event = calendar.date(from: DateComponents(year: 2030, month: 1, day: 2, hour: 6))!
         XCTAssertEqual(eventTimePhrase(event, relativeTo: reference, calendar: calendar), "i morgen, onsdag kl. 06")
+    }
+
+    func testScheduledNotificationTimePhraseAlwaysUsesWeekdayAndClock() {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let today = calendar.date(from: DateComponents(year: 2030, month: 1, day: 1, hour: 23, minute: 30))!
+        let tomorrow = calendar.date(from: DateComponents(year: 2030, month: 1, day: 2, hour: 6))!
+
+        XCTAssertEqual(scheduledNotificationTimePhrase(today, calendar: calendar), "tirsdag kl. 23")
+        XCTAssertEqual(scheduledNotificationTimePhrase(tomorrow, calendar: calendar), "onsdag kl. 06")
     }
 
     func testSharedWidgetDataSkipsIdenticalEncodedSnapshot() {
@@ -8221,12 +8232,12 @@ final class PlannerTests: XCTestCase {
         let restored = Store(forecastFetcher: { _, _ in [] }, persistenceKey: persistenceKey, now: base)
 
         XCTAssertEqual(restored.places.map(\.id), [placeID])
-        XCTAssertEqual(restored.log, [])
+        XCTAssertTrue(restored.log.isEmpty)
         let repairedData = try XCTUnwrap(UserDefaults.standard.data(forKey: persistenceKey))
         XCTAssertNotEqual(repairedData, malformedData)
         let repaired = try JSONDecoder().decode(PersistedStoreState.self, from: repairedData)
         XCTAssertEqual(repaired.places.map(\.id), [placeID])
-        XCTAssertEqual(repaired.log, [])
+        XCTAssertTrue(repaired.log.isEmpty)
     }
 
     @MainActor

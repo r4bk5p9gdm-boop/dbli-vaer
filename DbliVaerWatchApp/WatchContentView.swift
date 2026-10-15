@@ -113,7 +113,7 @@ struct WatchContentView: View {
                 } else {
                     if #available(watchOS 10.0, *) {
                         ContentUnavailableView(
-                            Text(WatchWeatherCopy.emptyState(.waitingTitle, languageStyle: languageStyle)),
+                            WatchWeatherCopy.emptyState(.waitingTitle, languageStyle: languageStyle),
                             systemImage: "iphone.and.arrow.forward",
                             description: Text(WatchWeatherCopy.emptyState(.waitingDescription, languageStyle: languageStyle))
                         )

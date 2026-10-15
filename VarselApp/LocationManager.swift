@@ -254,16 +254,19 @@ private final class ReverseGeocodeRequest {
                 timeoutTask = Task { [weak self, timeoutSeconds] in
                     do { try await Task.sleep(nanoseconds: UInt64(timeoutSeconds * 1_000_000_000)) }
                     catch { return }
-                    self?.finish(with: fallbackName, cancelGeocoder: true)
+                    guard let self else { return }
+                    self.finish(with: self.fallbackName, cancelGeocoder: true)
                 }
                 client.reverseGeocode(location) { [weak self] name in
                     let cleanedName = name?.trimmingCharacters(in: .whitespacesAndNewlines)
-                    self?.finish(with: cleanedName.flatMap { $0.isEmpty ? nil : $0 } ?? fallbackName)
+                    guard let self else { return }
+                    self.finish(with: cleanedName.flatMap { $0.isEmpty ? nil : $0 } ?? self.fallbackName)
                 }
             }
         } onCancel: {
             Task { @MainActor [weak self] in
-                self?.finish(with: fallbackName, cancelGeocoder: true)
+                guard let self else { return }
+                self.finish(with: self.fallbackName, cancelGeocoder: true)
             }
         }
     }

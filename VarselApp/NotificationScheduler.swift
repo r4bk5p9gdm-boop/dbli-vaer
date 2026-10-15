@@ -344,7 +344,7 @@ enum NotificationScheduler {
                   let rule = place.rules.first(where: { $0.id == context.rule.id }),
                   rule.enabled, !rule.isDisplayOnly,
                   !rule.onlyWhenNearby || nearbyPlaceIDs.contains(place.id)
-            else { return false }
+            else { return nil }
             guard context == NotificationPlanContext(place: place, rule: rule, languageStyle: languageStyle) else {
                 return nil
             }

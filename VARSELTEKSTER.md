@@ -30,11 +30,11 @@ beholdes, som på Klinga, nerri Namsos eller oppi Hornburu.
 
 | Type | Bokmål i første linje | Inntrøndersk i første linje | Nå-tekst bokmål | Nå-tekst inntrøndersk |
 | --- | --- | --- | --- | --- |
-| Regn | Regn | Regn | D e Regn! | D e Regn! |
-| Snø | Snø | Snø | Det Snør! | Det Snør! |
-| Vind | Vindkast | Vindkast | Det blåser! | D blæs! |
-| Dugg | Duggfall | Doggfall | Det er duggfall! | D Dogge! |
-| Frost | Frost | Frost | Det er frost! | D e Frost! |
+| Regn | Regn | Regn | Det Regner! | D e Regn! |
+| Snø | Snø | Snø | Det Snør! | D Snør! |
+| Vind | Vindkast | Vindkast | Det Blåser! | D Blæs! |
+| Dugg | Duggfall | Doggfall | Det er Duggfall! | D Dogge! |
+| Frost | Frost | Frost | Det er frost! | D Rime! |
 | Sol | Sol | Sol | Det er sol! | D e Sol! |
 | Temperatur | Under {grense}° / Over {grense}° | Under {grense}° / Over {grense}° | Det er under {grense}°! | D e Under {grense}°! |
 
@@ -78,7 +78,7 @@ Den går rett på dag og klokkeslett når dette gir ny informasjon.
 | Pågår nå | **{Nå-tekst}!** | {værbeskrivelse} i {varighet} til. |
 
 Eksempel: **D bli Regn! om 2 tima.** / **4 tima småregn fra kl. 14.**
-Nåstatus bruker aldri «fra kl.»: **D blæs!** / **Fresk bris i 2 tima til.**
+Nåstatus bruker aldri «fra kl.»: **D Blæs!** / **Fresk bris i 2 tima til.**
 Varighet er alltid med: under én time avrundes til 15, 30 eller 45 min;
 deretter brukes hele timer. Eksempel: **D bli Regn! om en halvtime.** /
 **30 min småregn fra kl. 14.**
@@ -120,9 +120,9 @@ hører ikke hjemme i sirkelen.
 | --- | --- | --- |
 | Svært lite | Yr | Yr |
 | Lite | Litt regn | Småregn |
-| Vanlig | Regn | Regn |
+| Vanlig | Regn | Regnbyge |
 | Mye | Kraftig regn | Striskur |
-| Byger i samme periode | Spredte regnbyger | Regnbyga |
+| Byger i samme periode | Spredte regnbyger | Spredte Regnbyger |
 
 Regnbyger brukes når det kommer og går, men uten et tørt opphold på minst én
 time. Varigheten er hele bygeperioden, ikke hvert enkelt regnskyll. Et opphold
@@ -140,9 +140,9 @@ på én time eller mer starter en ny nedbørhendelse.
 
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
-| Framtidig | **D bli Regn! om 2 timer.** ↳ 4 timer med litt regn fra kl. 14. | **D bli Regn! om 2 tima.** ↳ 4 tima med småregn fra kl. 14. |
+| Framtidig | **D bli Regn! om 2 timer.** ↳ 4 timer litt regn fra kl. 14. | **D bli Regn! om 2 tima.** ↳ 4 tima småregn fra kl. 14. |
 | Nært | **D bli Regn! om en halvtime.** ↳ 30 min litt regn fra kl. 14. | **D bli Regn! om en halvtime.** ↳ 30 min småregn fra kl. 14. |
-| Pågår nå | **D e Regn!** ↳ Litt regn i 45 min til. | **D e Regn!** ↳ Småregn i 45 min til. |
+| Pågår nå | **Det Regner!** ↳ Litt regn i 45 min til. | **D e Regn!** ↳ Småregn i 45 min til. |
 
 ## Watch og CarPlay-widget
 
@@ -223,7 +223,7 @@ begge slik Yr gjør.
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
 | Framtidig | **D bli Vindkast! om 3 timer.** ↳ Frisk bris i fire timer. | **D bli Vindkast! om 3 tima.** ↳ Fresk bris i fire tima. |
-| Pågår nå | **Det blåser!** ↳ Frisk bris i 2 timer til. | **D blæs!** ↳ Fresk bris i 2 tima til. |
+| Pågår nå | **Det Blåser!** ↳ Frisk bris i 2 timer til. | **D Blæs!** ↳ Fresk bris i 2 tima til. |
 
 ## Watch og CarPlay-widget
 
@@ -244,8 +244,9 @@ begge slik Yr gjør.
 | Usikkert | Mulig duggfall | Mulig doggfall |
 | Pågår nå | Det er duggfall | D Dogge |
 
-I pushvarsler kan beregnet lokal temperatur forklare grunnlaget. I Hjem, Watch
-og CarPlay brukes ikke duggpunktstall: varighet og starttid er nyttigere.
+I pushvarsler kan beregnet lokal temperatur forklare grunnlaget. I Hjem viser
+NÅ-rulleringen faktisk duggpunkt i andrelinjen; dugg har ingen varighet.
+Watch og CarPlay bruker korte hendelsesetiketter uten duggpunktstall.
 Den korte, sikre inntrønderske overskriften bruker **Dogg!**; usikker push
 beholder det forklarende **mulig doggfall**.
 
@@ -260,7 +261,7 @@ beholder det forklarende **mulig doggfall**.
 
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
-| Framtidig | **D bli Duggfall! om 3 timer.** ↳ Duggfall i 3 timer fra kl. 05. | **D bli Dogg! om 3 tima.** ↳ Doggfall i 3 tima fra kl. 05. |
+| Framtidig | **D bli Duggfall! om 3 timer.** ↳ Duggpunkt ved 7°C. | **D bli Dogg! om 3 tima.** ↳ Doggpunkt ved 7°C. |
 | Pågår nå | **Det er Duggfall!** ↳ Duggpunkt ved 7°C. | **D Dogge!** ↳ Doggpunkt ved 7°C. |
 
 ## Watch og CarPlay-widget
@@ -280,7 +281,7 @@ beholder det forklarende **mulig doggfall**.
 | --- | --- | --- |
 | Sikkert, lokal temperatur ved/under 0° | Frost | Frost |
 | Marginbasert, over 0° | Fare for frost | Fare for frost |
-| Pågår nå | Det er frost | D e Frost |
+| Pågår nå | Det er frost | D Rime! |
 
 Hvit markering i temperatur-raden betyr faktisk 0° eller kaldere. Blå
 frostmarkør betyr marginbasert frostfare over 0°.
@@ -297,7 +298,7 @@ frostmarkør betyr marginbasert frostfare over 0°.
 | Situasjon | Bokmål | Inntrøndersk |
 | --- | --- | --- |
 | Framtidig | **D bli Frost! i natt.** ↳ Frost ved −1° i fire timer fra kl. 03. | **D bli Frost! i natt.** ↳ Frost ved −1° i fire tima fra kl. 03. |
-| Pågår nå, sikkert | **Det er frost!** ↳ Frost i to timer til. | **D e Frost!** ↳ Frost i 2 tima til. |
+| Pågår nå, sikkert | **Det er frost!** ↳ Frost i to timer til. | **D Rime!** ↳ Frost i 2 tima til. |
 | Pågår nå, marginbasert | **Det kan bli Frost!** ↳ Fare for frost i to timer til. | **D kan bli Frost!** ↳ Fare for frost i 2 tima til. |
 
 ## Watch og CarPlay-widget

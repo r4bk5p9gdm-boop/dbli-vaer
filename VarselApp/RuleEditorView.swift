@@ -70,9 +70,14 @@ struct RuleEditorView: View {
                             .font(.footnote)
                             .foregroundStyle(.secondary)
                     } else {
+                        if rule.type == .temperatur {
+                            Picker("Retning", selection: $rule.temperatureDirection) {
+                                ForEach(Rule.TemperatureDirection.allCases) { direction in Text(direction.label).tag(direction) }
+                            }.pickerStyle(.segmented)
+                        }
                         VStack(alignment: .leading) {
                             HStack {
-                                Text(rule.type.needsDuration ? "Maks skydekke" : (rule.type == .temperatur ? "Under" : "Terskel"))
+                                Text(rule.type.needsDuration ? "Maks skydekke" : (rule.type == .temperatur ? rule.temperatureDirection.label : (rule.type == .sno ? "Nedbørsmengde" : "Terskel")))
                                 Spacer()
                                 Text("\(rule.threshold.formatted(.number.precision(.fractionLength(0...1)))) \(rule.type.unit)").bold()
                             }
@@ -86,7 +91,10 @@ struct RuleEditorView: View {
                         Text("Varsler når lufttemperaturen nærmer seg duggpunktet – dvs. når dugg eller kondens ventes.").font(.footnote).foregroundStyle(.secondary)
                     }
                     if rule.type == .temperatur {
-                        Text("Varsler når temperaturen ventes å bli lavere enn valgt verdi.").font(.footnote).foregroundStyle(.secondary)
+                        Text(rule.temperatureDirection == .above ? "Varsler når temperaturen ventes å bli høyere enn valgt verdi." : "Varsler når temperaturen ventes å bli lavere enn valgt verdi.").font(.footnote).foregroundStyle(.secondary)
+                    }
+                    if rule.type == .sno {
+                        Text("Grensen er mm vann per time fra Yr. Appen viser også anslått mm nysnø for brøyting.").font(.footnote).foregroundStyle(.secondary)
                     }
                 }
 

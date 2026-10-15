@@ -24,14 +24,18 @@
 		4957E5641B1793A673C2084E /* SharedWidgetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B93ED85B5B6DEC3E920DE7C /* SharedWidgetData.swift */; };
 		571DDBE9FD5F9687E0350EBB /* WatchWeatherStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 106AE568902E637B5E54C34E /* WatchWeatherStore.swift */; };
 		6282810939A91034371D7EB8 /* LiveWeatherActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA9BB97AA60040D681E93A04 /* LiveWeatherActivityManager.swift */; };
-		65A9A4C0A03A1FD8E7C750B3 /* DbliVaerWatchWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C7072B8E686818551ECB3DD9 /* DbliVaerWatchWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		65A9A4C0A03A1FD8E7C750B3 /* DbliVaerWatchWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C7072B8E686818551ECB3DD9 /* DbliVaerWatchWidget.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6779BFCC5C4892A8A3491473 /* VarselApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DF415DC1F57B8DE0D7E5B2 /* VarselApp.swift */; };
 		70ED2E26BAAADCB5172A381F /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35B43B5BBC1E008C8B2A972 /* Models.swift */; };
 		781773EE55D35A33BF729F8E /* DbliVaerWatchWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E46A38E8CCF88B96CCE7CB1 /* DbliVaerWatchWidget.swift */; };
 		81C815CDD2F843C726A58834 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E957BF4A8C6003DE47CE7CC4 /* Assets.xcassets */; };
-		908169B39EF5EA87C2205FE0 /* DbliVaerWatchApp.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 75533F4A27C4D6AE52F226AB /* DbliVaerWatchApp.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		908169B39EF5EA87C2205FE0 /* DbliVaerWatchApp.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 75533F4A27C4D6AE52F226AB /* DbliVaerWatchApp.app */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9095FC2E7FB91CB5C6F51ADC /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35B43B5BBC1E008C8B2A972 /* Models.swift */; };
 		91F337685D0430DB85B404D3 /* Planner.swift in Sources */ = {isa = PBXBuildFile; fileRef = EED36A1BECE4570EB1B3361D /* Planner.swift */; };
+		A10000000000000000000001 /* Sprak.json in Resources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000000 /* Sprak.json */; };
+		A10000000000000000000002 /* Sprak.json in Resources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000000 /* Sprak.json */; };
+		A10000000000000000000003 /* Sprak.json in Resources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000000 /* Sprak.json */; };
+		A10000000000000000000004 /* Sprak.json in Resources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000000 /* Sprak.json */; };
 		A545906CAB1BC2BC3429A42D /* SharedWidgetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B93ED85B5B6DEC3E920DE7C /* SharedWidgetData.swift */; };
 		A6283FB61B4C1984A803F5E8 /* WatchSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A24F1438F53B0802F2BD70B2 /* WatchSyncManager.swift */; };
 		A934155582AE471AC398B551 /* Planner.swift in Sources */ = {isa = PBXBuildFile; fileRef = EED36A1BECE4570EB1B3361D /* Planner.swift */; };
@@ -42,7 +46,7 @@
 		CD12D646812F7E3C10383AD7 /* PlannerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C07AE09F01FDEED8F8ED2841 /* PlannerTests.swift */; };
 		D63FA517E096A229A7EFECA3 /* WeatherActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2700B6D66CC4E80DD142B7 /* WeatherActivityAttributes.swift */; };
 		D678C1ADEDC3E7C44B9A96CC /* SharedWidgetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B93ED85B5B6DEC3E920DE7C /* SharedWidgetData.swift */; };
-		D7C50ADB56511A1EFC3A4B50 /* DbliVaerWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 18C6282D3E8EDCEAA16CAB68 /* DbliVaerWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D7C50ADB56511A1EFC3A4B50 /* DbliVaerWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 18C6282D3E8EDCEAA16CAB68 /* DbliVaerWidget.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E0B158061FCEFF76198B1149 /* WeatherActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC2700B6D66CC4E80DD142B7 /* WeatherActivityAttributes.swift */; };
 		E1AA57078C669CB1324A9C05 /* BackgroundRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C0C5C978C139FFB6401808 /* BackgroundRefresh.swift */; };
 		EF9DC6979BD392B65B50FD45 /* RulePresetPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D47BE515002919F075A1F78 /* RulePresetPickerView.swift */; };
@@ -133,12 +137,13 @@
 		75533F4A27C4D6AE52F226AB /* DbliVaerWatchApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DbliVaerWatchApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		78C00E938A2AF122A337FDED /* DbliVaerWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbliVaerWatchApp.swift; sourceTree = "<group>"; };
 		7E46A38E8CCF88B96CCE7CB1 /* DbliVaerWatchWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbliVaerWatchWidget.swift; sourceTree = "<group>"; };
-		82A126E5ABEA853C01BD7F9A /* VarselApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = VarselApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		82A126E5ABEA853C01BD7F9A /* VarselApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VarselApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		85532C9F3AABC75C16EF61BC /* DbliVaerWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbliVaerWidget.swift; sourceTree = "<group>"; };
 		85A0EBD3165BC715E4C6C591 /* PlaceSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceSearchView.swift; sourceTree = "<group>"; };
 		8A1D44269C447ACCEE7B375C /* DbliVaerWatchWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DbliVaerWatchWidget.entitlements; sourceTree = "<group>"; };
 		8B0718A2358880E70DEC00EB /* TimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineView.swift; sourceTree = "<group>"; };
 		8D47BE515002919F075A1F78 /* RulePresetPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RulePresetPickerView.swift; sourceTree = "<group>"; };
+		A10000000000000000000000 /* Sprak.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Sprak.json; sourceTree = SOURCE_ROOT; };
 		A24F1438F53B0802F2BD70B2 /* WatchSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSyncManager.swift; sourceTree = "<group>"; };
 		A363D4D7A546CF7826A12A2E /* YrService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YrService.swift; sourceTree = "<group>"; };
 		A91A904D643F38C91DDC4DFF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -203,6 +208,7 @@
 				CA4B3CBB905461C603DB1C45 /* VarselApp */,
 				DCCF19E0C01C2065E2C23BC6 /* VarselAppTests */,
 				1A8BB4F8B4A21679C2B00F90 /* Products */,
+				A10000000000000000000000 /* Sprak.json */,
 			);
 			sourceTree = "<group>";
 		};
@@ -280,6 +286,7 @@
 			buildConfigurationList = 1538CEAF4946B99D273F6B98 /* Build configuration list for PBXNativeTarget "DbliVaerWidget" */;
 			buildPhases = (
 				31930A5E4AE947EED7FFD3ED /* Sources */,
+				A10000000000000000000005 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -315,6 +322,7 @@
 			buildConfigurationList = 7BFF3A235E68ACEE52A37B58 /* Build configuration list for PBXNativeTarget "DbliVaerWatchWidget" */;
 			buildPhases = (
 				624878162B51D840DAF5F208 /* Sources */,
+				A10000000000000000000006 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -359,7 +367,6 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					01F4924AE4181399091C5E9E = {
-						DevelopmentTeam = 775WDN88WN;
 						ProvisioningStyle = Automatic;
 					};
 					272EA413536E95FB3B979EFE = {
@@ -371,7 +378,6 @@
 						ProvisioningStyle = Automatic;
 					};
 					76B7CDCB79BFF31DAF27EC0F = {
-						DevelopmentTeam = 775WDN88WN;
 						ProvisioningStyle = Automatic;
 					};
 					D0EC1463EE4219EE2130E927 = {
@@ -404,11 +410,28 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		A10000000000000000000005 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000000000000000000003 /* Sprak.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A10000000000000000000006 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000000000000000000004 /* Sprak.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A9DBE5AEE1F628D6A9715784 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				81C815CDD2F843C726A58834 /* Assets.xcassets in Resources */,
+				A10000000000000000000001 /* Sprak.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -417,6 +440,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				16BEBF07CE83DC4377111E9B /* Assets.xcassets in Resources */,
+				A10000000000000000000002 /* Sprak.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -528,6 +552,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = VarselApp/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.weather";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -546,8 +571,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = DbliVaerWatchApp/DbliVaerWatchApp.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 775WDN88WN;
 				INFOPLIST_FILE = DbliVaerWatchApp/Info.plist;
 				MARKETING_VERSION = 1.0;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = no.mathias.VarselApp.watchkitapp;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -580,6 +607,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = DbliVaerWatchApp/DbliVaerWatchApp.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 775WDN88WN;
 				INFOPLIST_FILE = DbliVaerWatchApp/Info.plist;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = no.mathias.VarselApp.watchkitapp;
@@ -638,6 +666,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = VarselApp/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.weather";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -704,7 +733,7 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
-				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+				WATCHOS_DEPLOYMENT_TARGET = 9.0;
 			};
 			name = Release;
 		};
@@ -769,7 +798,7 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+				WATCHOS_DEPLOYMENT_TARGET = 9.0;
 			};
 			name = Debug;
 		};
@@ -800,6 +829,7 @@
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_ENTITLEMENTS = DbliVaerWatchWidget/DbliVaerWatchWidget.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 775WDN88WN;
 				INFOPLIST_FILE = DbliVaerWatchWidget/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -807,6 +837,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = no.mathias.VarselApp.watchkitapp.widget;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -821,6 +852,7 @@
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CODE_SIGN_ENTITLEMENTS = DbliVaerWatchWidget/DbliVaerWatchWidget.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 775WDN88WN;
 				INFOPLIST_FILE = DbliVaerWatchWidget/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

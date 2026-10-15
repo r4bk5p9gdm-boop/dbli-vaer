@@ -256,7 +256,7 @@ struct WidgetWeatherSnapshot: Codable {
         place = try values.decode(Place.self, forKey: .place)
         updatedAt = try values.decode(Date.self, forKey: .updatedAt)
         if let referenceDate = decoder.userInfo[Self.validationReferenceDateKey] as? Date,
-           updatedAt.timeIntervalSince(referenceDate) > Store.forecastFutureTimestampTolerance {
+           updatedAt.timeIntervalSince(referenceDate) > ForecastPayloadLimits.futureTimestampTolerance {
             throw DecodingError.dataCorruptedError(
                 forKey: .updatedAt,
                 in: values,
@@ -338,7 +338,7 @@ enum WatchTransferPolicy {
     static func restoredTimestamp(_ persisted: Date?, now: Date = Date()) -> Date {
         guard let persisted,
               persisted.timeIntervalSince1970.isFinite,
-              persisted.timeIntervalSince(now) <= Store.forecastFutureTimestampTolerance else {
+              persisted.timeIntervalSince(now) <= ForecastPayloadLimits.futureTimestampTolerance else {
             return .distantPast
         }
         return persisted
@@ -347,7 +347,7 @@ enum WatchTransferPolicy {
     static func accepts(_ incoming: Date, after last: Date, now: Date = Date()) -> Bool {
         let incomingTime = incoming.timeIntervalSince1970
         guard incomingTime.isFinite,
-              incoming.timeIntervalSince(now) <= Store.forecastFutureTimestampTolerance else { return false }
+              incoming.timeIntervalSince(now) <= ForecastPayloadLimits.futureTimestampTolerance else { return false }
         return incoming > last
     }
 

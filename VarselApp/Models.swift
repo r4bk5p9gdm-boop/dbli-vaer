@@ -2,6 +2,11 @@ import SwiftUI
 import CoreLocation
 import OSLog
 
+enum ForecastPayloadLimits {
+    static let maximumLocationForecastTimeSteps = 500
+    static let futureTimestampTolerance: TimeInterval = 5 * 60
+}
+
 enum SolarCellMarkerStyle {
     static let solidFillOpacity = 0.78
     static let partialFillOpacity = 0.0
@@ -15,6 +20,13 @@ enum PlaceOrderingSettings {
     static let homePlaceIDKey = "varsel.homePlaceID"
     static let cabinPlaceIDKey = "varsel.cabinPlaceID"
     static let sortModeKey = "varsel.placeSortMode"
+    static let homeShortcutTitleKey = "varsel.homeShortcutTitle"
+    static let cabinShortcutTitleKey = "varsel.cabinShortcutTitle"
+
+    static func shortcutTitle(_ customTitle: String, fallback: String) -> String {
+        let title = customTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+        return title.isEmpty ? fallback : title
+    }
 }
 
 enum LiveLocationBadgeMotionPolicy {
@@ -110,6 +122,13 @@ enum HomeSwipeSelection {
         return WeatherLanguage.text("Stedside \(index) av \(count)", style: languageStyle)
     }
 
+    /// Moving forward follows a left swipe (the next page enters from trailing);
+    /// moving backward follows a right swipe (the previous page enters from leading).
+    static func transitionDirection(fromIndex: Int, toIndex: Int) -> Edge? {
+        guard fromIndex != toIndex else { return nil }
+        return toIndex > fromIndex ? .trailing : .leading
+    }
+
     /// Builds the visible shortcut menu from valid saved destinations only.
     /// When roles refer to the same place, they share one item while retaining
     /// the GPS affordance and a readable combined title.
@@ -118,7 +137,9 @@ enum HomeSwipeSelection {
         homeID: UUID?,
         cabinID: UUID?,
         availableIDs: Set<UUID>,
-        languageStyle: AlertLanguageStyle = .bokmal
+        languageStyle: AlertLanguageStyle = .bokmal,
+        homeShortcutTitle: String = "",
+        cabinShortcutTitle: String = ""
     ) -> [NavigationDestination] {
         var result: [NavigationDestination] = []
         func append(_ id: UUID?, title: String, systemImage: String, isPosition: Bool = false) {
@@ -137,8 +158,10 @@ enum HomeSwipeSelection {
         }
 
         let positionTitle = languageStyle == .english ? "Here!" : WeatherLanguage.text("Her!", style: languageStyle)
-        let homeTitle = languageStyle == .english ? "Home" : WeatherLanguage.text("Hjem", style: languageStyle)
-        let cabinTitle = languageStyle == .english ? "Cabin" : WeatherLanguage.text("Hytta", style: languageStyle)
+        let defaultHomeTitle = languageStyle == .english ? "Home" : WeatherLanguage.text("Hjem", style: languageStyle)
+        let defaultCabinTitle = languageStyle == .english ? "Cabin" : WeatherLanguage.text("Hytta", style: languageStyle)
+        let homeTitle = PlaceOrderingSettings.shortcutTitle(homeShortcutTitle, fallback: defaultHomeTitle)
+        let cabinTitle = PlaceOrderingSettings.shortcutTitle(cabinShortcutTitle, fallback: defaultCabinTitle)
         append(positionID, title: positionTitle, systemImage: "location.fill", isPosition: true)
         append(homeID, title: homeTitle, systemImage: "house.fill")
         append(cabinID, title: cabinTitle, systemImage: "house.fill")
@@ -947,12 +970,19 @@ struct Rule: Codable, Identifiable, Hashable {
         )
         repeatsEnabled = try values.decodeIfPresent(Bool.self, forKey: .repeatsEnabled) ?? false
         quiet = try values.decodeIfPresent(Bool.self, forKey: .quiet) ?? true
-        quietFrom = try values.decodeIfPresent(Int.self, forKey: .quietFrom) ?? 22
-        quietTo = try values.decodeIfPresent(Int.self, forKey: .quietTo) ?? 7
-        days = try values.decodeIfPresent(Set<Int>.self, forKey: .days) ?? Set(0..<7)
+        quietFrom = Self.clamp(try values.decodeIfPresent(Int.self, forKey: .quietFrom) ?? 22, to: 18...23)
+        quietTo = Self.clamp(try values.decodeIfPresent(Int.self, forKey: .quietTo) ?? 7, to: 5...10)
+        days = (try values.decodeIfPresent(Set<Int>.self, forKey: .days) ?? Set(0..<7))
+            .intersection(Set(0..<7))
         enabled = try values.decodeIfPresent(Bool.self, forKey: .enabled) ?? true
-        activeFromHour = try values.decodeIfPresent(Int.self, forKey: .activeFromHour) ?? (type == .sol ? 7 : 0)
-        activeToHour = try values.decodeIfPresent(Int.self, forKey: .activeToHour) ?? (type == .sol ? 22 : 0)
+        activeFromHour = Self.clamp(
+            try values.decodeIfPresent(Int.self, forKey: .activeFromHour) ?? (type == .sol ? 7 : 0),
+            to: 0...23
+        )
+        activeToHour = Self.clamp(
+            try values.decodeIfPresent(Int.self, forKey: .activeToHour) ?? (type == .sol ? 22 : 0),
+            to: 0...23
+        )
         onlyWhenNearby = try values.decodeIfPresent(Bool.self, forKey: .onlyWhenNearby) ?? false
         isDisplayOnly = try values.decodeIfPresent(Bool.self, forKey: .isDisplayOnly) ?? false
     }
@@ -1125,7 +1155,7 @@ struct ForecastHour: Codable, Identifiable, Hashable {
     private static let cachedForecastMaximumHorizon: TimeInterval = 10 * 24 * 3_600
     // Keep corrupt archives within the same generous upper bound as the
     // location-forecast response, even when their timestamps are unusually dense.
-    private static let cachedForecastMaximumHourCount = YrService.maximumLocationForecastTimeSteps
+    private static let cachedForecastMaximumHourCount = ForecastPayloadLimits.maximumLocationForecastTimeSteps
 
     private static func cacheCompletenessScore(_ hour: ForecastHour) -> Int {
         let optionalValues: [Double?] = [
@@ -2013,6 +2043,10 @@ func eventTimePhrase(_ eventAt: Date, relativeTo reference: Date = Date(), calen
     }
     if isNight { return "natt til \(weekday) kl. \(clock)" }
     return "\(weekday) kl. \(clock)"
+}
+
+func scheduledNotificationTimePhrase(_ fireAt: Date, calendar: Calendar = .current) -> String {
+    "\(weekdayLabel(fireAt, calendar: calendar)) kl. \(shortClockLabel(fireAt, calendar: calendar))"
 }
 
 func alertWeatherName(for rule: Rule) -> String {

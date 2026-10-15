@@ -2,9 +2,9 @@ import SwiftUI
 import CoreLocation
 
 private struct LocationPresenceBadge: View {
-    let course: CLLocationDirection?
     let languageStyle: AlertLanguageStyle
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var isPulsing = false
 
     private var shouldPulse: Bool {
         LiveLocationBadgeMotionPolicy.shouldPulse(reduceMotion: reduceMotion)
@@ -12,29 +12,31 @@ private struct LocationPresenceBadge: View {
 
     var body: some View {
         HStack(spacing: 5) {
-            ZStack(alignment: .bottomTrailing) {
-                Circle()
-                    .stroke(Color.indigo.opacity(0.22), lineWidth: 1)
-                    .frame(width: 21, height: 21)
-                Image(systemName: "location.north.fill")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(.indigo.gradient)
-                    .rotationEffect(.degrees(course ?? 0))
-                    .symbolEffect(.pulse, options: .repeating, isActive: shouldPulse)
-                    .animation(.easeInOut(duration: 0.35), value: course)
-                Circle()
-                    .fill(Color.green)
-                    .frame(width: 6, height: 6)
-                    .overlay(Circle().stroke(Color(uiColor: .systemBackground), lineWidth: 1.2))
-            }
+            Image(systemName: "location.north.fill")
+                .font(.system(size: 12, weight: .bold))
+                .rotationEffect(.degrees(45))
+                .scaleEffect(shouldPulse ? (isPulsing ? 1.16 : 0.88) : 1)
             Text("GPS")
                 .font(.system(size: 11, weight: .bold, design: .rounded))
                 .tracking(0.7)
-                .foregroundStyle(.secondary)
         }
+        .foregroundStyle(.indigo)
+        .onAppear(perform: updatePulse)
+        .onChange(of: shouldPulse) { _, _ in updatePulse() }
         .fixedSize()
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(LocationPresenceAccessibilityCopy.label(languageStyle: languageStyle))
+    }
+
+    private func updatePulse() {
+        guard shouldPulse else {
+            isPulsing = false
+            return
+        }
+
+        withAnimation(.easeInOut(duration: 1.1).repeatForever(autoreverses: true)) {
+            isPulsing = true
+        }
     }
 }
 
@@ -174,8 +176,12 @@ struct ContentView: View {
     @AppStorage("varsel.onboardingCompleted") private var onboardingCompleted = false
     @AppStorage(PlaceOrderingSettings.homePlaceIDKey) private var homePlaceID = ""
     @AppStorage(PlaceOrderingSettings.cabinPlaceIDKey) private var cabinPlaceID = ""
+    @AppStorage(PlaceOrderingSettings.homeShortcutTitleKey) private var homeShortcutTitle = ""
+    @AppStorage(PlaceOrderingSettings.cabinShortcutTitleKey) private var cabinShortcutTitle = ""
     @State private var showingOnboarding = false
     @State private var selectedTab: Tab = .home
+    @State private var homeTransitionDirection: Edge = .trailing
+    @State private var outgoingHomePlaceID: UUID?
 
     private var quickPlaceTabs: [HomeSwipeSelection.NavigationDestination] {
         HomeSwipeSelection.navigationDestinations(
@@ -183,7 +189,9 @@ struct ContentView: View {
             homeID: UUID(uuidString: homePlaceID) ?? store.selected?.id,
             cabinID: UUID(uuidString: cabinPlaceID),
             availableIDs: Set(store.places.map(\.id)),
-            languageStyle: store.alertLanguageStyle
+            languageStyle: store.alertLanguageStyle,
+            homeShortcutTitle: homeShortcutTitle,
+            cabinShortcutTitle: cabinShortcutTitle
         )
     }
 
@@ -203,7 +211,11 @@ struct ContentView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            HomeView(navigationPlaceIDs: navigationPlaceIDs)
+            HomeView(
+                navigationPlaceIDs: navigationPlaceIDs,
+                transitionDirection: $homeTransitionDirection,
+                outgoingPlaceID: $outgoingHomePlaceID
+            )
                 .tag(Tab.home)
             PlacesView()
                 .tag(Tab.places)
@@ -245,8 +257,22 @@ struct ContentView: View {
                         : (store.alertLanguageStyle == .english ? "Shows weather for this place" : WeatherLanguage.text("Viser vær for dette stedet", style: store.alertLanguageStyle))
                 ) {
                     guard let place = store.places.first(where: { $0.id == item.placeID }) else { return }
-                    store.select(place, fromCurrentLocation: item.representsCurrentPosition)
-                    selectedTab = .home
+                    if let currentID = selectedQuickPlaceID,
+                       let currentIndex = quickPlaceTabs.firstIndex(where: { $0.placeID == currentID }),
+                       let destinationIndex = quickPlaceTabs.firstIndex(where: { $0.placeID == item.placeID }),
+                       let direction = HomeSwipeSelection.transitionDirection(fromIndex: currentIndex, toIndex: destinationIndex) {
+                        outgoingHomePlaceID = currentID
+                        homeTransitionDirection = direction
+                        selectedTab = .home
+                        // Let SwiftUI record the outgoing page below the
+                        // incoming one before replacing the selected place.
+                        DispatchQueue.main.async {
+                            store.select(place, fromCurrentLocation: item.representsCurrentPosition)
+                        }
+                    } else {
+                        store.select(place, fromCurrentLocation: item.representsCurrentPosition)
+                        selectedTab = .home
+                    }
                 }
             }
             navigationButton(
@@ -333,7 +359,8 @@ struct HomeView: View {
     var navigationPlaceIDs: [UUID]? = nil
     @State private var editing: Rule?
     @State private var showingSettings = false
-    @State private var transitionDirection: Edge = .trailing
+    @Binding var transitionDirection: Edge
+    @Binding var outgoingPlaceID: UUID?
     @GestureState private var liveSwipeOffset: CGFloat = 0
 
     private var forecastHeaderTitle: String {
@@ -385,7 +412,6 @@ struct HomeView: View {
                                     forecast: visibleForecast,
                                     languageStyle: store.alertLanguageStyle,
                                     isCurrentLocation: store.selectionIsCurrentLocation,
-                                    locationCourse: store.selectionIsCurrentLocation ? store.currentLocationCourse : nil,
                                     onSelect: { place in store.select(place) },
                                     onEdit: { showingSettings = true },
                                     showsPlaceMenu: false,
@@ -480,38 +506,12 @@ struct HomeView: View {
                 .offset(x: effectiveSwipeOffset)
                 .padding()
                     .id(store.selectedID)
+                    .zIndex(store.selectedID == outgoingPlaceID ? 0 : 1)
                     .transition(.asymmetric(
                         insertion: .move(edge: transitionDirection),
                         removal: .move(edge: transitionDirection == .trailing ? .leading : .trailing)
                     ))
                 }
-                .animation(.easeInOut(duration: 0.32), value: store.selectedID)
-            }
-            .background(Color(red: 0.93, green: 0.95, blue: 0.97))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    ContextHelpButton(topic: .home)
-                }
-            }
-            .refreshable { _ = await store.refreshAll() }
-            .contentShape(Rectangle())
-            .highPriorityGesture(DragGesture(minimumDistance: 8)
-                .updating($liveSwipeOffset) { value, offset, transaction in
-                    guard abs(value.translation.width) > abs(value.translation.height) else {
-                        offset = 0
-                        return
-                    }
-                    transaction.animation = .interactiveSpring(response: 0.24, dampingFraction: 0.86)
-                    offset = value.translation.width
-                }
-                .onEnded { value in
-                let uniqueIDs = swipePlaces.map(\.id)
-                guard let current = store.selected,
-                      let next = HomeSwipeSelection.nextIndex(
-                        currentID: current.id,
-                        placeIDs: uniqueIDs,
-                        horizontalTranslation: value.translation.width,
                 .overlay(alignment: .topLeading) {
                     GeometryReader { geometry in
                         if let place = interactiveSwipeNeighbor,
@@ -542,12 +542,50 @@ struct HomeView: View {
                         }
                     }
                 }
+                .animation(.easeInOut(duration: 0.32), value: store.selectedID)
+            }
+            .background(Color(red: 0.93, green: 0.95, blue: 0.97))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    ContextHelpButton(topic: .home)
+                }
+            }
+            .refreshable { _ = await store.refreshAll() }
+            .contentShape(Rectangle())
+            // Simultaneous recognition lets ScrollView keep vertical drags;
+            // the horizontal page gesture only moves content when X dominates.
+            .simultaneousGesture(DragGesture(minimumDistance: 8)
+                .onChanged { value in
+                    guard abs(value.translation.width) > abs(value.translation.height),
+                          let current = store.selected,
+                          outgoingPlaceID != current.id else { return }
+                    outgoingPlaceID = current.id
+                }
+                .updating($liveSwipeOffset) { value, offset, transaction in
+                    guard abs(value.translation.width) > abs(value.translation.height) else {
+                        offset = 0
+                        return
+                    }
+                    transaction.animation = .interactiveSpring(response: 0.24, dampingFraction: 0.86)
+                    offset = value.translation.width
+                }
+                .onEnded { value in
+                let uniqueIDs = swipePlaces.map(\.id)
+                guard let current = store.selected,
+                      let next = HomeSwipeSelection.nextIndex(
+                        currentID: current.id,
+                        placeIDs: uniqueIDs,
+                        horizontalTranslation: value.translation.width,
                         verticalTranslation: value.translation.height
                       ),
                       uniqueIDs.indices.contains(next) else { return }
                 let nextID = uniqueIDs[next]
                 guard let nextPlace = swipePlaces.first(where: { $0.id == nextID }) else { return }
-                transitionDirection = value.translation.width < 0 ? .trailing : .leading
+                let currentIndex = uniqueIDs.firstIndex(of: current.id) ?? next
+                outgoingPlaceID = current.id
+                transitionDirection = HomeSwipeSelection.transitionDirection(fromIndex: currentIndex, toIndex: next)
+                    ?? (value.translation.width < 0 ? .trailing : .leading)
                 withAnimation(.easeInOut(duration: 0.32)) {
                     store.select(nextPlace, fromCurrentLocation: nextID == store.currentLocationPlaceID)
                 }
@@ -561,44 +599,6 @@ struct HomeView: View {
         let pageCount = max(1, swipePlaces.count)
         return min(pageCount - 1, max(0, swipePlaces.firstIndex(where: { $0.id == store.selected?.id }) ?? 0))
     }
-}
-
-private struct CurrentPlacePushAlertsSection: View {
-    let place: Place
-    let forecast: [ForecastHour]
-    let nearbyPlaceIDs: Set<UUID>
-    let notificationsAuthorized: Bool?
-    let languageStyle: AlertLanguageStyle
-
-    @State private var alertExpansion = PlaceExpansionState()
-
-    private var plannedPushAlerts: [PlannedAlert] {
-        Planner.planAll(
-            places: [place],
-            forecasts: [place.id: forecast],
-            nearbyPlaceIDs: nearbyPlaceIDs
-        )
-    }
-
-    private var enabledPushRules: [Rule] {
-        place.rules.filter { $0.enabled && !($0.isDisplayOnly) }
-    }
-
-    private func localized(_ bokmal: String, english: String) -> String {
-        languageStyle == .english ? english : WeatherLanguage.text(bokmal, style: languageStyle)
-    }
-
-    var body: some View {
-        let upcomingAlerts = plannedPushAlerts
-        let showsAllAlerts = alertExpansion.expandedPlaceID == place.id
-        return VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 8) {
-                Image(systemName: "bell.badge.fill")
-                    .foregroundStyle(.orange)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(localized("Kommende pushvarsler", english: "Upcoming push alerts"))
-                        .font(.headline)
-                    Text(place.nameWithPreposition)
 
     private var interactiveSwipeNeighbor: Place? {
         guard abs(liveSwipeOffset) > 8,
@@ -685,6 +685,44 @@ private struct HomeSwipeIncomingPage: View {
         .padding()
         .background(Color(uiColor: .systemBackground))
     }
+}
+
+private struct CurrentPlacePushAlertsSection: View {
+    let place: Place
+    let forecast: [ForecastHour]
+    let nearbyPlaceIDs: Set<UUID>
+    let notificationsAuthorized: Bool?
+    let languageStyle: AlertLanguageStyle
+
+    @State private var alertExpansion = PlaceExpansionState()
+
+    private var plannedPushAlerts: [PlannedAlert] {
+        Planner.planAll(
+            places: [place],
+            forecasts: [place.id: forecast],
+            nearbyPlaceIDs: nearbyPlaceIDs
+        )
+    }
+
+    private var enabledPushRules: [Rule] {
+        place.rules.filter { $0.enabled && !($0.isDisplayOnly) }
+    }
+
+    private func localized(_ bokmal: String, english: String) -> String {
+        languageStyle == .english ? english : WeatherLanguage.text(bokmal, style: languageStyle)
+    }
+
+    var body: some View {
+        let upcomingAlerts = plannedPushAlerts
+        let showsAllAlerts = alertExpansion.expandedPlaceID == place.id
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 8) {
+                Image(systemName: "bell.badge.fill")
+                    .foregroundStyle(.orange)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(localized("Kommende pushvarsler", english: "Upcoming push alerts"))
+                        .font(.headline)
+                    Text(place.nameWithPreposition)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -739,7 +777,7 @@ private struct HomeSwipeIncomingPage: View {
                                 ))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
-                                Text(localized("Sendes \(eventTimePhrase(alert.fireAt))", english: "Scheduled \(eventTimePhrase(alert.fireAt))"))
+                                Text(localized("Sendes \(scheduledNotificationTimePhrase(alert.fireAt))", english: "Scheduled \(scheduledNotificationTimePhrase(alert.fireAt))"))
                                     .font(.caption2.weight(.medium))
                                     .foregroundStyle(.blue)
                             }
@@ -779,7 +817,6 @@ private struct CurrentWeatherCard: View {
     let forecast: [ForecastHour]
     let languageStyle: AlertLanguageStyle
     let isCurrentLocation: Bool
-    var locationCourse: CLLocationDirection? = nil
     let onSelect: (Place) -> Void
     var onEdit: (() -> Void)? = nil
     var showsPlaceMenu = true
@@ -816,41 +853,44 @@ private struct CurrentWeatherCard: View {
 
                 if isCurrentLocation {
                     let heading = CurrentLocationPlaceHeading(place: place)
-                    HStack(alignment: .center, spacing: 4) {
-                        Text(heading.prefixedPreposition)
-                            .font(.caption.weight(.bold).italic())
-                            .foregroundStyle(.white)
-                            .fixedSize()
+                    Text(heading.prefixedPreposition)
+                        .font(.caption.weight(.bold).italic())
+                        .foregroundStyle(.white)
+                        .fixedSize()
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 3)
+                        .background(
+                            LinearGradient(
+                                colors: [.blue.opacity(0.72), .cyan.opacity(0.72)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            in: Capsule()
+                        )
+                        .rotationEffect(.degrees(-4))
+                        .accessibilityLabel("\(heading.prefixedPreposition), \(LocationPresenceAccessibilityCopy.label(languageStyle: languageStyle))")
 
-                        if showsPlaceMenu {
-                            Menu {
-                                placeMenuItems
-                            } label: {
-                                currentLocationPlaceName(showsChevron: true, heading: heading)
-                            }
-                            .layoutPriority(1)
-                        } else {
-                            currentLocationPlaceName(showsChevron: false, heading: heading)
-                                .layoutPriority(1)
+                    if showsPlaceMenu {
+                        Menu {
+                            placeMenuItems
+                        } label: {
+                            PlaceTitle(
+                                place: place,
+                                showsChevron: true,
+                                isCurrentLocation: true,
+                                gpsLanguageStyle: languageStyle
+                            )
                         }
+                        .layoutPriority(1)
+                    } else {
+                        PlaceTitle(
+                            place: place,
+                            showsChevron: false,
+                            isCurrentLocation: true,
+                            gpsLanguageStyle: languageStyle
+                        )
+                        .layoutPriority(1)
                     }
-                    .padding(.horizontal, 7)
-                    .padding(.vertical, 3)
-                    .background(
-                        LinearGradient(
-                            colors: [.blue.opacity(0.72), .cyan.opacity(0.72)],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        ),
-                        in: Capsule()
-                    )
-                    .rotationEffect(.degrees(-2))
-                    // Overlay leaves the original text baseline and card height unchanged.
-                    .overlay(alignment: .topLeading) {
-                        LocationPresenceBadge(course: locationCourse, languageStyle: languageStyle)
-                            .offset(x: 7, y: -19)
-                    }
-                    .accessibilityElement(children: .contain)
                 }
 
                 if !isCurrentLocation {
@@ -1005,27 +1045,6 @@ private struct CurrentWeatherCard: View {
         }
     }
 
-    private func currentLocationPlaceName(
-        showsChevron: Bool,
-        heading: CurrentLocationPlaceHeading
-    ) -> some View {
-        HStack(spacing: 3) {
-            Text(heading.placeName)
-                .font(.system(size: 21, weight: .medium, design: .rounded))
-                .lineLimit(1)
-                .minimumScaleFactor(0.55)
-            if showsChevron {
-                Image(systemName: "chevron.down")
-                    .font(.system(size: 8, weight: .bold))
-            }
-        }
-        .foregroundStyle(.white)
-        .fixedSize(horizontal: false, vertical: true)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(languageStyle == .english ? "Here \(place.nameWithPreposition)" : heading.visibleText), \(LocationPresenceAccessibilityCopy.label(languageStyle: languageStyle))")
-        .accessibilityHint(LocationPresenceAccessibilityCopy.hint(languageStyle: languageStyle))
-    }
-
     private var precipitationMetricValue: String {
         let amount = current.precipitationRiskRate
         return amount >= 0.1
@@ -1144,8 +1163,25 @@ private struct PlaceTitle: View {
     let place: Place
     let showsChevron: Bool
     let isCurrentLocation: Bool
+    var gpsLanguageStyle: AlertLanguageStyle? = nil
 
     var body: some View {
+        Group {
+            if let gpsLanguageStyle {
+                VStack(spacing: -2) {
+                    LocationPresenceBadge(languageStyle: gpsLanguageStyle)
+                    titleLabel
+                }
+                .fixedSize(horizontal: true, vertical: false)
+            } else {
+                titleLabel
+            }
+        }
+        .foregroundStyle(isCurrentLocation ? .indigo : .blue)
+        .frame(maxWidth: gpsLanguageStyle == nil ? .infinity : nil, alignment: .leading)
+    }
+
+    private var titleLabel: some View {
         HStack(spacing: 3) {
             Text(place.displayName)
                 .font(.system(size: 29, weight: .light, design: .rounded))
@@ -1156,8 +1192,6 @@ private struct PlaceTitle: View {
                     .font(.system(size: 9, weight: .semibold))
             }
         }
-        .foregroundStyle(isCurrentLocation ? .indigo : .blue)
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
@@ -2066,7 +2100,7 @@ struct AlertQueueView: View {
                                         .font(.subheadline.weight(.semibold))
                                     Text(NotificationCopy.message(for: alert.rule, eventAt: alert.eventAt, referenceAt: alert.fireAt, possible: alert.possible, eventDetail: alert.eventDetail, languageStyle: store.alertLanguageStyle))
                                         .font(.caption).foregroundStyle(.secondary)
-                                    Text("Sendes \(eventTimePhrase(alert.fireAt))")
+                                    Text("Sendes \(scheduledNotificationTimePhrase(alert.fireAt))")
                                         .font(.caption2).foregroundStyle(.blue)
                                 }
                             }
@@ -2184,6 +2218,8 @@ struct PlacesView: View {
     @AppStorage(PlaceOrderingSettings.homePlaceIDKey) private var homePlaceID = ""
     @AppStorage(PlaceOrderingSettings.cabinPlaceIDKey) private var cabinPlaceID = ""
     @AppStorage(PlaceOrderingSettings.sortModeKey) private var placeSortMode = PlaceSortMode.automatic.rawValue
+    @AppStorage(PlaceOrderingSettings.homeShortcutTitleKey) private var homeShortcutTitle = ""
+    @AppStorage(PlaceOrderingSettings.cabinShortcutTitleKey) private var cabinShortcutTitle = ""
 
     private var sortMode: PlaceSortMode { PlaceSortMode(rawValue: placeSortMode) ?? .automatic }
     private var orderedPlaces: [Place] {
@@ -2231,6 +2267,19 @@ struct PlacesView: View {
                          ? "Favoritt 1 og 2 står først. Resten sorteres etter avstand til hjemstedet."
                          : "Dra stedene i ønsket rekkefølge med håndtaket.")
                         .font(.caption).foregroundStyle(.secondary)
+                }
+                Section("Navn i hovedmenyen") {
+                    TextField("Sted 1 · Hjem", text: $homeShortcutTitle)
+                        .textInputAutocapitalization(.words)
+                        .submitLabel(.done)
+                        .accessibilityHint("Rediger teksten for hjemstedets snarvei. Tomt felt bruker standardnavnet Hjem.")
+                    TextField("Sted 2 · Hytta", text: $cabinShortcutTitle)
+                        .textInputAutocapitalization(.words)
+                        .submitLabel(.done)
+                        .accessibilityHint("Rediger teksten for hyttas snarvei. Tomt felt bruker standardnavnet Hytta.")
+                    Text("Dette endrer bare snarveinavnene, ikke navnene på stedene. Tøm et felt for å bruke standardnavnet igjen.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
                 if store.places.isEmpty {
                     ContentUnavailableView(
@@ -2428,11 +2477,9 @@ struct PlacesView: View {
                     defer {
                         if hasScopedAccess { url.stopAccessingSecurityScopedResource() }
                     }
-                    if let fileSize = try url.resourceValues(forKeys: [.fileSizeKey]).fileSize,
-                       fileSize > WeatherConfigurationDocument.maximumImportSizeBytes {
-                        throw CocoaError(.fileReadTooLarge)
-                    }
-                    let document = try WeatherConfigurationDocument(data: Data(contentsOf: url))
+                    let document = try WeatherConfigurationDocument(
+                        data: WeatherConfigurationDocument.readImportData(from: url)
+                    )
                     presentedSheet = .importPreview(document.configuration)
                 } catch {
                     importFailureMessage = ConfigurationImportFailure.message(
@@ -3051,7 +3098,7 @@ enum LocalCalibrationCopy {
 
     static func surface(_ bokmal: String, style: AlertLanguageStyle) -> String {
         guard style == .english else { return WeatherLanguage.text(bokmal, style: style) }
-        switch bokmal {
+        return switch bokmal {
         case "Gress": "grass"
         case "Bil/tak": "car/roof"
         case "Gress og bil/tak": "grass and car/roof"

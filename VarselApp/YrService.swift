@@ -7,7 +7,7 @@ enum YrForecastPayloadError: Error, Equatable {
 
 enum YrService {
     static let maximumLocationForecastPayloadBytes = 2_000_000
-    static let maximumLocationForecastTimeSteps = 500
+    static let maximumLocationForecastTimeSteps = ForecastPayloadLimits.maximumLocationForecastTimeSteps
     static let maximumNowcastPayloadBytes = 512_000
     static let maximumNowcastTimeSteps = 500
 

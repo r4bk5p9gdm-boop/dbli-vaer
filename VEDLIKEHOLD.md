@@ -69,6 +69,14 @@ Ved kontrollen ble også en duplisert `clientFactory`-deklarasjon i
 `LocationManager` fjernet, slik at den foregående GPS-endringen igjen kan
 kompileres.
 
+**BRUKER-152 · PÅ VENT 2026-10-15** — GitHub-remote er konfigurert, og
+iOS-/widget-/Watch-målene samt et usignert Release-arkiv er verifisert lokalt.
+Første TestFlight-opplasting er blokkert: maskinen har ingen gyldige
+codesigning-identiteter, og CoreSimulatorService/runtime er utilgjengelig.
+Signering ble ikke endret, og builden er ikke lastet opp. Gjenoppta når Xcode
+har en gyldig Apple Developer-konto/team med distribusjonssertifikat og
+profiler; deretter kjør simulator-/enhetssjekk og last opp fra Xcode Organizer.
+
 **BRUKER-146 · FULLFØRT 2026-10-10** — Værbåndenes vind- og duggmarkeringer
 bruker nå de egne verdiene fra «Tilpass», også når pushvarsler har andre
 terskler. Tabellen bruker kopier av reglene, så pushvarslene er uendret.
@@ -1016,21 +1024,31 @@ for en separat nattgren. Regresjonen dekker dag- og nattikon for alle seks
 værtilstander. Den eksisterende solnedgangstesten bekrefter også at overgangen
 følger Klingas lokale dagslys.
 
-**AUTO-579 · ÅPEN** — `CurrentWeatherCondition.resolve` klassifiserer skydekke
-med grensene 20 % og 65 %, men regresjonstesten dekker kun eksakte grenseverdier.
-Legg til like-under-/like-over-verdier for å låse klassifiseringen ved
-overgangene mellom sol, delvis skyet og skyet.
+**AUTO-579 · FULLFØRT 2026-10-15** — Regresjonstesten for
+`CurrentWeatherCondition.resolve` dekker nå 19,9/20/20,1 % og
+64,9/65/65,1 % skydekke, altså begge sider og selve grensene mellom sol,
+delvis skyet og skyet. XCTest-målet bygges; faktisk testkjøring er blokkert av
+manglende simulator-runtime/CoreSimulatorService.
 
-**AUTO-580 · ÅPEN** — Verifiser en Release-arkivering fra en ren checkout før
-TestFlight: app-scheme må arkivere riktig iOS-app med widget- og Watch-produktene,
-og arkivet må ha konsistente bundle-ID-er og versjons-/build-numre. Dokumenter
-eventuelle blokkeringer uten å endre signering eller laste opp builden.
+**AUTO-580 · PÅ VENT 2026-10-15** — Release-arkivering lykkes kun med
+`CODE_SIGNING_ALLOWED=NO` fra den nåværende arbeidskopien; arkivet inneholder
+iOS-appen, iOS-widgeten, Watch-appen og Watch-widgeten, og appen har bundle-ID
+`no.mathias.VarselApp`, versjon 1.0 og build 1. Arkivet er ikke
+distribusjonsklart og er ikke verifisert fra en ren checkout: det finnes ingen
+gyldige signeringsidentiteter, og bare 7,6 GiB ledig diskplass (99 % brukt).
+Ikke endre signering eller last opp dette arkivet; fortsett når Apple-signering
+og tilstrekkelig diskplass er tilgjengelig.
 
 **AUTO-581 · ÅPEN** — Før TestFlight, gjennomgå personvernmetadata mot faktisk
 dataflyt: sted/posisjon, Yr-forespørsler, lokal lagring og eventuell synkronisering.
 Dokumenter hvilke data som forlater enheten, formål og lagringstid, og noter hva
 som må oppgis i App Store Connects personvernerklæring. Ikke send inn eller
 publiser metadata.
+
+**AUTO-582 · ÅPEN** — Legg til en GitHub Actions-kontroll som på macOS bygger
+Release-arkivet uten signering og bygger XCTest-målet for simulator. Bruk
+delte Xcode-skjemaer, bevar Apple-signering utenfor CI, og dokumenter hva som
+fortsatt krever en fysisk signert build.
 
 **BRUKER-151 · FULLFØRT 2026-10-15** — Gjort oppstartsveiviseren lettere å
 skumme og komme gjennom: hvert steg viser en visuell, klikkbar progresjon for
