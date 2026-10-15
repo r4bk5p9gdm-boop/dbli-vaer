@@ -252,14 +252,19 @@ struct OnboardingWizardView: View {
         default: selectedCategory?.title ?? "Varsler på hytta"
         }
     }
+    private var progressStage: Int { step == 0 ? 0 : step == 1 ? 1 : 2 }
+    private let progressTitles = ["Sted", "Varsler", "Hytte"]
 
     var body: some View {
         NavigationStack {
-            Group {
-                switch step {
-                case 0: homePlaceStep
-                case 1, 3: alertChoiceStep
-                default: cabinStepView
+            VStack(spacing: 0) {
+                progressHeader
+                Group {
+                    switch step {
+                    case 0: homePlaceStep
+                    case 1, 3: alertChoiceStep
+                    default: cabinStepView
+                    }
                 }
             }
             .navigationTitle(pageTitle)
@@ -279,6 +284,54 @@ struct OnboardingWizardView: View {
         .sheet(isPresented: $showingCabinSearch) {
             PlaceSearchView(initialPreposition: .pa, onSelect: selectSearchedCabin)
         }
+    }
+
+    private var progressHeader: some View {
+        HStack(spacing: 7) {
+            ForEach(progressTitles.indices, id: \.self) { index in
+                Button {
+                    guard index < progressStage else { return }
+                    selectedCategory = nil
+                    step = index
+                } label: {
+                    HStack(spacing: 7) {
+                        ZStack {
+                            Circle()
+                                .fill(index <= progressStage ? Color.blue : Color.secondary.opacity(0.13))
+                                .frame(width: 25, height: 25)
+                            if index < progressStage {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 10, weight: .bold))
+                                    .foregroundStyle(.white)
+                            } else {
+                                Text("\(index + 1)")
+                                    .font(.caption2.weight(.bold))
+                                    .foregroundStyle(index == progressStage ? .white : .secondary)
+                            }
+                        }
+                        Text(progressTitles[index])
+                            .font(.caption.weight(index == progressStage ? .semibold : .regular))
+                            .foregroundStyle(index == progressStage ? .primary : .secondary)
+                            .lineLimit(1)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical, 7)
+                    .padding(.horizontal, 8)
+                    .background(
+                        index == progressStage ? Color.blue.opacity(0.08) : Color.clear,
+                        in: RoundedRectangle(cornerRadius: 10)
+                    )
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .disabled(index > progressStage)
+                .accessibilityLabel("Steg \(index + 1) av 3: \(progressTitles[index])")
+                .accessibilityAddTraits(index == progressStage ? .isSelected : [])
+            }
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 8)
+        .background(.bar)
     }
 
     private var homePlaceStep: some View {
@@ -347,7 +400,7 @@ struct OnboardingWizardView: View {
             .safeAreaInset(edge: .bottom) {
                 footer {
                     Spacer()
-                    Button("Velg varsler") {
+                    Button("Neste") {
                         if homePlaceID == nil { homePlaceID = store.selectedID }
                         step = 1
                     }
@@ -386,6 +439,7 @@ struct OnboardingWizardView: View {
                     }
                 }
                 .fontWeight(.semibold)
+                .buttonStyle(.borderedProminent)
                 .accessibilityHint(step == 3 ? "Lagrer varslene for hjemstedet og hytta." : "Går videre til valgfri hytteoppsett.")
             }
         }
@@ -396,6 +450,20 @@ struct OnboardingWizardView: View {
             Section {
                 Text("Velg en type for å se ferdige varselforslag. Du kan endre detaljene senere.")
                     .font(.subheadline).foregroundStyle(.secondary)
+                Label {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(activePresetIDs.isEmpty ? "Klar for egne valg" : "\(activePresetIDs.count) forslag valgt")
+                            .font(.subheadline.weight(.semibold))
+                        Text(activePresetIDs.isEmpty
+                             ? "Velg et forslag, eller fortsett uten varsler."
+                             : "Du kan bruke dem som de er eller tilpasse dem nå.")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
+                } icon: {
+                    Image(systemName: activePresetIDs.isEmpty ? "slider.horizontal.3" : "sparkles")
+                        .foregroundStyle(.blue)
+                }
+                .padding(.vertical, 4)
                 ForEach(WizardAlertCategory.allCases) { category in
                     Button {
                         selectedCategory = category
@@ -422,6 +490,7 @@ struct OnboardingWizardView: View {
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
+                    .listRowBackground(category.color.opacity(0.055))
                 }
             } header: {
                 Text(isCabinStep ? "Varsler for \(activePlace?.nameWithPreposition ?? "hytta")" : "Varsler for \(activePlace?.nameWithPreposition ?? "hjemstedet")")
@@ -512,6 +581,7 @@ struct OnboardingWizardView: View {
                 Spacer()
                 if cabinPlaceID == nil {
                     Button("Ferdig uten hytte") { installSelectedRules() }
+                        .buttonStyle(.borderedProminent)
                 } else {
                     Button("Velg hyttevarsler") { step = 3 }
                         .buttonStyle(.borderedProminent)

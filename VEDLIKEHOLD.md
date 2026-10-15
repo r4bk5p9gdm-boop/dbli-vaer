@@ -986,6 +986,14 @@ hardkodede norske etiketter «Nedbør» og «Vindkast», mens andre brikker hent
 lokalisert tekst. Lokaliser begge etter valgt språkstil og dekk bokmål,
 inntrøndersk og engelsk i en kopitest.
 
+**BRUKER-151 · FULLFØRT 2026-10-15** — Gjort oppstartsveiviseren lettere å
+skumme og komme gjennom: hvert steg viser en visuell, klikkbar progresjon for
+Sted, Varsler og valgfri Hytte, og tidligere steg kan åpnes igjen. Varselsteget
+viser tydelig hvor mange ferdige forslag som allerede er valgt, med forklaring
+om at de kan brukes raskt eller tilpasses. Neste-/lagrehandlingene er
+fremhevet som primærknapper. Swift-parsing og `git diff --check` besto; XCTest
+ble ikke kjørt fordi CoreSimulatorService/runtime ikke er tilgjengelig.
+
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med
 alder og advarsel når snapshotet er utdatert.
