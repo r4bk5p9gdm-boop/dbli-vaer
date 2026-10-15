@@ -2337,6 +2337,34 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testPlacesAccessibilityHintsFollowSortChoiceAndLanguageStyle() {
+        let automatic = PlacesAccessibilityCopy.sortModeHint(isAutomatic: true, languageStyle: .bokmal)
+        let manual = PlacesAccessibilityCopy.sortModeHint(isAutomatic: false, languageStyle: .bokmal)
+        XCTAssertNotEqual(automatic, manual)
+        XCTAssertTrue(automatic.contains("automatisk"))
+        XCTAssertTrue(manual.contains("Dra"))
+
+        let hints = [
+            PlacesAccessibilityCopy.homePlaceHint(languageStyle: .bokmal),
+            PlacesAccessibilityCopy.cabinPlaceHint(languageStyle: .bokmal),
+        ]
+        XCTAssertEqual(hints.count, 2)
+        XCTAssertTrue(hints.allSatisfy { !$0.isEmpty })
+
+        XCTAssertEqual(
+            PlacesAccessibilityCopy.sortModeHint(isAutomatic: true, languageStyle: .english),
+            "Places are sorted by distance, or you can choose a custom order."
+        )
+        XCTAssertEqual(
+            PlacesAccessibilityCopy.homePlaceHint(languageStyle: .english),
+            "The home place is used as the starting point for distance sorting."
+        )
+        XCTAssertNotEqual(
+            PlacesAccessibilityCopy.cabinPlaceHint(languageStyle: .inntrondersk),
+            PlacesAccessibilityCopy.cabinPlaceHint(languageStyle: .bokmal)
+        )
+    }
+
     func testContextHelpSheetCopyFollowsSelectedLanguageStyle() {
         let topics: [ContextHelpTopic] = [.home, .places, .alerts, .settings, .wizard]
 

@@ -1004,10 +1004,11 @@ sammen med authorized og provisional.
 dag-/nattstatus. Regresjonstesten dekker alle seks værtilstander, tre
 språkstiler og nattetikettene for klart/delvis skyet.
 
-**AUTO-577 · ÅPEN** — Innstillinger-visningen har fortsatt hardkodede norske
-VoiceOver-hint for sorteringsvalg og hjem-/hytte-snarveier i
-`PlacesView`. Følg valgt språkstil på hintene og dekk de ulike valgene med en
-liten kopitest.
+**AUTO-577 · FULLFØRT 2026-10-15** — VoiceOver-hintene for sorteringsvalg og
+hjem-/hyttevalg følger nå valgt språkstil i `PlacesView`.
+Sorteringshintet beskriver også aktiv automatisk eller manuell rekkefølge.
+Kopitest dekker begge sorteringsvalg og språkstilene bokmål, inntrøndersk og
+engelsk.
 
 **AUTO-578 · ÅPEN** — Gjeldende værikon erstattes med måneikon om natten for
 klart og delvis skyet vær (`CurrentWeatherCard.currentWeatherIcon`), men denne
@@ -1018,6 +1019,11 @@ dag-/nattvalg for alle værtilstander.
 med grensene 20 % og 65 %, men regresjonstesten dekker kun eksakte grenseverdier.
 Legg til like-under-/like-over-verdier for å låse klassifiseringen ved
 overgangene mellom sol, delvis skyet og skyet.
+
+**AUTO-580 · ÅPEN** — Verifiser en Release-arkivering fra en ren checkout før
+TestFlight: app-scheme må arkivere riktig iOS-app med widget- og Watch-produktene,
+og arkivet må ha konsistente bundle-ID-er og versjons-/build-numre. Dokumenter
+eventuelle blokkeringer uten å endre signering eller laste opp builden.
 
 **BRUKER-151 · FULLFØRT 2026-10-15** — Gjort oppstartsveiviseren lettere å
 skumme og komme gjennom: hvert steg viser en visuell, klikkbar progresjon for

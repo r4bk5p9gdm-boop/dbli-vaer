@@ -1,6 +1,6 @@
 {
-  "lastScheduledStart": "2026-10-15T10:56:07Z",
+  "lastScheduledStart": "2026-10-15T11:11:08Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-576 fullført 2026-10-15: CurrentWeatherCard bruker nå CurrentWeatherCondition.accessibilityLabel med valgt språkstil og dag-/nattstatus. Kopitest dekker seks værtilstander, bokmål/inntrøndersk/engelsk og nattetikettene for klart/delvis skyet. Bred værlogikkgjennomgang fant manglende like-under/like-over-tester for skydekkegrensene 20 %/65 % i CurrentWeatherCondition.resolve; registrert som AUTO-579. Swift-parsing, jq empty og git diff --check dokumenteres ved verifisering; XCTest fortsatt blokkert av utilgjengelig CoreSimulatorService. Urelaterte arbeidsendringer er bevart.",
-  "nextQueue": ["AUTO-577", "AUTO-578", "AUTO-579"]
+  "lastProgress": "AUTO-577 fullført 2026-10-15: VoiceOver-hintene for sorteringsvalg og hjemsted/hyttevalg i PlacesView følger nå valgt språkstil; sorteringshintet beskriver aktiv automatisk/manuell rekkefølge. Kopitest dekker begge sorteringsvalg, bokmål/inntrøndersk og engelsk. Swift-parsing og git diff --check består; XCTest er ikke kjørt, og full Xcode-arkivering er utsatt på grunn av tidligere CoreSimulatorService-problem og begrenset diskplass. Bred release-preflight fant behov for en ren-arkivverifisering av app-, widget- og Watch-produkter før TestFlight; registrert som AUTO-580. Bare denne oppgavens valgte endringer er med i committen; øvrige arbeidsendringer forblir ustaget.",
+  "nextQueue": ["AUTO-578", "AUTO-579", "AUTO-580"]
 }

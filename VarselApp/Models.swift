@@ -225,6 +225,40 @@ enum AppCopy {
     }
 }
 
+enum PlacesAccessibilityCopy {
+    static func sortModeHint(isAutomatic: Bool, languageStyle: AlertLanguageStyle) -> String {
+        localized(
+            isAutomatic
+                ? "Stedene sorteres automatisk etter avstand, eller du kan velge en egen rekkefølge."
+                : "Dra stedene i ønsket rekkefølge, eller velg automatisk sortering etter avstand.",
+            english: isAutomatic
+                ? "Places are sorted by distance, or you can choose a custom order."
+                : "Drag places into your preferred order, or choose automatic sorting by distance.",
+            languageStyle: languageStyle
+        )
+    }
+
+    static func homePlaceHint(languageStyle: AlertLanguageStyle) -> String {
+        localized(
+            "Hjemstedet brukes som utgangspunkt for avstandssortering.",
+            english: "The home place is used as the starting point for distance sorting.",
+            languageStyle: languageStyle
+        )
+    }
+
+    static func cabinPlaceHint(languageStyle: AlertLanguageStyle) -> String {
+        localized(
+            "Velg hvilket sted som skal ha en egen snarvei i hovedmenyen.",
+            english: "Choose which place gets its own shortcut in the main menu.",
+            languageStyle: languageStyle
+        )
+    }
+
+    private static func localized(_ bokmal: String, english: String, languageStyle: AlertLanguageStyle) -> String {
+        languageStyle == .english ? english : WeatherLanguage.text(bokmal, style: languageStyle)
+    }
+}
+
 enum AlertLanguageStyle: String, Codable, CaseIterable, Identifiable {
     case bokmal
     case inntrondersk

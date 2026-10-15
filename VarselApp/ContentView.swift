@@ -2221,21 +2221,21 @@ struct PlacesView: View {
                             Text(mode.label).tag(mode.rawValue)
                         }
                     }
-                    .accessibilityHint("Velg automatisk avstandssortering eller manuell rekkefølge")
+                    .accessibilityHint(PlacesAccessibilityCopy.sortModeHint(isAutomatic: sortMode == .automatic, languageStyle: store.alertLanguageStyle))
                     Picker("Hjemsted", selection: $homePlaceID) {
                         Text("Velg hjemsted").tag("")
                         ForEach(store.places) { place in
                             Text(place.displayName).tag(place.id.uuidString)
                         }
                     }
-                    .accessibilityHint("Brukes som utgangspunkt for avstandssortering")
+                    .accessibilityHint(PlacesAccessibilityCopy.homePlaceHint(languageStyle: store.alertLanguageStyle))
                     Picker("Hytta", selection: $cabinPlaceID) {
                         Text("Ikke valgt").tag("")
                         ForEach(store.places) { place in
                             Text(place.displayName).tag(place.id.uuidString)
                         }
                     }
-                    .accessibilityHint("Velg hvilket sted som skal ha en egen snarvei i hovedmenyen")
+                    .accessibilityHint(PlacesAccessibilityCopy.cabinPlaceHint(languageStyle: store.alertLanguageStyle))
                     Text(sortMode == .automatic
                          ? "Favoritt 1 og 2 står først. Resten sorteres etter avstand til hjemstedet."
                          : "Dra stedene i ønsket rekkefølge med håndtaket.")
