@@ -985,10 +985,11 @@ bruker nå egne kopiverdier for bokmål og engelsk, og følger den delte
 inntrønderske språktransformasjonen. Kopitest dekker begge etiketter på alle
 tre språkstiler.
 
-**AUTO-573 · ÅPEN** — `ContextHelpTopic` og `HelpGuideView` viser overskrifter,
-forklaringer og trinn bare på bokmål også når appen bruker engelsk. Lokaliser
-innholdet på hjelpesidene for alle språkstiler og legg til kopitest; behold
-emnenes pedagogiske innhold og rekkefølge.
+**AUTO-573 · FULLFØRT 2026-10-15** — Hjelpearket lokaliserer nå emnetitler,
+introduksjoner, forklaringstrinn, seksjonsoverskrift, navigasjonstittel og
+ferdigknapp for valgt språkstil. Engelske tekster er skrevet eksplisitt;
+inntrøndersk gjenbruker språktransformasjonen uten å endre emnenes rekkefølge.
+Kopitest dekker alle fem emner.
 
 **AUTO-574 · ÅPEN** — Den sammenfoldbare kompakte stedsraden gir fortsatt den
 norske VoiceOver-hjelpen «Trykk for å vise/lukke værdetaljene» uansett valgt
@@ -999,6 +1000,11 @@ kopitest.
 `UNAuthorizationStatus.ephemeral` som tillatt, men status-regresjonen dekker
 bare denied, authorized, provisional og notDetermined. Lås den tidsbegrensede
 ephemeral-tilgangen som tillatt med en liten enhetstest.
+
+**AUTO-576 · ÅPEN** — Den samme språkstilen bør gjelde VoiceOver-etiketten på
+værikonet i `CurrentWeatherCard`; `currentWeatherIcon.label` leveres fortsatt
+som bokmål uansett valgt språk. Lokaliser ikonetikettene og dekk alle
+værtilstander på bokmål, inntrøndersk og engelsk i en kopitest.
 
 **BRUKER-151 · FULLFØRT 2026-10-15** — Gjort oppstartsveiviseren lettere å
 skumme og komme gjennom: hvert steg viser en visuell, klikkbar progresjon for

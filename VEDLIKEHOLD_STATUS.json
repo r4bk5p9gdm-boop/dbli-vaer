@@ -1,6 +1,6 @@
 {
-  "lastScheduledStart": "2026-10-15T09:56:07Z",
+  "lastScheduledStart": "2026-10-15T10:11:07Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-572 fullført 2026-10-15: Målebrikkene for nedbør og vindkast bruker nå egne engelske etiketter og følger valgt bokmål/inntrøndersk språkstil. Kopitest dekker begge etikettene i alle tre språkstiler. Bred gjennomgang av varslingsplanleggeren fant at den eksplisitt støttede UNAuthorizationStatus.ephemeral-tilstanden mangler i statusregresjonstesten; registrert som AUTO-575. Swift-parsing, jq empty og git diff --check besto; XCTest er blokkert av utilgjengelig CoreSimulatorService. Urelaterte arbeidsendringer er bevart.",
-  "nextQueue": ["AUTO-573", "AUTO-574", "AUTO-575"]
+  "lastProgress": "AUTO-573 fullført 2026-10-15: Hele ContextHelpTopic-hjelpearket følger nå valgt språkstil: emnetittel, introduksjon, trinn og hjelpesidens navigasjonskopi. Engelske tekster er eksplisitte, mens inntrøndersk følger delt språktransformasjon. Kopitest dekker alle emner og språkstiler. Bred gjennomgang fant i tillegg et norsk VoiceOver-navn på værikonet i CurrentWeatherCard (AUTO-576); allerede åpne neste punkter er AUTO-574 og AUTO-575. Swift-parsing, jq empty og git diff --check dokumenteres ved verifisering; XCTest fortsatt blokkert av utilgjengelig CoreSimulatorService. Urelaterte arbeidsendringer er bevart.",
+  "nextQueue": ["AUTO-574", "AUTO-575", "AUTO-576"]
 }

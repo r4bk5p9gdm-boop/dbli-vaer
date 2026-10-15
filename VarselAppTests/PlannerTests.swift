@@ -2337,6 +2337,38 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testContextHelpSheetCopyFollowsSelectedLanguageStyle() {
+        let topics: [ContextHelpTopic] = [.home, .places, .alerts, .settings, .wizard]
+
+        for topic in topics {
+            XCTAssertFalse(topic.title(languageStyle: .english).isEmpty)
+            XCTAssertFalse(topic.introduction(languageStyle: .english).isEmpty)
+            XCTAssertTrue(topic.steps(languageStyle: .english).allSatisfy { !$0.isEmpty })
+            XCTAssertNotEqual(topic.title(languageStyle: .english), topic.title)
+            XCTAssertNotEqual(topic.introduction(languageStyle: .english), topic.introduction)
+            XCTAssertNotEqual(topic.steps(languageStyle: .english), topic.steps)
+            XCTAssertEqual(topic.title(languageStyle: .bokmal), topic.title)
+            XCTAssertEqual(topic.introduction(languageStyle: .bokmal), topic.introduction)
+            XCTAssertEqual(topic.steps(languageStyle: .bokmal), topic.steps)
+            XCTAssertEqual(
+                topic.steps(languageStyle: .inntrondersk),
+                topic.steps.map { WeatherLanguage.text($0, style: .inntrondersk) }
+            )
+        }
+
+        XCTAssertEqual(ContextHelpTopic.home.title(languageStyle: .english), "How to read Home")
+        XCTAssertEqual(ContextHelpTopic.places.title(languageStyle: .english), "Places and cabin")
+        XCTAssertEqual(ContextHelpTopic.alerts.title(languageStyle: .english), "What does the alert list mean?")
+        XCTAssertEqual(ContextHelpTopic.settings.title(languageStyle: .english), "Settings")
+        XCTAssertEqual(ContextHelpTopic.wizard.title(languageStyle: .english), "Getting started help")
+        XCTAssertEqual(ContextHelpChromeCopy.quickExplanation(languageStyle: .english), "Quick explanation")
+        XCTAssertEqual(ContextHelpChromeCopy.navigationTitle(languageStyle: .english), "Help")
+        XCTAssertEqual(ContextHelpChromeCopy.doneButton(languageStyle: .english), "Done")
+        XCTAssertEqual(ContextHelpChromeCopy.quickExplanation(languageStyle: .bokmal), "Kort forklart")
+        XCTAssertEqual(ContextHelpChromeCopy.navigationTitle(languageStyle: .bokmal), "Hjelp")
+        XCTAssertEqual(ContextHelpChromeCopy.doneButton(languageStyle: .bokmal), "Ferdig")
+    }
+
     func testWizardCategoriesCoverEveryAlertTypeExactlyOnce() {
         let expected: [WizardAlertCategory: Set<AlertType>] = [
             .rain: [.regn],

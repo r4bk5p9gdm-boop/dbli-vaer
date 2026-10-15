@@ -697,6 +697,19 @@ enum ContextHelpTopic {
         }
     }
 
+    func title(languageStyle: AlertLanguageStyle) -> String {
+        guard languageStyle == .english else {
+            return WeatherLanguage.text(title, style: languageStyle)
+        }
+        switch self {
+        case .home: "How to read Home"
+        case .places: "Places and cabin"
+        case .alerts: "What does the alert list mean?"
+        case .settings: "Settings"
+        case .wizard: "Getting started help"
+        }
+    }
+
     func accessibilityLabel(languageStyle: AlertLanguageStyle) -> String {
         let topicTitle: String
         if languageStyle == .english {
@@ -720,6 +733,19 @@ enum ContextHelpTopic {
         case .wizard: "Velg først hjemsted, og deretter værtypene du vil følge. Forslagene lagres som vanlige varsler du kan endre senere."
         }
     }
+
+    func introduction(languageStyle: AlertLanguageStyle) -> String {
+        guard languageStyle == .english else {
+            return WeatherLanguage.text(introduction, style: languageStyle)
+        }
+        switch self {
+        case .home: "Home shows the weather for the selected place and the coming days. Tap the pencil to customize rows, thresholds, and push alerts."
+        case .places: "Add your home, cabin, and other places. Places with active rules get their own alerts and can be selected on Home."
+        case .alerts: "Here you can see alerts already scheduled to be sent and active rules that keep monitoring the forecast."
+        case .settings: "Here you can find language, clock format, units, and Apple Watch and CarPlay options. You can restart the setup guide here."
+        case .wizard: "First choose your home place, then the weather types you want to follow. Suggestions are saved as regular alerts that you can edit later."
+        }
+    }
     var steps: [String] {
         switch self {
         case .home: ["Værbåndene viser når prognosen passerer en markert grense.", "Trykk på blyanten for å endre hva som vises og hvilke pushvarsler som brukes.", "Sveip sidelengs for å bla mellom favorittsteder."]
@@ -727,6 +753,24 @@ enum ContextHelpTopic {
         case .alerts: ["Bjelle betyr at et pushvarsel allerede er satt opp.", "Øye betyr at appen følger med på regelen, men ingen sending er planlagt akkurat nå.", "Åpne Tilpass fra Hjem for å endre eller legge til regler."]
         case .settings: ["Språkstil påvirker varseltekster og talemåte.", "Apple Watch kan følge telefonens posisjon eller ett fast sted.", "Du kan når som helst kjøre oppstartsveiviseren på nytt."]
         case .wizard: ["Velg hjemsted med posisjon eller søk.", "Åpne en værtype for å velge ferdige forslag, som regn i natt eller vind i morgen.", "Hytte er valgfritt; hyttevarsler kan bare gjelde når du er i nærheten.", "Alt kan endres senere under Tilpass."]
+        }
+    }
+
+    func steps(languageStyle: AlertLanguageStyle) -> [String] {
+        guard languageStyle == .english else {
+            return steps.map { WeatherLanguage.text($0, style: languageStyle) }
+        }
+        switch self {
+        case .home:
+            ["The weather bands show when the forecast crosses a marked threshold.", "Tap the pencil to change what is shown and which push alerts are used.", "Swipe sideways to browse favorite places."]
+        case .places:
+            ["Use your location or search to add a place.", "Select a place to open it on Home.", "For a cabin, you can enable ‘Only when nearby’ for its alerts."]
+        case .alerts:
+            ["A bell means a push alert is already scheduled.", "An eye means the app is monitoring the rule, but nothing is scheduled to be sent right now.", "Open Customize from Home to change or add rules."]
+        case .settings:
+            ["Language style affects alert text and wording.", "Apple Watch can follow your phone’s location or one fixed place.", "You can restart the setup guide at any time."]
+        case .wizard:
+            ["Choose your home place using your location or search.", "Open a weather type to choose ready-made suggestions, such as rain tonight or wind tomorrow.", "Adding a cabin is optional; cabin alerts can be limited to when you are nearby.", "You can change everything later under Customize."]
         }
     }
 }
@@ -751,19 +795,40 @@ struct ContextHelpButton: View {
     }
 }
 
+enum ContextHelpChromeCopy {
+    static func quickExplanation(languageStyle: AlertLanguageStyle) -> String {
+        localized("Kort forklart", english: "Quick explanation", languageStyle: languageStyle)
+    }
+
+    static func navigationTitle(languageStyle: AlertLanguageStyle) -> String {
+        localized("Hjelp", english: "Help", languageStyle: languageStyle)
+    }
+
+    static func doneButton(languageStyle: AlertLanguageStyle) -> String {
+        localized("Ferdig", english: "Done", languageStyle: languageStyle)
+    }
+
+    private static func localized(_ bokmal: String, english: String, languageStyle: AlertLanguageStyle) -> String {
+        languageStyle == .english ? english : WeatherLanguage.text(bokmal, style: languageStyle)
+    }
+}
+
 private struct HelpGuideView: View {
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var store: Store
     let topic: ContextHelpTopic
+
+    private var languageStyle: AlertLanguageStyle { store.alertLanguageStyle }
 
     var body: some View {
         NavigationStack {
             List {
-                Section(topic.title) {
-                    Text(topic.introduction)
+                Section(topic.title(languageStyle: languageStyle)) {
+                    Text(topic.introduction(languageStyle: languageStyle))
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                Section("Kort forklart") {
-                    ForEach(Array(topic.steps.enumerated()), id: \.offset) { index, text in
+                Section(ContextHelpChromeCopy.quickExplanation(languageStyle: languageStyle)) {
+                    ForEach(Array(topic.steps(languageStyle: languageStyle).enumerated()), id: \.offset) { index, text in
                         Label {
                             Text(text).fixedSize(horizontal: false, vertical: true)
                         } icon: {
@@ -776,11 +841,11 @@ private struct HelpGuideView: View {
                     }
                 }
             }
-            .navigationTitle("Hjelp")
+            .navigationTitle(ContextHelpChromeCopy.navigationTitle(languageStyle: languageStyle))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Ferdig") { dismiss() }
+                    Button(ContextHelpChromeCopy.doneButton(languageStyle: languageStyle)) { dismiss() }
                 }
             }
         }
