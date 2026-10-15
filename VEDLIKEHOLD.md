@@ -967,11 +967,9 @@ planlegging bare utløses ved aktiv scene.
 Dermed er klassene sol, solgløtt og skyet låst både på og rett utenfor
 tersklene.
 
-**AUTO-569 · ÅPEN** — Preposisjonsvalgene i stedssøk viser valgt verdi bare
-gjennom blå bakgrunn og hvit tekst. VoiceOver-knappene får dermed ikke en
-eksplisitt valgt/ikke valgt-semantikk. Eksponer valgt tilstand for hver knapp
-og legg til en tilgjengelighetsregresjon som sikrer at valget fortsatt
-kunngjøres når man navigerer mellom preposisjonene.
+**AUTO-569 · FULLFØRT 2026-10-15** — Hvert preposisjonsvalg eksponerer nå
+`.isSelected` for VoiceOver i tillegg til synlig blå/hvit markering. En
+regresjon verifiserer at valgt knapp annonseres som valgt og de øvrige ikke.
 
 **AUTO-570 · ÅPEN** — Hjelp-knappen i `RulePresetPickerView` setter
 VoiceOver-etiketten direkte til «Hjelp: …», mens appen ellers tilbyr engelsk
@@ -982,6 +980,11 @@ knappen, og dekk alle språkvariantene i kopitester.
 VoiceOver-etiketten «Valgt sted». Brukere med engelsk eller inntrøndersk
 språkstil får dermed et norsk statusnavn selv om omkringliggende stedstekst er
 lokalisert. Lokaliser statusetiketten og dekk variantene i en liten kopitest.
+
+**AUTO-572 · ÅPEN** — Nå-kortets målebrikker i `CurrentWeatherCard` bruker
+hardkodede norske etiketter «Nedbør» og «Vindkast», mens andre brikker henter
+lokalisert tekst. Lokaliser begge etter valgt språkstil og dekk bokmål,
+inntrøndersk og engelsk i en kopitest.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

@@ -60,6 +60,13 @@ enum PlaceSearchCopy {
         text("Preposisjon", english: "Preposition", style: style)
     }
 
+    static func prepositionAccessibilityTraits(
+        _ value: PlacePreposition,
+        selectedValue: PlacePreposition
+    ) -> AccessibilityTraits {
+        value == selectedValue ? .isSelected : []
+    }
+
     static func preposition(_ value: PlacePreposition, style: AlertLanguageStyle) -> String {
         guard style == .english else { return WeatherLanguage.text(value.rawValue, style: style) }
         return switch value {
@@ -275,6 +282,9 @@ struct PlaceSearchView: View {
                                                 )
                                         }
                                         .buttonStyle(.plain)
+                                        .accessibilityAddTraits(
+                                            PlaceSearchCopy.prepositionAccessibilityTraits(value, selectedValue: preposition)
+                                        )
                                     }
                                 }
                             }

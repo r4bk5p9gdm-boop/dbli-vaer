@@ -12904,6 +12904,14 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(PlaceSearchCopy.searchArea(.world, style: .inntrondersk), WeatherLanguage.text("Hele verden", style: .inntrondersk))
     }
 
+    func testPlaceSearchPrepositionTraitsExposeTheSelectedChoice() {
+        let selected = PlaceSearchCopy.prepositionAccessibilityTraits(.pa, selectedValue: .pa)
+        let unselected = PlaceSearchCopy.prepositionAccessibilityTraits(.i, selectedValue: .pa)
+
+        XCTAssertTrue(selected.contains(.isSelected))
+        XCTAssertFalse(unselected.contains(.isSelected))
+    }
+
     func testPlaceSearchClearSearchCopyUsesSelectedLanguage() {
         XCTAssertEqual(PlaceSearchCopy.clearSearch(.english), "Clear search")
         XCTAssertEqual(PlaceSearchCopy.clearSearch(.bokmal), "Tøm søk")
