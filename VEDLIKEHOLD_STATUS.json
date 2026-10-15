@@ -1,6 +1,6 @@
 {
-  "lastScheduledStart": "2026-10-15T09:41:07Z",
+  "lastScheduledStart": "2026-10-15T09:56:07Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-571 fullført 2026-10-15: Det kompakte valgte-sted-merket bruker nå den eksisterende PlaceRoleAccessibilityCopy med språkstilen fra Store. Eksisterende kopitest dekker bokmål, inntrøndersk og engelsk. Bred gjennomgang av UI-et fant også et separat, fortsatt norsk VoiceOver-hint på den sammenfoldbare stedsraden (AUTO-574); de andre åpne funnene er målebrikkene AUTO-572 og hjelpesidenes innhold AUTO-573. Swift-parsing, jq empty og git diff --check besto; XCTest er blokkert av utilgjengelig CoreSimulatorService. Urelaterte arbeidsendringer er bevart.",
-  "nextQueue": ["AUTO-572", "AUTO-573", "AUTO-574"]
+  "lastProgress": "AUTO-572 fullført 2026-10-15: Målebrikkene for nedbør og vindkast bruker nå egne engelske etiketter og følger valgt bokmål/inntrøndersk språkstil. Kopitest dekker begge etikettene i alle tre språkstiler. Bred gjennomgang av varslingsplanleggeren fant at den eksplisitt støttede UNAuthorizationStatus.ephemeral-tilstanden mangler i statusregresjonstesten; registrert som AUTO-575. Swift-parsing, jq empty og git diff --check besto; XCTest er blokkert av utilgjengelig CoreSimulatorService. Urelaterte arbeidsendringer er bevart.",
+  "nextQueue": ["AUTO-573", "AUTO-574", "AUTO-575"]
 }

@@ -980,10 +980,10 @@ Kopitest dekker alle emner og språkvalg.
 bruker nå `PlaceRoleAccessibilityCopy` og følger språkstilen som allerede er
 dekningstestet for bokmål, inntrøndersk og engelsk.
 
-**AUTO-572 · ÅPEN** — Nå-kortets målebrikker i `CurrentWeatherCard` bruker
-hardkodede norske etiketter «Nedbør» og «Vindkast», mens andre brikker henter
-lokalisert tekst. Lokaliser begge etter valgt språkstil og dekk bokmål,
-inntrøndersk og engelsk i en kopitest.
+**AUTO-572 · FULLFØRT 2026-10-15** — Målebrikkene for nedbør og vindkast
+bruker nå egne kopiverdier for bokmål og engelsk, og følger den delte
+inntrønderske språktransformasjonen. Kopitest dekker begge etiketter på alle
+tre språkstiler.
 
 **AUTO-573 · ÅPEN** — `ContextHelpTopic` og `HelpGuideView` viser overskrifter,
 forklaringer og trinn bare på bokmål også når appen bruker engelsk. Lokaliser
@@ -994,6 +994,11 @@ emnenes pedagogiske innhold og rekkefølge.
 norske VoiceOver-hjelpen «Trykk for å vise/lukke værdetaljene» uansett valgt
 språkstil. Lokaliser hintet for alle språkstiler og dekk begge tilstander i en
 kopitest.
+
+**AUTO-575 · ÅPEN** — `NotificationScheduler.authorizationStatus` behandler
+`UNAuthorizationStatus.ephemeral` som tillatt, men status-regresjonen dekker
+bare denied, authorized, provisional og notDetermined. Lås den tidsbegrensede
+ephemeral-tilgangen som tillatt med en liten enhetstest.
 
 **BRUKER-151 · FULLFØRT 2026-10-15** — Gjort oppstartsveiviseren lettere å
 skumme og komme gjennom: hvert steg viser en visuell, klikkbar progresjon for

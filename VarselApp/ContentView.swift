@@ -911,14 +911,14 @@ private struct CurrentWeatherCard: View {
             HStack(spacing: 5) {
                 LiveWeatherMetric(
                     icon: current.temp <= 1 ? AlertType.sno.systemImage : AlertType.regn.systemImage,
-                    label: "Nedbør",
+                    label: CurrentWeatherMetricCopy.label(for: .precipitation, languageStyle: languageStyle),
                     value: precipitationMetricValue,
                     color: current.temp <= 1 ? AlertType.sno.color : AlertType.regn.color,
                     isActive: current.precipitationRiskRate >= 0.1
                 )
                 LiveWeatherMetric(
                     icon: AlertType.vind.systemImage,
-                    label: "Vindkast",
+                    label: CurrentWeatherMetricCopy.label(for: .windGusts, languageStyle: languageStyle),
                     value: current.compactWindAndGust,
                     color: AlertType.vind.color,
                     isActive: (current.gust ?? 0) >= WindGustLevel.looseObjects.threshold
@@ -1191,6 +1191,27 @@ private struct WeatherWordmark: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(AppCopy.name(languageStyle: languageStyle))
 }
+}
+
+enum CurrentWeatherMetricCopy {
+    enum Metric {
+        case precipitation
+        case windGusts
+    }
+
+    static func label(for metric: Metric, languageStyle: AlertLanguageStyle) -> String {
+        let bokmal: String
+        let english: String
+        switch metric {
+        case .precipitation:
+            bokmal = "Nedbør"
+            english = "Precipitation"
+        case .windGusts:
+            bokmal = "Vindkast"
+            english = "Wind gusts"
+        }
+        return languageStyle == .english ? english : WeatherLanguage.text(bokmal, style: languageStyle)
+    }
 }
 
 private struct LiveWeatherMetric: View {

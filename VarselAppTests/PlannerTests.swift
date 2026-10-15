@@ -5254,6 +5254,15 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(displayedCondition, .cloudy)
     }
 
+    func testCurrentWeatherMetricLabelsFollowSelectedLanguageStyle() {
+        XCTAssertEqual(CurrentWeatherMetricCopy.label(for: .precipitation, languageStyle: .bokmal), "Nedbør")
+        XCTAssertEqual(CurrentWeatherMetricCopy.label(for: .windGusts, languageStyle: .bokmal), "Vindkast")
+        XCTAssertEqual(CurrentWeatherMetricCopy.label(for: .precipitation, languageStyle: .inntrondersk), "Nedbør")
+        XCTAssertEqual(CurrentWeatherMetricCopy.label(for: .windGusts, languageStyle: .inntrondersk), "Vindkast")
+        XCTAssertEqual(CurrentWeatherMetricCopy.label(for: .precipitation, languageStyle: .english), "Precipitation")
+        XCTAssertEqual(CurrentWeatherMetricCopy.label(for: .windGusts, languageStyle: .english), "Wind gusts")
+    }
+
     func testRotatingStatusDetailsDescribeWeatherWithoutRepeatingTime() {
         let hour = ForecastHour(
             time: base,
