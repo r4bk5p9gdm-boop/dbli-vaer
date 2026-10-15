@@ -995,10 +995,9 @@ Kopitest dekker alle fem emner.
 følger nå valgt språkstil både når værdetaljene er åpne og sammenfoldet.
 Kopitest dekker begge tilstander på bokmål, inntrøndersk og engelsk.
 
-**AUTO-575 · ÅPEN** — `NotificationScheduler.authorizationStatus` behandler
-`UNAuthorizationStatus.ephemeral` som tillatt, men status-regresjonen dekker
-bare denied, authorized, provisional og notDetermined. Lås den tidsbegrensede
-ephemeral-tilgangen som tillatt med en liten enhetstest.
+**AUTO-575 · FULLFØRT 2026-10-15** — Status-regresjonen bekrefter nå også at
+`UNAuthorizationStatus.ephemeral` behandles som aktiv varslingstillatelse,
+sammen med authorized og provisional.
 
 **AUTO-576 · ÅPEN** — Den samme språkstilen bør gjelde VoiceOver-etiketten på
 værikonet i `CurrentWeatherCard`; `currentWeatherIcon.label` leveres fortsatt
@@ -1009,6 +1008,11 @@ værtilstander på bokmål, inntrøndersk og engelsk i en kopitest.
 VoiceOver-hint for sorteringsvalg og hjem-/hytte-snarveier i
 `PlacesView`. Følg valgt språkstil på hintene og dekk de ulike valgene med en
 liten kopitest.
+
+**AUTO-578 · ÅPEN** — Gjeldende værikon erstattes med måneikon om natten for
+klart og delvis skyet vær (`CurrentWeatherCard.currentWeatherIcon`), men denne
+visningsregelen er ikke dekket av tester. Trekk ut en liten policy og dekk
+dag-/nattvalg for alle værtilstander.
 
 **BRUKER-151 · FULLFØRT 2026-10-15** — Gjort oppstartsveiviseren lettere å
 skumme og komme gjennom: hvert steg viser en visuell, klikkbar progresjon for

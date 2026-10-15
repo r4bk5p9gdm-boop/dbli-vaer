@@ -12266,11 +12266,13 @@ final class PlannerTests: XCTestCase {
         let denied = await NotificationScheduler.authorizationStatus { .denied }
         let authorized = await NotificationScheduler.authorizationStatus { .authorized }
         let provisional = await NotificationScheduler.authorizationStatus { .provisional }
+        let ephemeral = await NotificationScheduler.authorizationStatus { .ephemeral }
         let undetermined = await NotificationScheduler.authorizationStatus { .notDetermined }
 
         XCTAssertEqual(denied, false)
         XCTAssertEqual(authorized, true)
         XCTAssertEqual(provisional, true)
+        XCTAssertEqual(ephemeral, true)
         XCTAssertNil(undetermined)
     }
 

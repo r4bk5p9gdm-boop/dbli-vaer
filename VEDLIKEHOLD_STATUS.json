@@ -1,6 +1,6 @@
 {
-  "lastScheduledStart": "2026-10-15T10:26:07Z",
+  "lastScheduledStart": "2026-10-15T10:41:07Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-574 fullført 2026-10-15: Den sammenfoldbare kompakte stedsraden lokaliserer nå VoiceOver-hintet for begge utvidelsestilstander på bokmål, inntrøndersk og engelsk. Kopitest dekker seks tilstands-/språkvarianter. Bred gjennomgang fant norsk VoiceOver-etikett på værikonet i CurrentWeatherCard (AUTO-576) og hardkodede norske hint for sorterings- og snarveivalg i Innstillinger (AUTO-577). Swift-parsing, jq empty og git diff --check dokumenteres ved verifisering; XCTest fortsatt blokkert av utilgjengelig CoreSimulatorService. Urelaterte arbeidsendringer er bevart.",
-  "nextQueue": ["AUTO-575", "AUTO-576", "AUTO-577"]
+  "lastProgress": "AUTO-575 fullført 2026-10-15: NotificationScheduler.authorizationStatus-regresjonen dekker nå også UNAuthorizationStatus.ephemeral som aktiv varslingstillatelse. Bred kodegjennomgang fant at CurrentWeatherCard bytter til måneikon om natten for klart/delvis skyet vær uten direkte testdekning; registrert som AUTO-578. Swift-parsing, jq empty og git diff --check dokumenteres ved verifisering; XCTest fortsatt blokkert av utilgjengelig CoreSimulatorService. Urelaterte arbeidsendringer er bevart.",
+  "nextQueue": ["AUTO-576", "AUTO-577", "AUTO-578"]
 }
