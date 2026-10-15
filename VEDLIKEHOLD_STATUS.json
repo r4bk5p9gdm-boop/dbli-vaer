@@ -1,5 +1,6 @@
 {
-  "lastScheduledStart": "2026-10-15T08:02:37Z",
+  "lastScheduledStart": "2026-10-15T09:26:08Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-151 fullført 2026-10-15 etter at brukeren ba om en enklere, mer visuell oppstartsveiviser. Ved oppstart leste jeg VEDLIKEHOLD.md, statusfilen, git status og nyere historikk og fullskannet statusmarkører gjennom hele køloggen. Ingen åpne BRUKER-numre; AUTO-570/571/572 var åpne, men denne eksplisitte brukerbestillingen ble prioritert. Veiviseren viser nå en kompakt, klikkbar progresjon for Sted, Varsler og Hytte; gjennomførte steg kan åpnes igjen. Varselsteget oppsummerer hvor mange ferdige forslag som er valgt og forklarer at de kan brukes direkte eller tilpasses. Neste/lagre er tydelige primærhandlinger, og kategoriene har diskret visuell farge. Swift-parsing og git diff --check besto. XCTest ikke kjørt fordi CoreSimulatorService/runtime ikke er tilgjengelig; disk er 98 % full. Urelaterte eksisterende arbeidsendringer er bevart. Neste åpne kønumre fra fullskanningen: AUTO-570, AUTO-571, AUTO-572."
+  "lastProgress": "AUTO-570 fullført 2026-10-15: Hjelpeknappens VoiceOver-etiketter følger nå valgt språkstil; engelsk har oversatte emnetitler, mens bokmål/inntrøndersk bruker språktransformasjonen. Kopitest dekker fem emner og alle tre språkstilene. swiftc -parse, jq empty og git diff --check besto. XCTest ble ikke kjørt: CoreSimulatorService er utilgjengelig, og maskinen har bare 11 GB ledig disk. Bred gjennomgang fant at selve hjelpesideinnholdet fortsatt bare er bokmål (AUTO-573), i tillegg til de allerede åpne sted- og målebrikkeetikettene AUTO-571/572. Urelaterte eksisterende arbeidsendringer er bevart.",
+  "nextQueue": ["AUTO-571", "AUTO-572", "AUTO-573"]
 }

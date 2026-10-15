@@ -696,6 +696,21 @@ enum ContextHelpTopic {
         case .wizard: "Hjelp til oppstarten"
         }
     }
+
+    func accessibilityLabel(languageStyle: AlertLanguageStyle) -> String {
+        let topicTitle: String
+        if languageStyle == .english {
+            switch self {
+            case .home: topicTitle = "How to read Home"
+            case .places: topicTitle = "Places and cabin"
+            case .alerts: topicTitle = "Understanding the alert list"
+            case .settings: topicTitle = "Settings"
+            case .wizard: topicTitle = "Getting started help"
+            }
+            return "Help: \(topicTitle)"
+        }
+        return WeatherLanguage.text("Hjelp: \(title)", style: languageStyle)
+    }
     var introduction: String {
         switch self {
         case .home: "Hjem viser været for det valgte stedet og de neste dagene. Trykk på blyanten for å tilpasse rader, terskler og pushvarsler."
@@ -718,6 +733,7 @@ enum ContextHelpTopic {
 
 struct ContextHelpButton: View {
     let topic: ContextHelpTopic
+    @EnvironmentObject private var store: Store
     @State private var showingHelp = false
 
     var body: some View {
@@ -728,7 +744,7 @@ struct ContextHelpButton: View {
                 .shadow(color: .yellow.opacity(0.28), radius: 3)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Hjelp: \(topic.title)")
+        .accessibilityLabel(topic.accessibilityLabel(languageStyle: store.alertLanguageStyle))
         .sheet(isPresented: $showingHelp) {
             HelpGuideView(topic: topic)
         }

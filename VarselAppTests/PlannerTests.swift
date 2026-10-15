@@ -2320,6 +2320,23 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testContextHelpAccessibilityLabelsFollowSelectedLanguageStyle() {
+        let topics: [ContextHelpTopic] = [.home, .places, .alerts, .settings, .wizard]
+        let englishTitles = [
+            "How to read Home",
+            "Places and cabin",
+            "Understanding the alert list",
+            "Settings",
+            "Getting started help"
+        ]
+
+        for (topic, englishTitle) in zip(topics, englishTitles) {
+            XCTAssertEqual(topic.accessibilityLabel(languageStyle: .english), "Help: \(englishTitle)")
+            XCTAssertEqual(topic.accessibilityLabel(languageStyle: .bokmal), "Hjelp: \(topic.title)")
+            XCTAssertEqual(topic.accessibilityLabel(languageStyle: .inntrondersk), "Hjelp: \(WeatherLanguage.text(topic.title, style: .inntrondersk))")
+        }
+    }
+
     func testWizardCategoriesCoverEveryAlertTypeExactlyOnce() {
         let expected: [WizardAlertCategory: Set<AlertType>] = [
             .rain: [.regn],

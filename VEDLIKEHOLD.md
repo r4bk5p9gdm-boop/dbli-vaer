@@ -971,10 +971,10 @@ tersklene.
 `.isSelected` for VoiceOver i tillegg til synlig blå/hvit markering. En
 regresjon verifiserer at valgt knapp annonseres som valgt og de øvrige ikke.
 
-**AUTO-570 · ÅPEN** — Hjelp-knappen i `RulePresetPickerView` setter
-VoiceOver-etiketten direkte til «Hjelp: …», mens appen ellers tilbyr engelsk
-og inntrøndersk språkstil. Lokaliser hjelpepåbudet uten å endre den synlige
-knappen, og dekk alle språkvariantene i kopitester.
+**AUTO-570 · FULLFØRT 2026-10-15** — Hjelp-knappens VoiceOver-etikett følger nå
+valgt språkstil: alle fem emner har engelsk tittel, mens bokmål og inntrøndersk
+bruker appens delte språktransformasjon. Den synlige knappen er uendret.
+Kopitest dekker alle emner og språkvalg.
 
 **AUTO-571 · ÅPEN** — Valgt sted i `ContentView` får den hardkodede
 VoiceOver-etiketten «Valgt sted». Brukere med engelsk eller inntrøndersk
@@ -985,6 +985,11 @@ lokalisert. Lokaliser statusetiketten og dekk variantene i en liten kopitest.
 hardkodede norske etiketter «Nedbør» og «Vindkast», mens andre brikker henter
 lokalisert tekst. Lokaliser begge etter valgt språkstil og dekk bokmål,
 inntrøndersk og engelsk i en kopitest.
+
+**AUTO-573 · ÅPEN** — `ContextHelpTopic` og `HelpGuideView` viser overskrifter,
+forklaringer og trinn bare på bokmål også når appen bruker engelsk. Lokaliser
+innholdet på hjelpesidene for alle språkstiler og legg til kopitest; behold
+emnenes pedagogiske innhold og rekkefølge.
 
 **BRUKER-151 · FULLFØRT 2026-10-15** — Gjort oppstartsveiviseren lettere å
 skumme og komme gjennom: hvert steg viser en visuell, klikkbar progresjon for
