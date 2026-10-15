@@ -976,10 +976,9 @@ valgt språkstil: alle fem emner har engelsk tittel, mens bokmål og inntrønder
 bruker appens delte språktransformasjon. Den synlige knappen er uendret.
 Kopitest dekker alle emner og språkvalg.
 
-**AUTO-571 · ÅPEN** — Valgt sted i `ContentView` får den hardkodede
-VoiceOver-etiketten «Valgt sted». Brukere med engelsk eller inntrøndersk
-språkstil får dermed et norsk statusnavn selv om omkringliggende stedstekst er
-lokalisert. Lokaliser statusetiketten og dekk variantene i en liten kopitest.
+**AUTO-571 · FULLFØRT 2026-10-15** — Den kompakte stedsradens valgte-merke
+bruker nå `PlaceRoleAccessibilityCopy` og følger språkstilen som allerede er
+dekningstestet for bokmål, inntrøndersk og engelsk.
 
 **AUTO-572 · ÅPEN** — Nå-kortets målebrikker i `CurrentWeatherCard` bruker
 hardkodede norske etiketter «Nedbør» og «Vindkast», mens andre brikker henter
@@ -990,6 +989,11 @@ inntrøndersk og engelsk i en kopitest.
 forklaringer og trinn bare på bokmål også når appen bruker engelsk. Lokaliser
 innholdet på hjelpesidene for alle språkstiler og legg til kopitest; behold
 emnenes pedagogiske innhold og rekkefølge.
+
+**AUTO-574 · ÅPEN** — Den sammenfoldbare kompakte stedsraden gir fortsatt den
+norske VoiceOver-hjelpen «Trykk for å vise/lukke værdetaljene» uansett valgt
+språkstil. Lokaliser hintet for alle språkstiler og dekk begge tilstander i en
+kopitest.
 
 **BRUKER-151 · FULLFØRT 2026-10-15** — Gjort oppstartsveiviseren lettere å
 skumme og komme gjennom: hvert steg viser en visuell, klikkbar progresjon for

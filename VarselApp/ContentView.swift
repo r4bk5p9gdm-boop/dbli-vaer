@@ -2759,7 +2759,10 @@ private struct PlaceOverviewRow: View {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.caption)
                             .foregroundStyle(.blue)
-                            .accessibilityLabel("Valgt sted")
+                            .accessibilityLabel(PlaceRoleAccessibilityCopy.label(
+                                for: .selected,
+                                languageStyle: Store.shared.alertLanguageStyle
+                            ))
                     }
                 }
                 if let current {

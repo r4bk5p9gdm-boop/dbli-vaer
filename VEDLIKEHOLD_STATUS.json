@@ -1,6 +1,6 @@
 {
-  "lastScheduledStart": "2026-10-15T09:26:08Z",
+  "lastScheduledStart": "2026-10-15T09:41:07Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-570 fullført 2026-10-15: Hjelpeknappens VoiceOver-etiketter følger nå valgt språkstil; engelsk har oversatte emnetitler, mens bokmål/inntrøndersk bruker språktransformasjonen. Kopitest dekker fem emner og alle tre språkstilene. swiftc -parse, jq empty og git diff --check besto. XCTest ble ikke kjørt: CoreSimulatorService er utilgjengelig, og maskinen har bare 11 GB ledig disk. Bred gjennomgang fant at selve hjelpesideinnholdet fortsatt bare er bokmål (AUTO-573), i tillegg til de allerede åpne sted- og målebrikkeetikettene AUTO-571/572. Urelaterte eksisterende arbeidsendringer er bevart.",
-  "nextQueue": ["AUTO-571", "AUTO-572", "AUTO-573"]
+  "lastProgress": "AUTO-571 fullført 2026-10-15: Det kompakte valgte-sted-merket bruker nå den eksisterende PlaceRoleAccessibilityCopy med språkstilen fra Store. Eksisterende kopitest dekker bokmål, inntrøndersk og engelsk. Bred gjennomgang av UI-et fant også et separat, fortsatt norsk VoiceOver-hint på den sammenfoldbare stedsraden (AUTO-574); de andre åpne funnene er målebrikkene AUTO-572 og hjelpesidenes innhold AUTO-573. Swift-parsing, jq empty og git diff --check besto; XCTest er blokkert av utilgjengelig CoreSimulatorService. Urelaterte arbeidsendringer er bevart.",
+  "nextQueue": ["AUTO-572", "AUTO-573", "AUTO-574"]
 }
