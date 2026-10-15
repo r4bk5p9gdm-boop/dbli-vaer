@@ -961,11 +961,11 @@ oppstartsplanleggingen. En feil ved `BGTaskScheduler.submit` gjør derfor ikke
 bakgrunnsoppdateringen avhengig av full omstart. Enhetstest bekrefter at
 planlegging bare utløses ved aktiv scene.
 
-**AUTO-568 · ÅPEN** — `CurrentWeatherCondition.resolve` deler sol, solgløtt og
-skyet ved henholdsvis 20 % og 65 % skydekke. Eksisterende regresjon dekker
-verdiene akkurat på tersklene, men ikke tilstandsskiftene rett utenfor dem.
-Legg til en kompakt grensematrise for 19/20/21 % og 65/66 % slik at ikonbytte
-ikke glir én prosent feil ved senere værlogikkendringer.
+**AUTO-568 · FULLFØRT 2026-10-15** — La til
+`testCurrentWeatherCloudCoverThresholdsOnBothSides`, som verifiserer
+`CurrentWeatherCondition.resolve` ved 19,9/20/20,1 % og 64,9/65/65,1 %.
+Dermed er klassene sol, solgløtt og skyet låst både på og rett utenfor
+tersklene.
 
 **AUTO-569 · ÅPEN** — Preposisjonsvalgene i stedssøk viser valgt verdi bare
 gjennom blå bakgrunn og hvit tekst. VoiceOver-knappene får dermed ikke en
@@ -977,6 +977,11 @@ kunngjøres når man navigerer mellom preposisjonene.
 VoiceOver-etiketten direkte til «Hjelp: …», mens appen ellers tilbyr engelsk
 og inntrøndersk språkstil. Lokaliser hjelpepåbudet uten å endre den synlige
 knappen, og dekk alle språkvariantene i kopitester.
+
+**AUTO-571 · ÅPEN** — Valgt sted i `ContentView` får den hardkodede
+VoiceOver-etiketten «Valgt sted». Brukere med engelsk eller inntrøndersk
+språkstil får dermed et norsk statusnavn selv om omkringliggende stedstekst er
+lokalisert. Lokaliser statusetiketten og dekk variantene i en liten kopitest.
 
 **BRUKER-148 · FULLFØRT 2026-10-12** — Lukket som allerede levert av
 BRUKER-147: Watch, widgets og CarPlay viser sted og prognosens ferskhet, med

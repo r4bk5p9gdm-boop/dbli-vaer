@@ -1930,6 +1930,22 @@ final class PlannerTests: XCTestCase {
         }
     }
 
+    func testCurrentWeatherCloudCoverThresholdsOnBothSides() {
+        let cases: [(Double, CurrentWeatherCondition)] = [
+            (19.9, .clear),
+            (20, .clear),
+            (20.1, .partlyCloudy),
+            (64.9, .partlyCloudy),
+            (65, .partlyCloudy),
+            (65.1, .cloudy)
+        ]
+
+        for (cloud, expected) in cases {
+            let hour = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: cloud, dew: 5)
+            XCTAssertEqual(CurrentWeatherCondition.resolve(hour), expected, "Unexpected condition at cloud cover \(cloud)%")
+        }
+    }
+
     func testForecastSymbolChangesFromSunToNightAtKlingaSunset() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try XCTUnwrap(TimeZone(identifier: "Europe/Oslo"))
