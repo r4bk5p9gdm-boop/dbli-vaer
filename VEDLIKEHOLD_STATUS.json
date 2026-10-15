@@ -1,6 +1,6 @@
 {
-  "lastScheduledStart": "2026-10-15T11:56:52Z",
+  "lastScheduledStart": "2026-10-15T11:58:51Z",
   "noProgressCount": 0,
-  "lastProgress": "BRUKER-152 delvis utført 2026-10-15: GitHub-origin er konfigurert; Release-kompileringskontroll for iOS, widget og Watch besto, og et usignert arkiv inneholder appen, widget og Watch-produktene. Push venter på fokusert commit. TestFlight-opplasting er PÅ VENT: security find-identity meldte 0 valid identities; Simulator/CoreSimulatorService er utilgjengelig. Ingen signeringsinnstillinger endret og ingen app lastet opp. AUTO-579 fullført med grenseverdiregresjoner (testmålet bygget, simulator-kjøring mangler). AUTO-580 PÅ VENT: clean-checkout-arkiv blokkert av 7,6 GiB ledig diskplass og manglende sertifikater. AUTO-581 personvernmetadata og AUTO-582 GitHub Actions-kontroll står åpne.",
+  "lastProgress": "BRUKER-152 delvis utført 2026-10-15: commit 79d681d med release-forberedelser er pushet til GitHub origin/main. Release-kompileringskontroll for iOS, widget og Watch besto, og et usignert arkiv inneholder appen, widget og Watch-produktene. TestFlight-opplasting er PÅ VENT: security find-identity meldte 0 valid identities; Simulator/CoreSimulatorService er utilgjengelig. Ingen signeringsinnstillinger endret og ingen app lastet opp. AUTO-579 fullført med grenseverdiregresjoner (testmålet bygget, simulator-kjøring mangler). AUTO-580 PÅ VENT: clean-checkout-arkiv blokkert av 7,6 GiB ledig diskplass og manglende sertifikater. AUTO-581 personvernmetadata og AUTO-582 GitHub Actions-kontroll står åpne.",
   "nextQueue": ["BRUKER-152", "AUTO-580", "AUTO-581"]
 }

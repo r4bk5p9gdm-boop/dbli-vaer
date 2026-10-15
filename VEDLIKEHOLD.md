@@ -70,7 +70,8 @@ Ved kontrollen ble også en duplisert `clientFactory`-deklarasjon i
 kompileres.
 
 **BRUKER-152 · PÅ VENT 2026-10-15** — GitHub-remote er konfigurert, og
-iOS-/widget-/Watch-målene samt et usignert Release-arkiv er verifisert lokalt.
+commit `79d681d` er pushet til `origin/main`. iOS-/widget-/Watch-målene samt
+et usignert Release-arkiv er verifisert lokalt.
 Første TestFlight-opplasting er blokkert: maskinen har ingen gyldige
 codesigning-identiteter, og CoreSimulatorService/runtime er utilgjengelig.
 Signering ble ikke endret, og builden er ikke lastet opp. Gjenoppta når Xcode
