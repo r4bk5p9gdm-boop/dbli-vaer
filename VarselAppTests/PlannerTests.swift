@@ -1979,6 +1979,22 @@ final class PlannerTests: XCTestCase {
         )
     }
 
+    func testCurrentConditionSystemImageUsesMoonOnlyForClearSkyAtNight() {
+        let cases: [(CurrentWeatherCondition, String, String)] = [
+            (.snow, "cloud.snow.fill", "cloud.snow.fill"),
+            (.rain, "cloud.rain.fill", "cloud.rain.fill"),
+            (.fog, "cloud.fog.fill", "cloud.fog.fill"),
+            (.clear, "sun.max.fill", "moon.stars.fill"),
+            (.partlyCloudy, "cloud.sun.fill", "cloud.moon.fill"),
+            (.cloudy, "cloud.fill", "cloud.fill")
+        ]
+
+        for (condition, daySymbol, nightSymbol) in cases {
+            XCTAssertEqual(condition.systemImage(isDaylight: true), daySymbol, "Unexpected daytime symbol for \(condition)")
+            XCTAssertEqual(condition.systemImage(isDaylight: false), nightSymbol, "Unexpected nighttime symbol for \(condition)")
+        }
+    }
+
     func testFogMarkerInSolarBandUsesSunHazeOnlyWhenSolarCellShowsSun() {
         let foggy = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 95, dew: 7, fog: 50)
         let clearVisibility = ForecastHour(time: base, temp: 8, precip: 0, wind: 1, cloud: 95, dew: 7, fog: 49.9)

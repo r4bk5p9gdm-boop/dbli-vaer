@@ -1010,10 +1010,11 @@ Sorteringshintet beskriver også aktiv automatisk eller manuell rekkefølge.
 Kopitest dekker begge sorteringsvalg og språkstilene bokmål, inntrøndersk og
 engelsk.
 
-**AUTO-578 · ÅPEN** — Gjeldende værikon erstattes med måneikon om natten for
-klart og delvis skyet vær (`CurrentWeatherCard.currentWeatherIcon`), men denne
-visningsregelen er ikke dekket av tester. Trekk ut en liten policy og dekk
-dag-/nattvalg for alle værtilstander.
+**AUTO-578 · FULLFØRT 2026-10-15** — `CurrentWeatherCard.currentWeatherIcon`
+bruker nå den delte dag-/nattikon-policyen i `CurrentWeatherCondition` i stedet
+for en separat nattgren. Regresjonen dekker dag- og nattikon for alle seks
+værtilstander. Den eksisterende solnedgangstesten bekrefter også at overgangen
+følger Klingas lokale dagslys.
 
 **AUTO-579 · ÅPEN** — `CurrentWeatherCondition.resolve` klassifiserer skydekke
 med grensene 20 % og 65 %, men regresjonstesten dekker kun eksakte grenseverdier.
@@ -1024,6 +1025,12 @@ overgangene mellom sol, delvis skyet og skyet.
 TestFlight: app-scheme må arkivere riktig iOS-app med widget- og Watch-produktene,
 og arkivet må ha konsistente bundle-ID-er og versjons-/build-numre. Dokumenter
 eventuelle blokkeringer uten å endre signering eller laste opp builden.
+
+**AUTO-581 · ÅPEN** — Før TestFlight, gjennomgå personvernmetadata mot faktisk
+dataflyt: sted/posisjon, Yr-forespørsler, lokal lagring og eventuell synkronisering.
+Dokumenter hvilke data som forlater enheten, formål og lagringstid, og noter hva
+som må oppgis i App Store Connects personvernerklæring. Ikke send inn eller
+publiser metadata.
 
 **BRUKER-151 · FULLFØRT 2026-10-15** — Gjort oppstartsveiviseren lettere å
 skumme og komme gjennom: hvert steg viser en visuell, klikkbar progresjon for

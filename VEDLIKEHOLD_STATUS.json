@@ -1,6 +1,6 @@
 {
-  "lastScheduledStart": "2026-10-15T11:11:08Z",
+  "lastScheduledStart": "2026-10-15T11:26:08Z",
   "noProgressCount": 0,
-  "lastProgress": "AUTO-577 fullført 2026-10-15: VoiceOver-hintene for sorteringsvalg og hjemsted/hyttevalg i PlacesView følger nå valgt språkstil; sorteringshintet beskriver aktiv automatisk/manuell rekkefølge. Kopitest dekker begge sorteringsvalg, bokmål/inntrøndersk og engelsk. Swift-parsing og git diff --check består; XCTest er ikke kjørt, og full Xcode-arkivering er utsatt på grunn av tidligere CoreSimulatorService-problem og begrenset diskplass. Bred release-preflight fant behov for en ren-arkivverifisering av app-, widget- og Watch-produkter før TestFlight; registrert som AUTO-580. Bare denne oppgavens valgte endringer er med i committen; øvrige arbeidsendringer forblir ustaget.",
-  "nextQueue": ["AUTO-578", "AUTO-579", "AUTO-580"]
+  "lastProgress": "AUTO-578 fullført 2026-10-15: CurrentWeatherCard.currentWeatherIcon bruker nå den delte CurrentWeatherCondition.systemImage(isDaylight:) i stedet for egen nattgren. Kopitest dekker dag og natt for alle seks værtilstander; eksisterende Klinga-solnedgangstest låser lokalt dagslysskifte. Swift-parsing, jq empty og git diff --check kjøres for verifisering; XCTest er blokkert fordi CoreSimulatorService ikke kan koble til og ingen simulator-runtime er tilgjengelig. Bred gjennomgang av lokasjons-, nettrafikk- og lagringsbaner fant behov for å avstemme faktisk dataflyt mot App Store personvernmetadata; registrert som AUTO-581. Urelaterte ulagrede endringer bevares.",
+  "nextQueue": ["AUTO-579", "AUTO-580", "AUTO-581"]
 }

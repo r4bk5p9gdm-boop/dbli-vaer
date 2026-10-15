@@ -1107,21 +1107,12 @@ private struct CurrentWeatherCard: View {
     }
 
     private var currentWeatherIcon: (systemImage: String, color: Color, label: String) {
-        if !isDaylightNow {
-            switch currentCondition {
-            case .clear, .partlyCloudy:
-                return (
-                    "moon.stars.fill", Color.indigo,
-                    currentCondition.accessibilityLabel(languageStyle: languageStyle, isDaylight: false)
-                )
-            default:
-                break
-            }
-        }
+        let daylight = isDaylightNow
+        let showsMoon = !daylight && (currentCondition == .clear || currentCondition == .partlyCloudy)
         return (
-            currentCondition.systemImage,
-            currentCondition.color,
-            currentCondition.accessibilityLabel(languageStyle: languageStyle, isDaylight: true)
+            currentCondition.systemImage(isDaylight: daylight),
+            showsMoon ? Color.indigo : currentCondition.color,
+            currentCondition.accessibilityLabel(languageStyle: languageStyle, isDaylight: daylight)
         )
     }
 
