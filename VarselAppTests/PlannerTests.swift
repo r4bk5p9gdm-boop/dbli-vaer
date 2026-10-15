@@ -12538,6 +12538,30 @@ final class PlannerTests: XCTestCase {
             PlaceForecastExpansionAccessibilityCopy.hint(isExpanded: true, languageStyle: .english),
             "Double-tap to collapse the three-day forecast."
         )
+        XCTAssertEqual(
+            PlaceForecastExpansionAccessibilityCopy.compactRowHint(isExpanded: false, languageStyle: .bokmal),
+            "Trykk for å vise værdetaljer"
+        )
+        XCTAssertEqual(
+            PlaceForecastExpansionAccessibilityCopy.compactRowHint(isExpanded: true, languageStyle: .bokmal),
+            "Trykk for å lukke værdetaljene"
+        )
+        XCTAssertEqual(
+            PlaceForecastExpansionAccessibilityCopy.compactRowHint(isExpanded: false, languageStyle: .inntrondersk),
+            WeatherLanguage.text("Trykk for å vise værdetaljer", style: .inntrondersk)
+        )
+        XCTAssertEqual(
+            PlaceForecastExpansionAccessibilityCopy.compactRowHint(isExpanded: true, languageStyle: .inntrondersk),
+            WeatherLanguage.text("Trykk for å lukke værdetaljene", style: .inntrondersk)
+        )
+        XCTAssertEqual(
+            PlaceForecastExpansionAccessibilityCopy.compactRowHint(isExpanded: false, languageStyle: .english),
+            "Tap to show weather details."
+        )
+        XCTAssertEqual(
+            PlaceForecastExpansionAccessibilityCopy.compactRowHint(isExpanded: true, languageStyle: .english),
+            "Tap to hide weather details."
+        )
     }
 
     func testHomePageAccessibilityLabelFollowsSelectedLanguageStyle() {

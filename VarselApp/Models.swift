@@ -386,6 +386,18 @@ enum PlaceForecastExpansionAccessibilityCopy {
             : "Dobbeltrykk for å åpne tredagersvarselet."
         return WeatherLanguage.text(hint, style: languageStyle)
     }
+
+    static func compactRowHint(isExpanded: Bool, languageStyle: AlertLanguageStyle) -> String {
+        if languageStyle == .english {
+            return isExpanded
+                ? "Tap to hide weather details."
+                : "Tap to show weather details."
+        }
+        let hint = isExpanded
+            ? "Trykk for å lukke værdetaljene"
+            : "Trykk for å vise værdetaljer"
+        return WeatherLanguage.text(hint, style: languageStyle)
+    }
 }
 
 enum WeatherTextSeparator: String, CaseIterable, Codable, Identifiable {

@@ -2816,7 +2816,10 @@ private struct PlaceOverviewRow: View {
                 .stroke(isExpanded ? Color.indigo.opacity(0.35) : Color.secondary.opacity(0.14), lineWidth: isExpanded ? 1.5 : 1)
         )
         .accessibilityElement(children: .combine)
-        .accessibilityHint(isExpanded ? "Trykk for å lukke værdetaljene" : "Trykk for å vise værdetaljer")
+        .accessibilityHint(PlaceForecastExpansionAccessibilityCopy.compactRowHint(
+            isExpanded: isExpanded,
+            languageStyle: Store.shared.alertLanguageStyle
+        ))
     }
 }
 

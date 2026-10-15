@@ -991,10 +991,9 @@ ferdigknapp for valgt språkstil. Engelske tekster er skrevet eksplisitt;
 inntrøndersk gjenbruker språktransformasjonen uten å endre emnenes rekkefølge.
 Kopitest dekker alle fem emner.
 
-**AUTO-574 · ÅPEN** — Den sammenfoldbare kompakte stedsraden gir fortsatt den
-norske VoiceOver-hjelpen «Trykk for å vise/lukke værdetaljene» uansett valgt
-språkstil. Lokaliser hintet for alle språkstiler og dekk begge tilstander i en
-kopitest.
+**AUTO-574 · FULLFØRT 2026-10-15** — Den kompakte stedsradens VoiceOver-hint
+følger nå valgt språkstil både når værdetaljene er åpne og sammenfoldet.
+Kopitest dekker begge tilstander på bokmål, inntrøndersk og engelsk.
 
 **AUTO-575 · ÅPEN** — `NotificationScheduler.authorizationStatus` behandler
 `UNAuthorizationStatus.ephemeral` som tillatt, men status-regresjonen dekker
@@ -1005,6 +1004,11 @@ ephemeral-tilgangen som tillatt med en liten enhetstest.
 værikonet i `CurrentWeatherCard`; `currentWeatherIcon.label` leveres fortsatt
 som bokmål uansett valgt språk. Lokaliser ikonetikettene og dekk alle
 værtilstander på bokmål, inntrøndersk og engelsk i en kopitest.
+
+**AUTO-577 · ÅPEN** — Innstillinger-visningen har fortsatt hardkodede norske
+VoiceOver-hint for sorteringsvalg og hjem-/hytte-snarveier i
+`PlacesView`. Følg valgt språkstil på hintene og dekk de ulike valgene med en
+liten kopitest.
 
 **BRUKER-151 · FULLFØRT 2026-10-15** — Gjort oppstartsveiviseren lettere å
 skumme og komme gjennom: hvert steg viser en visuell, klikkbar progresjon for
