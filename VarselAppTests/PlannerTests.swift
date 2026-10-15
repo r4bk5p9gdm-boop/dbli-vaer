@@ -5286,6 +5286,44 @@ final class PlannerTests: XCTestCase {
         XCTAssertEqual(displayedCondition, .cloudy)
     }
 
+    func testCurrentWeatherIconAccessibilityLabelsFollowLanguageForAllConditions() {
+        let cases: [(CurrentWeatherCondition, String, String)] = [
+            (.snow, "Snø", "Snow"),
+            (.rain, "Regn", "Rain"),
+            (.fog, "Tåke", "Fog"),
+            (.clear, "Sol", "Clear"),
+            (.partlyCloudy, "Solgløtt", "Partly cloudy"),
+            (.cloudy, "Skyer", "Cloudy")
+        ]
+
+        for (condition, bokmal, english) in cases {
+            XCTAssertEqual(condition.accessibilityLabel(languageStyle: .bokmal), bokmal)
+            XCTAssertEqual(condition.accessibilityLabel(languageStyle: .english), english)
+            XCTAssertEqual(
+                condition.accessibilityLabel(languageStyle: .inntrondersk),
+                WeatherLanguage.text(bokmal, style: .inntrondersk)
+            )
+
+            let nightBokmal = switch condition {
+            case .clear: "Klart"
+            case .partlyCloudy: "Delvis skyet"
+            default: bokmal
+            }
+            XCTAssertEqual(
+                condition.accessibilityLabel(languageStyle: .bokmal, isDaylight: false),
+                nightBokmal
+            )
+            XCTAssertEqual(
+                condition.accessibilityLabel(languageStyle: .english, isDaylight: false),
+                english
+            )
+            XCTAssertEqual(
+                condition.accessibilityLabel(languageStyle: .inntrondersk, isDaylight: false),
+                WeatherLanguage.text(nightBokmal, style: .inntrondersk)
+            )
+        }
+    }
+
     func testCurrentWeatherMetricLabelsFollowSelectedLanguageStyle() {
         XCTAssertEqual(CurrentWeatherMetricCopy.label(for: .precipitation, languageStyle: .bokmal), "Nedbør")
         XCTAssertEqual(CurrentWeatherMetricCopy.label(for: .windGusts, languageStyle: .bokmal), "Vindkast")

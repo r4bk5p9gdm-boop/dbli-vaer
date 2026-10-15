@@ -1110,12 +1110,19 @@ private struct CurrentWeatherCard: View {
         if !isDaylightNow {
             switch currentCondition {
             case .clear, .partlyCloudy:
-                return ("moon.stars.fill", Color.indigo, "Natt")
+                return (
+                    "moon.stars.fill", Color.indigo,
+                    currentCondition.accessibilityLabel(languageStyle: languageStyle, isDaylight: false)
+                )
             default:
                 break
             }
         }
-        return (currentCondition.systemImage, currentCondition.color, currentCondition.label)
+        return (
+            currentCondition.systemImage,
+            currentCondition.color,
+            currentCondition.accessibilityLabel(languageStyle: languageStyle, isDaylight: true)
+        )
     }
 
     private var frostIsActiveNow: Bool {

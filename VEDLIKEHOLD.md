@@ -999,10 +999,10 @@ Kopitest dekker begge tilstander på bokmål, inntrøndersk og engelsk.
 `UNAuthorizationStatus.ephemeral` behandles som aktiv varslingstillatelse,
 sammen med authorized og provisional.
 
-**AUTO-576 · ÅPEN** — Den samme språkstilen bør gjelde VoiceOver-etiketten på
-værikonet i `CurrentWeatherCard`; `currentWeatherIcon.label` leveres fortsatt
-som bokmål uansett valgt språk. Lokaliser ikonetikettene og dekk alle
-værtilstander på bokmål, inntrøndersk og engelsk i en kopitest.
+**AUTO-576 · FULLFØRT 2026-10-15** — Værikonets VoiceOver-etikett bruker nå
+`CurrentWeatherCondition.accessibilityLabel` med valgt språkstil og gjeldende
+dag-/nattstatus. Regresjonstesten dekker alle seks værtilstander, tre
+språkstiler og nattetikettene for klart/delvis skyet.
 
 **AUTO-577 · ÅPEN** — Innstillinger-visningen har fortsatt hardkodede norske
 VoiceOver-hint for sorteringsvalg og hjem-/hytte-snarveier i
@@ -1013,6 +1013,11 @@ liten kopitest.
 klart og delvis skyet vær (`CurrentWeatherCard.currentWeatherIcon`), men denne
 visningsregelen er ikke dekket av tester. Trekk ut en liten policy og dekk
 dag-/nattvalg for alle værtilstander.
+
+**AUTO-579 · ÅPEN** — `CurrentWeatherCondition.resolve` klassifiserer skydekke
+med grensene 20 % og 65 %, men regresjonstesten dekker kun eksakte grenseverdier.
+Legg til like-under-/like-over-verdier for å låse klassifiseringen ved
+overgangene mellom sol, delvis skyet og skyet.
 
 **BRUKER-151 · FULLFØRT 2026-10-15** — Gjort oppstartsveiviseren lettere å
 skumme og komme gjennom: hvert steg viser en visuell, klikkbar progresjon for
